@@ -1,0 +1,6 @@
+name: MineInAbyss
+version: "0.02b"
+author: Derongan
+main: com.derongan.minecraft.madeinabyss.MadeInAbyss
+prefix: MiB
+description: A mod that adds abyss effects

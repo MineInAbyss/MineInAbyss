@@ -1,0 +1,42 @@
+package com.derongan.minecraft.madeinabyss.Ascension.Effect;
+
+import com.derongan.minecraft.madeinabyss.AbyssContext;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
+import static java.util.stream.Collectors.toList;
+
+
+public class SoundAscensionEffect extends AbstractAscensionEffect {
+    private List<Sound> sounds;
+    private static Random random = new Random();
+
+    public SoundAscensionEffect(AbyssContext context, long offset, int strength, int duration, List<String> allowedSounds) {
+        super(context, offset, strength, duration);
+        sounds = allowedSounds.stream().map((soundString) -> {
+            try {
+                return Sound.valueOf(soundString);
+            } catch (IllegalArgumentException iae) {
+                return null;
+            }
+        }).filter(Objects::nonNull).collect(toList());
+    }
+
+    @Override
+    void applyEffect(Player player) {
+        for (int i = 0; i < strength; i++) {
+            Location soundLocation = Vector.getRandom().multiply(5).toLocation(player.getWorld());
+            Sound sound = sounds.get(random.nextInt(sounds.size()));
+
+            getContext().getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getContext().getPlugin(), () -> {
+                player.playSound(soundLocation, sound, 1, 1);
+            }, random.nextInt(getContext().getTickTime()));
+        }
+    }
+}
