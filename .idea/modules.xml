@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MadeInAbyss.iml" filepath="$PROJECT_DIR$/MadeInAbyss.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MadeInAbyss_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MadeInAbyss_main.iml" group="MadeInAbyss" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MadeInAbyss_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MadeInAbyss_test.iml" group="MadeInAbyss" />
+    </modules>
+  </component>
+</project>
