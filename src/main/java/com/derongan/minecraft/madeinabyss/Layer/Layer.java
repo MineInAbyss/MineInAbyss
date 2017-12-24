@@ -12,7 +12,7 @@ public class Layer {
     private Set<AscensionEffectBuilder> effectsOnLayer = new HashSet<>();
     private AbyssContext context;
     private String deathMessage;
-    private int offset;
+    private int offset = 50;
 
     public Layer(String name, AbyssContext context) {
         this.name = name;
@@ -53,11 +53,14 @@ public class Layer {
                     builder = new AscensionEffectBuilder.SoundAscensionEffectBuilder();
                     ((AscensionEffectBuilder.SoundAscensionEffectBuilder) builder).setSounds((List<String>) effect.getOrDefault("sounds", null));
                     break;
+                case "DeathAscensionEffect":
+                    builder = new AscensionEffectBuilder.DeathAscensionEffectBuilder();
+                    break;
             }
 
             if (builder != null) {
                 builder.setContext(context)
-                        .setDuration(TickUtils.milisecondsToTicks(duration/1000))
+                        .setDuration(TickUtils.milisecondsToTicks(duration*1000))
                         .setStrength(strength)
                         .setOffset(offset);
 

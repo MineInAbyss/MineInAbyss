@@ -63,6 +63,5 @@ public final class MadeInAbyss extends JavaPlugin {
             e.printStackTrace();
 
         }
-
     }
 }

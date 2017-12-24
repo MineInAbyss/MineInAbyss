@@ -60,10 +60,10 @@ public abstract class AscensionEffectBuilder<E extends AscensionEffect> {
         }
     }
 
-    public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilder<BloodyAscensionEffect> {
+    public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilder<DamagingAscensionEffect> {
         @Override
-        public BloodyAscensionEffect build() {
-            return new BloodyAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+        public DamagingAscensionEffect build() {
+            return new DamagingAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
         }
     }
 
@@ -71,6 +71,13 @@ public abstract class AscensionEffectBuilder<E extends AscensionEffect> {
         @Override
         public DizzyAscensionEffect build() {
             return new DizzyAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+        }
+    }
+
+    public static class DeathAscensionEffectBuilder extends AscensionEffectBuilder<DeathAscensionEffect> {
+        @Override
+        public DeathAscensionEffect build() {
+            return new DeathAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
         }
     }
 

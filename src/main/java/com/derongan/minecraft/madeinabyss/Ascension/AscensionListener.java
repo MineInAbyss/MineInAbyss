@@ -9,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.Optional;
-
 public class AscensionListener implements Listener {
     private AbyssContext context;
 
@@ -27,18 +25,17 @@ public class AscensionListener implements Listener {
 
         Layer currentLayer = context.getLayerMap().getOrDefault(player.getWorld().getName(), null);
 
-        if(currentLayer != null) {
+        if (currentLayer != null) {
             AscensionData data = context.getPlayerAcensionDataMap().computeIfAbsent(player.getUniqueId(), uuid -> new AscensionData());
             data.changeDistanceMovedUp(deltaY);
 
-            if (data.getDistanceMovedUp() >= distanceForEffect) {
+            if (data.getDistanceMovedUp() >= currentLayer.getOffset()) {
                 data.setDistanceMovedUp(data.getDistanceMovedUp() % distanceForEffect);
-                Optional.of(context.getLayerMap().getOrDefault(player.getWorld().getName(), null)).ifPresent(layer -> {
-                    layer.getEffectsOnLayer().forEach(effectBuilder -> {
-                        data.applyEffect(effectBuilder.build());
-                    });
+                currentLayer.getEffectsOnLayer().forEach(effectBuilder -> {
+                    data.applyEffect(effectBuilder.build());
                 });
             }
+            ;
         }
     }
 
@@ -59,5 +56,6 @@ public class AscensionListener implements Listener {
         }
 
         deadPlayerData.clearEffects(playerDeathEvent.getEntity());
+        deadPlayerData.setDistanceMovedUp(0);
     }
 }

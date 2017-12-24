@@ -2,7 +2,7 @@ layers:
   -
     name: LayerOne
     offset: 50
-    effectsOnLayer:
+    effects:
       -
         name: DizzyAscensionEffect
         strength: 1
@@ -10,7 +10,7 @@ layers:
   -
     name: LayerTwo
     offset: 40
-    effectsOnLayer:
+    effects:
       -
         name: DizzyAscensionEffect
         strength: 2
@@ -18,7 +18,7 @@ layers:
   -
     name: LayerThree
     offset: 30
-    effectsOnLayer:
+    effects:
       -
         name: DizzyAscensionEffect
         strength: 5
@@ -29,7 +29,7 @@ layers:
         duration: 30
       -
         name: SoundAscensionEffect
-        strength: 5
+        strength: 1
         duration: 30
         sounds:
           - ENTITY_ZOMBIE_AMBIENT
@@ -39,8 +39,8 @@ layers:
   -
     name: LayerFour
     offset: 25
-    abyssDeathMessage: {Player} died from ascending on the fourth layer!
-    effectsOnLayer:
+    abyssDeathMessage: "{Player} died from ascending on the fourth layer!"
+    effects:
       -
         name: DizzyAscensionEffect
         strength: 10
@@ -56,8 +56,8 @@ layers:
   -
     name: LayerFive
     offset: 20
-    abyssDeathMessage: {Player} died from ascending on the fifth layer!
-    effectsOnLayer:
+    abyssDeathMessage: "{Player} died from ascending on the fifth layer!"
+    effects:
       -
         name: DizzyAscensionEffect
         strength: 10
@@ -69,4 +69,14 @@ layers:
       -
         name: DamagingAscensionEffect
         strength: 6
+        duration: 30
+
+  -
+    name: LayerSix
+    offset: 10
+    abyssDeathMessage: "{Player} died from ascending on the sixth layer!"
+    effects:
+      -
+        name: DeathAscensionEffect
+        strength: 10
         duration: 30

@@ -31,7 +31,7 @@ public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
         PlayerConnection con = ((CraftPlayer) player).getHandle().playerConnection;
         if (stands.isEmpty()) {
             for (int i = 0; i < strength; i++) {
-                Location loc = player.getLocation().toVector().add(Vector.getRandom().multiply(20)).toLocation(player.getWorld());
+                Location loc = player.getLocation().toVector().add(Vector.getRandom().subtract(new Vector(.5,.5,.5)).multiply(20)).toLocation(player.getWorld());
                 stands.add(new SpoofedEntityLiving(getNewArmorStand(player), 78, loc));
             }
             stands.forEach(a -> {

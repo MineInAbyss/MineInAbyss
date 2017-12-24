@@ -31,11 +31,11 @@ public class SoundAscensionEffect extends AbstractAscensionEffect {
     @Override
     void applyEffect(Player player) {
         for (int i = 0; i < strength; i++) {
-            Location soundLocation = Vector.getRandom().multiply(5).toLocation(player.getWorld());
+            Location soundLocation = Vector.getRandom().multiply(5).subtract(new Vector(2.5,2.5,2.5)).toLocation(player.getWorld()).add(player.getLocation());
             Sound sound = sounds.get(random.nextInt(sounds.size()));
 
             getContext().getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getContext().getPlugin(), () -> {
-                player.playSound(soundLocation, sound, 1, 1);
+                player.playSound(soundLocation, sound, 1f, 1f);
             }, random.nextInt(getContext().getTickTime()));
         }
     }
