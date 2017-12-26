@@ -1,6 +1,6 @@
 package com.derongan.minecraft.madeinabyss.Ascension;
 
-import com.derongan.minecraft.madeinabyss.Ascension.Effect.AscensionEffect;
+import com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects.AscensionEffect;
 import com.derongan.minecraft.madeinabyss.Layer.Layer;
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.entity.Player;

@@ -1,11 +1,11 @@
-package com.derongan.minecraft.madeinabyss.Ascension.Effect;
+package com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects;
 
 import com.derongan.minecraft.madeinabyss.AbyssContext;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class DamagingAscensionEffect extends AbstractAscensionEffect {
+public class DamagingAscensionEffect extends AbstractAscensionEffect {
     private final PotionEffect effect = new PotionEffect(PotionEffectType.WITHER, duration, strength);
 
     public DamagingAscensionEffect(AbyssContext context, long offset, int strength, int duration) {

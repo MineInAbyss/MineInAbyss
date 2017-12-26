@@ -1,7 +1,7 @@
 package com.derongan.minecraft.madeinabyss.Ascension;
 
 import com.derongan.minecraft.madeinabyss.AbyssContext;
-import com.derongan.minecraft.madeinabyss.Ascension.Effect.DeathAscensionEffect;
+import com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects.DeathAscensionEffect;
 import com.derongan.minecraft.madeinabyss.Layer.Layer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

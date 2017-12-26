@@ -1,4 +1,4 @@
-package com.derongan.minecraft.madeinabyss.Ascension.Effect;
+package com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects;
 
 import org.bukkit.entity.Player;
 

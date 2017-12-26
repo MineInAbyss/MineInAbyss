@@ -1,6 +1,7 @@
 package com.derongan.minecraft.madeinabyss.Ascension.Effect;
 
 import com.derongan.minecraft.madeinabyss.AbyssContext;
+import com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects.*;
 import org.bukkit.Sound;
 
 import java.util.Arrays;
