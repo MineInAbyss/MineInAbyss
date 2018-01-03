@@ -1,7 +1,7 @@
-package com.derongan.minecraft.madeinabyss;
+package com.derongan.minecraft.mineinabyss;
 
-import com.derongan.minecraft.madeinabyss.Ascension.AscensionData;
-import com.derongan.minecraft.madeinabyss.Layer.Layer;
+import com.derongan.minecraft.mineinabyss.Ascension.AscensionData;
+import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.Plugin;
 

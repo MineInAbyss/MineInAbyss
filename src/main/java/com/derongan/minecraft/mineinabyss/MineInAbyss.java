@@ -1,15 +1,15 @@
-package com.derongan.minecraft.madeinabyss;
+package com.derongan.minecraft.mineinabyss;
 
-import com.derongan.minecraft.madeinabyss.Ascension.AscensionListener;
-import com.derongan.minecraft.madeinabyss.Ascension.AscensionTask;
-import com.derongan.minecraft.madeinabyss.Layer.Layer;
+import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
+import com.derongan.minecraft.mineinabyss.Ascension.AscensionTask;
+import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
-public final class MadeInAbyss extends JavaPlugin {
+public final class MineInAbyss extends JavaPlugin {
     private final int TICKS_BETWEEN = 5;
 
     @Override

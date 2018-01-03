@@ -1,4 +1,4 @@
-package com.derongan.minecraft.madeinabyss.Spoofing;
+package com.derongan.minecraft.mineinabyss.Spoofing;
 
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Location;

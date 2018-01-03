@@ -1,6 +1,6 @@
-package com.derongan.minecraft.madeinabyss.Ascension;
+package com.derongan.minecraft.mineinabyss.Ascension;
 
-import com.derongan.minecraft.madeinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 

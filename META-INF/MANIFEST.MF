@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: com.derongan.minecraft.madeinabyss.MadeInAbyss
+Main-Class: com.derongan.minecraft.mineinabyss.MineInAbyss
 
 

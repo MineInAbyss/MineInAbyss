@@ -1,8 +1,8 @@
-package com.derongan.minecraft.madeinabyss.Layer;
+package com.derongan.minecraft.mineinabyss.Layer;
 
-import com.derongan.minecraft.madeinabyss.AbyssContext;
-import com.derongan.minecraft.madeinabyss.Ascension.Effect.AscensionEffectBuilder;
-import com.derongan.minecraft.madeinabyss.TickUtils;
+import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
+import com.derongan.minecraft.mineinabyss.TickUtils;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.*;

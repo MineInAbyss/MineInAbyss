@@ -1,6 +1,6 @@
-package com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects;
+package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
-import com.derongan.minecraft.madeinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

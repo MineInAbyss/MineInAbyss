@@ -1,8 +1,8 @@
-package com.derongan.minecraft.madeinabyss.Ascension;
+package com.derongan.minecraft.mineinabyss.Ascension;
 
-import com.derongan.minecraft.madeinabyss.AbyssContext;
-import com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects.DeathAscensionEffect;
-import com.derongan.minecraft.madeinabyss.Layer.Layer;
+import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects.DeathAscensionEffect;
+import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +22,11 @@ public class AscensionListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent playerMoveEvent) {
         double deltaY = playerMoveEvent.getTo().getY() - playerMoveEvent.getFrom().getY();
         Player player = playerMoveEvent.getPlayer();
+
+        // Admins are immune to effects by default
+        if(!player.hasPermission("mineinabyss.effectable")){
+            return;
+        }
 
         Layer currentLayer = context.getLayerMap().getOrDefault(player.getWorld().getName(), null);
 

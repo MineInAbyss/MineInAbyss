@@ -1,7 +1,7 @@
-package com.derongan.minecraft.madeinabyss.Ascension.Effect.Effects;
+package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
-import com.derongan.minecraft.madeinabyss.AbyssContext;
-import com.derongan.minecraft.madeinabyss.Spoofing.SpoofedEntityLiving;
+import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Spoofing.SpoofedEntityLiving;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
