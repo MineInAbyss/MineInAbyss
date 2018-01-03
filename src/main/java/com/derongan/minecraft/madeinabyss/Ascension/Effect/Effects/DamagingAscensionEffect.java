@@ -6,7 +6,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class DamagingAscensionEffect extends AbstractAscensionEffect {
-    private final PotionEffect effect = new PotionEffect(PotionEffectType.WITHER, duration, strength);
+    private final PotionEffect effect = new PotionEffect(PotionEffectType.WITHER, durationRemaining, strength);
 
     public DamagingAscensionEffect(AbyssContext context, long offset, int strength, int duration) {
         super(context, offset, strength, duration);

@@ -5,13 +5,15 @@ import org.bukkit.entity.Player;
 
 public abstract class AbstractAscensionEffect implements AscensionEffect {
     private AbyssContext context;
-    int duration;
+    int durationRemaining;
+    int elapsed;
     int strength;
     private long offset; //TODO honor this value
 
-    AbstractAscensionEffect(AbyssContext context, long offset, int strength, int duration) {
+    AbstractAscensionEffect(AbyssContext context, long offset, int strength, int durationRemaining) {
         this.context = context;
-        this.duration = duration;
+        this.durationRemaining = durationRemaining;
+        this.elapsed = 0;
         this.offset = offset;
         this.strength = strength;
     }
@@ -22,7 +24,7 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
 
     @Override
     public void applyEffect(Player player, int ticks) {
-        duration -= ticks;
+        durationRemaining -= ticks;
         applyEffect(player);
     }
 
@@ -30,17 +32,17 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
 
     @Override
     public boolean isDone() {
-        return duration <= 0;
+        return durationRemaining <= 0;
     }
 
     @Override
     public int getRemainingTicks() {
-        return duration;
+        return durationRemaining;
     }
 
     @Override
     public void setRemainingTicks(int remainingTicks) {
-        duration = remainingTicks;
+        durationRemaining = remainingTicks;
     }
 
     @Override

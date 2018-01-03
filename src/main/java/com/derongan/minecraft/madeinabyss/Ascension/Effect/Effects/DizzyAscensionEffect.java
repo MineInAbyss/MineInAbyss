@@ -6,7 +6,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class DizzyAscensionEffect extends AbstractAscensionEffect {
-    private final PotionEffect effect = new PotionEffect(PotionEffectType.CONFUSION, duration, strength);
+    private final PotionEffect effect = new PotionEffect(PotionEffectType.CONFUSION, durationRemaining, strength);
 
     public DizzyAscensionEffect(AbyssContext context, long offset, int strength, int duration) {
         super(context, offset, strength, duration);
@@ -25,3 +25,4 @@ public class DizzyAscensionEffect extends AbstractAscensionEffect {
         player.removePotionEffect(PotionEffectType.CONFUSION);
     }
 }
+            
