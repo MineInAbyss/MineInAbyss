@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.Vector;
 
 public class AscensionListener implements Listener {
     private AbyssContext context;
@@ -24,7 +25,7 @@ public class AscensionListener implements Listener {
         Player player = playerMoveEvent.getPlayer();
 
         // Admins are immune to effects by default
-        if(!player.hasPermission("mineinabyss.effectable")){
+        if (!player.hasPermission("mineinabyss.effectable")) {
             return;
         }
 
@@ -32,6 +33,12 @@ public class AscensionListener implements Listener {
 
         if (currentLayer != null) {
             AscensionData data = context.getPlayerAcensionDataMap().computeIfAbsent(player.getUniqueId(), uuid -> new AscensionData());
+
+            if (data.isJustChangedArea()) {
+                data.setJustChangedArea(false);
+                return;
+            }
+
             data.changeDistanceMovedUp(deltaY);
 
             if (data.getDistanceMovedUp() >= currentLayer.getOffset()) {
@@ -40,7 +47,28 @@ public class AscensionListener implements Listener {
                     data.applyEffect(effectBuilder.build());
                 });
             }
-            ;
+
+            int currentSection = data.getCurrentSection();
+
+            if (playerMoveEvent.getTo().getY() <= 5 && playerMoveEvent.getFrom().getY() > 5 && !currentLayer.isLastSection(currentSection)) {
+                context.getLogger().info(player.getDisplayName() + " descending to next section");
+
+                Vector nextSectionPoint = currentLayer.getSections().get(currentSection + 1);
+                Vector currentSectionPoint = currentLayer.getSections().get(currentSection);
+
+                player.teleport(player.getLocation().toVector().setY(245).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld()));
+                data.setCurrentSection(currentSection + 1);
+                data.setJustChangedArea(true);
+            } else if (playerMoveEvent.getTo().getY() > 250 && playerMoveEvent.getFrom().getY() <= 250 && !currentLayer.isFirstSection(currentSection)) {
+                context.getLogger().info(player.getDisplayName() + " ascending to next section");
+
+                Vector nextSectionPoint = currentLayer.getSections().get(currentSection - 1);
+                Vector currentSectionPoint = currentLayer.getSections().get(currentSection);
+
+                player.teleport(player.getLocation().toVector().setY(7).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld()));
+                data.setCurrentSection(currentSection - 1);
+                data.setJustChangedArea(true);
+            }
         }
     }
 

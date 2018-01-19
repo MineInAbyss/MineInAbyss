@@ -7,6 +7,9 @@ layers:
         name: DizzyAscensionEffect
         strength: 1
         durationRemaining: 15
+    sectionOffsets:
+      - [0,0]
+      - [0,0]
   -
     name: LayerTwo
     offset: 40

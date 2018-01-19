@@ -15,6 +15,8 @@ public class AscensionData {
     private Set<AscensionEffect> currentEffects = new HashSet<>();
 
     private Layer currentLayer;
+    private int currentSection = 0;
+    private boolean justChangedArea = false;
 
     private AscensionData(double distanceMovedUp) {
         this.setDistanceMovedUp(distanceMovedUp);
@@ -67,5 +69,21 @@ public class AscensionData {
 
     public void setCurrentLayer(Layer currentLayer) {
         this.currentLayer = currentLayer;
+    }
+
+    public int getCurrentSection() {
+        return currentSection;
+    }
+
+    public void setCurrentSection(int currentSection) {
+        this.currentSection = currentSection;
+    }
+
+    public boolean isJustChangedArea() {
+        return justChangedArea;
+    }
+
+    public void setJustChangedArea(boolean justChangedArea) {
+        this.justChangedArea = justChangedArea;
     }
 }

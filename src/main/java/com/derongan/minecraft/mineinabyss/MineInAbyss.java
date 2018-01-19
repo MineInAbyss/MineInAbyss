@@ -6,7 +6,9 @@ import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public final class MineInAbyss extends JavaPlugin {
@@ -26,6 +28,18 @@ public final class MineInAbyss extends JavaPlugin {
 
         for (Map layerData : getConfig().getMapList("layers")) {
             Layer layer = new Layer((String) layerData.get("name"), context);
+
+            List<List<Integer>> sections = (List<List<Integer>>) layerData.get("sectionOffsets");
+
+            if(sections != null){
+                context.getLogger().info("Section data found");
+
+            } else {
+                context.getLogger().info("No section data");
+                sections = new ArrayList<>();
+            }
+
+            layer.setSectionsOnLayer(sections);
             layer.setEffectsOnLayer((Collection<Map>) layerData.get("effects"));
             layer.setDeathMessage((String) layerData.getOrDefault("abyssDeathMessage", null));
             layer.setOffset((int)layerData.getOrDefault("offset", 50));

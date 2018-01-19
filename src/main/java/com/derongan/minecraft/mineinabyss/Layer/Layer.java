@@ -4,12 +4,15 @@ import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 import com.derongan.minecraft.mineinabyss.TickUtils;
 import com.google.common.collect.ImmutableSet;
+import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Layer {
     private String name;
     private Set<AscensionEffectBuilder> effectsOnLayer = new HashSet<>();
+    private List<Vector> sections;
     private AbyssContext context;
     private String deathMessage;
     private int offset = 50;
@@ -25,6 +28,11 @@ public class Layer {
 
     public ImmutableSet<AscensionEffectBuilder> getEffectsOnLayer() {
         return ImmutableSet.copyOf(effectsOnLayer);
+    }
+
+
+    public void setSectionsOnLayer(List<List<Integer>> points) {
+        sections = points.stream().map(a -> new Vector(a.get(0), 0, a.get(1))).collect(Collectors.toList());
     }
 
     public void setEffectsOnLayer(Collection<Map> effects) {
@@ -60,7 +68,7 @@ public class Layer {
 
             if (builder != null) {
                 builder.setContext(context)
-                        .setDuration(TickUtils.milisecondsToTicks(duration*1000))
+                        .setDuration(TickUtils.milisecondsToTicks(duration * 1000))
                         .setStrength(strength)
                         .setOffset(offset);
 
@@ -83,5 +91,17 @@ public class Layer {
 
     public void setOffset(int offset) {
         this.offset = offset;
+    }
+
+    public boolean isLastSection(int i){
+        return i == sections.size()-1;
+    }
+
+    public boolean isFirstSection(int i){
+        return i == 0;
+    }
+
+    public List<Vector> getSections() {
+        return sections;
     }
 }
