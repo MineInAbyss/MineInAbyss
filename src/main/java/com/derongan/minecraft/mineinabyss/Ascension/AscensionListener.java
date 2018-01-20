@@ -24,10 +24,6 @@ public class AscensionListener implements Listener {
         double deltaY = playerMoveEvent.getTo().getY() - playerMoveEvent.getFrom().getY();
         Player player = playerMoveEvent.getPlayer();
 
-        // Admins are immune to effects by default
-        if (!player.hasPermission("mineinabyss.effectable")) {
-            return;
-        }
 
         Layer currentLayer = context.getLayerMap().getOrDefault(player.getWorld().getName(), null);
 
@@ -39,33 +35,38 @@ public class AscensionListener implements Listener {
                 return;
             }
 
-            data.changeDistanceMovedUp(deltaY);
 
-            if (data.getDistanceMovedUp() >= currentLayer.getOffset()) {
-                data.setDistanceMovedUp(data.getDistanceMovedUp() % distanceForEffect);
-                currentLayer.getEffectsOnLayer().forEach(effectBuilder -> {
-                    data.applyEffect(effectBuilder.build());
-                });
+            // Admins are immune to effects by default
+            if (player.hasPermission("mineinabyss.effectable")) {
+                data.changeDistanceMovedUp(deltaY);
+
+                if (data.getDistanceMovedUp() >= currentLayer.getOffset()) {
+                    data.setDistanceMovedUp(data.getDistanceMovedUp() % distanceForEffect);
+                    currentLayer.getEffectsOnLayer().forEach(effectBuilder -> {
+                        data.applyEffect(effectBuilder.build());
+                    });
+                }
             }
 
             int currentSection = data.getCurrentSection();
 
-            if (playerMoveEvent.getTo().getY() <= 5 && playerMoveEvent.getFrom().getY() > 5 && !currentLayer.isLastSection(currentSection)) {
+            if (playerMoveEvent.getTo().getY() <= 10 && playerMoveEvent.getFrom().getY() > 10 && !currentLayer.isLastSection(currentSection)) {
                 context.getLogger().info(player.getDisplayName() + " descending to next section");
 
                 Vector nextSectionPoint = currentLayer.getSections().get(currentSection + 1);
                 Vector currentSectionPoint = currentLayer.getSections().get(currentSection);
 
-                player.teleport(player.getLocation().toVector().setY(245).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld()));
+                //TODO DONT HARDCODE U IDIOT
+                player.teleport(player.getLocation().toVector().setY(230).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld()));
                 data.setCurrentSection(currentSection + 1);
                 data.setJustChangedArea(true);
-            } else if (playerMoveEvent.getTo().getY() > 250 && playerMoveEvent.getFrom().getY() <= 250 && !currentLayer.isFirstSection(currentSection)) {
+            } else if (playerMoveEvent.getTo().getY() > 246 && playerMoveEvent.getFrom().getY() <= 246 && !currentLayer.isFirstSection(currentSection)) {
                 context.getLogger().info(player.getDisplayName() + " ascending to next section");
 
                 Vector nextSectionPoint = currentLayer.getSections().get(currentSection - 1);
                 Vector currentSectionPoint = currentLayer.getSections().get(currentSection);
 
-                player.teleport(player.getLocation().toVector().setY(7).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld()));
+                player.teleport(player.getLocation().toVector().setY(26).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld()));
                 data.setCurrentSection(currentSection - 1);
                 data.setJustChangedArea(true);
             }
@@ -88,6 +89,7 @@ public class AscensionListener implements Listener {
             playerDeathEvent.setDeathMessage(playerDeathEvent.getDeathMessage() + " in the depths of the abyss");
         }
 
+        deadPlayerData.setCurrentSection(0);
         deadPlayerData.clearEffects(playerDeathEvent.getEntity());
         deadPlayerData.setDistanceMovedUp(0);
     }
