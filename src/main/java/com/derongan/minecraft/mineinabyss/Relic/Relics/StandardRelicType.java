@@ -1,9 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Relic.Relics;
 
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.BlazeReapRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.IncineratorRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.PushingRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.TimeStopRelicBehaviour;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.*;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.RelicBehaviour;
 import org.bukkit.Material;
 
@@ -34,6 +32,12 @@ public enum StandardRelicType implements RelicType {
             new TimeStopRelicBehaviour(),
             "Unheard Bell",
             Arrays.asList("What does it do?", "It is rumored to stop time.")
+    ),
+    ROPE_LADDER(Material.LEASH,
+            0,
+            new UnfurlLadderRelicBehaviour(),
+            "Rope Ladder",
+            Arrays.asList("Places a Ladder")
     );
 
     private final Material material;
@@ -48,6 +52,9 @@ public enum StandardRelicType implements RelicType {
         this.behaviour = behaviour;
         this.name = name;
         this.lore = lore;
+
+        if(behaviour instanceof CleanUpWorldRelicBehaviour)
+            ((CleanUpWorldRelicBehaviour) behaviour).setRelicType(this);
     }
 
 

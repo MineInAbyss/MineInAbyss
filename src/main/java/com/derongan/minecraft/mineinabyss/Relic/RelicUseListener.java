@@ -2,14 +2,17 @@ package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.ChatRelicBehaviour;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.*;
 
@@ -35,6 +38,9 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerJoin(PlayerJoinEvent playerJoinEvent) {
+//        playerJoinEvent.getPlayer().setGravity(true);
+//        playerJoinEvent.getPlayer().setWalkSpeed(.2f);
+//        playerJoinEvent.getPlayer().setFlySpeed(.5f);
 //        playerJoinEvent.getPlayer().setCompassTarget(new Location(playerJoinEvent.getPlayer().getWorld(), 0, -10000, 0));
     }
 
@@ -76,6 +82,12 @@ public class RelicUseListener implements Listener {
                 // Cancel events the relic shouldn't handle
                 playerInteractEvent.setCancelled(true);
             }
+        }
+
+        if(playerInteractEvent.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+            Block block = playerInteractEvent.getClickedBlock();
+
+            CleanUpWorldRelicBehaviour.cleanUp(block.getLocation());
         }
     }
 

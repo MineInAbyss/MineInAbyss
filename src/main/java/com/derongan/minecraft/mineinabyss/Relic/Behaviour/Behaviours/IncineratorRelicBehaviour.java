@@ -14,6 +14,7 @@ import java.util.List;
 public class IncineratorRelicBehaviour implements UseRelicBehaviour {
     @Override
     public void onUse(PlayerInteractEvent event) {
+        event.setCancelled(true);
         Player player = event.getPlayer();
 
         List<Block> blocks = player.getLineOfSight(RelicUseListener.passable, 100);
