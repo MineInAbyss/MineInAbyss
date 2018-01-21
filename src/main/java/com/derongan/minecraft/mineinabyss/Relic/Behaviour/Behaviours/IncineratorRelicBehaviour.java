@@ -1,6 +1,6 @@
-package com.derongan.minecraft.mineinabyss.Relic.Relics;
+package com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours;
 
-import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -10,14 +10,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.Arrays;
 import java.util.List;
 
-public class IncineratorRelicType extends AbstractRelicType {
-    public IncineratorRelicType(AbyssContext context) {
-        super(Material.DIAMOND_PICKAXE, 7, context);
-    }
-
+public class IncineratorRelicBehaviour implements UseRelicBehaviour {
     @Override
     public void onUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -61,16 +56,5 @@ public class IncineratorRelicType extends AbstractRelicType {
                 }
             }
         });
-    }
-
-
-    @Override
-    public String getName() {
-        return "Incinerator";
-    }
-
-    @Override
-    public List<String> getLore() {
-        return Arrays.asList("Use with care....");
     }
 }

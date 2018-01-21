@@ -1,21 +1,20 @@
-package com.derongan.minecraft.mineinabyss.Relic.Relics;
+package com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours;
 
-import com.derongan.minecraft.mineinabyss.AbyssContext;
-import org.bukkit.Material;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class BlazeReapRelicType extends AbstractRelicType {
-    public BlazeReapRelicType(AbyssContext context) {
-        super(Material.DIAMOND_PICKAXE, 1, context);
+public class BlazeReapRelicBehaviour implements EntityHitRelicBehaviour, UseRelicBehaviour {
+    @Override
+    public void onHit(EntityDamageByEntityEvent event) {
+        doBlaze((Player)event.getDamager(), event.getEntity().getLocation().getBlock());
     }
 
     @Override
@@ -26,10 +25,13 @@ public class BlazeReapRelicType extends AbstractRelicType {
 
         if (target != null && player != null) {
             doBlaze(player, target);
+
+            event.setCancelled(true);
         }
     }
 
-    public void doBlaze(Player player, Block target){
+
+    private void doBlaze(Player player, Block target) {
         player.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, target.getRelative(BlockFace.UP).getLocation(), 3);
         player.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, target.getRelative(BlockFace.DOWN).getLocation(), 3);
         player.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, target.getRelative(BlockFace.EAST).getLocation(), 3);
@@ -44,15 +46,5 @@ public class BlazeReapRelicType extends AbstractRelicType {
             if (b instanceof LivingEntity)
                 ((LivingEntity) b).damage(10);
         });
-    }
-
-    @Override
-    public String getName() {
-        return "Blaze Reap";
-    }
-
-    @Override
-    public List<String> getLore() {
-        return Arrays.asList("An abnormally large pickaxe that contains Everlasting Gunpowder");
     }
 }
