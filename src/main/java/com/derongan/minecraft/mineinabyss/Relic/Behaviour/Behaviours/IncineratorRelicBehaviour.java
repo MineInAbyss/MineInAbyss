@@ -2,7 +2,6 @@ package com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours;
 
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -29,17 +28,17 @@ public class IncineratorRelicBehaviour implements UseRelicBehaviour {
                         if (Math.random() > .999)
                             player.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, relative.getLocation(), 1);
 
-                        if (Math.abs(i) == 2 || Math.abs(j) == 2 || Math.abs(k) == 2) {
-                            if (relative.getType() != Material.AIR) {
-                                relative.setType(Material.COAL_BLOCK);
-                            }
-                        } else {
-                            if (Math.random() > .1)
-                                relative.setType(Material.AIR);
-                            else
-                                relative.setType(Material.FIRE);
-
-                        }
+//                        if (Math.abs(i) == 2 || Math.abs(j) == 2 || Math.abs(k) == 2) {
+//                            if (relative.getType() != Material.AIR) {
+//                                relative.setType(Material.COAL_BLOCK);
+//                            }
+//                        } else {
+//                            if (Math.random() > .1)
+//                                relative.setType(Material.AIR);
+//                            else
+//                                relative.setType(Material.FIRE);
+//
+//                        }
                         if (i == 0 && j == 0 && k == 0) {
                             if (Math.random() > .5) {
                                 player.getWorld().spawnParticle(Particle.SMOKE_LARGE, relative.getLocation(), 1);
