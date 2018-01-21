@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.Relic.Relics.BlazeReapRelicType;
+import com.derongan.minecraft.mineinabyss.Relic.Relics.PushStickRelicType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,8 +13,15 @@ public class RelicCommandExecutor implements CommandExecutor {
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
 
-            if (label.equals("give")) {
-                player.getInventory().addItem(new BlazeReapRelicType().getItem());
+            if (label.equals("relic")) {
+                switch (args[0]) {
+                    case "blazereap":
+                        player.getInventory().addItem(new BlazeReapRelicType().getItem());
+                        break;
+                    case "pusher":
+                        player.getInventory().addItem(new PushStickRelicType().getItem());
+                        break;
+                }
             }
 
             return true;

@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Relic.Relics;
 
 import org.bukkit.Material;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,5 +48,9 @@ public abstract class AbstractRelicType {
         return Arrays.asList("An amazing relic");
     }
 
-    public abstract void onUse();
+    public abstract void onUse(PlayerInteractEvent event);
+
+    public boolean isRelicItem(ItemStack itemStack){
+        return itemStack.getDurability() == durability;
+    }
 }

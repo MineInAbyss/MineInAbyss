@@ -4,3 +4,8 @@ author: Derongan
 main: com.derongan.minecraft.mineinabyss.MineInAbyss
 prefix: MiB
 description: A mod that adds abyss effects
+
+commands:
+  relic:
+    description: Give a relic
+    usage: /relic

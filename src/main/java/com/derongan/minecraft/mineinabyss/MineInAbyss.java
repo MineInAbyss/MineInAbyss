@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionTask;
 import com.derongan.minecraft.mineinabyss.Layer.Layer;
+import com.derongan.minecraft.mineinabyss.Relic.RelicCommandExecutor;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,6 +40,7 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
         getServer().getPluginManager().registerEvents(new RelicUseListener(context), this);
+        this.getCommand("relic").setExecutor(new RelicCommandExecutor());
     }
 
     @Override
