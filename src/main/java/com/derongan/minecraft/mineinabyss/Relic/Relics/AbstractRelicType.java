@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss.Relic.Relics;
 
+import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractRelicType {
+    AbyssContext context;
     Material material;
     short durability;
 
@@ -20,9 +22,10 @@ public abstract class AbstractRelicType {
      * @param material
      * @param durability
      */
-    public AbstractRelicType(Material material, int durability) {
+    public AbstractRelicType(Material material, int durability, AbyssContext context) {
         this.material = material;
         this.durability = (short)durability;
+        this.context = context;
     }
 
 
@@ -51,6 +54,6 @@ public abstract class AbstractRelicType {
     public abstract void onUse(PlayerInteractEvent event);
 
     public boolean isRelicItem(ItemStack itemStack){
-        return itemStack.getDurability() == durability;
+        return itemStack.getDurability() == durability && itemStack.getType().equals(material);
     }
 }

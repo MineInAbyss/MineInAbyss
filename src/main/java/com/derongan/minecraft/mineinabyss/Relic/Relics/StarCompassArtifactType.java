@@ -8,9 +8,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Arrays;
 import java.util.List;
 
-public class PushStickRelicType extends AbstractRelicType {
-    public PushStickRelicType(AbyssContext context) {
-        super(Material.DIAMOND_PICKAXE, 2, context);
+public class StarCompassArtifactType extends AbstractRelicType {
+    public StarCompassArtifactType(AbyssContext context) {
+        super(Material.COMPASS, 0, context);
     }
 
     @Override
@@ -20,11 +20,13 @@ public class PushStickRelicType extends AbstractRelicType {
 
     @Override
     public String getName() {
-        return "Push stick";
+        return "Star Compass";
     }
 
     @Override
     public List<String> getLore() {
-        return Arrays.asList("A pushing stick");
+        return Arrays.asList("This shit is broken -_-");
     }
+
+
 }

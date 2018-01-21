@@ -8,9 +8,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Arrays;
 import java.util.List;
 
-public class PushStickRelicType extends AbstractRelicType {
-    public PushStickRelicType(AbyssContext context) {
-        super(Material.DIAMOND_PICKAXE, 2, context);
+public class ThousandMenPinsArtifactType extends AbstractRelicType {
+    public ThousandMenPinsArtifactType(AbyssContext context) {
+        super(Material.DIAMOND_PICKAXE, 4, context);
     }
 
     @Override
@@ -20,11 +20,11 @@ public class PushStickRelicType extends AbstractRelicType {
 
     @Override
     public String getName() {
-        return "Push stick";
+        return "Thousand-Men Pin";
     }
 
     @Override
     public List<String> getLore() {
-        return Arrays.asList("A pushing stick");
+        return Arrays.asList("Each pin is said to bestow the strength of a thousand men");
     }
 }

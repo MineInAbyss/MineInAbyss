@@ -40,7 +40,7 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
         getServer().getPluginManager().registerEvents(new RelicUseListener(context), this);
-        this.getCommand("relic").setExecutor(new RelicCommandExecutor());
+        this.getCommand("relic").setExecutor(new RelicCommandExecutor(context));
     }
 
     @Override
