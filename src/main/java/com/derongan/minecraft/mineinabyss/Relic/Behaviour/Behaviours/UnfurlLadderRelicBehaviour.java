@@ -51,6 +51,9 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
 
             BukkitScheduler scheduler = event.getPlayer().getServer().getScheduler();
 
+            if(!current.getType().equals(Material.AIR))
+                return;
+
             int lengthFallen = 0;
             do {
                 final Block theBlock = current;
@@ -81,7 +84,7 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
                 registeredLocations.remove(last);
                 modifiedBlocks.forEach(a -> a.setTypeIdAndData(Material.AIR.getId(), (byte) 0, false));
 
-                Item item = first.getWorld().dropItem(first.add(.5, -.5, .5), myRelic.getItem());
+                Item item = first.getWorld().dropItem(first.add(.5, 0, .5), myRelic.getItem());
                 item.setVelocity(item.getVelocity().zero());
 
                 tasks.forEach(scheduler::cancelTask);
