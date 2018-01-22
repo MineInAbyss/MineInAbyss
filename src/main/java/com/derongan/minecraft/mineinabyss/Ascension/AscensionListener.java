@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss.Ascension;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects.DeathAscensionEffect;
 import com.derongan.minecraft.mineinabyss.Layer.Layer;
+import com.derongan.minecraft.mineinabyss.Layer.Section;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,33 +50,59 @@ public class AscensionListener implements Listener {
                 }
             }
 
-            int currentSection = data.getCurrentSection();
+            double toY = playerMoveEvent.getTo().getY();
+            double fromY = playerMoveEvent.getFrom().getY();
 
-            if (playerMoveEvent.getTo().getY() <= 10 && playerMoveEvent.getFrom().getY() > 10 && !currentLayer.isLastSection(currentSection)) {
-                context.getLogger().info(player.getDisplayName() + " descending to next section");
+            int currentSectionNum = data.getCurrentSection();
+            Section currentSection = currentLayer.getSections().get(currentSectionNum);
 
-                Vector nextSectionPoint = currentLayer.getSections().get(currentSection + 1);
-                Vector currentSectionPoint = currentLayer.getSections().get(currentSection);
+            int shared;
 
-                Location tpLoc = player.getLocation().toVector().setY(230).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
-                tpLoc.setDirection(player.getLocation().getDirection());
+            if (!currentLayer.isLastSection(currentSectionNum)) {
+                Section nextSection = currentLayer.getSections().get(currentSectionNum + 1);
 
-                //TODO DONT HARDCODE U IDIOT
-                player.teleport(tpLoc);
-                data.setCurrentSection(currentSection + 1);
-                data.setJustChangedArea(true);
-            } else if (playerMoveEvent.getTo().getY() > 246 && playerMoveEvent.getFrom().getY() <= 246 && !currentLayer.isFirstSection(currentSection)) {
-                context.getLogger().info(player.getDisplayName() + " ascending to next section");
+                shared = currentSection.getSharedWithBelow();
 
-                Vector nextSectionPoint = currentLayer.getSections().get(currentSection - 1);
-                Vector currentSectionPoint = currentLayer.getSections().get(currentSection);
+                // once you are three quarters of the distance into the shared area, teleport
+                int threshold = (int) (shared*.4);
+                int invThresh =  shared - threshold;
 
-                Location tpLoc = player.getLocation().toVector().setY(26).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
-                tpLoc.setDirection(player.getLocation().getDirection());
+                if(toY <= threshold && fromY > toY){
+                    context.getLogger().info(player.getDisplayName() + " descending to next section");
 
-                player.teleport(tpLoc);
-                data.setCurrentSection(currentSection - 1);
-                data.setJustChangedArea(true);
+                    Vector nextSectionPoint = nextSection.getOffset();
+                    Vector currentSectionPoint = currentSection.getOffset();
+
+                    Location tpLoc = player.getLocation().toVector().setY(256-invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
+                    tpLoc.setDirection(player.getLocation().getDirection());
+
+                    player.teleport(tpLoc);
+                    data.setCurrentSection(currentSectionNum + 1);
+                    data.setJustChangedArea(true);
+                }
+            }
+            if (!currentLayer.isFirstSection(currentSectionNum)) {
+                Section nextSection = currentLayer.getSections().get(currentSectionNum - 1);
+
+                shared = nextSection.getSharedWithBelow();
+
+                // once you are one quarters of the distance from the top of the shared area, teleport
+                int threshold = (int) (shared*.4);
+                int invThresh =  shared - threshold;;
+
+                if(toY >= 256-threshold && fromY < toY){
+                    context.getLogger().info(player.getDisplayName() + " ascending to next section");
+
+                    Vector nextSectionPoint = nextSection.getOffset();
+                    Vector currentSectionPoint = currentSection.getOffset();
+
+                    Location tpLoc = player.getLocation().toVector().setY(invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
+                    tpLoc.setDirection(player.getLocation().getDirection());
+
+                    player.teleport(tpLoc);
+                    data.setCurrentSection(currentSectionNum - 1);
+                    data.setJustChangedArea(true);
+                }
             }
         }
     }
