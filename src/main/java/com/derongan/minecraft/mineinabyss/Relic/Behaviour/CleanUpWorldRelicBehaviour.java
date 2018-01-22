@@ -1,6 +1,5 @@
 package com.derongan.minecraft.mineinabyss.Relic.Behaviour;
 
-import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import org.bukkit.Location;
 
 import java.util.HashMap;
@@ -20,6 +19,4 @@ public interface CleanUpWorldRelicBehaviour extends RelicBehaviour {
             runnable.run();
         }
     }
-
-    void setRelicType(RelicType type);
 }

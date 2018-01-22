@@ -4,6 +4,7 @@ import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects.DeathAscensionEffect;
 import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -99,5 +100,9 @@ public class AscensionListener implements Listener {
         deadPlayerData.setCurrentSection(0);
         deadPlayerData.clearEffects(playerDeathEvent.getEntity());
         deadPlayerData.setDistanceMovedUp(0);
+
+        Player player = playerDeathEvent.getEntity();
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+        player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
     }
 }

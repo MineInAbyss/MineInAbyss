@@ -1,7 +1,6 @@
 package com.derongan.minecraft.mineinabyss.Relic.Relics;
 
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.*;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.RelicBehaviour;
 import org.bukkit.Material;
 
@@ -38,6 +37,12 @@ public enum StandardRelicType implements RelicType {
             new UnfurlLadderRelicBehaviour(),
             "Rope Ladder",
             Arrays.asList("Places a Ladder")
+    ),
+    THOUSAND_MEN_PINS(Material.STONE_HOE,
+            1,
+            new ThousandMenPinsRelicBehaviour(),
+            "Thousand-Men Pins",
+            Arrays.asList("Each pin is said to bestow", "the strength of a thousand men", "", "Right click to consume")
     );
 
     private final Material material;
@@ -53,8 +58,7 @@ public enum StandardRelicType implements RelicType {
         this.name = name;
         this.lore = lore;
 
-        if(behaviour instanceof CleanUpWorldRelicBehaviour)
-            ((CleanUpWorldRelicBehaviour) behaviour).setRelicType(this);
+        behaviour.setRelicType(this);
     }
 
 
