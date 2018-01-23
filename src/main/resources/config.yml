@@ -8,8 +8,9 @@ layers:
         strength: 1
         durationRemaining: 15
     sectionOffsets:
-      - [425,83]
-      - [2953,515]
+      - [425,83,36]
+      - [2953,515,41]
+      - [4521,515,41]
   -
     name: LayerTwo
     offset: 40
