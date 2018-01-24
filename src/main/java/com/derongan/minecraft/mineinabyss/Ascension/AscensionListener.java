@@ -54,55 +54,58 @@ public class AscensionListener implements Listener {
             double toY = playerMoveEvent.getTo().getY();
             double fromY = playerMoveEvent.getFrom().getY();
 
-            int currentSectionNum = data.getCurrentSection();
-            Section currentSection = currentLayer.getSections().get(currentSectionNum);
+            if (currentLayer.getSections().size() > 0) {
+                int currentSectionNum = data.getCurrentSection();
+                Section currentSection = currentLayer.getSections().get(currentSectionNum);
 
-            int shared;
+                int shared;
 
-            if (!currentLayer.isLastSection(currentSectionNum)) {
-                Section nextSection = currentLayer.getSections().get(currentSectionNum + 1);
+                if (!currentLayer.isLastSection(currentSectionNum)) {
+                    Section nextSection = currentLayer.getSections().get(currentSectionNum + 1);
 
-                shared = currentSection.getSharedWithBelow();
+                    shared = currentSection.getSharedWithBelow();
 
-                // once you are three quarters of the distance into the shared area, teleport
-                int threshold = (int) (shared*.4);
-                int invThresh =  shared - threshold;
+                    // once you are three quarters of the distance into the shared area, teleport
+                    int threshold = (int) (shared * .4);
+                    int invThresh = shared - threshold;
 
-                if(toY <= threshold && fromY > toY){
-                    context.getLogger().info(player.getDisplayName() + " descending to next section");
+                    if (toY <= threshold && fromY > toY) {
+                        context.getLogger().info(player.getDisplayName() + " descending to next section");
 
-                    Vector nextSectionPoint = nextSection.getOffset();
-                    Vector currentSectionPoint = currentSection.getOffset();
+                        Vector nextSectionPoint = nextSection.getOffset();
+                        Vector currentSectionPoint = currentSection.getOffset();
 
-                    Location tpLoc = player.getLocation().toVector().setY(256-invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
-                    tpLoc.setDirection(player.getLocation().getDirection());
+                        Location tpLoc = player.getLocation().toVector().setY(256 - invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
+                        tpLoc.setDirection(player.getLocation().getDirection());
 
-                    player.teleport(tpLoc);
-                    data.setCurrentSection(currentSectionNum + 1);
-                    data.setJustChangedArea(true);
+                        player.teleport(tpLoc);
+                        data.setCurrentSection(currentSectionNum + 1);
+                        data.setJustChangedArea(true);
+                    }
                 }
-            }
-            if (!currentLayer.isFirstSection(currentSectionNum)) {
-                Section nextSection = currentLayer.getSections().get(currentSectionNum - 1);
+                if (!currentLayer.isFirstSection(currentSectionNum)) {
+                    Section nextSection = currentLayer.getSections().get(currentSectionNum - 1);
 
-                shared = nextSection.getSharedWithBelow();
+                    shared = nextSection.getSharedWithBelow();
 
-                // once you are one quarters of the distance from the top of the shared area, teleport
-                int threshold = (int) (shared*.4);
-                int invThresh =  shared - threshold;;
+                    // once you are one quarters of the distance from the top of the shared area, teleport
+                    int threshold = (int) (shared * .4);
+                    int invThresh = shared - threshold;
+                    ;
 
-                if(toY >= 256-threshold && fromY < toY){
-                    context.getLogger().info(player.getDisplayName() + " ascending to next section");
+                    if (toY >= 256 - threshold && fromY < toY) {
+                        context.getLogger().info(player.getDisplayName() + " ascending to next section");
 
-                    Vector nextSectionPoint = nextSection.getOffset();
-                    Vector currentSectionPoint = currentSection.getOffset();
+                        Vector nextSectionPoint = nextSection.getOffset();
+                        Vector currentSectionPoint = currentSection.getOffset();
 
-                    Location tpLoc = player.getLocation().toVector().setY(invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
-                    tpLoc.setDirection(player.getLocation().getDirection());
+                        Location tpLoc = player.getLocation().toVector().setY(invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
+                        tpLoc.setDirection(player.getLocation().getDirection());
 
-                    player.teleport(tpLoc);
-                    data.setCurrentSection(currentSectionNum - 1);
-                    data.setJustChangedArea(true);
+                        player.teleport(tpLoc);
+                        data.setCurrentSection(currentSectionNum - 1);
+                        data.setJustChangedArea(true);
+                    }
                 }
             }
         }
