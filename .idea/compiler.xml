@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="MadeInAbyss_main" target="1.8" />
       <module name="MadeInAbyss_test" target="1.8" />
+      <module name="MineInAbyss_main" target="1.8" />
+      <module name="MineInAbyss_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
