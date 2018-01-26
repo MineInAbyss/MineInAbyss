@@ -2,7 +2,6 @@ package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
-import com.derongan.minecraft.mineinabyss.Relic.Relics.StandardRelicType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,13 +20,30 @@ public class RelicCommandExecutor implements CommandExecutor {
             Player player = (Player) commandSender;
 
             if (label.equals("relic")) {
-                try {
-                    RelicType type = StandardRelicType.valueOf(args[0]);
-                    player.getInventory().addItem(type.getItem());
-                } catch (IllegalArgumentException e){
+//                try {
+//                    RelicType type = StandardRelicType.valueOf(args[0]);
+//                    player.getInventory().addItem(type.getItem());
+//                } catch (IllegalArgumentException e){
+//                    return false;
+//                }
+
+                if(args.length == 0){
                     return false;
                 }
+
+                for (RelicType relicType : RelicType.registeredRelics.values()){
+                    if (relicType.getName().replace(" ","_").toLowerCase().equals(args[0].toLowerCase())) {
+                        player.getInventory().addItem(relicType.getItem());
+                        return true;
+                    }
+                }
             }
+
+            if(label.equals("relicreload")){
+                RelicLoader.unloadAllRelics();
+                RelicLoader.loadAllRelics(context);
+            }
+
 
             return true;
         }

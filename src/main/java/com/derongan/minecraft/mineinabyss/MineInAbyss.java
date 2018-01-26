@@ -4,9 +4,8 @@ import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionTask;
 import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import com.derongan.minecraft.mineinabyss.Relic.RelicCommandExecutor;
+import com.derongan.minecraft.mineinabyss.Relic.RelicLoader;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
-import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
-import com.derongan.minecraft.mineinabyss.Relic.Relics.StandardRelicType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -56,11 +55,12 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
         getServer().getPluginManager().registerEvents(new RelicUseListener(), this);
-        this.getCommand("relic").setExecutor(new RelicCommandExecutor(context));
+        RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
 
-        for (StandardRelicType standardRelicType : StandardRelicType.values()) {
-            RelicType.registerRelicType(standardRelicType);
-        }
+        this.getCommand("relic").setExecutor(relicCommandExecutor);
+        this.getCommand("relicreload").setExecutor(relicCommandExecutor);
+
+        RelicLoader.loadAllRelics(context);
     }
 
     @Override

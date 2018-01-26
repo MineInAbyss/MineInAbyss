@@ -8,4 +8,7 @@ description: A mod that adds abyss effects
 commands:
   relic:
     description: Give a relic
-    usage: /relic
+    usage: /relic relic_name
+  relicreload:
+    description: Reload relics
+    usage: /relicreload

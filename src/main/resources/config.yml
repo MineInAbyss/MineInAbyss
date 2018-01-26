@@ -1,3 +1,5 @@
+storage:
+  relicpath: "relics/"
 layers:
   -
     name: LayerOne

@@ -40,6 +40,10 @@ public interface RelicType {
         registeredRelics.put(type.getKey(), type);
     }
 
+    static void unregisterAllRelics(){
+        registeredRelics.clear();
+    }
+
     static RelicType getRegisteredRelicType(ItemStack itemStack){
         if(itemStack == null){
             return null;
