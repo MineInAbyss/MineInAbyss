@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Relic.Relics;
 
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.RelicBehaviour;
+import com.derongan.minecraft.mineinabyss.Relic.RelicRarity;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface RelicType {
-    Map<RelicTypeKey,RelicType> registeredRelics = new HashMap<>();
+    Map<RelicTypeKey, RelicType> registeredRelics = new HashMap<>();
 
     String getName();
 
@@ -22,49 +23,53 @@ public interface RelicType {
 
     RelicBehaviour getBehaviour();
 
+    RelicRarity getRarity();
+
 
     default ItemStack getItem() {
         ItemStack item = new org.bukkit.inventory.ItemStack(getMaterial(), 1, getDurability());
 
         ItemMeta meta = item.getItemMeta();
         meta.setUnbreakable(true);
-        meta.setDisplayName(getName());
         meta.setLore(getLore());
+
+        meta.setDisplayName(getRarity().getColor() + getName());
+
 
         item.setItemMeta(meta);
 
         return item;
     }
 
-    static void registerRelicType(RelicType type){
+    static void registerRelicType(RelicType type) {
         registeredRelics.put(type.getKey(), type);
     }
 
-    static void unregisterAllRelics(){
+    static void unregisterAllRelics() {
         registeredRelics.clear();
     }
 
-    static RelicType getRegisteredRelicType(ItemStack itemStack){
-        if(itemStack == null){
+    static RelicType getRegisteredRelicType(ItemStack itemStack) {
+        if (itemStack == null) {
             return null;
         }
         return getRegisteredRelicType(itemStack.getDurability(), itemStack.getType());
     }
 
-    static RelicType getRegisteredRelicType(Short durability, Material material){
+    static RelicType getRegisteredRelicType(Short durability, Material material) {
         return getRegisteredRelicType(new RelicTypeKey(durability, material));
     }
 
-    static RelicType getRegisteredRelicType(RelicTypeKey key){
+    static RelicType getRegisteredRelicType(RelicTypeKey key) {
         return registeredRelics.get(key);
     }
 
-    default RelicTypeKey getKey(){
+    default RelicTypeKey getKey() {
         return new RelicTypeKey(getDurability(), getMaterial());
     }
 
 
-    class RelicTypeKey{
+    class RelicTypeKey {
         private Short durability;
         private Material material;
 
@@ -80,7 +85,7 @@ public interface RelicType {
 
         @Override
         public boolean equals(Object o) {
-            if(!(o instanceof RelicTypeKey))
+            if (!(o instanceof RelicTypeKey))
                 return false;
             RelicTypeKey other = (RelicTypeKey) o;
             return this.material.equals(other.material) && this.durability.equals(other.durability);
