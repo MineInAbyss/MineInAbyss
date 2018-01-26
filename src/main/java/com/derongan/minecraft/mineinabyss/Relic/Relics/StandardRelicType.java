@@ -38,6 +38,12 @@ public enum StandardRelicType implements RelicType {
             new UnfurlLadderRelicBehaviour(),
             "Rope Ladder",
             Arrays.asList("Places a Ladder")
+    ),
+    CAMPFIRE(Material.COOKED_BEEF,
+            0,
+            new CampfireRelicBehaviour(),
+            "Campfire",
+            Arrays.asList("Something seems a little", "Offz about this food...")
     );
 
     private final Material material;
