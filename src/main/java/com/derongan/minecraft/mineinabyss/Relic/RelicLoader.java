@@ -9,7 +9,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class RelicLoader {
@@ -31,17 +30,18 @@ public class RelicLoader {
                 TrueFileFilter.INSTANCE
         );
 
-        files.forEach(a->{
+        files.forEach(a -> {
             String relPath = fullURI.relativize(a.toURI()).toString();
-            String className = relPath.substring(0,relPath.length()-6).replace("/", ".");
+            String className = relPath.substring(0, relPath.length() - 6).replace("/", ".");
 
+            // We just need to load the enums
             try {
                 Class<?> someClass = relicClassLoader.loadClass(className);
-                if(Arrays.asList(someClass.getInterfaces()).contains(RelicType.class)) {
-                    RelicType.registerRelicType((RelicType) someClass.newInstance());
+                if(someClass.isEnum() &&  RelicType.class.isAssignableFrom(someClass)){
+                    someClass.getEnumConstants();
                 }
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e){
-                System.out.println("Could not load " + className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         });
     }
