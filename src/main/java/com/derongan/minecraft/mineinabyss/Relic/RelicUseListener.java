@@ -75,9 +75,10 @@ public class RelicUseListener implements Listener {
     }
 
     @EventHandler()
-    public void onPlayerInteractEntity(PlayerArmorStandManipulateEvent e){
+    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e){
         if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)){
-            e.getPlayer().getInventory().addItem(e.getRightClicked().getItemInHand());
+            ArmorStand as = (ArmorStand) e.getRightClicked();
+            e.getPlayer().getInventory().addItem(as.getHelmet());
             e.getRightClicked().remove();
             e.setCancelled(true);
         }
@@ -103,13 +104,13 @@ public class RelicUseListener implements Listener {
         }
     }
 
-    @EventHandler()
-    public void armorStandInteracted(PlayerArmorStandManipulateEvent e){
-        ArmorStand clickedEntity = e.getRightClicked();
-        if(clickedEntity.getCustomName() == "Campfire"){;
-        clickedEntity.remove();
-        }
-    }
+    //@EventHandler()
+    //public void pickedUpRelic(PlayerArmorStandManipulateEvent e){
+    //    ArmorStand clickedEntity = e.getRightClicked();
+    //    if(clickedEntity.getCustomName() == "Relic"){
+    //    clickedEntity.remove();
+    //    }
+    //}
 
     @EventHandler()
     public void onPlayerChat(AsyncPlayerChatEvent chatEvent) {

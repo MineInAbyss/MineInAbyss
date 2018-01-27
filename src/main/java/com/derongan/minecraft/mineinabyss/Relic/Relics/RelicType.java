@@ -50,12 +50,12 @@ public interface RelicType {
     default ArmorStand getAndPlaceItem(Location location){
         ItemStack item = getItem();
 
-        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location.add(.5, -1.4, .5).setDirection(new Vector(0, 0, 0)), EntityType.ARMOR_STAND);
+        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location.add(.5, -0.4, .5).setDirection(new Vector(0, 0, 0)), EntityType.ARMOR_STAND);
         as.setGravity(false);
         as.setArms(true);
         as.setVisible(false);
         as.setCollidable(false);
-        as.setItemInHand(item);
+        as.setHelmet(item);
         as.setRightArmPose(new EulerAngle(-Math.PI / 2, -Math.PI / 2, 0));
 
         if (getRarity() == RelicRarity.SPECIAL_GRADE) {
@@ -65,9 +65,10 @@ public interface RelicType {
         }
         as.setCustomNameVisible(true);
         as.setInvulnerable(true);
-
         return as;
     }
+
+
 
     static void registerRelicType(RelicType type) {
         registeredRelics.put(type.getKey(), type);
@@ -75,6 +76,15 @@ public interface RelicType {
 
     static void unregisterAllRelics() {
         registeredRelics.clear();
+    }
+
+    static RelicType findRelicType(String name) {
+        for (RelicType relicType : RelicType.registeredRelics.values()) {
+            if(relicType.getName().replace(" ", "_").toLowerCase().equals(name)){
+                return relicType;
+            }
+        }
+        return null;
     }
 
     static RelicType getRegisteredRelicType(ItemStack itemStack) {
