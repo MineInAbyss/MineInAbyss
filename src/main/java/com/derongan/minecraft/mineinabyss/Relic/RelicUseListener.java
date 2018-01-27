@@ -8,7 +8,9 @@ import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -58,6 +60,7 @@ public class RelicUseListener implements Listener {
 
         if (damager instanceof Player) {
             Player player = (Player) damager;
+
             RelicType type = RelicType.getRegisteredRelicType(((Player) damager).getInventory().getItemInMainHand());
 
             if (type != null) {
@@ -69,6 +72,15 @@ public class RelicUseListener implements Listener {
             }
         }
 
+    }
+
+    @EventHandler()
+    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e){
+        if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)){
+            e.getPlayer().getInventory().addItem(((ArmorStand)e.getRightClicked()).getItemInHand());
+            e.getRightClicked().remove();
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler()
