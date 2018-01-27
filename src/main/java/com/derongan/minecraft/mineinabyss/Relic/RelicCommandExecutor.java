@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Relic.Loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
