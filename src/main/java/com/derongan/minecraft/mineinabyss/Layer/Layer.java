@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Layer {
     private String name;
     private Set<AscensionEffectBuilder> effectsOnLayer = new HashSet<>();
-    private List<Vector> sections;
+    private List<Section> sections;
     private AbyssContext context;
     private String deathMessage;
     private int offset = 50;
@@ -32,7 +32,7 @@ public class Layer {
 
 
     public void setSectionsOnLayer(List<List<Integer>> points) {
-        sections = points.stream().map(a -> new Vector(a.get(0), 0, a.get(1))).collect(Collectors.toList());
+        sections = points.stream().map(a -> new Section(new Vector(a.get(0), 0, a.get(1)), a.get(2))).collect(Collectors.toList());
     }
 
     public void setEffectsOnLayer(Collection<Map> effects) {
@@ -101,7 +101,7 @@ public class Layer {
         return i == 0;
     }
 
-    public List<Vector> getSections() {
+    public List<Section> getSections() {
         return sections;
     }
 }
