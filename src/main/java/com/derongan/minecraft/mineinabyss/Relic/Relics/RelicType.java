@@ -2,9 +2,15 @@ package com.derongan.minecraft.mineinabyss.Relic.Relics;
 
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.RelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.RelicRarity;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +45,28 @@ public interface RelicType {
         item.setItemMeta(meta);
 
         return item;
+    }
+
+    default ArmorStand getAndPlaceItem(Location location){
+        ItemStack item = getItem();
+
+        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location.add(.5, -1.4, .5).setDirection(new Vector(0, 0, 0)), EntityType.ARMOR_STAND);
+        as.setGravity(false);
+        as.setArms(true);
+        as.setVisible(false);
+        as.setCollidable(false);
+        as.setItemInHand(item);
+        as.setRightArmPose(new EulerAngle(-Math.PI / 2, -Math.PI / 2, 0));
+
+        if (getRarity() == RelicRarity.SPECIAL_GRADE) {
+            as.setCustomName(ChatColor.GRAY.toString() + ChatColor.MAGIC + getName());
+        } else {
+            as.setCustomName(ChatColor.GRAY + getName());
+        }
+        as.setCustomNameVisible(true);
+        as.setInvulnerable(true);
+
+        return as;
     }
 
     static void registerRelicType(RelicType type) {

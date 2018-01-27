@@ -3,7 +3,6 @@ package com.derongan.minecraft.mineinabyss;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionTask;
 import com.derongan.minecraft.mineinabyss.Layer.Layer;
-import com.derongan.minecraft.mineinabyss.Relic.Distribution.DistributionTask;
 import com.derongan.minecraft.mineinabyss.Relic.Loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.Relic.RelicCommandExecutor;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
@@ -53,8 +52,8 @@ public final class MineInAbyss extends JavaPlugin {
         Runnable mainTask = new AscensionTask(context, TICKS_BETWEEN);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, mainTask, TICKS_BETWEEN, TICKS_BETWEEN);
 
-        Runnable lootTask = new DistributionTask(context);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, lootTask, TICKS_BETWEEN, TickUtils.milisecondsToTicks(20000));
+//        Runnable lootTask = new DistributionTask(context);
+//        getServer().getScheduler().scheduleSyncRepeatingTask(this, lootTask, TICKS_BETWEEN, TickUtils.milisecondsToTicks(20000));
 
 
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
