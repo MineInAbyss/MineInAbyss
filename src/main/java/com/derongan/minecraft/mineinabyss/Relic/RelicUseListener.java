@@ -8,6 +8,7 @@ import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -88,6 +89,14 @@ public class RelicUseListener implements Listener {
             Block block = playerInteractEvent.getClickedBlock();
 
             CleanUpWorldRelicBehaviour.cleanUp(block.getLocation());
+        }
+    }
+
+    @EventHandler()
+    public void armorStandInteracted(PlayerArmorStandManipulateEvent e){
+        ArmorStand clickedEntity = e.getRightClicked();
+        if(clickedEntity.getCustomName() == "Campfire"){;
+        clickedEntity.remove();
         }
     }
 
