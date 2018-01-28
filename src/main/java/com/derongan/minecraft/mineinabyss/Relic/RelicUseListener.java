@@ -1,15 +1,11 @@
 package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.ChatRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.*;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -75,10 +71,12 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerInteractEntity(PlayerArmorStandManipulateEvent e){
-        if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)){
-            e.getPlayer().getInventory().addItem(e.getRightClicked().getItemInHand());
-            e.getRightClicked().remove();
-            e.setCancelled(true);
+        RelicType relicType = ArmorStandBehaviour.registeredRelics.get(e.getRightClicked().getUniqueId());
+
+        if(relicType != null){
+            if(relicType.getBehaviour() instanceof ArmorStandBehaviour){
+                ((ArmorStandBehaviour) relicType.getBehaviour()).onManipulateArmorStand(e);
+            }
         }
     }
 

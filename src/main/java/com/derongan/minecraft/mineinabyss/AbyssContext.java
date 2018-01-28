@@ -1,10 +1,12 @@
 package com.derongan.minecraft.mineinabyss;
 
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionData;
+import com.derongan.minecraft.mineinabyss.Database.DatabaseUtils;
 import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.Plugin;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +22,7 @@ public class AbyssContext {
     private Logger logger;
     private Configuration config;
     private int tickTime;
+    private Connection connection;
 
     public Plugin getPlugin() {
         return plugin;
@@ -59,5 +62,18 @@ public class AbyssContext {
 
     public void setTickTime(int tickTime) {
         this.tickTime = tickTime;
+    }
+
+    public Connection getConnection() {
+        if(plugin == null){
+            throw new IllegalStateException("Plugin must be set before attempting to get database");
+        } else {
+            String dBPath = plugin.getDataFolder().getPath() + config.getString("storage.sqlitefile");
+
+            if(connection == null){
+                connection = DatabaseUtils.getDBConnection(dBPath);
+            }
+            return connection;
+        }
     }
 }
