@@ -21,9 +21,11 @@ public class AscensionCommandExecutor implements CommandExecutor {
 
             if (label.equals("sectionon")) {
                 data.setDev(false);
+                player.sendMessage("Section TP On");
                 return true;
             } else if (label.equals("sectionoff")) {
                 data.setDev(true);
+                player.sendMessage("Section TP Off");
                 return true;
             }
         }
