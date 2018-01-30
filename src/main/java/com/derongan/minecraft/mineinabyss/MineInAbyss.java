@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss;
 
+import com.derongan.minecraft.mineinabyss.Ascension.AscensionCommandExecutor;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionTask;
 import com.derongan.minecraft.mineinabyss.Configuration.ConfigurationManager;
@@ -64,10 +65,15 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
         getServer().getPluginManager().registerEvents(new RelicUseListener(), this);
-        RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
 
+
+        RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
         this.getCommand("relic").setExecutor(relicCommandExecutor);
         this.getCommand("relicreload").setExecutor(relicCommandExecutor);
+
+        AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
+        this.getCommand("sectionon").setExecutor(ascensionCommandExecutor);
+        this.getCommand("sectionoff").setExecutor(ascensionCommandExecutor);
 
         RelicLoader.loadAllRelics(context);
     }
