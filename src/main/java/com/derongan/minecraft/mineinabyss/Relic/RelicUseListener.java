@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.CampfireRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.ChatRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
@@ -84,7 +85,8 @@ public class RelicUseListener implements Listener {
         if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
             if (e.getRightClicked().getScoreboardTags().contains("Campfire")) {
                 ArmorStand as = (ArmorStand) e.getRightClicked();
-                if (p.getInventory().getItemInMainHand().getType().equals(Material.COOKED_BEEF)) {
+                Material ma = p.getInventory().getItemInMainHand().getType();
+                if (ma.equals(Material.RABBIT) || ma.equals(Material.RAW_CHICKEN) || ma.equals(Material.RAW_FISH) || ma.equals(Material.RAW_BEEF) || ma.equals(Material.PORK)) {
                     as.setItemInHand(p.getInventory().getItemInMainHand());
                     p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                     e.setCancelled(true);
@@ -96,11 +98,7 @@ public class RelicUseListener implements Listener {
                     as.setItemInHand(new ItemStack(Material.AIR));
                     e.setCancelled(true);
                     return;
-                }/*else if (as.getItemInHand() == null) {//p.getInventory().getItemInMainHand().getType() == null &&
-                    p.getInventory().addItem(as.getHelmet());
-                    as.remove();
-                    e.setCancelled(true);
-                }*/
+                }
             }
 
             ArmorStand as = (ArmorStand) e.getRightClicked();
