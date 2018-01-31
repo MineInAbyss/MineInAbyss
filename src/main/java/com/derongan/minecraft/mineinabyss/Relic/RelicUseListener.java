@@ -6,6 +6,8 @@ import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehav
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
+import net.minecraft.server.v1_12_R1.Item;
+import net.minecraft.server.v1_12_R1.Items;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -17,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,12 +79,36 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e){
-        if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)){
+        Player p = e.getPlayer();
+
+        if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
+            if (e.getRightClicked().getScoreboardTags().contains("Campfire")) {
+                ArmorStand as = (ArmorStand) e.getRightClicked();
+                if (p.getInventory().getItemInMainHand().getType().equals(Material.COOKED_BEEF)) {
+                    as.setItemInHand(p.getInventory().getItemInMainHand());
+                    p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+                    e.setCancelled(true);
+                    return;
+                }else if (!as.getItemInHand().getType().equals(Material.AIR)) {
+                    ItemStack is = as.getItemInHand();
+                    is.setAmount(1);
+                    p.getInventory().setItemInMainHand(is);
+                    as.setItemInHand(new ItemStack(Material.AIR));
+                    e.setCancelled(true);
+                    return;
+                }/*else if (as.getItemInHand() == null) {//p.getInventory().getItemInMainHand().getType() == null &&
+                    p.getInventory().addItem(as.getHelmet());
+                    as.remove();
+                    e.setCancelled(true);
+                }*/
+            }
+
             ArmorStand as = (ArmorStand) e.getRightClicked();
-            e.getPlayer().getInventory().addItem(as.getHelmet());
-            e.getRightClicked().remove();
+            p.getInventory().addItem(as.getHelmet());
+            as.remove();
             e.setCancelled(true);
         }
+
     }
 
     @EventHandler()

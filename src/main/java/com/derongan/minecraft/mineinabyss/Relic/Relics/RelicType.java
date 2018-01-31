@@ -50,13 +50,13 @@ public interface RelicType {
     default ArmorStand getAndPlaceItem(Location location){
         ItemStack item = getItem();
 
-        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location.add(.5, -0.4, .5).setDirection(new Vector(0, 0, 0)), EntityType.ARMOR_STAND);
+        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location.add(.5, 0.6, .5).setDirection(new Vector(0, 0, 0)), EntityType.ARMOR_STAND);
         as.setGravity(false);
         as.setArms(true);
         as.setVisible(false);
         as.setCollidable(false);
         as.setHelmet(item);
-        as.setRightArmPose(new EulerAngle(-Math.PI / 2, -Math.PI / 2, 0));
+        as.setRightArmPose(new EulerAngle(Math.toRadians(180), Math.toRadians(-75), Math.toRadians(90)));
 
         if (getRarity() == RelicRarity.SPECIAL_GRADE) {
             as.setCustomName(ChatColor.GRAY.toString() + ChatColor.MAGIC + getName());

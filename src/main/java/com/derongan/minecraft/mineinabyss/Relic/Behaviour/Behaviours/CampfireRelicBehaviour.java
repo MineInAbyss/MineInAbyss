@@ -1,28 +1,14 @@
 package com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours;
 
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.SlightlyOffzRelicType;
-import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
-
-import java.util.Arrays;
-import java.util.Random;
 
 public class CampfireRelicBehaviour implements UseRelicBehaviour {
     @Override
@@ -40,19 +26,10 @@ public class CampfireRelicBehaviour implements UseRelicBehaviour {
     }
 
     private void doPlaceCampfire(Player player, Block target) {
-        //ArmorStand as  = (ArmorStand) player.getWorld().spawnEntity(target.getLocation().add(0.45,-1.3,0.45), EntityType.ARMOR_STAND);
-        //as.setGravity(false);
-        //as.setVisible(false);
-        //as.setCustomName("Relic");
-        RelicType type = RelicType.findRelicType("campfire");
+        RelicType type = SlightlyOffzRelicType.CAMPFIRE;
 
-        type.getAndPlaceItem(target.getLocation());
-
-
-        //ItemStack is = new ItemStack(Material.DIAMOND_HOE, 1, (short) 2);
-        //ItemMeta meta = is.getItemMeta();
-        //meta.setUnbreakable(true);
-        //is.setItemMeta(meta);
-        //as.setHelmet(is);
+        ArmorStand as = type.getAndPlaceItem(target.getLocation());
+        as.addScoreboardTag("Campfire");
+        as.setRightArmPose(new EulerAngle(Math.toRadians(180), Math.toRadians(-75), Math.toRadians(90)));
     }
 }
