@@ -1,14 +1,8 @@
 package com.derongan.minecraft.mineinabyss.Relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours.CampfireRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.ChatRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.CleanUpWorldRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.EntityHitRelicBehaviour;
-import com.derongan.minecraft.mineinabyss.Relic.Behaviour.UseRelicBehaviour;
+import com.derongan.minecraft.mineinabyss.Relic.Behaviour.*;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
-import net.minecraft.server.v1_12_R1.Item;
-import net.minecraft.server.v1_12_R1.Items;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -105,8 +99,14 @@ public class RelicUseListener implements Listener {
             p.getInventory().addItem(as.getHelmet());
             as.remove();
             e.setCancelled(true);
-        }
+    public void onPlayerInteractEntity(PlayerArmorStandManipulateEvent e){
+        RelicType relicType = ArmorStandBehaviour.registeredRelics.get(e.getRightClicked().getUniqueId());
 
+        if(relicType != null){
+            if(relicType.getBehaviour() instanceof ArmorStandBehaviour){
+                ((ArmorStandBehaviour) relicType.getBehaviour()).onManipulateArmorStand(e);
+            }
+        }
     }
 
     @EventHandler()
@@ -128,14 +128,6 @@ public class RelicUseListener implements Listener {
             CleanUpWorldRelicBehaviour.cleanUp(block.getLocation());
         }
     }
-
-    //@EventHandler()
-    //public void pickedUpRelic(PlayerArmorStandManipulateEvent e){
-    //    ArmorStand clickedEntity = e.getRightClicked();
-    //    if(clickedEntity.getCustomName() == "Relic"){
-    //    clickedEntity.remove();
-    //    }
-    //}
 
     @EventHandler()
     public void onPlayerChat(AsyncPlayerChatEvent chatEvent) {

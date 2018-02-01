@@ -18,6 +18,8 @@ public class AscensionData {
     private int currentSection = 0;
     private boolean justChangedArea = false;
 
+    private boolean dev = false;
+
     private AscensionData(double distanceMovedUp) {
         this.setDistanceMovedUp(distanceMovedUp);
     }
@@ -85,5 +87,13 @@ public class AscensionData {
 
     public void setJustChangedArea(boolean justChangedArea) {
         this.justChangedArea = justChangedArea;
+    }
+
+    public boolean isDev() {
+        return dev;
+    }
+
+    public void setDev(boolean dev) {
+        this.dev = dev;
     }
 }

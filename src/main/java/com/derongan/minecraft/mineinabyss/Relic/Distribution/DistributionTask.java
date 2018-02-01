@@ -1,7 +1,9 @@
 package com.derongan.minecraft.mineinabyss.Relic.Distribution;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Relic.Relics.LootableRelicType;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
+import com.derongan.minecraft.mineinabyss.TickUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -9,10 +11,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Random;
 
 public class DistributionTask extends BukkitRunnable {
-    AbyssContext context;
+    private AbyssContext context;
+    private LootableRelicType lootableRelicType;
 
     public DistributionTask(AbyssContext context) {
         this.context = context;
+        lootableRelicType = new LootableRelicType();
     }
 
     @Override
@@ -27,11 +31,11 @@ public class DistributionTask extends BukkitRunnable {
         Random random = new Random();
         Object[] relicTypes = RelicType.registeredRelics.values().toArray();
         RelicType type = (RelicType) relicTypes[random.nextInt(relicTypes.length)];
+
         spawnLootableRelic(location, type);
     }
 
-    //Todo move elsewhere
     void spawnLootableRelic(Location location, RelicType relicType) {
-        relicType.getAndPlaceItem(location);
+        lootableRelicType.spawnLootableRelic(location, relicType, TickUtils.milisecondsToTicks(10000));
     }
 }

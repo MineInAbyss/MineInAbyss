@@ -1,5 +1,6 @@
 storage:
   relicpath: "relics/"
+  sqlitefile: "mineinabyss.db"
 layers:
   -
     name: LayerOne

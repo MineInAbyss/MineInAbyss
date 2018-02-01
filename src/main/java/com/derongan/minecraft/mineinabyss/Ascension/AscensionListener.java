@@ -51,6 +51,10 @@ public class AscensionListener implements Listener {
                 }
             }
 
+            if(data.isDev()){
+                return;
+            }
+
             double toY = playerMoveEvent.getTo().getY();
             double fromY = playerMoveEvent.getFrom().getY();
 

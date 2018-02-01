@@ -12,3 +12,9 @@ commands:
   relicreload:
     description: Reload relics
     usage: /relicreload
+  sectionoff:
+    description: Cheat
+    usage: /sectionoff
+  sectionon:
+    description: why
+    usage: /sectionon
