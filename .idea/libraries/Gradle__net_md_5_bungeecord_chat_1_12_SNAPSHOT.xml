@@ -5,9 +5,6 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.12-SNAPSHOT/efa352af58d0e9488a95b7f3975deee9f2852ce0/bungeecord-chat-1.12-SNAPSHOT-sources.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.12-SNAPSHOT/dbec147700a4aa4337cd001eb32228192608b395/bungeecord-chat-1.12-SNAPSHOT-sources.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.12-SNAPSHOT/76a8a02899265435d01d8e40dba27c888b403e2e/bungeecord-chat-1.12-SNAPSHOT-sources.jar!/" />
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.12-SNAPSHOT/ec91a4b53b10495f5c0312a3a3c8c45421ba0da2/bungeecord-chat-1.12-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>

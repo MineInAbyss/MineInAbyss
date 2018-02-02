@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':MineInAbyss-API')
+    compile group: 'org.spigotmc', name: 'spigot', version: project.property("apiversion")
+}
