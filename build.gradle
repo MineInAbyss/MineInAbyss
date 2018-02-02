@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 subprojects {
     apply plugin: 'java'
 
@@ -16,5 +18,12 @@ subprojects {
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
         mavenLocal()
+    }
+
+
+    processResources {
+        from(sourceSets.main.resources.srcDirs) {
+            filter ReplaceTokens, tokens: [plugin_version: plugin_version]
+        }
     }
 }

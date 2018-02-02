@@ -1,5 +1,5 @@
 name: MineInAbyss
-version: "0.02b"
+version: @plugin_version@
 author: Derongan
 main: MineInAbyss
 prefix: MiB
