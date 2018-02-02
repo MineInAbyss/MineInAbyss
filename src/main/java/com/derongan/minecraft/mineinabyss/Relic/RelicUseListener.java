@@ -73,38 +73,12 @@ public class RelicUseListener implements Listener {
     }
 
     @EventHandler()
-    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e){
-        Player p = e.getPlayer();
-
-        if(e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
-            if (e.getRightClicked().getScoreboardTags().contains("Campfire")) {
-                ArmorStand as = (ArmorStand) e.getRightClicked();
-                Material ma = p.getInventory().getItemInMainHand().getType();
-                if (ma.equals(Material.RABBIT) || ma.equals(Material.RAW_CHICKEN) || ma.equals(Material.RAW_FISH) || ma.equals(Material.RAW_BEEF) || ma.equals(Material.PORK)) {
-                    as.setItemInHand(p.getInventory().getItemInMainHand());
-                    p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
-                    e.setCancelled(true);
-                    return;
-                }else if (!as.getItemInHand().getType().equals(Material.AIR)) {
-                    ItemStack is = as.getItemInHand();
-                    is.setAmount(1);
-                    p.getInventory().setItemInMainHand(is);
-                    as.setItemInHand(new ItemStack(Material.AIR));
-                    e.setCancelled(true);
-                    return;
-                }
-            }
-
-            ArmorStand as = (ArmorStand) e.getRightClicked();
-            p.getInventory().addItem(as.getHelmet());
-            as.remove();
-            e.setCancelled(true);
-    public void onPlayerInteractEntity(PlayerArmorStandManipulateEvent e){
+    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         RelicType relicType = ArmorStandBehaviour.registeredRelics.get(e.getRightClicked().getUniqueId());
 
         if(relicType != null){
             if(relicType.getBehaviour() instanceof ArmorStandBehaviour){
-                ((ArmorStandBehaviour) relicType.getBehaviour()).onManipulateArmorStand(e);
+                ((ArmorStandBehaviour) relicType.getBehaviour()).onPlayerInteractEntity(e);
             }
         }
     }

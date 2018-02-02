@@ -10,7 +10,7 @@ import java.util.List;
 
 public enum SlightlyOffzRelicType implements RelicType {
     CAMPFIRE(Material.DIAMOND_HOE,
-            2,
+            3,
             new CampfireRelicBehaviour(),
             "Campfire",
             Arrays.asList("Great for cooking food"),

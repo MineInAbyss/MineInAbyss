@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="MadeInAbyss:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/MadeInAbyss_jar</output-path>
+    <output-path>$USER_HOME$/Documents/Programming/Spigot servers/plugins</output-path>
     <root id="archive" name="MadeInAbyss.jar">
       <element id="module-output" name="MadeInAbyss_main" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/config.yml" />
