@@ -4,6 +4,7 @@ import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 import com.derongan.minecraft.mineinabyss.TickUtils;
 import com.google.common.collect.ImmutableSet;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -16,6 +17,25 @@ public class Layer {
     private AbyssContext context;
     private String deathMessage;
     private int offset = 50;
+
+    private Layer nextLayer;
+    private Layer prevLayer;
+
+    public Layer getNextLayer() {
+        return nextLayer;
+    }
+
+    public void setNextLayer(Layer nextLayer) {
+        this.nextLayer = nextLayer;
+    }
+
+    public Layer getPrevLayer() {
+        return prevLayer;
+    }
+
+    public void setPrevLayer(Layer prevLayer) {
+        this.prevLayer = prevLayer;
+    }
 
     public Layer(String name, AbyssContext context) {
         this.name = name;
@@ -31,8 +51,10 @@ public class Layer {
     }
 
 
-    public void setSectionsOnLayer(List<List<Integer>> points) {
-        sections = points.stream().map(a -> new Section(new Vector(a.get(0), 0, a.get(1)), a.get(2))).collect(Collectors.toList());
+    public void setSectionsOnLayer(List<List<Integer>> points, World world) {
+        sections = points.stream().map(a -> {
+            return new Section(new Vector(a.get(0), 0, a.get(1)), a.get(2), world);
+        }).collect(Collectors.toList());
     }
 
     public void setEffectsOnLayer(Collection<Map> effects) {
@@ -93,15 +115,27 @@ public class Layer {
         this.offset = offset;
     }
 
-    public boolean isLastSection(int i){
-        return i == sections.size()-1;
+    public boolean isLastSection(int i) {
+        return i == sections.size() - 1;
     }
 
-    public boolean isFirstSection(int i){
+    public boolean isFirstSection(int i) {
         return i == 0;
     }
 
     public List<Section> getSections() {
         return sections;
+    }
+
+    public Section getSectionAbove(int i) {
+        if (i != 0)
+            return sections.get(i - 1);
+        return null;
+    }
+
+    public Section getSectionBelow(int i) {
+        if (i != sections.size() - 1)
+            return sections.get(i + 1);
+        return null;
     }
 }

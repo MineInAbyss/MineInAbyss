@@ -12,6 +12,7 @@ import java.util.Set;
 public class AscensionData {
     private double distanceMovedUp;
 
+    private Player player;
     private Set<AscensionEffect> currentEffects = new HashSet<>();
 
     private Layer currentLayer;
@@ -20,12 +21,8 @@ public class AscensionData {
 
     private boolean dev = false;
 
-    private AscensionData(double distanceMovedUp) {
-        this.setDistanceMovedUp(distanceMovedUp);
-    }
-
-    public AscensionData() {
-        this(0);
+    public AscensionData(Player player) {
+        this.player = player;
     }
 
     public double getDistanceMovedUp() {
@@ -95,5 +92,13 @@ public class AscensionData {
 
     public void setDev(boolean dev) {
         this.dev = dev;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

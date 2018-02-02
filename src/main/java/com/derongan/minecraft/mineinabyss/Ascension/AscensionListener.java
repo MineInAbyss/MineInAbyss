@@ -24,36 +24,19 @@ public class AscensionListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent playerMoveEvent) {
-        double deltaY = playerMoveEvent.getTo().getY() - playerMoveEvent.getFrom().getY();
         Player player = playerMoveEvent.getPlayer();
-
 
         Layer currentLayer = context.getLayerMap().getOrDefault(player.getWorld().getName(), null);
 
         if (currentLayer != null) {
-            AscensionData data = context.getPlayerAcensionDataMap().computeIfAbsent(player.getUniqueId(), uuid -> new AscensionData());
+            AscensionData data = context.getPlayerAcensionDataMap().computeIfAbsent(player.getUniqueId(), uuid -> new AscensionData(player));
 
-            if (data.isJustChangedArea()) {
-                data.setJustChangedArea(false);
+            if (isPlayerExempt(data)) {
                 return;
             }
 
-
-            // Admins are immune to effects by default
-            if (player.hasPermission("mineinabyss.effectable")) {
-                data.changeDistanceMovedUp(deltaY);
-
-                if (data.getDistanceMovedUp() >= currentLayer.getOffset()) {
-                    data.setDistanceMovedUp(data.getDistanceMovedUp() % distanceForEffect);
-                    currentLayer.getEffectsOnLayer().forEach(effectBuilder -> {
-                        data.applyEffect(effectBuilder.build());
-                    });
-                }
-            }
-
-            if(data.isDev()){
-                return;
-            }
+            double deltaY = playerMoveEvent.getTo().getY() - playerMoveEvent.getFrom().getY();
+            doAscensionEffect(deltaY, currentLayer, data);
 
             double toY = playerMoveEvent.getTo().getY();
             double fromY = playerMoveEvent.getFrom().getY();
@@ -62,55 +45,103 @@ public class AscensionListener implements Listener {
                 int currentSectionNum = data.getCurrentSection();
                 Section currentSection = currentLayer.getSections().get(currentSectionNum);
 
-                int shared;
+                doDescend(player, currentLayer, data, toY, fromY, currentSectionNum, currentSection);
+                doAscend(player, currentLayer, data, toY, fromY, currentSectionNum, currentSection);
+            }
+        }
+    }
 
-                if (!currentLayer.isLastSection(currentSectionNum)) {
-                    Section nextSection = currentLayer.getSections().get(currentSectionNum + 1);
+    private void doDescend(Player player, Layer currentLayer, AscensionData data, double toY, double fromY, int currentSectionNum, Section currentSection) {
+        int shared;
+        Layer nextLayer = currentLayer.getNextLayer();
+        if (!(currentLayer.isLastSection(currentSectionNum)) || nextLayer != null && nextLayer.getSections().size() > 0) {
+            Section nextSection;
+            if (currentLayer.isLastSection(currentSectionNum))
+                nextSection = nextLayer.getSections().get(0);
+            else
+                nextSection = currentLayer.getSections().get(currentSectionNum + 1);
 
-                    shared = currentSection.getSharedWithBelow();
+            shared = currentSection.getSharedWithBelow();
 
-                    // once you are three quarters of the distance into the shared area, teleport
-                    int threshold = (int) (shared * .4);
-                    int invThresh = shared - threshold;
+            // once you are three quarters of the distance into the shared area, teleport
+            double threshold = (shared * .4);
+            double invThresh = shared * .6;
 
-                    if (toY <= threshold && fromY > toY) {
-                        context.getLogger().info(player.getDisplayName() + " descending to next section");
+            if (toY <= threshold && fromY > toY) {
+                context.getLogger().info(player.getDisplayName() + " descending to next section");
 
-                        Vector nextSectionPoint = nextSection.getOffset();
-                        Vector currentSectionPoint = currentSection.getOffset();
+                Vector nextSectionPoint = nextSection.getOffset();
+                Vector currentSectionPoint = currentSection.getOffset();
 
-                        Location tpLoc = player.getLocation().toVector().setY(256 - invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
-                        tpLoc.setDirection(player.getLocation().getDirection());
+                Location tpLoc = player.getLocation().toVector().setY(256 - invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(nextSection.getWorld());
+                tpLoc.setDirection(player.getLocation().getDirection());
 
-                        player.teleport(tpLoc);
-                        data.setCurrentSection(currentSectionNum + 1);
-                        data.setJustChangedArea(true);
-                    }
-                }
-                if (!currentLayer.isFirstSection(currentSectionNum)) {
-                    Section nextSection = currentLayer.getSections().get(currentSectionNum - 1);
+                player.teleport(tpLoc);
 
-                    shared = nextSection.getSharedWithBelow();
+                if (currentLayer.isLastSection(currentSectionNum))
+                    data.setCurrentSection(0);
+                else
+                    data.setCurrentSection(currentSectionNum + 1);
 
-                    // once you are one quarters of the distance from the top of the shared area, teleport
-                    int threshold = (int) (shared * .4);
-                    int invThresh = shared - threshold;
-                    ;
+                data.setJustChangedArea(true);
+            }
+        }
+    }
 
-                    if (toY >= 256 - threshold && fromY < toY) {
-                        context.getLogger().info(player.getDisplayName() + " ascending to next section");
+    private void doAscend(Player player, Layer currentLayer, AscensionData data, double toY, double fromY, int currentSectionNum, Section currentSection) {
+        int shared;
+        if (!currentLayer.isFirstSection(currentSectionNum)) {
+            Section nextSection = currentLayer.getSections().get(currentSectionNum - 1);
 
-                        Vector nextSectionPoint = nextSection.getOffset();
-                        Vector currentSectionPoint = currentSection.getOffset();
+            shared = nextSection.getSharedWithBelow();
 
-                        Location tpLoc = player.getLocation().toVector().setY(invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(player.getWorld());
-                        tpLoc.setDirection(player.getLocation().getDirection());
+            // once you are one quarters of the distance from the top of the shared area, teleport
+            double threshold = (shared * .4);
+            double invThresh = shared * .6;
 
-                        player.teleport(tpLoc);
-                        data.setCurrentSection(currentSectionNum - 1);
-                        data.setJustChangedArea(true);
-                    }
-                }
+            if (toY >= 256 - threshold && fromY < toY) {
+                context.getLogger().info(player.getDisplayName() + " ascending to next section");
+
+                Vector nextSectionPoint = nextSection.getOffset();
+                Vector currentSectionPoint = currentSection.getOffset();
+
+                Location tpLoc = player.getLocation().toVector().setY(invThresh).add(nextSectionPoint).subtract(currentSectionPoint).toLocation(nextSection.getWorld());
+                tpLoc.setDirection(player.getLocation().getDirection());
+
+                player.teleport(tpLoc);
+                data.setCurrentSection(currentSectionNum - 1);
+                data.setJustChangedArea(true);
+            }
+        }
+    }
+
+
+    /**
+     * Return if the player has modifiers making them exempt from tp/effects
+     *
+     * @param data the AscensionData for the player
+     * @return true if the player is exempt
+     */
+    private boolean isPlayerExempt(AscensionData data) {
+        if (data.isJustChangedArea()) {
+            data.setJustChangedArea(false);
+            return true;
+        }
+        return data.isDev();
+    }
+
+    private void doAscensionEffect(double deltaY, Layer currentLayer, AscensionData data) {
+        Player player = data.getPlayer();
+
+        // Admins are immune to effects by default
+        if (player.hasPermission("mineinabyss.effectable")) {
+            data.changeDistanceMovedUp(deltaY);
+
+            if (data.getDistanceMovedUp() >= currentLayer.getOffset()) {
+                data.setDistanceMovedUp(data.getDistanceMovedUp() % distanceForEffect);
+                currentLayer.getEffectsOnLayer().forEach(effectBuilder -> {
+                    data.applyEffect(effectBuilder.build());
+                });
             }
         }
     }

@@ -33,6 +33,7 @@ public final class MineInAbyss extends JavaPlugin {
         context.setConfig(getConfig());
         context.setTickTime(TICKS_BETWEEN);
 
+        Layer prev = null;
         for (Map layerData : getConfig().getMapList("layers")) {
             Layer layer = new Layer((String) layerData.get("name"), context);
 
@@ -46,11 +47,17 @@ public final class MineInAbyss extends JavaPlugin {
                 sections = new ArrayList<>();
             }
 
-            layer.setSectionsOnLayer(sections);
+            layer.setSectionsOnLayer(sections, getServer().getWorld(layer.getName()));
             layer.setEffectsOnLayer((Collection<Map>) layerData.get("effects"));
             layer.setDeathMessage((String) layerData.getOrDefault("abyssDeathMessage", null));
             layer.setOffset((int)layerData.getOrDefault("offset", 50));
             context.getLayerMap().put(layer.getName(), layer);
+
+            layer.setPrevLayer(prev);
+            if(prev != null){
+                prev.setNextLayer(layer);
+            }
+            prev = layer;
         }
 
         Runnable mainTask = new AscensionTask(context, TICKS_BETWEEN);
