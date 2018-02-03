@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":MineInAbyss" external.linked.project.path="$MODULE_DIR$/../../../MineInAbyss" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="GRADLE" external.system.module.group="com.derongan.minecraft" external.system.module.version="0.3b-SNAPSHOT" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+        </autoDetectTypes>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../../MineInAbyss/out/production/classes" />
+    <output-test url="file://$MODULE_DIR$/../../../MineInAbyss/out/test/classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../MineInAbyss">
+      <sourceFolder url="file://$MODULE_DIR$/../../../MineInAbyss/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../MineInAbyss/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../MineInAbyss/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../MineInAbyss/src/test/resources" type="java-test-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../MineInAbyss/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../MineInAbyss/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../MineInAbyss/out" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="MineInAbyss-API" scope="PROVIDED" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.yaml:snakeyaml:1.19" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: junit:junit:4.10" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="module" module-name="MineInAbyss-API" scope="RUNTIME" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.yaml:snakeyaml:1.19" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: junit:junit:4.10" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="module" module-name="MineInAbyss-API" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.yaml:snakeyaml:1.19" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.1" level="project" />
+  </component>
+</module>

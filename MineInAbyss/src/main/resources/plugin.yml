@@ -1,0 +1,20 @@
+name: MineInAbyss
+version: @plugin_version@
+author: Derongan
+main: com.derongan.minecraft.mineinabyss.plugin.MineInAbyss
+prefix: MiB
+description: A mod that adds abyss effects
+
+commands:
+  relic:
+    description: Give a relic
+    usage: /relic relic_name
+  relicreload:
+    description: Reload relics
+    usage: /relicreload
+  sectionoff:
+    description: Cheat
+    usage: /sectionoff
+  sectionon:
+    description: why
+    usage: /sectionon
