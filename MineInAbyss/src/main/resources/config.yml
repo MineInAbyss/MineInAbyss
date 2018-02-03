@@ -23,7 +23,8 @@ layers:
         strength: 2
         durationRemaining: 22
     sectionOffsets:
-      - [1673, 289, 0]
+      - [1673, 19, 24]
+      - [385, 14, 0]
   -
     name: LayerThree
     offset: 30

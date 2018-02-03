@@ -54,7 +54,7 @@ public class AscensionListener implements Listener {
     private void doDescend(Player player, Layer currentLayer, AscensionData data, double toY, double fromY, int currentSectionNum, Section currentSection) {
         int shared;
         Layer nextLayer = currentLayer.getNextLayer();
-        if (!(currentLayer.isLastSection(currentSectionNum)) || nextLayer != null && nextLayer.getSections().size() > 0) {
+        if (!(currentLayer.isLastSection(currentSectionNum)) || (nextLayer != null && nextLayer.getSections().size() > 0)) {
             Section nextSection;
             if (currentLayer.isLastSection(currentSectionNum))
                 nextSection = nextLayer.getSections().get(0);
@@ -90,9 +90,13 @@ public class AscensionListener implements Listener {
 
     private void doAscend(Player player, Layer currentLayer, AscensionData data, double toY, double fromY, int currentSectionNum, Section currentSection) {
         int shared;
-        if (!currentLayer.isFirstSection(currentSectionNum)) {
-            Section nextSection = currentLayer.getSections().get(currentSectionNum - 1);
-
+        Layer prevLayer = currentLayer.getPrevLayer();
+        if (!(currentLayer.isFirstSection(currentSectionNum)) || (prevLayer != null && prevLayer.getSections().size() > 0)) {
+            Section nextSection;
+            if (currentLayer.isFirstSection(currentSectionNum))
+                nextSection = prevLayer.getSections().get(prevLayer.getSections().size() - 1);
+            else
+                nextSection = currentLayer.getSections().get(currentSectionNum - 1);
             shared = nextSection.getSharedWithBelow();
 
             // once you are one quarters of the distance from the top of the shared area, teleport
@@ -109,7 +113,12 @@ public class AscensionListener implements Listener {
                 tpLoc.setDirection(player.getLocation().getDirection());
 
                 player.teleport(tpLoc);
-                data.setCurrentSection(currentSectionNum - 1);
+
+                if (currentLayer.isFirstSection(currentSectionNum))
+                    data.setCurrentSection(prevLayer.getSections().size() - 1);
+                else
+                    data.setCurrentSection(currentSectionNum - 1);
+
                 data.setJustChangedArea(true);
             }
         }
@@ -154,6 +163,9 @@ public class AscensionListener implements Listener {
         String layerOfDeathName = playerDeathEvent.getEntity().getWorld().getName();
         String playerName = playerDeathEvent.getEntity().getName();
         Layer layerOfDeath = context.getLayerMap().getOrDefault(layerOfDeathName, null);
+
+        if(layerOfDeath == null)
+            return;
 
         if (layerOfDeath.getDeathMessage() != null || deadPlayerData.getCurrentEffects().stream().anyMatch(a -> a instanceof DeathAscensionEffect) || (playerDeathEvent.getDeathMessage().contains("withered away"))) {
             playerDeathEvent.setDeathMessage(layerOfDeath.getDeathMessage().replace("{Player}", playerName));
