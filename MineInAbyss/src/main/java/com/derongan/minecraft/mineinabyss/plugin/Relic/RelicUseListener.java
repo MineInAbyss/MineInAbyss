@@ -18,9 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RelicUseListener implements Listener {
-    AbyssContext context;
-
-    public static Set<Material> passable = Stream.of(Material.AIR,
+    public final static Set<Material> passable = Stream.of(Material.AIR,
             Material.LEAVES,
             Material.LEAVES_2,
             Material.YELLOW_FLOWER,
@@ -56,7 +54,7 @@ public class RelicUseListener implements Listener {
         if (damager instanceof Player) {
             Player player = (Player) damager;
 
-            RelicType type = RelicType.getRegisteredRelicType(((Player) damager).getInventory().getItemInMainHand());
+            RelicType type = RelicType.getRegisteredRelicType(player.getInventory().getItemInMainHand());
 
             if (type != null) {
                 if (type.getBehaviour() instanceof EntityHitRelicBehaviour) {
