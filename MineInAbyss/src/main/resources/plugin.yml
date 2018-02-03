@@ -9,6 +9,9 @@ commands:
   relic:
     description: Give a relic
     usage: /relic relic_name
+  relics:
+    description: List relics
+    usage: /relics
   relicreload:
     description: Reload relics
     usage: /relicreload

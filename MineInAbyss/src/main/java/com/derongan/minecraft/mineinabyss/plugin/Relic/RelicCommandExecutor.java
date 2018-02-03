@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.stream.Collectors;
+
 public class RelicCommandExecutor implements CommandExecutor {
     private AbyssContext context;
 
@@ -21,13 +23,6 @@ public class RelicCommandExecutor implements CommandExecutor {
             Player player = (Player) commandSender;
 
             if (label.equals("relic")) {
-//                try {
-//                    RelicType type = StandardRelicType.valueOf(args[0]);
-//                    player.getInventory().addItem(type.getItem());
-//                } catch (IllegalArgumentException e){
-//                    return false;
-//                }
-
                 if (args.length == 0) {
                     return false;
                 }
@@ -43,6 +38,14 @@ public class RelicCommandExecutor implements CommandExecutor {
             if (label.equals("relicreload")) {
                 RelicLoader.unloadAllRelics();
                 RelicLoader.loadAllRelics(context);
+                return true;
+            }
+
+            if(label.equals("relics")){
+                player.sendMessage("Relics: " + RelicType.registeredRelics.values().stream()
+                        .map(RelicType::getName)
+                        .map(a->a.replace(" ", "_"))
+                        .collect(Collectors.joining(", ")));
                 return true;
             }
         }

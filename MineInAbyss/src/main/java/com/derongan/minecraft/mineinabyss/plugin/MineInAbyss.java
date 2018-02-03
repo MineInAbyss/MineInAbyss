@@ -75,6 +75,7 @@ public final class MineInAbyss extends JavaPlugin {
         RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
         this.getCommand("relic").setExecutor(relicCommandExecutor);
         this.getCommand("relicreload").setExecutor(relicCommandExecutor);
+        this.getCommand("relics").setExecutor(relicCommandExecutor);
 
         AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
         this.getCommand("sectionon").setExecutor(ascensionCommandExecutor);
