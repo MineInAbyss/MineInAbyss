@@ -12,13 +12,12 @@ public class ConfigurationManager {
         this.configuration = configuration;
     }
 
-
-
-
     public static void createConfig(Plugin plugin) {
         try {
             if (!plugin.getDataFolder().exists()) {
-                plugin.getDataFolder().mkdirs();
+                if(!plugin.getDataFolder().mkdirs()){
+                    throw new RuntimeException("Failed to make config file");
+                }
             }
             File file = new File(plugin.getDataFolder(), "config.yml");
             if (!file.exists()) {
