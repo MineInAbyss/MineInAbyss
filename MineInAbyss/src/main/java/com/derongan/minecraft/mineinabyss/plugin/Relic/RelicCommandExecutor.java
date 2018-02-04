@@ -38,9 +38,6 @@ public class RelicCommandExecutor implements CommandExecutor {
                     }
                 }
             }
-            //if (label.equals("asPos")) {
-            //    commandSender.
-            //}
 
             if (label.equals("relicreload")) {
                 RelicLoader.unloadAllRelics();

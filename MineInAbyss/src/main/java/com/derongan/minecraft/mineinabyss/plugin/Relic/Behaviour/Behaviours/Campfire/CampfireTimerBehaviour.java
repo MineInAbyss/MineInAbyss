@@ -1,9 +1,10 @@
-package com.derongan.minecraft.mineinabyss.plugin.Relic.Behaviour.Behaviours;
+package com.derongan.minecraft.mineinabyss.plugin.Relic.Behaviour.Behaviours.Campfire;
 
 import com.derongan.minecraft.mineinabyss.API.Relic.Behaviour.RelicBehaviour;
 import com.derongan.minecraft.mineinabyss.API.Relic.Relics.RelicType;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
@@ -20,21 +21,27 @@ public interface CampfireTimerBehaviour extends RelicBehaviour {
     Map<UUID, CampfireInfo> registeredCampfires = new ConcurrentHashMap<>();
 
 
-    static void registerCampfire(RelicType relicType , Entity entity) {
-        registeredCampfires.put(entity.getUniqueId(), new CampfireInfo(0, 0, relicType, entity));
+    static void registerCampfire(RelicType relicType , Entity entity, int maxCoal) {
+        registeredCampfires.put(entity.getUniqueId(), new CampfireInfo(0, 0, maxCoal, relicType, entity));
     }
 
     static void setCookTime(int cookTime, Entity entity) {
         registeredCampfires.get(entity.getUniqueId()).cookTime = cookTime;
     }
 
-    static void addBurnTime(int coalLeft, Entity entity){
-        ArmorStand as = (ArmorStand) entity;
-        ItemStack is = as.getHelmet();
-        is.setDurability((short) 2);
-        as.setHelmet(is);
+    static void addBurnTime(int addCoal, Entity entity, Player p){
+        CampfireInfo campfire = registeredCampfires.get(entity.getUniqueId());
+        if(campfire.coalLeft <= campfire.maxCoal-addCoal) {
+            ArmorStand as = (ArmorStand) entity;
+            ItemStack is = as.getHelmet();
 
-        registeredCampfires.get(entity.getUniqueId()).coalLeft += coalLeft;
+            is.setDurability((short) 2);
+            as.setHelmet(is);
+
+            campfire.coalLeft += addCoal;
+
+            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+        }
     }
 
     static void stopBurning(Entity entity){
@@ -46,12 +53,14 @@ public interface CampfireTimerBehaviour extends RelicBehaviour {
     class CampfireInfo {
         public int coalLeft;
         public int cookTime;
+        public int maxCoal;
         public RelicType relicType;
         public Object entity;
 
-        public CampfireInfo(int coalLeft, int cookTime, RelicType relicType, Object entity) {
+        public CampfireInfo(int coalLeft, int cookTime, int maxCoal, RelicType relicType, Object entity) {
             this.coalLeft = coalLeft;
             this.cookTime = cookTime;
+            this.maxCoal = maxCoal;
             this.relicType = relicType;
             this.entity = entity;
         }

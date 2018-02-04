@@ -3,7 +3,6 @@ package com.derongan.minecraft.mineinabyss.plugin.Relic.Behaviour.Behaviours;
 import com.derongan.minecraft.mineinabyss.API.Relic.Behaviour.ArmorStandBehaviour;
 import com.derongan.minecraft.mineinabyss.API.Relic.Behaviour.DecayableRelicBehaviour;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 /**

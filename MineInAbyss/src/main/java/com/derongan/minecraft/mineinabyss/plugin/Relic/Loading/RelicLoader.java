@@ -2,11 +2,8 @@ package com.derongan.minecraft.mineinabyss.plugin.Relic.Loading;
 
 import com.derongan.minecraft.mineinabyss.plugin.AbyssContext;
 import com.derongan.minecraft.mineinabyss.API.Relic.Relics.RelicType;
+import com.derongan.minecraft.mineinabyss.plugin.Relic.Relics.SlightlyOffzRelicType;
 import com.derongan.minecraft.mineinabyss.plugin.Relic.Relics.StandardRelicType;
-import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
-import com.derongan.minecraft.mineinabyss.Relic.Relics.StandardRelicType;
-import com.derongan.minecraft.mineinabyss.Relic.Relics.SlightlyOffzRelicType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
