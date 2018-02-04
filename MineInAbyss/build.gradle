@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':MineInAbyss-API')
+    compile group: 'org.spigotmc', name: 'spigot', version: project.property("api_version")
+}
+
+jar {
+    from project(':MineInAbyss-API').sourceSets.main.output
+}

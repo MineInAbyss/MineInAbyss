@@ -1,36 +1,29 @@
-apply plugin: 'java'
-
-group = pluginGroup
-version = pluginVersion
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
-    mavenLocal()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'org.spigotmc', name: 'spigot-api', version: project.property("apiversion")
-    compile group: 'org.spigotmc', name: 'spigot', version: project.property("apiversion")
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
-    compile group: 'commons-dbutils', name: 'commons-dbutils', version: '1.7'
-}
-
 import org.apache.tools.ant.filters.ReplaceTokens
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: [version: version]
+subprojects {
+    apply plugin: 'java'
+
+    group 'com.derongan.minecraft'
+    version plugin_version+"-SNAPSHOT"
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'spigotmc-repo'
+            url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+        }
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/groups/public/'
+        }
+        mavenLocal()
+    }
+
+
+    processResources {
+        from(sourceSets.main.resources.srcDirs) {
+            filter ReplaceTokens, tokens: [plugin_version: plugin_version]
+        }
     }
 }
