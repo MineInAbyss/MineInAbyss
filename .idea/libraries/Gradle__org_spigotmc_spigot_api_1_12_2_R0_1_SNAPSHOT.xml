@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spigotmc/spigot-api/1.12.2-R0.1-SNAPSHOT/ea1cf81541c3519eedbc3f989987764982edfd4c/spigot-api-1.12.2-R0.1-SNAPSHOT.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spigotmc/spigot-api/1.12.2-R0.1-SNAPSHOT/5f5d21e88e81e8252797e29007cc06739ab848b4/spigot-api-1.12.2-R0.1-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spigotmc/spigot-api/1.12.2-R0.1-SNAPSHOT/ab8036b9b9887e5b7b5c1ba45f7e3ccff10823a9/spigot-api-1.12.2-R0.1-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spigotmc/spigot-api/1.12.2-R0.1-SNAPSHOT/494d458e90e7b62316785241f56caf980df729c4/spigot-api-1.12.2-R0.1-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
