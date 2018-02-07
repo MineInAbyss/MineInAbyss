@@ -51,6 +51,13 @@ public enum StandardRelicType implements RelicType {
             "Thousand-Men Pins",
             Arrays.asList("Each pin is said to bestow", "the strength of a thousand men", "", "Right click to consume"),
             RelicRarity.FIRST_GRADE
+    ),
+    SLAVE_STICK(Material.STICK,
+            5,
+            new SlaveRelicBehaviour(),
+            "Slave Stick",
+            Arrays.asList("Ha"),
+            RelicRarity.SPECIAL_GRADE
     );
 
     private final Material material;

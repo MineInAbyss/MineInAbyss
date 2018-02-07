@@ -17,7 +17,7 @@ public interface DecayableRelicBehaviour extends RelicBehaviour {
     Map<UUID, RelicInfo> registeredRelics = new ConcurrentHashMap<>();
 
 
-    default void registerRelic(Entity entity, int lifetime, RelicType relicType) {
+    static void registerRelic(Entity entity, int lifetime, RelicType relicType) {
         registeredRelics.put(entity.getUniqueId(), new RelicInfo(lifetime, 0, entity, relicType));
     }
 
