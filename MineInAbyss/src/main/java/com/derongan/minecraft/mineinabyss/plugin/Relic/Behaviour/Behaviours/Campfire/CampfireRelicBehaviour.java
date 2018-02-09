@@ -95,12 +95,12 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
         if(toCook.coalLeft <= 0){
             ItemStack is = as.getHelmet();
             is.setDurability((short) 3);
-            as.setHelmet(is);
         }else {
             toCook.coalLeft -= ticks;
             toCook.cookTime -= ticks;
             if (!as.getItemInHand().getType().equals(Material.AIR)) {
-                if (toCook.cookTime <= 0) {
+                //TODO this is a hack to fix the annyoing sound issue
+                if (toCook.cookTime <= 0 && toCook.cookTime > -1000) {
                     Material hand = as.getItemInHand().getType();
                     ItemStack is = as.getItemInHand();
                     switch(hand) {
@@ -121,6 +121,7 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
                             break;
                     }
                     as.setItemInHand(is);
+                    toCook.cookTime = -10000;
                 }
                 as.getWorld().spawnParticle(Particle.SMOKE_NORMAL, as.getLocation().add(0.25, 1.6, 0), 1, 0, 0, 0, 0);
             }
