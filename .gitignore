@@ -2,4 +2,6 @@
 .idea/libraries/
 .idea/gradle.xml
 .idea/workspace.xml
+.idea/modules.xml
 .gradle/
+gradle/
