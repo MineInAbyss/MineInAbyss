@@ -26,4 +26,5 @@ subprojects {
             filter ReplaceTokens, tokens: [plugin_version: plugin_version]
         }
     }
+
 }
