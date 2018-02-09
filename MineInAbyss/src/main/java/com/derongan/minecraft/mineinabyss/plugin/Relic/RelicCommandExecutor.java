@@ -26,7 +26,6 @@ public class RelicCommandExecutor implements CommandExecutor {
                 if (args.length == 0) {
                     return false;
                 }
-
                 for (RelicType relicType : RelicType.registeredRelics.values()) {
                     if (relicType.getName().replace(" ", "_").toLowerCase().equals(args[0].toLowerCase())) {
                         player.getInventory().addItem(relicType.getItem());

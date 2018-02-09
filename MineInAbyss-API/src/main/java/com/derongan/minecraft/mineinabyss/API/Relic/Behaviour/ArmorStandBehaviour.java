@@ -2,6 +2,7 @@ package com.derongan.minecraft.mineinabyss.API.Relic.Behaviour;
 
 import com.derongan.minecraft.mineinabyss.API.Relic.Relics.RelicType;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,5 +17,5 @@ public interface ArmorStandBehaviour {
     default void registerRelic(UUID uuid, RelicType type) {
         registeredRelics.put(uuid, type);
     }
-    void onManipulateArmorStand(PlayerArmorStandManipulateEvent event);
+    void onPlayerInteractEntity(PlayerInteractAtEntityEvent event);
 }
