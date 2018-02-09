@@ -17,6 +17,5 @@ public interface ArmorStandBehaviour {
     default void registerRelic(UUID uuid, RelicType type) {
         registeredRelics.put(uuid, type);
     }
-    //void onManipulateArmorStand(PlayerArmorStandManipulateEvent event);
     void onPlayerInteractEntity(PlayerInteractAtEntityEvent event);
 }

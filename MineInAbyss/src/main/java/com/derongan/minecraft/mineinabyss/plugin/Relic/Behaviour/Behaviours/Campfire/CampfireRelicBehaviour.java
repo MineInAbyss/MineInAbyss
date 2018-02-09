@@ -21,17 +21,20 @@ import java.util.List;
 public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicBehaviour, ArmorStandBehaviour {
 
     RelicType type;
+    List allowedPlacements  = Arrays.asList(Material.GRASS, Material.STONE, Material.DIRT);
+    List foodItems = Arrays.asList(Material.RABBIT, Material.RAW_CHICKEN, Material.RAW_FISH, Material.RAW_BEEF, Material.PORK);
+
     @Override
     public void onUse(PlayerInteractEvent event) {
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getBlockFace() == BlockFace.UP) {
-            event.setCancelled(true);
+        event.setCancelled(true);
 
-            Player player = event.getPlayer();
+        Player player = event.getPlayer();
+
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getBlockFace() == BlockFace.UP && player.getInventory().getItemInMainHand().equals(type.getItem())) {
             Block target = event.getClickedBlock();
             Material ma = target.getType();
-            List allowedPlacements  = Arrays.asList(Material.GRASS, Material.STONE, Material.DIRT);
 
-            if (allowedPlacements.contains(ma)) {
+            if (this.allowedPlacements.contains(ma)) {
                 player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
                 doPlaceCampfire(target);
             }
@@ -55,7 +58,6 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
         Player p = e.getPlayer();
         ArmorStand as = (ArmorStand) e.getRightClicked();
         Material ma = p.getInventory().getItemInMainHand().getType();
-        List foodItems = Arrays.asList(Material.RABBIT, Material.RAW_CHICKEN, Material.RAW_FISH, Material.RAW_BEEF, Material.PORK);
 
         if (ma.equals(Material.COAL)) { //If player is holding coal
             CampfireTimerBehaviour.addBurnTime(600, as, p);
@@ -69,7 +71,7 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
             p.getInventory().addItem(is);
 
             e.setCancelled(true);
-        } else if (foodItems.contains(ma)) { //If player is holding a food item
+        } else if (this.foodItems.contains(ma)) { //If player is holding a food item
             CampfireTimerBehaviour.setCookTime(200, as);
 
             as.setItemInHand(p.getInventory().getItemInMainHand());
@@ -101,16 +103,22 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
                 if (toCook.cookTime <= 0) {
                     Material hand = as.getItemInHand().getType();
                     ItemStack is = as.getItemInHand();
-                    if (hand == Material.RABBIT) {
-                        is.setType(Material.COOKED_RABBIT);
-                    } else if (hand == Material.RAW_CHICKEN) {
-                        is.setType(Material.COOKED_CHICKEN);
-                    } else if (hand == Material.RAW_FISH) {
-                        is.setType(Material.COOKED_FISH);
-                    } else if (hand == Material.RAW_BEEF) {
-                        is.setType(Material.COOKED_BEEF);
-                    } else if (hand == Material.PORK) {
-                        is.setType(Material.GRILLED_PORK);
+                    switch(hand) {
+                        case RABBIT:
+                            is.setType(Material.COOKED_RABBIT);
+                            break;
+                        case RAW_CHICKEN:
+                            is.setType(Material.COOKED_CHICKEN);
+                            break;
+                        case RAW_FISH:
+                            is.setType(Material.COOKED_FISH);
+                            break;
+                        case RAW_BEEF:
+                            is.setType(Material.COOKED_BEEF);
+                            break;
+                        case PORK:
+                            is.setType(Material.GRILLED_PORK);
+                            break;
                     }
                     as.setItemInHand(is);
                 }
