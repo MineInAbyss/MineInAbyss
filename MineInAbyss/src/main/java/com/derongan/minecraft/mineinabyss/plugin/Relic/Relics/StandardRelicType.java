@@ -57,7 +57,7 @@ public enum StandardRelicType implements RelicType {
             new SlaveRelicBehaviour(),
             "Slave Stick",
             Arrays.asList("Ha"),
-            RelicRarity.SPECIAL_GRADE
+            RelicRarity.NOT_IMPLEMENTED
     );
 
     private final Material material;
