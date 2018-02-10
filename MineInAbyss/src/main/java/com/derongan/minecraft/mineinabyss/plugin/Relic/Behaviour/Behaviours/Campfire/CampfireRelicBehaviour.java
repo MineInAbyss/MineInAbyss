@@ -93,12 +93,14 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
         ArmorStand as = (ArmorStand) toCook.entity;
 
         if(toCook.coalLeft <= 0){
-            ItemStack is = as.getHelmet();
-            is.setDurability((short) 3);
-            as.setHelmet(is);
+            if(toCook.coalLeft != -10) {
+                ItemStack is = as.getHelmet();
+                is.setDurability((short) 3);
+                as.setHelmet(is);
+                toCook.coalLeft = -10;
+            }
         }else {
             toCook.coalLeft -= ticks;
-            toCook.cookTime -= ticks;
             if (!as.getItemInHand().getType().equals(Material.AIR)) {
                 if (toCook.cookTime <= 0) {
                     Material hand = as.getItemInHand().getType();
@@ -120,7 +122,12 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
                             is.setType(Material.GRILLED_PORK);
                             break;
                     }
-                    as.setItemInHand(is);
+                    if (toCook.cookTime != -10) {
+                        as.setItemInHand(is);
+                        toCook.cookTime = -10;
+                    }
+                }else{
+                    toCook.cookTime -= ticks;
                 }
                 as.getWorld().spawnParticle(Particle.SMOKE_NORMAL, as.getLocation().add(0.25, 1.6, 0), 1, 0, 0, 0, 0);
             }

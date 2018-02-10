@@ -38,6 +38,9 @@ public interface CampfireTimerBehaviour extends RelicBehaviour {
             is.setDurability((short) 2);
             as.setHelmet(is);
 
+            if(campfire.coalLeft < 0){
+                campfire.coalLeft = 0;
+            }
             campfire.coalLeft += addCoal;
 
             p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
