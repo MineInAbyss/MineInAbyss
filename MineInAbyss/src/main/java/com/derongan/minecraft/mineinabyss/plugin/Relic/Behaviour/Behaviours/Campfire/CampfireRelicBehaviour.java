@@ -93,34 +93,41 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
         ArmorStand as = (ArmorStand) toCook.entity;
 
         if(toCook.coalLeft <= 0){
-            ItemStack is = as.getHelmet();
-            is.setDurability((short) 3);
-            as.setHelmet(is);
+            if(toCook.coalLeft != -10) {
+                ItemStack is = as.getHelmet();
+                is.setDurability((short) 3);
+                as.setHelmet(is);
+                toCook.coalLeft = -10;
+            }
         }else {
             toCook.coalLeft -= ticks;
-            toCook.cookTime -= ticks;
             if (!as.getItemInHand().getType().equals(Material.AIR)) {
                 if (toCook.cookTime <= 0) {
-                    Material hand = as.getItemInHand().getType();
-                    ItemStack is = as.getItemInHand();
-                    switch(hand) {
-                        case RABBIT:
-                            is.setType(Material.COOKED_RABBIT);
-                            break;
-                        case RAW_CHICKEN:
-                            is.setType(Material.COOKED_CHICKEN);
-                            break;
-                        case RAW_FISH:
-                            is.setType(Material.COOKED_FISH);
-                            break;
-                        case RAW_BEEF:
-                            is.setType(Material.COOKED_BEEF);
-                            break;
-                        case PORK:
-                            is.setType(Material.GRILLED_PORK);
-                            break;
+                    if(toCook.cookTime != -10) {
+                        Material hand = as.getItemInHand().getType();
+                        ItemStack is = as.getItemInHand();
+                        switch (hand) {
+                            case RABBIT:
+                                is.setType(Material.COOKED_RABBIT);
+                                break;
+                            case RAW_CHICKEN:
+                                is.setType(Material.COOKED_CHICKEN);
+                                break;
+                            case RAW_FISH:
+                                is.setType(Material.COOKED_FISH);
+                                break;
+                            case RAW_BEEF:
+                                is.setType(Material.COOKED_BEEF);
+                                break;
+                            case PORK:
+                                is.setType(Material.GRILLED_PORK);
+                                break;
+                        }
+                        as.setItemInHand(is);
+                        toCook.cookTime = -10;
                     }
-                    as.setItemInHand(is);
+                }else{
+                    toCook.cookTime -= ticks;
                 }
                 as.getWorld().spawnParticle(Particle.SMOKE_NORMAL, as.getLocation().add(0.25, 1.6, 0), 1, 0, 0, 0, 0);
             }
