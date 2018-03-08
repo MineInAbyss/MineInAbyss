@@ -1,8 +1,16 @@
 dependencies {
     compile project(':MineInAbyss-API')
     compile group: 'org.spigotmc', name: 'spigot', version: project.property("api_version")
+    testCompile "org.mockito:mockito-core:2.+"
 }
 
 jar {
     from project(':MineInAbyss-API').sourceSets.main.output
 }
+
+task copyJar(type: Copy) {
+    from jar // here it automatically reads jar file produced from jar task
+    into '/srv/craftbukkit/plugins/'
+}
+
+build.dependsOn copyJar

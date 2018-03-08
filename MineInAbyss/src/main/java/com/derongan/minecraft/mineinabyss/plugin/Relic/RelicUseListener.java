@@ -101,7 +101,7 @@ public class RelicUseListener implements Listener {
         if(e.getEntity() instanceof Player){
             for (ItemStack itemStack : ((Player) e.getEntity()).getInventory().getArmorContents()) {
                 RelicType type = RelicType.getRegisteredRelicType(itemStack);
-                if (type.getBehaviour() instanceof OnDamageRelicBehaviour) {
+                if (type != null && type.getBehaviour() instanceof OnDamageRelicBehaviour) {
                     ((OnDamageRelicBehaviour) type.getBehaviour()).onDamage(e);
                 }
             }

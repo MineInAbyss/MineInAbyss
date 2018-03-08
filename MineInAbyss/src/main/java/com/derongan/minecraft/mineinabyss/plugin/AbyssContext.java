@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class AbyssContext {
     private Map<UUID, AscensionData> playerAcensionDataMap = new HashMap<>();
-    private Map<String, Layer> layerMap = new HashMap<>();
+    private Map<String, Layer> layerMap;
     private Plugin plugin;
     private Logger logger;
     private Configuration config;
@@ -53,6 +53,10 @@ public class AbyssContext {
 
     public Map<String, Layer> getLayerMap() {
         return layerMap;
+    }
+
+    public void setLayerMap(Map<String, Layer> layerMap) {
+        this.layerMap = layerMap;
     }
 
     public int getTickTime() {

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class Layer {
     private String name;
-    private Set<AscensionEffectBuilder> effectsOnLayer = new HashSet<>();
+    private Set<AscensionEffectBuilder> effectsOnLayer;
     private List<Section> sections;
     private AbyssContext context;
     private String deathMessage;
@@ -50,53 +50,12 @@ public class Layer {
         return ImmutableSet.copyOf(effectsOnLayer);
     }
 
-
-    public void setSectionsOnLayer(List<List<Integer>> points, World world) {
-        sections = points.stream().map(a -> {
-            return new Section(new Vector(a.get(0), 0, a.get(1)), a.get(2), world);
-        }).collect(Collectors.toList());
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
     }
 
-    public void setEffectsOnLayer(Collection<Map> effects) {
-        // TODO Improve this logic
-        for (Map effect : effects) {
-            int duration = (int) effect.getOrDefault("duration", 10);
-            int strength = (int) effect.getOrDefault("strength", 1);
-            int offset = (int) effect.getOrDefault("offset", 50); // TODO CURRENTLY IGNORED
-
-            AscensionEffectBuilder builder = null;
-
-            switch ((String) effect.get("name")) {
-                case "BloodyAscensionEffect":
-                    builder = new AscensionEffectBuilder.BloodyAscensionEffectBuilder();
-                    break;
-                case "DizzyAscensionEffect":
-                    builder = new AscensionEffectBuilder.DizzyAscensionEffectBuilder();
-                    break;
-                case "DamagingAscensionEffect":
-                    builder = new AscensionEffectBuilder.DamagingAscensionEffectBuilder();
-                    break;
-                case "HallucinatingAscensionEffect":
-                    builder = new AscensionEffectBuilder.HallucinatingAscensionEffectBuilder();
-                    break;
-                case "SoundAscensionEffect":
-                    builder = new AscensionEffectBuilder.SoundAscensionEffectBuilder();
-                    ((AscensionEffectBuilder.SoundAscensionEffectBuilder) builder).setSounds((List<String>) effect.getOrDefault("sounds", null));
-                    break;
-                case "DeathAscensionEffect":
-                    builder = new AscensionEffectBuilder.DeathAscensionEffectBuilder();
-                    break;
-            }
-
-            if (builder != null) {
-                builder.setContext(context)
-                        .setDuration(TickUtils.milisecondsToTicks(duration * 1000))
-                        .setStrength(strength)
-                        .setOffset(offset);
-
-                effectsOnLayer.add(builder);
-            }
-        }
+    public void setEffectsOnLayer(Set<AscensionEffectBuilder> effects) {
+        effectsOnLayer = effects;
     }
 
     public String getDeathMessage() {
