@@ -15,14 +15,13 @@ import org.bukkit.util.Vector;
 
 public class AscensionListener implements Listener {
     private AbyssContext context;
-
     private double distanceForEffect = 5;
 
     public AscensionListener(AbyssContext context) {
         this.context = context;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onPlayerMove(PlayerMoveEvent playerMoveEvent) {
         Player player = playerMoveEvent.getPlayer();
 
@@ -35,11 +34,11 @@ public class AscensionListener implements Listener {
                 return;
             }
 
-            double deltaY = playerMoveEvent.getTo().getY() - playerMoveEvent.getFrom().getY();
-            doAscensionEffect(deltaY, currentLayer, data);
-
             double toY = playerMoveEvent.getTo().getY();
             double fromY = playerMoveEvent.getFrom().getY();
+            double deltaY = toY - fromY;
+
+            doAscensionEffect(deltaY, currentLayer, data);
 
             if (currentLayer.getSections().size() > 0) {
                 int currentSectionNum = data.getCurrentSection();
@@ -53,6 +52,7 @@ public class AscensionListener implements Listener {
 
     private void doDescend(Player player, Layer currentLayer, AscensionData data, double toY, double fromY, int currentSectionNum, Section currentSection) {
         int shared;
+
         Layer nextLayer = currentLayer.getNextLayer();
         if (!(currentLayer.isLastSection(currentSectionNum)) || (nextLayer != null && nextLayer.getSections().size() > 0)) {
             Section nextSection;
@@ -64,7 +64,7 @@ public class AscensionListener implements Listener {
             shared = currentSection.getSharedWithBelow();
 
             // once you are three quarters of the distance into the shared area, teleport
-            double threshold = (shared * .4);
+            double threshold = shared * .4;
             double invThresh = shared * .6;
 
             if (toY <= threshold && fromY > toY) {
@@ -90,6 +90,7 @@ public class AscensionListener implements Listener {
 
     private void doAscend(Player player, Layer currentLayer, AscensionData data, double toY, double fromY, int currentSectionNum, Section currentSection) {
         int shared;
+
         Layer prevLayer = currentLayer.getPrevLayer();
         if (!(currentLayer.isFirstSection(currentSectionNum)) || (prevLayer != null && prevLayer.getSections().size() > 0)) {
             Section nextSection;
@@ -100,7 +101,7 @@ public class AscensionListener implements Listener {
             shared = nextSection.getSharedWithBelow();
 
             // once you are one quarters of the distance from the top of the shared area, teleport
-            double threshold = (shared * .4);
+            double threshold = shared * .4;
             double invThresh = shared * .6;
 
             if (toY >= 256 - threshold && fromY < toY) {
@@ -155,13 +156,14 @@ public class AscensionListener implements Listener {
         }
     }
 
-
     //TODO can I get a better cause reason
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent playerDeathEvent) {
-        AscensionData deadPlayerData = context.getPlayerAcensionDataMap().get(playerDeathEvent.getEntity().getUniqueId());
-        String layerOfDeathName = playerDeathEvent.getEntity().getWorld().getName();
-        String playerName = playerDeathEvent.getEntity().getName();
+        Player player = playerDeathEvent.getEntity();
+
+        AscensionData deadPlayerData = context.getPlayerAcensionDataMap().get(player.getUniqueId());
+        String layerOfDeathName = player.getWorld().getName();
+        String playerName = player.getName();
         Layer layerOfDeath = context.getLayerMap().getOrDefault(layerOfDeathName, null);
 
         if(layerOfDeath == null)
@@ -175,10 +177,9 @@ public class AscensionListener implements Listener {
         }
 
         deadPlayerData.setCurrentSection(0);
-        deadPlayerData.clearEffects(playerDeathEvent.getEntity());
+        deadPlayerData.clearEffects(player);
         deadPlayerData.setDistanceMovedUp(0);
 
-        Player player = playerDeathEvent.getEntity();
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
         player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
     }
