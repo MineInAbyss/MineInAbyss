@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss.plugin.Relic.Relics;
 
+import com.derongan.minecraft.mineinabyss.API.Relic.Behaviour.DecayableRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.API.Relic.Relics.RelicType;
 import com.derongan.minecraft.mineinabyss.plugin.Relic.Behaviour.Behaviours.LootableRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.API.Relic.Behaviour.RelicBehaviour;
@@ -71,7 +72,7 @@ public class LootableRelicType implements RelicType {
         as.setCustomNameVisible(true);
         as.setInvulnerable(true);
 
-        behaviour.registerRelic(as, lifetime, this);
+        DecayableRelicBehaviour.registerRelic(as, lifetime, this);
         behaviour.registerRelic(as.getUniqueId(), this);
     }
 }

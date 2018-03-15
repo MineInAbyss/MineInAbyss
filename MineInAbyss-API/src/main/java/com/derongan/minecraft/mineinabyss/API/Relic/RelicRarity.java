@@ -8,7 +8,8 @@ public enum RelicRarity {
     SECOND_GRADE(ChatColor.GOLD),
     THIRD_GRADE(ChatColor.DARK_GREEN),
     FOURTH_GRADE(ChatColor.DARK_BLUE),
-    TOOL(ChatColor.GRAY);
+    TOOL(ChatColor.GRAY),
+    NOT_IMPLEMENTED(ChatColor.WHITE);
 
     ChatColor color;
 

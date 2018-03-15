@@ -22,7 +22,7 @@ public class AscensionListener implements Listener {
         this.context = context;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onPlayerMove(PlayerMoveEvent playerMoveEvent) {
         Player player = playerMoveEvent.getPlayer();
 
@@ -61,6 +61,10 @@ public class AscensionListener implements Listener {
             else
                 nextSection = currentLayer.getSections().get(currentSectionNum + 1);
 
+            if(nextSection.getWorld() == null){
+                return;
+            }
+
             shared = currentSection.getSharedWithBelow();
 
             // once you are three quarters of the distance into the shared area, teleport
@@ -97,6 +101,11 @@ public class AscensionListener implements Listener {
                 nextSection = prevLayer.getSections().get(prevLayer.getSections().size() - 1);
             else
                 nextSection = currentLayer.getSections().get(currentSectionNum - 1);
+
+            if(nextSection.getWorld() == null){
+                return;
+            }
+
             shared = nextSection.getSharedWithBelow();
 
             // once you are one quarters of the distance from the top of the shared area, teleport
@@ -167,12 +176,12 @@ public class AscensionListener implements Listener {
         if(layerOfDeath == null)
             return;
 
-        if (layerOfDeath.getDeathMessage() != null || deadPlayerData.getCurrentEffects().stream().anyMatch(a -> a instanceof DeathAscensionEffect) || (playerDeathEvent.getDeathMessage().contains("withered away"))) {
-            playerDeathEvent.setDeathMessage(layerOfDeath.getDeathMessage().replace("{Player}", playerName));
-        } else {
-            // TODO need to make this flow with current layer.
+        //TODO improve logic
+//        if (layerOfDeath.getDeathMessage() != null || deadPlayerData.getCurrentEffects().stream().anyMatch(a -> a instanceof DeathAscensionEffect) || (playerDeathEvent.getDeathMessage().contains("withered away"))) {
+//            playerDeathEvent.setDeathMessage(layerOfDeath.getDeathMessage().replace("{Player}", playerName));
+//        } else {
             playerDeathEvent.setDeathMessage(playerDeathEvent.getDeathMessage() + " in the depths of the abyss");
-        }
+//        }
 
         deadPlayerData.setCurrentSection(0);
         deadPlayerData.clearEffects(playerDeathEvent.getEntity());

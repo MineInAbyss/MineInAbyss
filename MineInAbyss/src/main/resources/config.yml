@@ -1,6 +1,5 @@
 storage:
   relicpath: "relics/"
-  sqlitefile: "mineinabyss.db"
 layers:
   -
     name: LayerOne
@@ -11,9 +10,17 @@ layers:
         strength: 1
         durationRemaining: 15
     sectionOffsets:
-      - [425,83,36]
-      - [2953,515,41]
-      - [4521,563,41]
+      - [0,0,36]
+      - [2863,16,41]
+      - [4271,0,41]
+      - [5422,-1,41]
+    sectionAreas:
+      - [185,1,126,58]
+    lootTable:
+      chunkrange:
+        topRight: [190, 0]
+        bottomLeft: [124, 60]
+      relics: ALL
   -
     name: LayerTwo
     offset: 40
@@ -23,8 +30,8 @@ layers:
         strength: 2
         durationRemaining: 22
     sectionOffsets:
-      - [1673, 19, 24]
-      - [385, 14, 0]
+      - [1246,-65,24]
+      - [-42,-70,37]
   -
     name: LayerThree
     offset: 30
@@ -46,6 +53,14 @@ layers:
           - BLOCK_FIRE_AMBIENT
           - BLOCK_GRASS_STEP
           - ENTITY_ZOMBIE_STEP
+    sectionOffsets:
+      - [-42,-70,49]
+      - [790,-70,49]
+      - [1622,-70,49]
+      - [2454,-70,49]
+      - [3196,-70,49]
+      - [4118,-70,49]
+      - [4950,-70,0]
   -
     name: LayerFour
     offset: 25
