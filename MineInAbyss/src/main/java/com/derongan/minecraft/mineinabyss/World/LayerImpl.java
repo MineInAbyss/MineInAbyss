@@ -8,10 +8,16 @@ import java.util.List;
 
 public class LayerImpl implements Layer {
     private String layerName;
+    private String layerSub;
     private int index;
-    private World world;
 
     private List<Section> sections;
+
+    public LayerImpl(String layerName, String layerSub, int index) {
+        this.layerName = layerName;
+        this.layerSub = layerSub;
+        this.index = index;
+    }
 
     @Override
     public String getName() {
@@ -19,18 +25,13 @@ public class LayerImpl implements Layer {
     }
 
     @Override
+    public String getSub() {
+        return layerSub;
+    }
+
+    @Override
     public int getIndex() {
         return index;
-    }
-
-    @Override
-    public World getWorld() {
-        return world;
-    }
-
-    @Override
-    public String getWorldName() {
-        return world.getName();
     }
 
     @Override
@@ -41,5 +42,9 @@ public class LayerImpl implements Layer {
     @Override
     public Section getSection(int index) {
         return sections.get(index);
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
     }
 }

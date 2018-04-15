@@ -1,107 +1,94 @@
-storage:
-  relicpath: "relics/"
 layers:
   -
-    name: LayerOne
-    offset: 50
-    effects:
+    name: Orth
+    sub: City of the Great Pit
+    world: LayerOne
+    sections:
       -
-        name: DizzyAscensionEffect
-        strength: 1
-        durationRemaining: 15
-    sectionOffsets:
-      - [0,0,36]
-      - [2863,16,41]
-      - [4271,0,41]
-      - [5422,-1,41]
-    sectionAreas:
-      - [185,1,126,58]
-    lootTable:
-      chunkrange:
-        topRight: [190, 0]
-        bottomLeft: [124, 60]
-      relics: ALL
+        refTop: [0, 0, 0]
+        refBottom: [-493, 16, 125]
+        world: LayerOne
   -
-    name: LayerTwo
-    offset: 40
-    effects:
+    name: Edge of the Abyss
+    sub: 0-1350 meters
+    world: LayerOne
+    sections:
       -
-        name: DizzyAscensionEffect
-        strength: 2
-        durationRemaining: 22
-    sectionOffsets:
-      - [1246,-65,24]
-      - [-42,-70,37]
+        refTop: [2370, 236, 141]
+        refBottom: [2500, 20, 123]
+        world: LayerOne
+      -
+        refTop: [3908, 235, 107]
+        refBottom: [3956, 24, -97]
+        world: LayerOne
+      -
+        refTop: [5107, 239, -98]
+        refBottom: [5149, 21, -99]
+        world: LayerOne
   -
-    name: LayerThree
-    offset: 30
-    effects:
+    name: Forest of Temptation
+    sub: 1351-2600 meters
+    world: LayerTwo
+    sections:
       -
-        name: DizzyAscensionEffect
-        strength: 5
-        durationRemaining: 30
+        refTop: [973, 236, -163]
+        refBottom: [1673, 24, 19]
+        world: LayerTwo
       -
-        name: HallucinatingAscensionEffect
-        strength: 4
-        durationRemaining: 30
-      -
-        name: SoundAscensionEffect
-        strength: 1
-        durationRemaining: 30
-        sounds:
-          - ENTITY_ZOMBIE_AMBIENT
-          - BLOCK_FIRE_AMBIENT
-          - BLOCK_GRASS_STEP
-          - ENTITY_ZOMBIE_STEP
-    sectionOffsets:
-      - [-42,-70,49]
-      - [790,-70,49]
-      - [1622,-70,49]
-      - [2454,-70,49]
-      - [3196,-70,49]
-      - [4118,-70,49]
-      - [4950,-70,0]
+        refTop: [385, 256, 14]
+        refBottom: [0, 19, -149]
+        world: LayerTwo
   -
-    name: LayerFour
-    offset: 25
-    abyssDeathMessage: "{Player} died from ascending on the fourth layer!"
-    effects:
+    name: Great Fault
+    sub: 2601-7000 meters
+    world: LayerThree
+    sections:
       -
-        name: DizzyAscensionEffect
-        strength: 10
-        durationRemaining: 30
+        refTop: [0, 238, -149]
+        refBottom: [0, 25, -149]
+        world: LayerThree
       -
-        name: BloodyAscensionEffect
-        strength: 10
-        durationRemaining: 30
+        refTop: [832, 232, -149]
+        refBottom: [832, 25, -149]
+        world: LayerThree
       -
-        name: DamagingAscensionEffect
-        strength: 4
-        durationRemaining: 30
+        refTop: [1664, 232, -149]
+        refBottom: [1664, 25, -149]
+        world: LayerThree
+      -
+        refTop: [2496, 232, -149]
+        refBottom: [2496, 25, -149]
+        world: LayerThree
+      -
+        refTop: [3238, 232, -149]
+        refBottom: [3238, 25, -149]
+        world: LayerThree
+      -
+        refTop: [4160, 232, -149]
+        refBottom: [4160, 25, -149]
+        world: LayerThree
+      -
+        refTop: [4992, 232, -149]
+        refBottom: [4992, 25, -149]
+        world: LayerThree
   -
-    name: LayerFive
-    offset: 20
-    abyssDeathMessage: "{Player} died from ascending on the fifth layer!"
-    effects:
+    name: Goblet of Giants
+    sub: 7001-12000 meters
+    world: LayerFour
+    sections:
       -
-        name: DizzyAscensionEffect
-        strength: 10
-        durationRemaining: 30
+        refTop: [0, 232, -148]
+        refBottom: [74, 23, -538]
+        world: LayerFour
       -
-        name: BloodyAscensionEffect
-        strength: 10
-        durationRemaining: 30
+        refTop: [1498, 243, -442]
+        refBottom: [1462, 21, -353]
+        world: LayerFour
       -
-        name: DamagingAscensionEffect
-        strength: 6
-        durationRemaining: 30
-
-  -
-    name: LayerSix
-    offset: 10
-    abyssDeathMessage: "{Player} died from ascending on the sixth layer!"
-    effects:
+        refTop: [2886, 241, -353]
+        refBottom: [2859, 21, -276]
+        world: LayerFour
       -
-        name: DeathAscensionEffect
-        strength: 10
-        durationRemaining: 30
+        refTop: [4145, 241, -260]
+        refBottom: [0, 0, 0]
+        world: LayerFour

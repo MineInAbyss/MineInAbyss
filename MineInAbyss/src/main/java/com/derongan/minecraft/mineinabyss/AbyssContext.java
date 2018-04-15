@@ -1,8 +1,10 @@
 package com.derongan.minecraft.mineinabyss;
 
-import com.derongan.minecraft.mineinabyss.Layer.Layer;
 import com.derongan.minecraft.mineinabyss.Player.PlayerData;
+import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
+import com.derongan.minecraft.mineinabyss.World.AbyssWorldManagerImpl;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.Connection;
@@ -16,12 +18,18 @@ import java.util.logging.Logger;
  */
 public class AbyssContext {
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
-    private Map<String, Layer> layerMap;
     private Plugin plugin;
     private Logger logger;
     private Configuration config;
     private int tickTime;
     private Connection connection;
+
+    private AbyssWorldManager worldManager;
+
+    public AbyssContext(Configuration config) {
+        this.config = config;
+        worldManager = new AbyssWorldManagerImpl(getConfig());
+    }
 
     public Plugin getPlugin() {
         return plugin;
@@ -47,23 +55,15 @@ public class AbyssContext {
         return config;
     }
 
-    public void setConfig(Configuration config) {
-        this.config = config;
-    }
-
-    public Map<String, Layer> getLayerMap() {
-        return layerMap;
-    }
-
-    public void setLayerMap(Map<String, Layer> layerMap) {
-        this.layerMap = layerMap;
-    }
-
     public int getTickTime() {
         return tickTime;
     }
 
     public void setTickTime(int tickTime) {
         this.tickTime = tickTime;
+    }
+
+    public AbyssWorldManager getWorldManager() {
+        return worldManager;
     }
 }

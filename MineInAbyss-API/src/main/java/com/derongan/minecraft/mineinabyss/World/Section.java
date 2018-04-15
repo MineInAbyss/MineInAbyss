@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.World;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 public interface Section {
     /**
@@ -26,4 +27,23 @@ public interface Section {
      * @return The bottom reference point
      */
     Location getReferenceLocationBottom();
+
+    /**
+     * Get the layer this section belongs to
+     * @return the layer this section belongs to
+     */
+    Layer getLayer();
+
+
+    /**
+     * Gets the Bukkit World for this section
+     * @return The world this section is in
+     */
+    World getWorld();
+
+    /**
+     * Gets the name of the world this layer is in
+     * @return The name of the world
+     */
+    String getWorldName();
 }

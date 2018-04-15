@@ -12,22 +12,15 @@ public interface Layer {
     String getName();
 
     /**
+     * Get the sub header
+     */
+    String getSub();
+
+    /**
      * Gets the index of this Layer. Higher layers have lower index
      * @return The index of this layer
      */
     int getIndex();
-
-    /**
-     * Gets the Bukkit World for this layer
-     * @return The world this layer is in
-     */
-    World getWorld();
-
-    /**
-     * Gets the name of the world this layer is in
-     * @return The name of the world
-     */
-    String getWorldName();
 
     /**
      * Gets the sections in this layer. This list is immutable.

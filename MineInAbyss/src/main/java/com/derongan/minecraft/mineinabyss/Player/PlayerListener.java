@@ -10,16 +10,18 @@ import java.io.IOException;
 
 public class PlayerListener implements Listener{
     private AbyssContext context;
+    private PlayerDataConfigManager playerDataConfigManager;
 
     public PlayerListener(AbyssContext context) {
         this.context = context;
+        this.playerDataConfigManager = new PlayerDataConfigManager(context);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent joinEvent) {
         context.getPlayerDataMap().put(
                 joinEvent.getPlayer().getUniqueId(),
-                PlayerDataManager.loadPlayerData(joinEvent.getPlayer())
+                playerDataConfigManager.loadPlayerData(joinEvent.getPlayer())
         );
     }
 
@@ -27,7 +29,7 @@ public class PlayerListener implements Listener{
     public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
         PlayerData data = context.getPlayerDataMap().remove(playerQuitEvent.getPlayer().getUniqueId());
         try {
-            PlayerDataManager.savePlayerData(data);
+            playerDataConfigManager.savePlayerData(data);
         } catch (IOException e) {
             context.getLogger().warning("Failed to save data for player "+playerQuitEvent.getPlayer().getUniqueId().toString());
             e.printStackTrace();
