@@ -55,28 +55,28 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
     public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilderImpl {
         @Override
         public AscensionEffect build() {
-            return new BloodyAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+            return new BloodyAscensionEffect(getOffset(), getStrength(), getDuration());
         }
     }
 
     public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilderImpl<DamagingAscensionEffect> {
         @Override
         public DamagingAscensionEffect build() {
-            return new DamagingAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+            return new DamagingAscensionEffect(getOffset(), getStrength(), getDuration());
         }
     }
 
     public static class DizzyAscensionEffectBuilder extends AscensionEffectBuilderImpl<DizzyAscensionEffect> {
         @Override
         public DizzyAscensionEffect build() {
-            return new DizzyAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+            return new DizzyAscensionEffect(getOffset(), getStrength(), getDuration());
         }
     }
 
     public static class DeathAscensionEffectBuilder extends AscensionEffectBuilderImpl<DeathAscensionEffect> {
         @Override
         public DeathAscensionEffect build() {
-            return new DeathAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+            return new DeathAscensionEffect(getOffset(), getStrength(), getDuration());
         }
     }
 
@@ -84,7 +84,7 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
     HallucinatingAscensionEffectBuilder extends AscensionEffectBuilderImpl<HallucinatingAscensionEffect> {
         @Override
         public HallucinatingAscensionEffect build() {
-            return new HallucinatingAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
+            return new HallucinatingAscensionEffect(getOffset(), getStrength(), getDuration());
         }
     }
 

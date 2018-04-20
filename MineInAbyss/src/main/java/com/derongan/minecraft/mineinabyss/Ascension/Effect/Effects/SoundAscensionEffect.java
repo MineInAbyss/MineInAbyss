@@ -1,9 +1,11 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.MineInAbyss;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class SoundAscensionEffect extends AbstractAscensionEffect {
     private int ticksBetweenSoundInitialization;
 
     public SoundAscensionEffect(AbyssContext context, long offset, int strength, int duration, List<String> allowedSounds) {
-        super(context, offset, strength, duration);
+        super(offset, strength, duration);
         sounds = allowedSounds.stream().map((soundString) -> {
             try {
                 return Sound.valueOf(soundString);
@@ -39,9 +41,11 @@ public class SoundAscensionEffect extends AbstractAscensionEffect {
             Location soundLocation = Vector.getRandom().multiply(5).subtract(new Vector(2.5, 2.5, 2.5)).toLocation(player.getWorld()).add(player.getLocation());
             Sound sound = sounds.get(random.nextInt(sounds.size()));
 
-            getContext().getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getContext().getPlugin(), () -> {
+            Plugin plugin = MineInAbyss.getInstance();
+
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 player.playSound(soundLocation, sound, 1f, 1f);
-            }, random.nextInt(getContext().getTickTime()));
+            }, random.nextInt(10));
             lastDurationRemaining = durationRemaining;
         }
     }

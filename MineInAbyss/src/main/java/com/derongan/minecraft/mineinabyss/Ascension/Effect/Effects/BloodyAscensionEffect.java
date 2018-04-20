@@ -1,6 +1,5 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
-import com.derongan.minecraft.mineinabyss.AbyssContext;
 import net.minecraft.server.v1_12_R1.EnumParticle;
 import net.minecraft.server.v1_12_R1.PacketPlayOutWorldParticles;
 import org.bukkit.Location;
@@ -8,8 +7,8 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class BloodyAscensionEffect extends AbstractAscensionEffect {
-    public BloodyAscensionEffect(AbyssContext context, long offset, int strength, int duration) {
-        super(context, offset, strength, duration);
+    public BloodyAscensionEffect(long offset, int strength, int duration) {
+        super(offset, strength, duration);
     }
 
     @Override

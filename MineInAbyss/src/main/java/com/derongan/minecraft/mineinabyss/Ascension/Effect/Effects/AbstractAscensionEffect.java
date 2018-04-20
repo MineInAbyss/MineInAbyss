@@ -5,22 +5,16 @@ import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
 import org.bukkit.entity.Player;
 
 public abstract class AbstractAscensionEffect implements AscensionEffect {
-    private AbyssContext context;
     int durationRemaining;
     int elapsed;
     int strength;
     private long offset; //TODO honor this value
 
-    AbstractAscensionEffect(AbyssContext context, long offset, int strength, int durationRemaining) {
-        this.context = context;
+    AbstractAscensionEffect(long offset, int strength, int durationRemaining) {
         this.durationRemaining = durationRemaining;
         this.elapsed = 0;
         this.offset = offset;
         this.strength = strength;
-    }
-
-    AbyssContext getContext() {
-        return context;
     }
 
     @Override

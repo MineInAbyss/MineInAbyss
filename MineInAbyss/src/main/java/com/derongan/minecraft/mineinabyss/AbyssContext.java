@@ -55,14 +55,6 @@ public class AbyssContext {
         return config;
     }
 
-    public int getTickTime() {
-        return tickTime;
-    }
-
-    public void setTickTime(int tickTime) {
-        this.tickTime = tickTime;
-    }
-
     public AbyssWorldManager getWorldManager() {
         return worldManager;
     }

@@ -1,6 +1,5 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
-import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Spoofing.SpoofedEntityLiving;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Location;
@@ -16,8 +15,8 @@ import java.util.List;
 public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
     private List<SpoofedEntityLiving> stands = new ArrayList<SpoofedEntityLiving>();
 
-    public HallucinatingAscensionEffect(AbyssContext context, long offset, int strength, int duration) {
-        super(context, offset, strength, duration);
+    public HallucinatingAscensionEffect(long offset, int strength, int duration) {
+        super(offset, strength, duration);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
-import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -8,8 +7,8 @@ import org.bukkit.potion.PotionEffectType;
 public class DizzyAscensionEffect extends AbstractAscensionEffect {
     private final PotionEffect effect = new PotionEffect(PotionEffectType.CONFUSION, durationRemaining, strength);
 
-    public DizzyAscensionEffect(AbyssContext context, long offset, int strength, int duration) {
-        super(context, offset, strength, duration);
+    public DizzyAscensionEffect(long offset, int strength, int duration) {
+        super(offset, strength, duration);
     }
 
     @Override
