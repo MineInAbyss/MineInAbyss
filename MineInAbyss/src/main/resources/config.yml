@@ -57,10 +57,10 @@ layers:
         name: DizzyAscensionEffect
         strength: 5
         durationRemaining: 30
-      -
-        name: HallucinatingAscensionEffect
-        strength: 4
-        durationRemaining: 30
+#      -
+#        name: HallucinatingAscensionEffect
+#        strength: 4
+#        durationRemaining: 30
       -
         name: SoundAscensionEffect
         strength: 1

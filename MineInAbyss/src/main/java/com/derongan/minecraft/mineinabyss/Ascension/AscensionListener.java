@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class AscensionListener implements Listener {
 
             int shared = SectionUtils.getSharedBlocks(currentSection, newSection);
 
-            if (to.getY() > WORLD_HEIGHT - .4 * shared) {
+            if (to.getY() > WORLD_HEIGHT - .3 * shared) {
                 teleportBetweenSections(playerData, to, currentSection, newSection);
             }
 
@@ -86,7 +87,7 @@ public class AscensionListener implements Listener {
 
             int shared = SectionUtils.getSharedBlocks(currentSection, newSection);
 
-            if (to.getY() < .6 * shared) {
+            if (to.getY() < .3 * shared) {
                 teleportBetweenSections(playerData, to, currentSection, newSection);
             }
         }
@@ -95,7 +96,9 @@ public class AscensionListener implements Listener {
     private void teleportBetweenSections(PlayerData data, Location to, Section oldSection, Section newSection) {
         Location newLoc = SectionUtils.getCorrespondingLocation(oldSection, newSection, to);
 
+        Vector oldVelocity = data.getPlayer().getVelocity();
         data.getPlayer().teleport(newLoc);
+        data.getPlayer().setVelocity(oldVelocity);
 
         recentlyMovedPlayers.add(data.getPlayer().getUniqueId());
 
