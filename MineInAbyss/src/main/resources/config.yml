@@ -12,6 +12,11 @@ layers:
     name: Edge of the Abyss
     sub: 0-1350 meters
     world: LayerOne
+    effects:
+      -
+        name: DizzyAscensionEffect
+        strength: 1
+        durationRemaining: 15
     sections:
       -
         refTop: [2370, 236, 141]

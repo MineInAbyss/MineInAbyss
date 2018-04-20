@@ -3,8 +3,6 @@ package com.derongan.minecraft.mineinabyss.Player;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
 import com.derongan.minecraft.mineinabyss.World.Layer;
 import com.derongan.minecraft.mineinabyss.World.Section;
-import org.bukkit.Effect;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -77,4 +75,16 @@ public interface PlayerData {
      * @param effect the effect to add
      */
     void addAscensionEffect(AscensionEffect effect);
+
+    /**
+     * Get the distance the player has ascended since last being affected by the curse
+     * @return The distance in meters
+     */
+    double getDistanceAscended();
+
+    /**
+     * Set the distance the player has ascended.
+     * TODO should this be exposed like this?
+     */
+    void setDistanceAscended(double distanceAscended);
 }

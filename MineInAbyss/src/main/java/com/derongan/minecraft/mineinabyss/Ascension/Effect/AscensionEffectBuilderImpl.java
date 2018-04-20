@@ -10,15 +10,13 @@ import java.util.stream.Collectors;
 
 
 //TODO look at java patterns and figure out a nice way to not have to repeat the builder multiple times
-public abstract class AscensionEffectBuilder<E extends AscensionEffect> {
+public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> implements AscensionEffectBuilder {
     private AbyssContext context;
     private long offset = 30;
     private int strength = 1;
     private int duration = 200;   // Pass it in as as ticks here
 
-    public abstract E build();
-
-    public AscensionEffectBuilder<E> setContext(AbyssContext context) {
+    public AscensionEffectBuilderImpl<E> setContext(AbyssContext context) {
         this.context = context;
         return this;
     }
@@ -35,12 +33,12 @@ public abstract class AscensionEffectBuilder<E extends AscensionEffect> {
         return strength;
     }
 
-    public AscensionEffectBuilder<E> setStrength(int strength) {
+    public AscensionEffectBuilderImpl<E> setStrength(int strength) {
         this.strength = strength;
         return this;
     }
 
-    public AscensionEffectBuilder<E> setOffset(long offset) {
+    public AscensionEffectBuilderImpl<E> setOffset(long offset) {
         this.offset = offset;
         return this;
     }
@@ -49,33 +47,33 @@ public abstract class AscensionEffectBuilder<E extends AscensionEffect> {
         return duration;
     }
 
-    public AscensionEffectBuilder<E> setDuration(int duration) {
+    public AscensionEffectBuilderImpl<E> setDuration(int duration) {
         this.duration = duration;
         return this;
     }
 
-    public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilder {
+    public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilderImpl {
         @Override
         public AscensionEffect build() {
             return new BloodyAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
         }
     }
 
-    public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilder<DamagingAscensionEffect> {
+    public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilderImpl<DamagingAscensionEffect> {
         @Override
         public DamagingAscensionEffect build() {
             return new DamagingAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
         }
     }
 
-    public static class DizzyAscensionEffectBuilder extends AscensionEffectBuilder<DizzyAscensionEffect> {
+    public static class DizzyAscensionEffectBuilder extends AscensionEffectBuilderImpl<DizzyAscensionEffect> {
         @Override
         public DizzyAscensionEffect build() {
             return new DizzyAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
         }
     }
 
-    public static class DeathAscensionEffectBuilder extends AscensionEffectBuilder<DeathAscensionEffect> {
+    public static class DeathAscensionEffectBuilder extends AscensionEffectBuilderImpl<DeathAscensionEffect> {
         @Override
         public DeathAscensionEffect build() {
             return new DeathAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
@@ -83,14 +81,14 @@ public abstract class AscensionEffectBuilder<E extends AscensionEffect> {
     }
 
     public static class
-    HallucinatingAscensionEffectBuilder extends AscensionEffectBuilder<HallucinatingAscensionEffect> {
+    HallucinatingAscensionEffectBuilder extends AscensionEffectBuilderImpl<HallucinatingAscensionEffect> {
         @Override
         public HallucinatingAscensionEffect build() {
             return new HallucinatingAscensionEffect(getContext(), getOffset(), getStrength(), getDuration());
         }
     }
 
-    public static class SoundAscensionEffectBuilder extends AscensionEffectBuilder<SoundAscensionEffect> {
+    public static class SoundAscensionEffectBuilder extends AscensionEffectBuilderImpl<SoundAscensionEffect> {
         private static final List<String> ALL_SOUNDS = Arrays.stream(Sound.values()).map(sound->sound.name()).collect(Collectors.toList());
         List<String> sounds = ALL_SOUNDS;
 

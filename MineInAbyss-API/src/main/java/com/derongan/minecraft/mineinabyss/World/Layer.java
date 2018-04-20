@@ -1,5 +1,7 @@
 package com.derongan.minecraft.mineinabyss.World;
 
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 import org.bukkit.World;
 
 import java.util.List;
@@ -34,6 +36,11 @@ public interface Layer {
      * @return The section at the index
      */
     Section getSection(int index);
+
+    /**
+     * Gets the effects of ascending on this layer
+     */
+    List<AscensionEffectBuilder> getAscensionEffects();
 
 
     /**

@@ -3,15 +3,9 @@ package com.derongan.minecraft.mineinabyss.Player;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
 import com.derongan.minecraft.mineinabyss.World.Layer;
 import com.derongan.minecraft.mineinabyss.World.Section;
-import com.google.common.annotations.VisibleForTesting;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 
 public class PlayerDataImpl implements PlayerData {
@@ -21,8 +15,9 @@ public class PlayerDataImpl implements PlayerData {
     private boolean affectedByCurse;
     private boolean anchored;
 
-    @VisibleForTesting
-    Player player;
+    private double distanceAscended;
+
+    private Player player;
 
     public PlayerDataImpl(Player player) {
         this.player = player;
@@ -85,19 +80,13 @@ public class PlayerDataImpl implements PlayerData {
         effects.add(effect);
     }
 
-    public static PlayerDataImpl valueOf(Map<String, Object> map){
-        Player player = Bukkit.getPlayer((UUID)map.get("uuid"));
-        boolean affected = (boolean) map.get("affected");
-        boolean anchored = (boolean) map.get("anchored");
+    @Override
+    public double getDistanceAscended() {
+        return distanceAscended;
+    }
 
-        PlayerDataImpl playerData = new PlayerDataImpl(player);
-
-        //TODO think about this. We initialize in a way that only we can, and
-        //dont expose ways to mess this object up.
-        playerData.player = player;
-        playerData.setAffectedByCurse(affected);
-        playerData.setAnchored(anchored);
-
-        return playerData;
+    @Override
+    public void setDistanceAscended(double distanceAscended) {
+        this.distanceAscended = distanceAscended;
     }
 }

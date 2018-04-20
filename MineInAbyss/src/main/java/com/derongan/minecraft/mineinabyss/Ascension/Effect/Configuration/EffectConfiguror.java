@@ -1,7 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect.Configuration;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilderImpl;
 import com.derongan.minecraft.mineinabyss.util.TickUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -16,8 +16,8 @@ public class EffectConfiguror {
         this.context = context;
     }
 
-    public Set<AscensionEffectBuilder> getEffectsFromMap(Collection<Map> effects) {
-        Set<AscensionEffectBuilder> ascensionEffectBuilders = new HashSet<>();
+    public Set<AscensionEffectBuilderImpl> getEffectsFromMap(Collection<Map> effects) {
+        Set<AscensionEffectBuilderImpl> ascensionEffectBuilders = new HashSet<>();
 
         // TODO Improve this logic
         for (Map effect : effects) {
@@ -25,7 +25,7 @@ public class EffectConfiguror {
             int strength = (int) effect.getOrDefault("strength", 1);
             int offset = (int) effect.getOrDefault("offset", 50); // TODO CURRENTLY IGNORED
 
-            AscensionEffectBuilder builder = buildAscensionEffects(effect);
+            AscensionEffectBuilderImpl builder = buildAscensionEffects(effect);
 
             if (builder != null) {
                 builder.setContext(context)
@@ -40,28 +40,28 @@ public class EffectConfiguror {
         return ascensionEffectBuilders;
     }
 
-    private AscensionEffectBuilder buildAscensionEffects(Map effect) {
-        AscensionEffectBuilder builder = null;
+    private AscensionEffectBuilderImpl buildAscensionEffects(Map effect) {
+        AscensionEffectBuilderImpl builder = null;
 
         switch ((String) effect.get("name")) {
             case "BloodyAscensionEffect":
-                builder = new AscensionEffectBuilder.BloodyAscensionEffectBuilder();
+                builder = new AscensionEffectBuilderImpl.BloodyAscensionEffectBuilder();
                 break;
             case "DizzyAscensionEffect":
-                builder = new AscensionEffectBuilder.DizzyAscensionEffectBuilder();
+                builder = new AscensionEffectBuilderImpl.DizzyAscensionEffectBuilder();
                 break;
             case "DamagingAscensionEffect":
-                builder = new AscensionEffectBuilder.DamagingAscensionEffectBuilder();
+                builder = new AscensionEffectBuilderImpl.DamagingAscensionEffectBuilder();
                 break;
             case "HallucinatingAscensionEffect":
-                builder = new AscensionEffectBuilder.HallucinatingAscensionEffectBuilder();
+                builder = new AscensionEffectBuilderImpl.HallucinatingAscensionEffectBuilder();
                 break;
             case "SoundAscensionEffect":
-                builder = new AscensionEffectBuilder.SoundAscensionEffectBuilder();
-                ((AscensionEffectBuilder.SoundAscensionEffectBuilder) builder).setSounds((List<String>) effect.getOrDefault("sounds", null));
+                builder = new AscensionEffectBuilderImpl.SoundAscensionEffectBuilder();
+                ((AscensionEffectBuilderImpl.SoundAscensionEffectBuilder) builder).setSounds((List<String>) effect.getOrDefault("sounds", null));
                 break;
             case "DeathAscensionEffect":
-                builder = new AscensionEffectBuilder.DeathAscensionEffectBuilder();
+                builder = new AscensionEffectBuilderImpl.DeathAscensionEffectBuilder();
                 break;
         }
         return builder;

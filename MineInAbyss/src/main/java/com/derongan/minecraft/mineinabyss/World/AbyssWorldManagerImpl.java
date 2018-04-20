@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss.World;
 
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -24,6 +25,7 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
     private static final String NAME_KEY = "name";
     private static final String SUB_KEY = "sub";
     private static final String SECTION_KEY = "sections";
+    private static final String EFFECTS_KEY = "effects";
 
     public AbyssWorldManagerImpl(Configuration config) {
         layers = new ArrayList<>();
@@ -48,7 +50,16 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
                         .collect(Collectors.toList())
         );
 
+        layer.setEffects(((List<Map<?,?>>)map.get(EFFECTS_KEY))
+                        .stream()
+                        .map(this::parseAscensionEffects)
+                        .collect(Collectors.toList()));
+
         return layer;
+    }
+
+    private AscensionEffectBuilder parseAscensionEffects(Map<?,?> map){
+        return null;
     }
 
     private Section parseSection(Map<?, ?> map, Layer layer) {

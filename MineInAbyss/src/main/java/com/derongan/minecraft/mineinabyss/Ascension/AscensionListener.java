@@ -51,6 +51,16 @@ public class AscensionListener implements Listener {
 
         Section currentSection = playerData.getCurrentSection();
 
+        if(playerData.isAffectedByCurse()){
+            double dist = playerData.getDistanceAscended();
+            playerData.setDistanceAscended(Math.max(dist - changeY,0));
+
+            if(dist >= 10){
+                playerData.getCurrentLayer().getAscensionEffects().forEach(playerData::addAscensionEffect);
+                playerData.setDistanceAscended(0);
+            }
+        }
+
         if (changeY > 0) {
             Section newSection = manager.getSectonAt(currentSection.getIndex() - 1);
 
@@ -109,7 +119,11 @@ public class AscensionListener implements Listener {
 
         AbyssWorldManager manager = context.getWorldManager();
 
+        Layer layerOfDeath = context.getPlayerDataMap().get(player.getUniqueId()).getCurrentLayer();
+
         context.getPlayerDataMap().get(player.getUniqueId()).setCurrentSection(manager.getSectonAt(0));
         context.getPlayerDataMap().get(player.getUniqueId()).setCurrentLayer(manager.getLayerAt(0));
+
+        deathEvent.setDeathMessage(deathEvent.getDeathMessage() + layerOfDeath.getDeathMessage());
     }
 }
