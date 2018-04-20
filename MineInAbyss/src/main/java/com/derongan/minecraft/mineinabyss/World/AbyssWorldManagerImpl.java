@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.World;
 
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.Configuration.EffectConfiguror;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -8,10 +9,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AbyssWorldManagerImpl implements AbyssWorldManager {
@@ -43,23 +41,32 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
         LayerImpl layer = new LayerImpl(layerName, subHeader, numLayers++);
         layers.add(layer);
 
+        List<Map<?, ?>> sectionMap = (List<Map<?, ?>>) map.get(SECTION_KEY);
+
         layer.setSections(
-                ((List<Map<?, ?>>) map.get(SECTION_KEY))
+                sectionMap
                         .stream()
                         .map(a -> parseSection(a, layer))
                         .collect(Collectors.toList())
         );
 
-        layer.setEffects(((List<Map<?,?>>)map.get(EFFECTS_KEY))
+        List<Map<?, ?>> effectMap = (List<Map<?, ?>>) map.get(EFFECTS_KEY);
+        if (effectMap == null)
+            effectMap = Collections.emptyList();
+
+        layer.setEffects(
+                effectMap
                         .stream()
                         .map(this::parseAscensionEffects)
-                        .collect(Collectors.toList()));
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
 
         return layer;
     }
 
-    private AscensionEffectBuilder parseAscensionEffects(Map<?,?> map){
-        return null;
+    private AscensionEffectBuilder parseAscensionEffects(Map<?, ?> map) {
+        return EffectConfiguror.createBuilderFromMap(map);
     }
 
     private Section parseSection(Map<?, ?> map, Layer layer) {
@@ -92,7 +99,7 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
 
     @Override
     public Section getSectonAt(int index) {
-        if(index >= sections.size() || index < 0)
+        if (index >= sections.size() || index < 0)
             return null;
 
         return sections.get(index);
@@ -100,7 +107,7 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
 
     @Override
     public Layer getLayerAt(int index) {
-        if(index >= layers.size() || index < 0)
+        if (index >= layers.size() || index < 0)
             return null;
 
         return layers.get(index);

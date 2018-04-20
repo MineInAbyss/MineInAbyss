@@ -22,7 +22,7 @@ public class SoundAscensionEffect extends AbstractAscensionEffect {
     private int lastDurationRemaining;
     private int ticksBetweenSoundInitialization;
 
-    public SoundAscensionEffect(AbyssContext context, long offset, int strength, int duration, List<String> allowedSounds) {
+    public SoundAscensionEffect(long offset, int strength, int duration, List<String> allowedSounds) {
         super(offset, strength, duration);
         sounds = allowedSounds.stream().map((soundString) -> {
             try {

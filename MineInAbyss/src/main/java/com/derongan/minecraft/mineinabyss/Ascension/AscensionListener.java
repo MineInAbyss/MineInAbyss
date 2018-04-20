@@ -53,10 +53,13 @@ public class AscensionListener implements Listener {
 
         if(playerData.isAffectedByCurse()){
             double dist = playerData.getDistanceAscended();
-            playerData.setDistanceAscended(Math.max(dist - changeY,0));
+            playerData.setDistanceAscended(Math.max(dist + changeY,0));
 
             if(dist >= 10){
-                playerData.getCurrentLayer().getAscensionEffects().forEach(playerData::addAscensionEffect);
+                playerData.getCurrentLayer().getAscensionEffects().forEach(a->{
+                   a.build().applyEffect(player,10);
+                });
+                player.sendMessage("Oh no u is cursed");
                 playerData.setDistanceAscended(0);
             }
         }
@@ -103,6 +106,7 @@ public class AscensionListener implements Listener {
 
         data.setCurrentSection(newSection);
         data.setCurrentLayer(newSection.getLayer());
+        data.setDistanceAscended(0); // Reset distance
 
         if (newSection.getLayer() != oldSection.getLayer()) {
             data.getPlayer().sendTitle(newSection.getLayer().getName(), newSection.getLayer().getSub(), 50, 10, 20);

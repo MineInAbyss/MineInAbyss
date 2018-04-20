@@ -34,6 +34,11 @@ layers:
     name: Forest of Temptation
     sub: 1351-2600 meters
     world: LayerTwo
+    effects:
+      -
+        name: DizzyAscensionEffect
+        strength: 2
+        durationRemaining: 22
     sections:
       -
         refTop: [973, 236, -163]
@@ -47,6 +52,24 @@ layers:
     name: Great Fault
     sub: 2601-7000 meters
     world: LayerThree
+    effects:
+      -
+        name: DizzyAscensionEffect
+        strength: 5
+        durationRemaining: 30
+      -
+        name: HallucinatingAscensionEffect
+        strength: 4
+        durationRemaining: 30
+      -
+        name: SoundAscensionEffect
+        strength: 1
+        durationRemaining: 30
+        sounds:
+          - ENTITY_ZOMBIE_AMBIENT
+          - BLOCK_FIRE_AMBIENT
+          - BLOCK_GRASS_STEP
+          - ENTITY_ZOMBIE_STEP
     sections:
       -
         refTop: [0, 238, -149]
@@ -80,6 +103,19 @@ layers:
     name: Goblet of Giants
     sub: 7001-12000 meters
     world: LayerFour
+    effects:
+      -
+        name: DizzyAscensionEffect
+        strength: 10
+        durationRemaining: 30
+      -
+        name: BloodyAscensionEffect
+        strength: 10
+        durationRemaining: 30
+      -
+        name: DamagingAscensionEffect
+        strength: 4
+        durationRemaining: 30
     sections:
       -
         refTop: [0, 232, -148]

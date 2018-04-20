@@ -11,19 +11,9 @@ import java.util.stream.Collectors;
 
 //TODO look at java patterns and figure out a nice way to not have to repeat the builder multiple times
 public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> implements AscensionEffectBuilder {
-    private AbyssContext context;
     private long offset = 30;
     private int strength = 1;
     private int duration = 200;   // Pass it in as as ticks here
-
-    public AscensionEffectBuilderImpl<E> setContext(AbyssContext context) {
-        this.context = context;
-        return this;
-    }
-
-    AbyssContext getContext() {
-        return context;
-    }
 
     long getOffset() {
         return offset;
@@ -94,7 +84,7 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
 
         @Override
         public SoundAscensionEffect build() {
-            return new SoundAscensionEffect(getContext(), getOffset(), getStrength(), getDuration(), getSounds());
+            return new SoundAscensionEffect(getOffset(), getStrength(), getDuration(), getSounds());
         }
 
         public SoundAscensionEffectBuilder setSounds(List<String> allowedSounds){
