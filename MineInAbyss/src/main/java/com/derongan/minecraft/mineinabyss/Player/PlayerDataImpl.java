@@ -21,6 +21,7 @@ public class PlayerDataImpl implements PlayerData {
 
     public PlayerDataImpl(Player player) {
         this.player = player;
+        this.affectedByCurse = true;
     }
 
     private List<AscensionEffect> effects;

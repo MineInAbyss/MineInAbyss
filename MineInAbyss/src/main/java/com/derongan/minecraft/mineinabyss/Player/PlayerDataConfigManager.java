@@ -19,6 +19,7 @@ public class PlayerDataConfigManager {
     private static final String SECTION_KEY = "section";
     private static final String AFFECTABLE_KEY = "affectable";
     private static final String ANCHORED_KEY = "anchored";
+    private static final String ASCENDED_KEY = "ascended";
 
     private AbyssContext context;
 
@@ -38,6 +39,7 @@ public class PlayerDataConfigManager {
             data.setAnchored(config.getBoolean(ANCHORED_KEY));
             data.setCurrentLayer(manager.getLayerAt(config.getInt(LAYER_KEY)));
             data.setCurrentSection(manager.getSectonAt(config.getInt(SECTION_KEY)));
+            data.setDistanceAscended(config.getDouble(ASCENDED_KEY));
 
             return data;
         } else {
@@ -61,6 +63,7 @@ public class PlayerDataConfigManager {
         config.set(SECTION_KEY, playerData.getCurrentSection().getIndex());
         config.set(AFFECTABLE_KEY, playerData.isAffectedByCurse());
         config.set(ANCHORED_KEY, playerData.isAnchored());
+        config.set(ASCENDED_KEY, playerData.getDistanceAscended());
 
         config.save(path.toFile());
     }
