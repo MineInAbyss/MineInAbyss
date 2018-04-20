@@ -24,13 +24,13 @@ public class WorldCommandExecutor implements CommandExecutor {
 
             if (label.equals("sectionon")) {
                 context.getPlayerDataMap().get(player.getUniqueId()).setAnchored(false);
-                player.sendMessage("Automatic TP disabled");
+                player.sendMessage("Automatic TP enabled");
                 return true;
             }
 
             if (label.equals("sectionoff")){
                 context.getPlayerDataMap().get(player.getUniqueId()).setAnchored(true);
-                player.sendMessage("Automatic TP enabled");
+                player.sendMessage("Automatic TP disabled");
                 return true;
             }
         }

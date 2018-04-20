@@ -89,10 +89,10 @@ layers:
         world: LayerThree
       -
         refTop: [3238, 232, -149]
-        refBottom: [3238, 25, -149]
+        refBottom: [3223, 25, 92]
         world: LayerThree
       -
-        refTop: [4160, 232, -149]
+        refTop: [4055, 232, 92]
         refBottom: [4160, 25, -149]
         world: LayerThree
       -

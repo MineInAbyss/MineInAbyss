@@ -6,10 +6,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AscensionCommandListener implements CommandExecutor {
+public class AscensionCommandExecutor implements CommandExecutor {
     private AbyssContext context;
 
-    public AscensionCommandListener(AbyssContext context) {
+    public AscensionCommandExecutor(AbyssContext context) {
         this.context = context;
     }
 
