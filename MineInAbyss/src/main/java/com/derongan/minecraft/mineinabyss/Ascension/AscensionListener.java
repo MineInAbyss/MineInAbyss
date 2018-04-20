@@ -59,10 +59,12 @@ public class AscensionListener implements Listener {
                 playerData.getCurrentLayer().getAscensionEffects().forEach(a->{
                    a.build().applyEffect(player,10);
                 });
-                player.sendMessage("Oh no u is cursed");
                 playerData.setDistanceAscended(0);
             }
         }
+
+        if(playerData.isAnchored())
+            return;
 
         if (changeY > 0) {
             Section newSection = manager.getSectonAt(currentSection.getIndex() - 1);

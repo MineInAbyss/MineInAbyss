@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss;
 
+import com.derongan.minecraft.mineinabyss.Ascension.AscensionCommandListener;
 import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
 import com.derongan.minecraft.mineinabyss.Configuration.ConfigurationManager;
 import com.derongan.minecraft.mineinabyss.Player.PlayerData;
@@ -9,6 +10,7 @@ import com.derongan.minecraft.mineinabyss.Relic.Loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.Relic.RelicCommandExecutor;
 import com.derongan.minecraft.mineinabyss.Relic.RelicDecayTask;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
+import com.derongan.minecraft.mineinabyss.World.WorldCommandExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,15 +42,25 @@ public final class MineInAbyss extends JavaPlugin {
                         manager.loadPlayerData(player))
         );
 
-//        Runnable decayTask = new RelicDecayTask(TICKS_BETWEEN);
-//        getServer().getScheduler().scheduleSyncRepeatingTask(this, decayTask, TICKS_BETWEEN, TICKS_BETWEEN);
-//        getServer().getPluginManager().registerEvents(new RelicUseListener(), this);
-//        RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
-//        this.getCommand("relic").setExecutor(relicCommandExecutor);
-//        this.getCommand("relicreload").setExecutor(relicCommandExecutor);
-//        this.getCommand("relics").setExecutor(relicCommandExecutor);
-//
-//        RelicLoader.loadAllRelics(context);
+        Runnable decayTask = new RelicDecayTask(TICKS_BETWEEN);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, decayTask, TICKS_BETWEEN, TICKS_BETWEEN);
+        getServer().getPluginManager().registerEvents(new RelicUseListener(), this);
+        RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
+        this.getCommand("relic").setExecutor(relicCommandExecutor);
+        this.getCommand("relicreload").setExecutor(relicCommandExecutor);
+        this.getCommand("relics").setExecutor(relicCommandExecutor);
+
+        WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
+
+        this.getCommand("sectionon").setExecutor(worldCommandExecutor);
+        this.getCommand("sectionoff").setExecutor(worldCommandExecutor);
+
+        AscensionCommandListener ascensionCommandListener = new AscensionCommandListener(context);
+
+        this.getCommand("curseon").setExecutor(ascensionCommandListener);
+        this.getCommand("curseoff").setExecutor(ascensionCommandListener);
+
+        RelicLoader.loadAllRelics(context);
     }
 
     @Override

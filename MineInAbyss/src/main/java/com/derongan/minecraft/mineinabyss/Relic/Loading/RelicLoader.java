@@ -32,6 +32,10 @@ public class RelicLoader {
 //            RelicType.registerRelicType(slightlyOffzRelicType);
 //        }
 
+        //TODO fix so custom are enabled again
+        if(true)
+            return;
+
         String relicRelDir = (String) context.getConfig().get("storage.relicpath");
         URI fullURI = context.getPlugin().getDataFolder().toURI().resolve(relicRelDir);
 

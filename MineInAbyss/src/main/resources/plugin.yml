@@ -21,3 +21,9 @@ commands:
   sectionon:
     description: why
     usage: /sectionon
+  curseon:
+    description: Turn on curse
+    usage: /curseon
+  curseoff:
+    description: Turn off curse
+    usage: /curseoff
