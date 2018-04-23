@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
@@ -42,6 +43,9 @@ public class AscensionListener implements Listener {
             return;
 
         AbyssWorldManager manager = context.getWorldManager();
+
+        if (!manager.isAbyssWorld(player.getWorld().getName()))
+            return;
 
         Location from = moveEvent.getFrom();
         Location to = moveEvent.getTo();
@@ -134,5 +138,11 @@ public class AscensionListener implements Listener {
         context.getPlayerDataMap().get(player.getUniqueId()).setCurrentLayer(manager.getLayerAt(0));
 
         deathEvent.setDeathMessage(deathEvent.getDeathMessage() + layerOfDeath.getDeathMessage());
+    }
+
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent playerTeleportEvent){
+        Player player = playerTeleportEvent.getPlayer();
+        PlayerData data = context.getPlayerDataMap().get(player.getUniqueId());
     }
 }

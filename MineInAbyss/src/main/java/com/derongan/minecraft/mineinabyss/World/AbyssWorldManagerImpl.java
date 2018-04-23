@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class AbyssWorldManagerImpl implements AbyssWorldManager {
     private List<Section> sections;
     private List<Layer> layers;
+    private Set<String> abyssWorlds;
 
     private int numLayers;
     private int numSections;
@@ -28,6 +29,8 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
     public AbyssWorldManagerImpl(Configuration config) {
         layers = new ArrayList<>();
         sections = new ArrayList<>();
+
+        abyssWorlds = new HashSet<>();
 
         List<Map<?, ?>> layerlist = config.getMapList(LAYER_KEY);
 
@@ -73,6 +76,8 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
         String worldName = (String) map.get("world");
         World world = Bukkit.getWorld(worldName);
 
+        abyssWorlds.add(worldName);
+
         Location refBottom = parseLocation((List<Integer>) map.get("refBottom"), world);
         Location refTop = parseLocation((List<Integer>) map.get("refTop"), world);
 
@@ -111,5 +116,10 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
             return null;
 
         return layers.get(index);
+    }
+
+    @Override
+    public boolean isAbyssWorld(String worldName) {
+        return abyssWorlds.contains(worldName);
     }
 }

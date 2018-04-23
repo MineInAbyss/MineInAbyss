@@ -31,4 +31,11 @@ public interface AbyssWorldManager {
      * @return the layer to get
      */
     Layer getLayerAt(int index);
+
+    /**
+     * Check if the world is a world set up for the abyss
+     * @param worldName
+     * @return
+     */
+    boolean isAbyssWorld(String worldName);
 }
