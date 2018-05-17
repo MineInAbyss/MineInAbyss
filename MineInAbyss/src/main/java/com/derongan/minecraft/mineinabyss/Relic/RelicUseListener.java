@@ -1,7 +1,10 @@
 package com.derongan.minecraft.mineinabyss.Relic;
 
+import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.*;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
+import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
+import net.minecraft.server.v1_12_R1.WorldManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -32,6 +35,14 @@ public class RelicUseListener implements Listener {
             Material.RED_MUSHROOM,
             Material.DOUBLE_PLANT).collect(Collectors.toSet());
 
+    private AbyssContext context;
+    private AbyssWorldManager worldManager;
+
+    public RelicUseListener(AbyssContext context) {
+        this.context = context;
+        worldManager = context.getWorldManager();
+    }
+
     @EventHandler()
     public void onPlayerFish(PlayerFishEvent playerFishEvent) {
     }
@@ -43,6 +54,11 @@ public class RelicUseListener implements Listener {
     @EventHandler()
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
+
+        if(!worldManager.isAbyssWorld(event.getPlayer().getWorld().getName())){
+            return;
+        }
+
         RelicType relicType = RelicType.getRegisteredRelicType(player.getInventory().getItemInMainHand());
 
         if (relicType != null) {
@@ -55,6 +71,11 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onEntityHit(EntityDamageByEntityEvent entityDamageByEntityEvent) {
+
+        if(!worldManager.isAbyssWorld(entityDamageByEntityEvent.getDamager().getWorld().getName())){
+            return;
+        }
+
         Entity damager = entityDamageByEntityEvent.getDamager();
 
         if (damager instanceof Player) {
@@ -75,6 +96,10 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
+        if(!worldManager.isAbyssWorld(e.getPlayer().getWorld().getName())){
+            return;
+        }
+
         RelicType relicType = ArmorStandBehaviour.registeredRelics.get(e.getRightClicked().getUniqueId());
 
         if(relicType != null){
@@ -86,6 +111,10 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onEntityDamageEvent(EntityDamageEvent e){
+        if(!worldManager.isAbyssWorld(e.getEntity().getWorld().getName())){
+            return;
+        }
+
         if(e.getEntity() instanceof Player){
             for (ItemStack itemStack : ((Player) e.getEntity()).getInventory().getArmorContents()) {
                 RelicType type = RelicType.getRegisteredRelicType(itemStack);
@@ -98,6 +127,10 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerUseItem(PlayerInteractEvent playerInteractEvent) {
+        if(!worldManager.isAbyssWorld(playerInteractEvent.getPlayer().getWorld().getName())){
+            return;
+        }
+
         RelicType type = RelicType.getRegisteredRelicType(playerInteractEvent.getItem());
 
         if (type != null) {
@@ -118,6 +151,9 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerChat(AsyncPlayerChatEvent chatEvent) {
+        if(!worldManager.isAbyssWorld(chatEvent.getPlayer().getWorld().getName())){
+            return;
+        }
 
         Player player = chatEvent.getPlayer();
         RelicType type = RelicType.getRegisteredRelicType(player.getInventory().getItemInMainHand());
