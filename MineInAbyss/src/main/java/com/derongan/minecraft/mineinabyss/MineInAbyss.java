@@ -9,11 +9,16 @@ import com.derongan.minecraft.mineinabyss.Player.PlayerListener;
 import com.derongan.minecraft.mineinabyss.Relic.Loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.Relic.RelicCommandExecutor;
 import com.derongan.minecraft.mineinabyss.Relic.RelicDecayTask;
+import com.derongan.minecraft.mineinabyss.Relic.RelicGroundEntity;
 import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
+import com.derongan.minecraft.mineinabyss.World.EntityChunkListener;
 import com.derongan.minecraft.mineinabyss.World.WorldCommandExecutor;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 
@@ -33,6 +38,7 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
+        getServer().getPluginManager().registerEvents(new EntityChunkListener(context), this);
 
         PlayerDataConfigManager manager = new PlayerDataConfigManager(context);
 
@@ -49,6 +55,7 @@ public final class MineInAbyss extends JavaPlugin {
         this.getCommand("relic").setExecutor(relicCommandExecutor);
         this.getCommand("relicreload").setExecutor(relicCommandExecutor);
         this.getCommand("relics").setExecutor(relicCommandExecutor);
+        this.getCommand("yolo").setExecutor(relicCommandExecutor);
 
         WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
 
@@ -59,6 +66,8 @@ public final class MineInAbyss extends JavaPlugin {
 
         this.getCommand("curseon").setExecutor(ascensionCommandExecutor);
         this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
+
+        ConfigurationSerialization.registerClass(RelicGroundEntity.class);
 
         RelicLoader.loadAllRelics(context);
     }
@@ -85,5 +94,9 @@ public final class MineInAbyss extends JavaPlugin {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MineInAbyss");
 
         return (MineInAbyss) plugin;
+    }
+
+    public AbyssContext getContext() {
+        return context;
     }
 }

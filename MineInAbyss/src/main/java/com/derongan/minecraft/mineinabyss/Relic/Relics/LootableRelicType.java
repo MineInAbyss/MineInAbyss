@@ -51,27 +51,4 @@ public class LootableRelicType implements RelicType {
     public RelicRarity getRarity() {
         return null;
     }
-
-    public void spawnLootableRelic(Location location, RelicType type, int lifetime) {
-        ItemStack item = type.getItem();
-
-        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location.add(.5, -1.4, .5).setDirection(new Vector(0, 0, 0)), EntityType.ARMOR_STAND);
-        as.setGravity(false);
-        as.setArms(true);
-        as.setVisible(false);
-        as.setCollidable(false);
-        as.setItemInHand(item);
-        as.setRightArmPose(new EulerAngle(-Math.PI / 2, -Math.PI / 2, 0));
-
-        if (type.getRarity() == RelicRarity.SPECIAL_GRADE) {
-            as.setCustomName(ChatColor.GRAY.toString() + ChatColor.MAGIC + type.getName());
-        } else {
-            as.setCustomName(ChatColor.GRAY + type.getName());
-        }
-        as.setCustomNameVisible(true);
-        as.setInvulnerable(true);
-
-        DecayableRelicBehaviour.registerRelic(as, lifetime, this);
-        behaviour.registerRelic(as.getUniqueId(), this);
-    }
 }

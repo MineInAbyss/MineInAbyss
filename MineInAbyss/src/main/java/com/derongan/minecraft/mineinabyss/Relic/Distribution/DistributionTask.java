@@ -36,6 +36,6 @@ public class DistributionTask extends BukkitRunnable {
     }
 
     void spawnLootableRelic(Location location, RelicType relicType) {
-        lootableRelicType.spawnLootableRelic(location, relicType, TickUtils.milisecondsToTicks(10000));
+//        lootableRelicType.spawnLootableRelic(location, relicType, TickUtils.milisecondsToTicks(10000));
     }
 }

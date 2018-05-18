@@ -3,6 +3,9 @@ package com.derongan.minecraft.mineinabyss.Relic;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Relic.Loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
+import com.derongan.minecraft.mineinabyss.Relic.Relics.StandardRelicType;
+import com.derongan.minecraft.mineinabyss.World.ChunkEntity;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,9 +46,21 @@ public class RelicCommandExecutor implements CommandExecutor {
             if(label.equals("relics")){
                 player.sendMessage("Relics: " + RelicType.registeredRelics.values().stream()
                         .map(RelicType::getName)
-                        .map(a->a.replace(" ", "_"))
+                        .map(a->a.replace(  " ", "_"))
                         .collect(Collectors.joining(", ")));
                 return true;
+            }
+
+            if(label.equals("yolo")){
+                Location location = player.getLocation();
+                RelicType blaze = StandardRelicType.BLAZE_REAP;
+                ChunkEntity entity = new RelicGroundEntity(blaze,
+                        location.getBlockX(),
+                        location.getBlockY(),
+                        location.getBlockZ());
+                entity.createEntity(location.getWorld());
+
+                context.getEntityChunkManager().addEntity(location.getChunk(), entity);
             }
         }
 
