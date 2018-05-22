@@ -29,3 +29,6 @@ commands:
   curseoff:
     description: Turn off curse
     usage: /curseoff
+  yolo:
+    description: Testing
+    usage: /yolo

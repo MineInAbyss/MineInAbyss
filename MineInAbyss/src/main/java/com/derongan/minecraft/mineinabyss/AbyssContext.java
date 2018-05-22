@@ -3,6 +3,8 @@ package com.derongan.minecraft.mineinabyss;
 import com.derongan.minecraft.mineinabyss.Player.PlayerData;
 import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
 import com.derongan.minecraft.mineinabyss.World.AbyssWorldManagerImpl;
+import com.derongan.minecraft.mineinabyss.World.EntityChunkManager;
+import com.derongan.minecraft.mineinabyss.World.EntityChunkManagerImpl;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -25,10 +27,12 @@ public class AbyssContext {
     private Connection connection;
 
     private AbyssWorldManager worldManager;
+    private EntityChunkManager entityChunkManager;
 
     public AbyssContext(Configuration config) {
         this.config = config;
         worldManager = new AbyssWorldManagerImpl(getConfig());
+        entityChunkManager = new EntityChunkManagerImpl(this);
     }
 
     public Plugin getPlugin() {
@@ -57,5 +61,9 @@ public class AbyssContext {
 
     public AbyssWorldManager getWorldManager() {
         return worldManager;
+    }
+
+    public EntityChunkManager getEntityChunkManager() {
+        return entityChunkManager;
     }
 }

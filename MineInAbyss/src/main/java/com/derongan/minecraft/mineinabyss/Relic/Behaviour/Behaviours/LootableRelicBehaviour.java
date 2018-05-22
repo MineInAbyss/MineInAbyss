@@ -1,8 +1,11 @@
 package com.derongan.minecraft.mineinabyss.Relic.Behaviour.Behaviours;
 
+import com.derongan.minecraft.mineinabyss.MineInAbyss;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.ArmorStandBehaviour;
 import com.derongan.minecraft.mineinabyss.Relic.Behaviour.DecayableRelicBehaviour;
+import com.derongan.minecraft.mineinabyss.World.EntityChunkManager;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 /**
@@ -15,8 +18,18 @@ public class LootableRelicBehaviour implements DecayableRelicBehaviour, ArmorSta
         ArmorStandBehaviour.registeredRelics.remove(e.getRightClicked().getUniqueId());
         ArmorStand as = (ArmorStand) e.getRightClicked();
         e.getPlayer().getInventory().addItem(as.getItemInHand());
-        as.remove();
+
+        removeFromWorld(e.getRightClicked());
+
         e.setCancelled(true);
+    }
+
+    private void removeFromWorld(Entity e){
+        EntityChunkManager manager = MineInAbyss.getInstance().getContext().getEntityChunkManager();
+        manager.removeEntity(e.getLocation().getChunk(), e);
+        e.remove();
+
+        System.out.println("Removing relic");
     }
 
     @Override
