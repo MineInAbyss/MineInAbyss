@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -138,7 +139,9 @@ public class RelicUseListener implements Listener {
                 ((UseRelicBehaviour) type.getBehaviour()).onUse(playerInteractEvent);
             } else {
                 // Cancel events the relic shouldn't handle
-                playerInteractEvent.setCancelled(true);
+				if (!(type.getBehaviour() instanceof ConsumeRelicBehaviour)) { //let eat events continue
+					playerInteractEvent.setCancelled(true);
+				}
             }
         }
 
@@ -161,6 +164,21 @@ public class RelicUseListener implements Listener {
         if (type != null) {
             if (type.getBehaviour() instanceof ChatRelicBehaviour) {
                 ((ChatRelicBehaviour) type.getBehaviour()).onChat(chatEvent);
+            }
+        }
+    }
+
+    @EventHandler()
+    public void onPlayerConsumeItem(PlayerItemConsumeEvent e) {
+        if(!worldManager.isAbyssWorld(e.getPlayer().getWorld().getName())){
+            return;
+        }
+
+        RelicType type = RelicType.getRegisteredRelicType(e.getItem());
+
+        if (type != null) {
+            if (type.getBehaviour() instanceof ConsumeRelicBehaviour) {
+                ((ConsumeRelicBehaviour) type.getBehaviour()).onConsume(e);
             }
         }
     }
