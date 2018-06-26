@@ -132,6 +132,22 @@ layers:
         refBottom: [2859, 21, -276]
         world: LayerFour
       -
-        refTop: [4145, 241, -260]
+        refTop: [4155, 230, -388]
+        refBottom: [4346, 34, -284]
+        world: LayerFour
+      -
+        refTop: [5562, 253, -156]
+        refBottom: [5314, 12, -294]
+        world: LayerFour
+      -
+        refTop: [6898, 232, -294]
+        refBottom: [6652, 10, -476]
+        world: LayerFour
+      -
+        refTop: [8636, 230, -460]
+        refBottom: [8941, 10, -756]
+        world: LayerFour
+      -
+        refTop: [11565, 230, -740]
         refBottom: [0, 0, 0]
         world: LayerFour
