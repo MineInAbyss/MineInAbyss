@@ -13,14 +13,16 @@ public class EffectConfiguror {
     public static AscensionEffectBuilder createBuilderFromMap(Map effect) {
         int duration = (int) effect.getOrDefault("duration", 10);
         int strength = (int) effect.getOrDefault("strength", 1);
-        int offset = (int) effect.getOrDefault("offset", 50); // TODO CURRENTLY IGNORED
+        int offset = (int) effect.getOrDefault("offset", 0);
+        int iterations = (int) effect.getOrDefault("iterations", 1);
 
         AscensionEffectBuilderImpl builder = buildAscensionEffects(effect);
 
         if (builder != null) {
             builder.setDuration(TickUtils.milisecondsToTicks(duration * 1000))
                     .setStrength(strength)
-                    .setOffset(offset);
+                    .setIterations(iterations)
+                    .setOffset(TickUtils.milisecondsToTicks(offset * 1000));
         }
 
         return builder;

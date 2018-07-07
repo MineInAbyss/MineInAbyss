@@ -7,8 +7,8 @@ import org.bukkit.potion.PotionEffectType;
 public class DizzyAscensionEffect extends AbstractAscensionEffect {
     private final PotionEffect effect = new PotionEffect(PotionEffectType.CONFUSION, durationRemaining, strength);
 
-    public DizzyAscensionEffect(long offset, int strength, int duration) {
-        super(offset, strength, duration);
+    public DizzyAscensionEffect(int offset, int strength, int duration, int iterations) {
+        super(offset, strength, duration, iterations);
     }
 
     @Override

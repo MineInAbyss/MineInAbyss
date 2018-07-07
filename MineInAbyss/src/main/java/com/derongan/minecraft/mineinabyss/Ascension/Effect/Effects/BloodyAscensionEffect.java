@@ -7,8 +7,8 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class BloodyAscensionEffect extends AbstractAscensionEffect {
-    public BloodyAscensionEffect(long offset, int strength, int duration) {
-        super(offset, strength, duration);
+    public BloodyAscensionEffect(int offset, int strength, int duration, int iterations) {
+        super(offset, strength, duration, iterations);
     }
 
     @Override
