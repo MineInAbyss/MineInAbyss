@@ -11,11 +11,12 @@ import java.util.stream.Collectors;
 
 //TODO look at java patterns and figure out a nice way to not have to repeat the builder multiple times
 public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> implements AscensionEffectBuilder {
-    private long offset = 30;
+    private int offset = 0;
     private int strength = 1;
     private int duration = 200;   // Pass it in as as ticks here
+    private int iterations = 1;
 
-    long getOffset() {
+    int getOffset() {
         return offset;
     }
 
@@ -23,12 +24,16 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
         return strength;
     }
 
+    int getIterations(){
+        return iterations;
+    }
+
     public AscensionEffectBuilderImpl<E> setStrength(int strength) {
         this.strength = strength;
         return this;
     }
 
-    public AscensionEffectBuilderImpl<E> setOffset(long offset) {
+    public AscensionEffectBuilderImpl<E> setOffset(int offset) {
         this.offset = offset;
         return this;
     }
@@ -42,31 +47,36 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
         return this;
     }
 
+    public AscensionEffectBuilderImpl<E> setIterations(int iterations) {
+        this.iterations = iterations;
+        return this;
+    }
+
     public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilderImpl {
         @Override
         public AscensionEffect build() {
-            return new BloodyAscensionEffect(getOffset(), getStrength(), getDuration());
+            return new BloodyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
         }
     }
 
     public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilderImpl<DamagingAscensionEffect> {
         @Override
         public DamagingAscensionEffect build() {
-            return new DamagingAscensionEffect(getOffset(), getStrength(), getDuration());
+            return new DamagingAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
         }
     }
 
     public static class DizzyAscensionEffectBuilder extends AscensionEffectBuilderImpl<DizzyAscensionEffect> {
         @Override
         public DizzyAscensionEffect build() {
-            return new DizzyAscensionEffect(getOffset(), getStrength(), getDuration());
+            return new DizzyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
         }
     }
 
     public static class DeathAscensionEffectBuilder extends AscensionEffectBuilderImpl<DeathAscensionEffect> {
         @Override
         public DeathAscensionEffect build() {
-            return new DeathAscensionEffect(getOffset(), getStrength(), getDuration());
+            return new DeathAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
         }
     }
 
@@ -74,7 +84,7 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
     HallucinatingAscensionEffectBuilder extends AscensionEffectBuilderImpl<HallucinatingAscensionEffect> {
         @Override
         public HallucinatingAscensionEffect build() {
-            return new HallucinatingAscensionEffect(getOffset(), getStrength(), getDuration());
+            return new HallucinatingAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
         }
     }
 
@@ -84,7 +94,7 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
 
         @Override
         public SoundAscensionEffect build() {
-            return new SoundAscensionEffect(getOffset(), getStrength(), getDuration(), getSounds());
+            return new SoundAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations(), getSounds());
         }
 
         public SoundAscensionEffectBuilder setSounds(List<String> allowedSounds){
