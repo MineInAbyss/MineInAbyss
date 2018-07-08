@@ -18,7 +18,8 @@ layers:
       -
         name: DizzyAscensionEffect
         strength: 1
-        durationRemaining: 15
+        duration: 7
+        iterations: 3
     sections:
       -
         refTop: [2370, 236, 141]
@@ -40,7 +41,8 @@ layers:
       -
         name: DizzyAscensionEffect
         strength: 2
-        durationRemaining: 22
+        duration: 12
+        iterations: 2
     sections:
       -
         refTop: [973, 236, -163]
@@ -58,7 +60,7 @@ layers:
       -
         name: DizzyAscensionEffect
         strength: 5
-        durationRemaining: 30
+        duration: 30
 #      -
 #        name: HallucinatingAscensionEffect
 #        strength: 4
@@ -66,12 +68,23 @@ layers:
       -
         name: SoundAscensionEffect
         strength: 1
-        durationRemaining: 30
+        duration: 4
+        iterations: 7
         sounds:
-          - ENTITY_ZOMBIE_AMBIENT
           - BLOCK_FIRE_AMBIENT
           - BLOCK_GRASS_STEP
+          - BLOCK_LADDER_STEP
+          - BLOCK_GRAVEL_STEP
           - ENTITY_ZOMBIE_STEP
+          - ENTITY_GENERIC_HURT
+          - ENTITY_GENERIC_SWIM
+          - ENTITY_GENERIC_SMALL_FALL
+          - ENTITY_ITEM_PICKUP
+          - BLOCK_WATER_AMBIENT
+          - ENTITY_ARROW_SHOOT
+          - ENTITY_CHICKEN_STEP
+          - ENTITY_CHICKEN_AMBIENT
+          - ENTITY_CREEPER_PRIMED
     sections:
       -
         refTop: [0, 238, -149]
@@ -109,15 +122,18 @@ layers:
       -
         name: DizzyAscensionEffect
         strength: 10
-        durationRemaining: 30
+        duration: 36
       -
         name: BloodyAscensionEffect
         strength: 10
-        durationRemaining: 30
+        duration: 2
+        offset: 4
+        iterations: 16
       -
         name: DamagingAscensionEffect
-        strength: 4
-        durationRemaining: 30
+        strength: 1
+        duration: 30
+        offset: 6
     sections:
       -
         refTop: [0, 232, -148]

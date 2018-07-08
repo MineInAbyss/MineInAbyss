@@ -7,8 +7,8 @@ import org.bukkit.potion.PotionEffectType;
 public class DamagingAscensionEffect extends AbstractAscensionEffect {
     private final PotionEffect effect = new PotionEffect(PotionEffectType.WITHER, durationRemaining, strength);
 
-    public DamagingAscensionEffect(long offset, int strength, int duration) {
-        super(offset, strength, duration);
+    public DamagingAscensionEffect(int offset, int strength, int duration, int iterations) {
+        super(offset, strength, duration, iterations);
     }
 
     @Override

@@ -2,15 +2,22 @@ package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import com.derongan.minecraft.mineinabyss.MineInAbyss;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
 
 public abstract class AbstractAscensionEffect implements AscensionEffect {
     int durationRemaining;
     int elapsed;
     int strength;
-    private long offset; //TODO honor this value
+    int offset;
+    int iterations;
 
-    AbstractAscensionEffect(long offset, int strength, int durationRemaining) {
+    AbstractAscensionEffect(int offset, int strength, int durationRemaining, int iterations) {
+        this.iterations = iterations;
         this.durationRemaining = durationRemaining;
         this.elapsed = 0;
         this.offset = offset;
@@ -19,8 +26,12 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
 
     @Override
     public void applyEffect(Player player, int ticks) {
-        durationRemaining -= ticks;
-        applyEffect(player);
+        for (int IterationsScheduled = 0; IterationsScheduled != iterations; IterationsScheduled++) {
+            Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
+                durationRemaining -= ticks;
+                applyEffect(player);
+            }, (offset + IterationsScheduled + (durationRemaining * IterationsScheduled)));
+        }
     }
 
     abstract void applyEffect(Player player);

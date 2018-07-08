@@ -3,8 +3,8 @@ package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 import org.bukkit.entity.Player;
 
 public class DeathAscensionEffect extends AbstractAscensionEffect {
-    public DeathAscensionEffect(long offset, int strength, int duration) {
-        super(offset, strength, duration);
+    public DeathAscensionEffect(int offset, int strength, int duration, int iterations) {
+        super(offset, strength, duration, iterations);
     }
 
     @Override
