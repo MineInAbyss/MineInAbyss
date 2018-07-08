@@ -1,10 +1,14 @@
 package com.derongan.minecraft.mineinabyss;
 
+import com.derongan.minecraft.deeperworld.world.WorldManager;
 import com.derongan.minecraft.mineinabyss.Player.PlayerData;
 import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
 import com.derongan.minecraft.mineinabyss.World.AbyssWorldManagerImpl;
 import com.derongan.minecraft.mineinabyss.World.EntityChunkManager;
 import com.derongan.minecraft.mineinabyss.World.EntityChunkManagerImpl;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -26,12 +30,17 @@ public class AbyssContext {
     private int tickTime;
     private Connection connection;
 
+    private WorldManager realWorldManager;
+
     private AbyssWorldManager worldManager;
     private EntityChunkManager entityChunkManager;
 
     public AbyssContext(Configuration config) {
         this.config = config;
         worldManager = new AbyssWorldManagerImpl(getConfig());
+
+        realWorldManager = Bukkit.getServicesManager().load(WorldManager.class);
+
         entityChunkManager = new EntityChunkManagerImpl(this);
     }
 

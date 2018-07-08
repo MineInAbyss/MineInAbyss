@@ -18,8 +18,12 @@ subprojects {
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
         mavenLocal()
+        jcenter()
     }
 
+    dependencies {
+        compile group: 'com.derongan.minecraft', name: 'DeeperWorld', version: '1.0-SNAPSHOT'
+    }
 
     processResources {
         from(sourceSets.main.resources.srcDirs) {
