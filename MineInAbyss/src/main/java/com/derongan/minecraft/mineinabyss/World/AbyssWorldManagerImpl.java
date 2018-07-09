@@ -19,14 +19,12 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
     private Set<World> abyssWorlds;
 
     private int numLayers;
-    private int numSections;
 
     private static final String LAYER_KEY = "layers";
     private static final String NAME_KEY = "name";
     private static final String SUB_KEY = "sub";
     private static final String SECTION_KEY = "sections";
     private static final String EFFECTS_KEY = "effects";
-    private static final String REGION_KEY = "region";
 
 
     public AbyssWorldManagerImpl(Configuration config) {
@@ -36,7 +34,6 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
 
         List<Map<?, ?>> layerlist = config.getMapList(LAYER_KEY);
 
-        numSections = 0;
         layerlist.forEach(this::parseLayer);
     }
 
@@ -77,6 +74,11 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
     @Override
     public List<Layer> getLayers() {
         return ImmutableList.copyOf(layers);
+    }
+
+    @Override
+    public Layer getLayerForSection(Section section) {
+        return layers.stream().filter(a->a.containsSection(section)).findFirst().orElse(null);
     }
 
     @Override

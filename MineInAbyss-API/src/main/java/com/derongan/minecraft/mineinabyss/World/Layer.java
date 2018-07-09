@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss.World;
 
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 
 import java.util.List;
@@ -26,7 +27,13 @@ public interface Layer {
      * Gets the sections in this layer. This list is immutable.
      * @return An immutable list containing the sections of this layer
      */
-    List<com.derongan.minecraft.deeperworld.world.section.Section> getSections();
+    List<Section> getSections();
+
+
+    /**
+     * Returns whether or not this layer contains this section
+     */
+    boolean containsSection(Section section);
 
 
     /**

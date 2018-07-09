@@ -3,10 +3,13 @@ package com.derongan.minecraft.mineinabyss.Ascension;
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent;
 import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent;
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent;
+import com.derongan.minecraft.deeperworld.world.WorldManager;
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Player.PlayerData;
 import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
 import com.derongan.minecraft.mineinabyss.World.Layer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,9 +25,12 @@ public class AscensionListener implements Listener {
     private AbyssContext context;
     private Set<UUID> recentlyMovedPlayers;
 
+    private WorldManager worldManager;
+
     public AscensionListener(AbyssContext context) {
         this.context = context;
 
+        worldManager = Bukkit.getServicesManager().load(WorldManager.class);
         recentlyMovedPlayers = new HashSet<>();
     }
 
@@ -49,23 +55,48 @@ public class AscensionListener implements Listener {
 
         PlayerData playerData = context.getPlayerDataMap().get(player.getUniqueId());
 
-        if(playerData.isAffectedByCurse()){
+        if (playerData.isAffectedByCurse()) {
             double dist = playerData.getDistanceAscended();
-            playerData.setDistanceAscended(Math.max(dist + changeY,0));
+            playerData.setDistanceAscended(Math.max(dist + changeY, 0));
 
-            if(dist >= 10){
-                playerData.getCurrentLayer().getAscensionEffects().forEach(a->{
-                   a.build().applyEffect(player,10);
-                });
-                playerData.setDistanceAscended(0);
+            if (dist >= 10) {
+                Layer layerForSection = manager.getLayerForSection(worldManager.getSectionFor(moveEvent.getFrom()));
+
+                if (layerForSection != null) {
+                    layerForSection.getAscensionEffects().forEach(a -> {
+                        a.build().applyEffect(player, 10);
+                    });
+                    playerData.setDistanceAscended(0);
+                }
             }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
-    private void onPlayerChangeSection(PlayerChangeSectionEvent changeSectionEvent){
-        if(!context.getPlayerDataMap().get(changeSectionEvent.getPlayer().getUniqueId()).isAnchored()){
+    private void onPlayerAscend(PlayerAscendEvent e){
+        onPlayerChangeSection(e);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void onPlayerDescend(PlayerDescendEvent e){
+        onPlayerChangeSection(e);
+    }
+
+    private void onPlayerChangeSection(PlayerChangeSectionEvent changeSectionEvent) {
+        if (!context.getPlayerDataMap().get(changeSectionEvent.getPlayer().getUniqueId()).isAnchored()) {
             recentlyMovedPlayers.add(changeSectionEvent.getPlayer().getUniqueId());
+            AbyssWorldManager manager = context.getWorldManager();
+
+            Section fromSection = changeSectionEvent.getFromSection();
+            Section toSection = changeSectionEvent.getToSection();
+
+            Layer fromLayer = manager.getLayerForSection(fromSection);
+            Layer toLayer = manager.getLayerForSection(toSection);
+
+            if (fromLayer != toLayer) {
+                changeSectionEvent.getPlayer().sendTitle(toLayer.getName(), toLayer.getSub(), 50, 10, 20);
+            }
+
         } else {
             changeSectionEvent.setCancelled(true);
         }

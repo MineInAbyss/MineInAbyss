@@ -1,5 +1,6 @@
 package com.derongan.minecraft.mineinabyss.World;
 
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import org.bukkit.World;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface AbyssWorldManager {
      * @return
      */
     boolean isAbyssWorld(World worldName);
+
+    Layer getLayerForSection(Section section);
 }

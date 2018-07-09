@@ -12,7 +12,7 @@ public class LayerImpl implements Layer {
     private String layerSub;
     private int index;
 
-    private List<com.derongan.minecraft.deeperworld.world.section.Section> sections;
+    private List<Section> sections;
     private List<AscensionEffectBuilder> effects;
 
     public LayerImpl(String layerName, String layerSub, int index) {
@@ -43,6 +43,10 @@ public class LayerImpl implements Layer {
         return Collections.unmodifiableList(sections);
     }
 
+    @Override
+    public boolean containsSection(Section section) {
+        return sections.stream().anyMatch(a->a.getKey().equals(section.getKey()));
+    }
 
     public void setSections(List<com.derongan.minecraft.deeperworld.world.section.Section> sections) {
         this.sections = sections;
