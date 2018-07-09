@@ -22,6 +22,8 @@ public class PotionAscensionEffect extends AbstractAscensionEffect{
             player.addPotionEffect(new PotionEffect(e, durationRemaining, strength));
         }
     }
+
+    //TODO make potion effects be able to merge in different ways
     /** public void mergeAddPotionEffect(Player player, PotionEffectType potionEffect, int newEffectDuration, int newStrength) {
              if (player.getPotionEffect(potionEffect).getDuration() < newEffectDuration) {
                  } else if (player.getPotionEffect(potionEffect).getDuration() > newEffectDuration) {

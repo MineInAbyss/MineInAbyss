@@ -64,7 +64,7 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             return this;
-        }
+        } //Convert string list to potion effect types and filter out false entries
 
         List<PotionEffectType> getEffects(){return applyEffects;}
 
@@ -85,20 +85,6 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
         @Override
         public AscensionEffect build() {
             return new BloodyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
-        }
-    }
-
-    public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilderImpl<DamagingAscensionEffect> {
-        @Override
-        public DamagingAscensionEffect build() {
-            return new DamagingAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
-        }
-    }
-
-    public static class DizzyAscensionEffectBuilder extends AscensionEffectBuilderImpl<DizzyAscensionEffect> {
-        @Override
-        public DizzyAscensionEffect build() {
-            return new DizzyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
         }
     }
 

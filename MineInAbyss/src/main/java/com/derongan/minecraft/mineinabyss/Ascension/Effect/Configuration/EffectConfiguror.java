@@ -43,12 +43,6 @@ public class EffectConfiguror {
             case "BloodyAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.BloodyAscensionEffectBuilder();
                 break;
-            case "DizzyAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.DizzyAscensionEffectBuilder();
-                break;
-            case "DamagingAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.DamagingAscensionEffectBuilder();
-                break;
             case "HallucinatingAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.HallucinatingAscensionEffectBuilder();
                 break;
