@@ -3,9 +3,12 @@ package com.derongan.minecraft.mineinabyss.Ascension.Effect;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects.*;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.Sound;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -50,6 +53,32 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
     public AscensionEffectBuilderImpl<E> setIterations(int iterations) {
         this.iterations = iterations;
         return this;
+    }
+
+    public static class PotionAscensionEffectBuilder extends AscensionEffectBuilderImpl<PotionAscensionEffect> {
+        List<PotionEffectType> applyEffects;
+
+        public PotionAscensionEffectBuilder setEffects(List<String> listedEffects){
+            applyEffects = listedEffects.stream()
+                    .map(s -> { try { return PotionEffectType.getByName(s); } catch (IllegalArgumentException iae) { return null; } })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        List<PotionEffectType> getEffects(){return applyEffects;}
+
+        @Override
+        public PotionAscensionEffect build() {
+            return new PotionAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations(), getEffects());
+        }
+    }
+
+    public static class VomitAscensionEffectBuilder extends AscensionEffectBuilderImpl<VomitAscensionEffect> {
+        @Override
+        public VomitAscensionEffect build() {
+            return new VomitAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
+        }
     }
 
     public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilderImpl {
