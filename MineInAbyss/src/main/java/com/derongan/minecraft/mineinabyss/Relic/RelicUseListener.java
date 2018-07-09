@@ -56,7 +56,7 @@ public class RelicUseListener implements Listener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
 
-        if(!worldManager.isAbyssWorld(event.getPlayer().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(event.getPlayer().getWorld())){
             return;
         }
 
@@ -73,7 +73,7 @@ public class RelicUseListener implements Listener {
     @EventHandler()
     public void onEntityHit(EntityDamageByEntityEvent entityDamageByEntityEvent) {
 
-        if(!worldManager.isAbyssWorld(entityDamageByEntityEvent.getDamager().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(entityDamageByEntityEvent.getDamager().getWorld())){
             return;
         }
 
@@ -97,7 +97,7 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
-        if(!worldManager.isAbyssWorld(e.getPlayer().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(e.getPlayer().getWorld())){
             return;
         }
 
@@ -112,7 +112,7 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onEntityDamageEvent(EntityDamageEvent e){
-        if(!worldManager.isAbyssWorld(e.getEntity().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(e.getEntity().getWorld())){
             return;
         }
 
@@ -128,7 +128,7 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerUseItem(PlayerInteractEvent playerInteractEvent) {
-        if(!worldManager.isAbyssWorld(playerInteractEvent.getPlayer().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(playerInteractEvent.getPlayer().getWorld())){
             return;
         }
 
@@ -154,7 +154,7 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerChat(AsyncPlayerChatEvent chatEvent) {
-        if(!worldManager.isAbyssWorld(chatEvent.getPlayer().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(chatEvent.getPlayer().getWorld())){
             return;
         }
 
@@ -170,7 +170,7 @@ public class RelicUseListener implements Listener {
 
     @EventHandler()
     public void onPlayerConsumeItem(PlayerItemConsumeEvent e) {
-        if(!worldManager.isAbyssWorld(e.getPlayer().getWorld().getName())){
+        if(!worldManager.isAbyssWorld(e.getPlayer().getWorld())){
             return;
         }
 

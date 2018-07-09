@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public class PlayerDataConfigManager {
     private static final String UUID_KEY = "uuid";
-    private static final String LAYER_KEY = "layer";
-    private static final String SECTION_KEY = "section";
     private static final String AFFECTABLE_KEY = "affectable";
     private static final String ANCHORED_KEY = "anchored";
     private static final String ASCENDED_KEY = "ascended";
@@ -37,15 +35,11 @@ public class PlayerDataConfigManager {
             PlayerData data = new PlayerDataImpl(player);
             data.setAffectedByCurse(config.getBoolean(AFFECTABLE_KEY));
             data.setAnchored(config.getBoolean(ANCHORED_KEY));
-            data.setCurrentLayer(manager.getLayerAt(config.getInt(LAYER_KEY)));
-            data.setCurrentSection(manager.getSectonAt(config.getInt(SECTION_KEY)));
             data.setDistanceAscended(config.getDouble(ASCENDED_KEY));
 
             return data;
         } else {
             PlayerData data = new PlayerDataImpl(player);
-            data.setCurrentLayer(manager.getLayerAt(0));
-            data.setCurrentSection(manager.getSectonAt(0));
 
             return data;
         }
@@ -59,8 +53,6 @@ public class PlayerDataConfigManager {
 
         YamlConfiguration config = new YamlConfiguration();
         config.set(UUID_KEY, playerData.getPlayer().getUniqueId().toString());
-        config.set(LAYER_KEY, playerData.getCurrentLayer().getIndex());
-        config.set(SECTION_KEY, playerData.getCurrentSection().getIndex());
         config.set(AFFECTABLE_KEY, playerData.isAffectedByCurse());
         config.set(ANCHORED_KEY, playerData.isAnchored());
         config.set(ASCENDED_KEY, playerData.getDistanceAscended());

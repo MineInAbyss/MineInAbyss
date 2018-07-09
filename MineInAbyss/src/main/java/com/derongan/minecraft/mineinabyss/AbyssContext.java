@@ -27,8 +27,6 @@ public class AbyssContext {
     private Plugin plugin;
     private Logger logger;
     private Configuration config;
-    private int tickTime;
-    private Connection connection;
 
     private WorldManager realWorldManager;
 
@@ -70,6 +68,9 @@ public class AbyssContext {
 
     public AbyssWorldManager getWorldManager() {
         return worldManager;
+    }
+    public WorldManager getRealWorldManager() {
+        return realWorldManager;
     }
 
     public EntityChunkManager getEntityChunkManager() {

@@ -1,9 +1,7 @@
 package com.derongan.minecraft.mineinabyss.World;
 
-import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
-import com.google.common.collect.ImmutableList;
-import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +12,7 @@ public class LayerImpl implements Layer {
     private String layerSub;
     private int index;
 
-    private List<Section> sections;
+    private List<com.derongan.minecraft.deeperworld.world.section.Section> sections;
     private List<AscensionEffectBuilder> effects;
 
     public LayerImpl(String layerName, String layerSub, int index) {
@@ -45,12 +43,8 @@ public class LayerImpl implements Layer {
         return Collections.unmodifiableList(sections);
     }
 
-    @Override
-    public Section getSection(int index) {
-        return sections.get(index);
-    }
 
-    public void setSections(List<Section> sections) {
+    public void setSections(List<com.derongan.minecraft.deeperworld.world.section.Section> sections) {
         this.sections = sections;
     }
 
