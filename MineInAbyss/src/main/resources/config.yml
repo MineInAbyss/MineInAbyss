@@ -49,11 +49,13 @@ layers:
           - CONFUSION
           - HUNGER
       -
-        name: VomitAscensionEffect
-        strenght: 7
+        name: ParticleAscensionEffect
+        strenght: 20
         duration: 3
         iterations: 2
         offset: 5
+        particles:
+        - SLIME
     sections:
       -
         refTop: [973, 236, -163]
@@ -76,11 +78,13 @@ layers:
           - CONFUSION
           - HUNGER
       -
-        name: VomitAscensionEffect
-        strenght: 12
+        name: ParticleAscensionEffect
+        strenght: 40
         duration: 2
         iterations: 2
         offset: 5
+        particles:
+        - SLIME
 #      -
 #        name: HallucinatingAscensionEffect
 #        strength: 4
@@ -147,11 +151,13 @@ layers:
         effects:
         - CONFUSION
       -
-        name: BloodyAscensionEffect
-        strength: 10
+        name: ParticleAscensionEffect
+        strength: 20
         duration: 2
         offset: 1
         iterations: 16
+        particles:
+        - REDSTONE
       -
         name: PotionAscensionEffect
         strength: 0

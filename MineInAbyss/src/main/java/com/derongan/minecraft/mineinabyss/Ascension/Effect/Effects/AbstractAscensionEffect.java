@@ -26,10 +26,10 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
 
     @Override
     public void applyEffect(Player player, int ticks) {
-        for (int IterationsScheduled = 0; IterationsScheduled != iterations; IterationsScheduled++) {
+        for (int iterationsScheduled = 0; iterationsScheduled != iterations; iterationsScheduled++) {
             Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
                 applyEffect(player);
-            }, (offset + IterationsScheduled + (durationRemaining * IterationsScheduled)));
+            }, (offset + iterationsScheduled + (durationRemaining * iterationsScheduled)));
         }
     }
 

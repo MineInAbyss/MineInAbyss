@@ -35,20 +35,21 @@ public class EffectConfiguror {
         switch ((String) effect.get("name")) {
             case "PotionAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.PotionAscensionEffectBuilder();
-                ((AscensionEffectBuilderImpl.PotionAscensionEffectBuilder) builder).setEffects((List<String>) effect.getOrDefault("effects", null));
+                ((AscensionEffectBuilderImpl.PotionAscensionEffectBuilder) builder)
+                        .setEffects((List<String>) effect.getOrDefault("effects", null));
                 break;
-            case "VomitAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.VomitAscensionEffectBuilder();
-                break;
-            case "BloodyAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.BloodyAscensionEffectBuilder();
+            case "ParticleAscensionEffect":
+                builder = new AscensionEffectBuilderImpl.ParticleAscensionEffectBuilder();
+                ((AscensionEffectBuilderImpl.ParticleAscensionEffectBuilder) builder)
+                        .setParticles((List<String>) effect.getOrDefault("particles", null));
                 break;
             case "HallucinatingAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.HallucinatingAscensionEffectBuilder();
                 break;
             case "SoundAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.SoundAscensionEffectBuilder();
-                ((AscensionEffectBuilderImpl.SoundAscensionEffectBuilder) builder).setSounds((List<String>) effect.getOrDefault("sounds", null));
+                ((AscensionEffectBuilderImpl.SoundAscensionEffectBuilder) builder)
+                        .setSounds((List<String>) effect.getOrDefault("sounds", null));
                 break;
             case "DeathAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.DeathAscensionEffectBuilder();

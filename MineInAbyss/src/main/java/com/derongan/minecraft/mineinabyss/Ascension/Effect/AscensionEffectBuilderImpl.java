@@ -1,9 +1,9 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect;
 
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects.*;
-import com.derongan.minecraft.mineinabyss.AbyssContext;
+import net.minecraft.server.v1_12_R1.EnumParticle;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
@@ -60,7 +60,7 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
 
         public PotionAscensionEffectBuilder setEffects(List<String> listedEffects){
             applyEffects = listedEffects.stream()
-                    .map(s -> { try { return PotionEffectType.getByName(s); } catch (IllegalArgumentException iae) { return null; } })
+                    .map(s -> PotionEffectType.getByName(s))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             return this;
@@ -74,17 +74,22 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
         }
     }
 
-    public static class VomitAscensionEffectBuilder extends AscensionEffectBuilderImpl<VomitAscensionEffect> {
-        @Override
-        public VomitAscensionEffect build() {
-            return new VomitAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
-        }
-    }
+    public static class ParticleAscensionEffectBuilder extends AscensionEffectBuilderImpl<ParticleAscensionEffect> {
+        List<EnumParticle> addParticles;
 
-    public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilderImpl {
+        public ParticleAscensionEffectBuilder setParticles(List<String> listedParticles){
+            addParticles = listedParticles.stream()
+                    .map(p -> { try { return  EnumParticle.valueOf(p); } catch (IllegalArgumentException iae) { return null; } })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        List<EnumParticle> getParticles(){return addParticles;}
+
         @Override
-        public AscensionEffect build() {
-            return new BloodyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
+        public ParticleAscensionEffect build() {
+            return new ParticleAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations(), getParticles());
         }
     }
 
