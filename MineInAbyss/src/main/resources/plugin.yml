@@ -17,6 +17,9 @@ commands:
   relicreload:
     description: Reload relics
     usage: /relicreload
+  pinsreset:
+    describtion: Reset pin effects
+    usage: /pinsreset
   sectionoff:
     description: Cheat
     usage: /sectionoff

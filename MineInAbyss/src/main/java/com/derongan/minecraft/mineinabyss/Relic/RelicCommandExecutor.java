@@ -6,6 +6,7 @@ import com.derongan.minecraft.mineinabyss.Relic.Relics.RelicType;
 import com.derongan.minecraft.mineinabyss.Relic.Relics.StandardRelicType;
 import com.derongan.minecraft.mineinabyss.World.ChunkEntity;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -61,6 +62,13 @@ public class RelicCommandExecutor implements CommandExecutor {
                 entity.createEntity(location.getWorld());
 
                 context.getEntityChunkManager().addEntity(location.getChunk(), entity);
+            }
+
+            if (label.equals("pinsreset")) {
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1);
+                player.sendMessage("Thousand men pins removed");
+                return true;
             }
         }
 

@@ -54,6 +54,7 @@ public final class MineInAbyss extends JavaPlugin {
         RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
         this.getCommand("relic").setExecutor(relicCommandExecutor);
         this.getCommand("relicreload").setExecutor(relicCommandExecutor);
+        this.getCommand("pinsreset").setExecutor(relicCommandExecutor);
         this.getCommand("relics").setExecutor(relicCommandExecutor);
         this.getCommand("yolo").setExecutor(relicCommandExecutor);
 
