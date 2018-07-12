@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect.Configuration;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
+import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilderImpl;
 import com.derongan.minecraft.mineinabyss.util.TickUtils;
@@ -32,21 +33,23 @@ public class EffectConfiguror {
         AscensionEffectBuilderImpl builder = null;
 
         switch ((String) effect.get("name")) {
-            case "BloodyAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.BloodyAscensionEffectBuilder();
+            case "PotionAscensionEffect":
+                builder = new AscensionEffectBuilderImpl.PotionAscensionEffectBuilder();
+                ((AscensionEffectBuilderImpl.PotionAscensionEffectBuilder) builder)
+                        .setEffects((List<String>) effect.getOrDefault("effects", null));
                 break;
-            case "DizzyAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.DizzyAscensionEffectBuilder();
-                break;
-            case "DamagingAscensionEffect":
-                builder = new AscensionEffectBuilderImpl.DamagingAscensionEffectBuilder();
+            case "ParticleAscensionEffect":
+                builder = new AscensionEffectBuilderImpl.ParticleAscensionEffectBuilder();
+                ((AscensionEffectBuilderImpl.ParticleAscensionEffectBuilder) builder)
+                        .setParticles((List<String>) effect.getOrDefault("particles", null));
                 break;
             case "HallucinatingAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.HallucinatingAscensionEffectBuilder();
                 break;
             case "SoundAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.SoundAscensionEffectBuilder();
-                ((AscensionEffectBuilderImpl.SoundAscensionEffectBuilder) builder).setSounds((List<String>) effect.getOrDefault("sounds", null));
+                ((AscensionEffectBuilderImpl.SoundAscensionEffectBuilder) builder)
+                        .setSounds((List<String>) effect.getOrDefault("sounds", null));
                 break;
             case "DeathAscensionEffect":
                 builder = new AscensionEffectBuilderImpl.DeathAscensionEffectBuilder();

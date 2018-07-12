@@ -1,11 +1,14 @@
 package com.derongan.minecraft.mineinabyss.Ascension.Effect;
 
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects.*;
-import com.derongan.minecraft.mineinabyss.AbyssContext;
+import net.minecraft.server.v1_12_R1.EnumParticle;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -52,24 +55,41 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
         return this;
     }
 
-    public static class BloodyAscensionEffectBuilder extends AscensionEffectBuilderImpl {
+    public static class PotionAscensionEffectBuilder extends AscensionEffectBuilderImpl<PotionAscensionEffect> {
+        List<PotionEffectType> applyEffects;
+
+        public PotionAscensionEffectBuilder setEffects(List<String> listedEffects){
+            applyEffects = listedEffects.stream()
+                    .map(s -> PotionEffectType.getByName(s))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            return this;
+        } //Convert string list to potion effect types and filter out false entries
+
+        List<PotionEffectType> getEffects(){return applyEffects;}
+
         @Override
-        public AscensionEffect build() {
-            return new BloodyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
+        public PotionAscensionEffect build() {
+            return new PotionAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations(), getEffects());
         }
     }
 
-    public static class DamagingAscensionEffectBuilder extends AscensionEffectBuilderImpl<DamagingAscensionEffect> {
-        @Override
-        public DamagingAscensionEffect build() {
-            return new DamagingAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
-        }
-    }
+    public static class ParticleAscensionEffectBuilder extends AscensionEffectBuilderImpl<ParticleAscensionEffect> {
+        List<EnumParticle> addParticles;
 
-    public static class DizzyAscensionEffectBuilder extends AscensionEffectBuilderImpl<DizzyAscensionEffect> {
+        public ParticleAscensionEffectBuilder setParticles(List<String> listedParticles){
+            addParticles = listedParticles.stream()
+                    .map(p -> { try { return  EnumParticle.valueOf(p); } catch (IllegalArgumentException iae) { return null; } })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        List<EnumParticle> getParticles(){return addParticles;}
+
         @Override
-        public DizzyAscensionEffect build() {
-            return new DizzyAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations());
+        public ParticleAscensionEffect build() {
+            return new ParticleAscensionEffect(getOffset(), getStrength(), getDuration(), getIterations(), getParticles());
         }
     }
 
