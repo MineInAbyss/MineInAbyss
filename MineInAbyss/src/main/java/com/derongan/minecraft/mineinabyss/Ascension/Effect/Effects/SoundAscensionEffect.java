@@ -2,6 +2,7 @@ package com.derongan.minecraft.mineinabyss.Ascension.Effect.Effects;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -22,8 +23,8 @@ public class SoundAscensionEffect extends AbstractAscensionEffect {
     private int lastDurationRemaining;
     private int ticksBetweenSoundInitialization;
 
-    public SoundAscensionEffect(long offset, int strength, int duration, List<String> allowedSounds) {
-        super(offset, strength, duration);
+    public SoundAscensionEffect(int offset, int strength, int duration, int iterations, List<String> allowedSounds) {
+        super(offset, strength, duration, iterations);
         sounds = allowedSounds.stream().map((soundString) -> {
             try {
                 return Sound.valueOf(soundString);

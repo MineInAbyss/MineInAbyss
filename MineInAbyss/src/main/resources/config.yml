@@ -16,9 +16,12 @@ layers:
     world: LayerOne
     effects:
       -
-        name: DizzyAscensionEffect
+        name: PotionAscensionEffect
         strength: 1
-        durationRemaining: 15
+        duration: 7
+        iterations: 3
+        effects:
+          - CONFUSION
     sections:
       -
         refTop: [2370, 236, 141]
@@ -38,9 +41,21 @@ layers:
     world: LayerTwo
     effects:
       -
-        name: DizzyAscensionEffect
-        strength: 2
-        durationRemaining: 22
+        name: PotionAscensionEffect
+        strength: 14
+        duration: 12
+        iterations: 2
+        effects:
+          - CONFUSION
+          - HUNGER
+      -
+        name: ParticleAscensionEffect
+        strenght: 20
+        duration: 3
+        iterations: 2
+        offset: 5
+        particles:
+        - SLIME
     sections:
       -
         refTop: [973, 236, -163]
@@ -56,22 +71,45 @@ layers:
     world: LayerThree
     effects:
       -
-        name: DizzyAscensionEffect
-        strength: 5
-        durationRemaining: 30
+        name: PotionAscensionEffect
+        strength: 14
+        duration: 30
+        effects:
+          - CONFUSION
+          - HUNGER
+      -
+        name: ParticleAscensionEffect
+        strenght: 40
+        duration: 2
+        iterations: 2
+        offset: 5
+        particles:
+        - SLIME
 #      -
 #        name: HallucinatingAscensionEffect
 #        strength: 4
 #        durationRemaining: 30
       -
         name: SoundAscensionEffect
-        strength: 1
-        durationRemaining: 30
+        strength: 0
+        duration: 4
+        iterations: 6
+        offset: 5
         sounds:
-          - ENTITY_ZOMBIE_AMBIENT
           - BLOCK_FIRE_AMBIENT
           - BLOCK_GRASS_STEP
+          - BLOCK_LADDER_STEP
+          - BLOCK_GRAVEL_STEP
           - ENTITY_ZOMBIE_STEP
+          - ENTITY_GENERIC_HURT
+          - ENTITY_GENERIC_SWIM
+          - ENTITY_GENERIC_SMALL_FALL
+          - ENTITY_ITEM_PICKUP
+          - BLOCK_WATER_AMBIENT
+          - ENTITY_ARROW_SHOOT
+          - ENTITY_CHICKEN_STEP
+          - ENTITY_CHICKEN_AMBIENT
+          - ENTITY_CREEPER_PRIMED
     sections:
       -
         refTop: [0, 238, -149]
@@ -107,17 +145,30 @@ layers:
     world: LayerFour
     effects:
       -
-        name: DizzyAscensionEffect
+        name: PotionAscensionEffect
         strength: 10
-        durationRemaining: 30
+        duration: 36
+        effects:
+        - CONFUSION
       -
-        name: BloodyAscensionEffect
-        strength: 10
-        durationRemaining: 30
+        name: ParticleAscensionEffect
+        strength: 20
+        duration: 2
+        offset: 1
+        iterations: 16
+        particles:
+        - REDSTONE
       -
-        name: DamagingAscensionEffect
-        strength: 4
-        durationRemaining: 30
+        name: PotionAscensionEffect
+        strength: 0
+        duration: 28
+        offset: 2
+        effects:
+        - WITHER
+        - HUNGER
+        - SLOW
+        - SLOW_DIGGING
+        - WEAKNESS
     sections:
       -
         refTop: [0, 232, -148]

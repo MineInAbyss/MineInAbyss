@@ -15,8 +15,8 @@ import java.util.List;
 public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
     private List<SpoofedEntityLiving> stands = new ArrayList<SpoofedEntityLiving>();
 
-    public HallucinatingAscensionEffect(long offset, int strength, int duration) {
-        super(offset, strength, duration);
+    public HallucinatingAscensionEffect(int offset, int strength, int duration, int iterations) {
+        super(offset, strength, duration, iterations);
     }
 
     @Override
