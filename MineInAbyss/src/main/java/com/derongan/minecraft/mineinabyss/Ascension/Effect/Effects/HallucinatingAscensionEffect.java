@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
             });
         } else {
             stands.forEach(a -> {
-//                a.moveTo(con, player.getLocation().clone().add(1, 0, 1));
+                a.moveTo(con, player.getLocation().clone().add(1, 0, 1));
                 a.lookAt(con, player.getLocation());
             });
         }
@@ -78,14 +79,14 @@ public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
         ItemStack chest = new ItemStack(Item.getById(299));
         ItemStack legs = new ItemStack(Item.getById(300));
         ItemStack boots = new ItemStack(Item.getById(301));
-        ItemStack shears = new ItemStack(Item.getById(359));
+        ItemStack random = new ItemStack(Item.getById(ThreadLocalRandom.current().nextInt(0, 450)));
 
 
         con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.HEAD, helm));
         con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.CHEST, chest));
         con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.LEGS, legs));
         con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.FEET, boots));
-        con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.MAINHAND, shears));
-        con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.OFFHAND, shears));
+        con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.MAINHAND, random));
+        con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.OFFHAND, random));
     }
 }

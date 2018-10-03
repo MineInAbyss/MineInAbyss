@@ -15,6 +15,7 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
     int strength;
     int offset;
     int iterations;
+    private int iterationsRemaining;
 
     AbstractAscensionEffect(int offset, int strength, int durationRemaining, int iterations) {
         this.iterations = iterations;
@@ -22,15 +23,18 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
         this.elapsed = 0;
         this.offset = offset;
         this.strength = strength;
+        iterationsRemaining = iterations;
     }
 
     @Override
     public void applyEffect(Player player, int ticks) {
-        for (int iterationsScheduled = 0; iterationsScheduled != iterations; iterationsScheduled++) {
             Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
                 applyEffect(player);
-            }, (offset + iterationsScheduled + (durationRemaining * iterationsScheduled)));
-        }
+                Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
+                    repeatEffect(player);
+                }, (1 + durationRemaining));
+            }, (offset));
+
     }
 
     abstract void applyEffect(Player player);
@@ -52,5 +56,16 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
 
     @Override
     public void cleanUp(Player player) {
+    }
+
+    private void repeatEffect(Player player){
+        iterationsRemaining -= 1;
+        if(iterationsRemaining > 0){
+            applyEffect(player);
+        } else {
+            Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
+                repeatEffect(player);
+            }, (1 + durationRemaining));
+        }
     }
 }
