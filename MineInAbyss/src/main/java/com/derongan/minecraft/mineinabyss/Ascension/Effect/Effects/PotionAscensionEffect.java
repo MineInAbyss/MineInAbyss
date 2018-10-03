@@ -39,16 +39,14 @@ public class PotionAscensionEffect extends AbstractAscensionEffect{
     }
 
     //potion effect merge shenanigans, creates a new stronger effect for when the effects overlap and another effect for the longer effect
-    /*private void mergeAddPotionEffect(Player player, PotionEffectType potionEffect, int newEffectDuration, int newStrength) {
+    //TODO I have no idea why it doesn't work
+    private void mergeAddPotionEffect(Player player, PotionEffectType potionEffect, int newEffectDuration, int newStrength) {
         if (player.getPotionEffect(potionEffect).getDuration() < newEffectDuration) {
             int oldEffectDuration = player.getPotionEffect(potionEffect).getDuration();
             int oldEffectStrength = player.getPotionEffect(potionEffect).getAmplifier();
-
             PotionEffect firstAddPotionEffect = new PotionEffect(potionEffect, oldEffectDuration, player.getPotionEffect(potionEffect).getAmplifier() + newStrength);
-
             player.removePotionEffect(potionEffect);
             player.addPotionEffect(firstAddPotionEffect);
-
             Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
                 if (player.getPotionEffect(potionEffect) != null) {
                     mergeAddPotionEffect(player, potionEffect, newEffectDuration - oldEffectDuration, newStrength);
@@ -56,16 +54,12 @@ public class PotionAscensionEffect extends AbstractAscensionEffect{
                     player.addPotionEffect(new PotionEffect(potionEffect, newEffectDuration - oldEffectDuration, newStrength));
                 }
                 }, (oldEffectDuration + 1));
-
         } else if (player.getPotionEffect(potionEffect).getDuration() > newEffectDuration) {
             int oldEffectDuration = player.getPotionEffect(potionEffect).getDuration();
             int oldEffectStrength = player.getPotionEffect(potionEffect).getAmplifier();
-
             PotionEffect firstAddPotionEffect = new PotionEffect(potionEffect, newEffectDuration, oldEffectStrength + newStrength);
-
             player.removePotionEffect(potionEffect);
             player.addPotionEffect(firstAddPotionEffect);
-
             Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
                 if (player.getPotionEffect(potionEffect) != null) {
                     mergeAddPotionEffect(player, potionEffect,  oldEffectDuration - newEffectDuration, oldEffectStrength);
@@ -73,13 +67,12 @@ public class PotionAscensionEffect extends AbstractAscensionEffect{
                     player.addPotionEffect(new PotionEffect(potionEffect, oldEffectDuration - newEffectDuration, oldEffectStrength));
                 }
             }, (newEffectDuration + 1));
-
         } else {
             PotionEffect mergedAddPotionEffect =  new PotionEffect(potionEffect, newEffectDuration, player.getPotionEffect(potionEffect).getAmplifier() + newStrength);
             player.removePotionEffect(potionEffect);
             player.addPotionEffect(mergedAddPotionEffect);
         }
-    }*/
+    }
 
     //if the effects merging strength makes no difference
     private void mergeExtendPotionEffect(Player player, PotionEffectType potionEffect, int newEffectDuration) {

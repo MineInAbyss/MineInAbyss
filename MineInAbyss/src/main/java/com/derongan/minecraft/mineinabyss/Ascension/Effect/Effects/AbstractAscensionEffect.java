@@ -23,17 +23,19 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
         this.elapsed = 0;
         this.offset = offset;
         this.strength = strength;
-        iterationsRemaining = iterations;
+        this.iterationsRemaining = iterations;
     }
 
     @Override
     public void applyEffect(Player player, int ticks) {
-            Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
-                applyEffect(player);
+        Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
+            applyEffect(player);
+            if (iterationsRemaining > 1) {
                 Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
                     repeatEffect(player);
                 }, (1 + durationRemaining));
-            }, (offset));
+            }
+        }, (offset));
 
     }
 
@@ -59,10 +61,14 @@ public abstract class AbstractAscensionEffect implements AscensionEffect {
     }
 
     private void repeatEffect(Player player){
-        iterationsRemaining -= 1;
-        if(iterationsRemaining > 0){
+        iterationsRemaining--;
+
+        if(iterationsRemaining < 1){
             applyEffect(player);
-        } else {
+        }
+
+        if (iterationsRemaining > 0) {
+            applyEffect(player);
             Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
                 repeatEffect(player);
             }, (1 + durationRemaining));

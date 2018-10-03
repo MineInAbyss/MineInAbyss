@@ -1,52 +1,53 @@
 package com.derongan.minecraft.mineinabyss.Ascension;
 
+import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent;
+import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent;
+import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent;
+import com.derongan.minecraft.deeperworld.world.WorldManager;
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.MineInAbyss;
 import com.derongan.minecraft.mineinabyss.Player.PlayerData;
 import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
 import com.derongan.minecraft.mineinabyss.World.Layer;
-import com.derongan.minecraft.mineinabyss.World.Section;
-import com.derongan.minecraft.mineinabyss.World.SectionUtils;
-import com.derongan.minecraft.mineinabyss.util.TickUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.util.Vector;
-import org.bukkit.attribute.Attribute;
 
+import org.bukkit.GameMode;
+import org.bukkit.attribute.Attribute;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import static com.derongan.minecraft.mineinabyss.World.MinecraftConstants.WORLD_HEIGHT;
 
 public class AscensionListener implements Listener {
     private AbyssContext context;
     private Set<UUID> recentlyMovedPlayers;
 
+    private WorldManager worldManager;
+
     public AscensionListener(AbyssContext context) {
         this.context = context;
 
+        worldManager = Bukkit.getServicesManager().load(WorldManager.class);
         recentlyMovedPlayers = new HashSet<>();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent moveEvent) {
         Player player = moveEvent.getPlayer();
 
-        if (recentlyMovedPlayers.contains(player.getUniqueId()))
+        if (recentlyMovedPlayers.contains(player.getUniqueId())) {
+            recentlyMovedPlayers.remove(player.getUniqueId());
             return;
+        }
 
         AbyssWorldManager manager = context.getWorldManager();
 
-        if (!manager.isAbyssWorld(player.getWorld().getName()))
+        if (!manager.isAbyssWorld(player.getWorld()))
             return;
 
         Location from = moveEvent.getFrom();
@@ -56,71 +57,50 @@ public class AscensionListener implements Listener {
 
         PlayerData playerData = context.getPlayerDataMap().get(player.getUniqueId());
 
-        Section currentSection = playerData.getCurrentSection();
-
-        if(playerData.isAffectedByCurse()){
+        if (playerData.isAffectedByCurse()) {
             double dist = playerData.getDistanceAscended();
-            playerData.setDistanceAscended(Math.max(dist + changeY,0));
+            playerData.setDistanceAscended(Math.max(dist + changeY, 0));
 
-            if(dist >= 10){
-                playerData.getCurrentLayer().getAscensionEffects().forEach(a->{
-                   a.build().applyEffect(player,10);
-                });
-                playerData.setDistanceAscended(0);
-            }
-        }
+            if (dist >= 10) {
+                Layer layerForSection = manager.getLayerForSection(worldManager.getSectionFor(moveEvent.getFrom()));
 
-        if(playerData.isAnchored())
-            return;
-
-        if (changeY > 0) {
-            Section newSection = manager.getSectonAt(currentSection.getIndex() - 1);
-
-            if (newSection == null)
-                return;
-
-            int shared = SectionUtils.getSharedBlocks(currentSection, newSection);
-
-            if (to.getY() > WORLD_HEIGHT - .3 * shared) {
-                teleportBetweenSections(playerData, to, currentSection, newSection);
-            }
-
-        } else if (changeY < 0) {
-            Section newSection = manager.getSectonAt(currentSection.getIndex() + 1);
-
-            if (newSection == null)
-                return;
-
-            int shared = SectionUtils.getSharedBlocks(currentSection, newSection);
-
-            if (to.getY() < .3 * shared) {
-                teleportBetweenSections(playerData, to, currentSection, newSection);
+                if (layerForSection != null) {
+                    layerForSection.getAscensionEffects().forEach(a -> {
+                        a.build().applyEffect(player, 10);
+                    });
+                    playerData.setDistanceAscended(0);
+                }
             }
         }
     }
 
-    private void teleportBetweenSections(PlayerData data, Location to, Section oldSection, Section newSection) {
-        Location newLoc = SectionUtils.getCorrespondingLocation(oldSection, newSection, to);
+    @EventHandler(ignoreCancelled = true)
+    private void onPlayerAscend(PlayerAscendEvent e){
+        onPlayerChangeSection(e);
+    }
 
-        Vector oldVelocity = data.getPlayer().getVelocity();
-        data.getPlayer().teleport(newLoc);
-        data.getPlayer().setVelocity(oldVelocity);
+    @EventHandler(ignoreCancelled = true)
+    private void onPlayerDescend(PlayerDescendEvent e){
+        onPlayerChangeSection(e);
+    }
 
-        recentlyMovedPlayers.add(data.getPlayer().getUniqueId());
+    private void onPlayerChangeSection(PlayerChangeSectionEvent changeSectionEvent) {
+        if (!context.getPlayerDataMap().get(changeSectionEvent.getPlayer().getUniqueId()).isAnchored()) {
+            recentlyMovedPlayers.add(changeSectionEvent.getPlayer().getUniqueId());
+            AbyssWorldManager manager = context.getWorldManager();
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(
-                MineInAbyss.getInstance(),
-                () -> recentlyMovedPlayers.remove(data.getPlayer().getUniqueId()),
-                TickUtils.milisecondsToTicks(500)
-        );
+            Section fromSection = changeSectionEvent.getFromSection();
+            Section toSection = changeSectionEvent.getToSection();
 
+            Layer fromLayer = manager.getLayerForSection(fromSection);
+            Layer toLayer = manager.getLayerForSection(toSection);
 
-        data.setCurrentSection(newSection);
-        data.setCurrentLayer(newSection.getLayer());
-        data.setDistanceAscended(0); // Reset distance
+            if (fromLayer != toLayer) {
+                changeSectionEvent.getPlayer().sendTitle(toLayer.getName(), toLayer.getSub(), 50, 10, 20);
+            }
 
-        if (newSection.getLayer() != oldSection.getLayer()) {
-            data.getPlayer().sendTitle(newSection.getLayer().getName(), newSection.getLayer().getSub(), 50, 10, 20);
+        } else {
+            changeSectionEvent.setCancelled(true);
         }
     }
 
@@ -136,20 +116,11 @@ public class AscensionListener implements Listener {
 
         Layer layerOfDeath = context.getPlayerDataMap().get(player.getUniqueId()).getCurrentLayer();
 
-        context.getPlayerDataMap().get(player.getUniqueId()).setCurrentSection(manager.getSectonAt(0));
-        context.getPlayerDataMap().get(player.getUniqueId()).setCurrentLayer(manager.getLayerAt(0));
+        deathEvent.setDeathMessage(deathEvent.getDeathMessage() + layerOfDeath.getDeathMessage());
 
-        if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+        if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) { //reset thousand men pins
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
             player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1);
         }
-
-        deathEvent.setDeathMessage(deathEvent.getDeathMessage() + layerOfDeath.getDeathMessage());
-    }
-
-    @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent playerTeleportEvent){
-        Player player = playerTeleportEvent.getPlayer();
-        PlayerData data = context.getPlayerDataMap().get(player.getUniqueId());
     }
 }
