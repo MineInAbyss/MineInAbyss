@@ -1,8 +1,7 @@
 package com.derongan.minecraft.mineinabyss.World;
 
-import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
-import org.bukkit.World;
 
 import java.util.List;
 
@@ -30,12 +29,12 @@ public interface Layer {
      */
     List<Section> getSections();
 
+
     /**
-     * Gets the section at index or throws //todo what to throw
-     * @param index The index of the section
-     * @return The section at the index
+     * Returns whether or not this layer contains this section
      */
-    Section getSection(int index);
+    boolean containsSection(Section section);
+
 
     /**
      * Gets the effects of ascending on this layer

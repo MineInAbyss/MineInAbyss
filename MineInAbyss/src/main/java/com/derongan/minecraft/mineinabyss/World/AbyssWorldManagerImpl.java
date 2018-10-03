@@ -1,24 +1,24 @@
 package com.derongan.minecraft.mineinabyss.World;
 
+import com.derongan.minecraft.deeperworld.world.WorldManager;
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.Configuration.EffectConfiguror;
+
+import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AbyssWorldManagerImpl implements AbyssWorldManager {
-    private List<Section> sections;
     private List<Layer> layers;
-    private Set<String> abyssWorlds;
+
+    private Set<World> abyssWorlds;
 
     private int numLayers;
-    private int numSections;
 
     private static final String LAYER_KEY = "layers";
     private static final String NAME_KEY = "name";
@@ -26,9 +26,9 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
     private static final String SECTION_KEY = "sections";
     private static final String EFFECTS_KEY = "effects";
 
+
     public AbyssWorldManagerImpl(Configuration config) {
         layers = new ArrayList<>();
-        sections = new ArrayList<>();
 
         abyssWorlds = new HashSet<>();
 
@@ -44,14 +44,13 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
         LayerImpl layer = new LayerImpl(layerName, subHeader, numLayers++);
         layers.add(layer);
 
-        List<Map<?, ?>> sectionMap = (List<Map<?, ?>>) map.get(SECTION_KEY);
+        WorldManager worldManager = Bukkit.getServicesManager().load(WorldManager.class);
 
-        layer.setSections(
-                sectionMap
-                        .stream()
-                        .map(a -> parseSection(a, layer))
-                        .collect(Collectors.toList())
-        );
+        List<Section> sections = ((List<String>)map.get(SECTION_KEY)).stream().map(worldManager::getSectionFor).collect(Collectors.toList());
+
+        layer.setSections(sections);
+
+        sections.forEach(a->abyssWorlds.add(a.getWorld()));
 
         List<Map<?, ?>> effectMap = (List<Map<?, ?>>) map.get(EFFECTS_KEY);
         if (effectMap == null)
@@ -72,54 +71,18 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
         return EffectConfiguror.createBuilderFromMap(map);
     }
 
-    private Section parseSection(Map<?, ?> map, Layer layer) {
-        String worldName = (String) map.get("world");
-        World world = Bukkit.getWorld(worldName);
-
-        abyssWorlds.add(worldName);
-
-        Location refBottom = parseLocation((List<Integer>) map.get("refBottom"), world);
-        Location refTop = parseLocation((List<Integer>) map.get("refTop"), world);
-
-        SectionImpl section = new SectionImpl(numSections++, world, layer, refTop, refBottom);
-
-        sections.add(section);
-
-        return section;
-    }
-
-    private Location parseLocation(List<Integer> points, World world) {
-        return new Location(world, points.get(0), points.get(1), points.get(2));
-    }
-
     @Override
     public List<Layer> getLayers() {
-        return Collections.unmodifiableList(layers);
+        return ImmutableList.copyOf(layers);
     }
 
     @Override
-    public List<Section> getSections() {
-        return Collections.unmodifiableList(sections);
+    public Layer getLayerForSection(Section section) {
+        return layers.stream().filter(a->a.containsSection(section)).findFirst().orElse(null);
     }
 
     @Override
-    public Section getSectonAt(int index) {
-        if (index >= sections.size() || index < 0)
-            return null;
-
-        return sections.get(index);
-    }
-
-    @Override
-    public Layer getLayerAt(int index) {
-        if (index >= layers.size() || index < 0)
-            return null;
-
-        return layers.get(index);
-    }
-
-    @Override
-    public boolean isAbyssWorld(String worldName) {
+    public boolean isAbyssWorld(World worldName) {
         return abyssWorlds.contains(worldName);
     }
 }

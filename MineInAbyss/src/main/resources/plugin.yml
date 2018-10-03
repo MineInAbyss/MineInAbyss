@@ -3,6 +3,7 @@ version: @plugin_version@
 author: Derongan
 main: com.derongan.minecraft.mineinabyss.MineInAbyss
 softdepend: [Multiverse-Core]
+depend: [DeeperWorld]
 
 prefix: MiB
 description: A mod that adds abyss effects

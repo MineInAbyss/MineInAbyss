@@ -1,9 +1,7 @@
 package com.derongan.minecraft.mineinabyss.World;
 
-import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
+import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffectBuilder;
-import com.google.common.collect.ImmutableList;
-import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,11 +44,11 @@ public class LayerImpl implements Layer {
     }
 
     @Override
-    public Section getSection(int index) {
-        return sections.get(index);
+    public boolean containsSection(Section section) {
+        return sections.stream().anyMatch(a->a.getKey().equals(section.getKey()));
     }
 
-    public void setSections(List<Section> sections) {
+    public void setSections(List<com.derongan.minecraft.deeperworld.world.section.Section> sections) {
         this.sections = sections;
     }
 

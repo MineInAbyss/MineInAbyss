@@ -2,7 +2,6 @@ package com.derongan.minecraft.mineinabyss.Player;
 
 import com.derongan.minecraft.mineinabyss.Ascension.Effect.AscensionEffect;
 import com.derongan.minecraft.mineinabyss.World.Layer;
-import com.derongan.minecraft.mineinabyss.World.Section;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.List;
 
 public class PlayerDataImpl implements PlayerData {
     private Layer currentLayer;
-    private Section currentSection;
 
     private boolean affectedByCurse;
     private boolean anchored;
@@ -34,16 +32,6 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public void setCurrentLayer(Layer currentLayer) {
         this.currentLayer = currentLayer;
-    }
-
-    @Override
-    public Section getCurrentSection() {
-        return currentSection;
-    }
-
-    @Override
-    public void setCurrentSection(Section currentSection) {
-        this.currentSection = currentSection;
     }
 
     @Override
