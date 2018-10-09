@@ -8,9 +8,10 @@ jar {
     from project(':MineInAbyss-API').sourceSets.main.output
 }
 
-task copyJar(type: Copy) {
-    from jar // here it automatically reads jar file produced from jar task
-    into '/srv/craftbukkit/plugins/'
-}
-
-build.dependsOn copyJar
+// Uncomment and change path to your testing server to automatically drop jar
+//task copyJar(type: Copy) {
+//    from jar // here it automatically reads jar file produced from jar task
+//    into '/srv/craftbukkit/plugins/'
+//}
+//
+//build.dependsOn copyJar

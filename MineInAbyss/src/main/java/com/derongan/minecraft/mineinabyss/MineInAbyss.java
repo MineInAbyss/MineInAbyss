@@ -1,24 +1,22 @@
 package com.derongan.minecraft.mineinabyss;
 
-import com.derongan.minecraft.mineinabyss.Ascension.AscensionCommandExecutor;
-import com.derongan.minecraft.mineinabyss.Ascension.AscensionListener;
-import com.derongan.minecraft.mineinabyss.Configuration.ConfigurationManager;
-import com.derongan.minecraft.mineinabyss.Player.PlayerData;
-import com.derongan.minecraft.mineinabyss.Player.PlayerDataConfigManager;
-import com.derongan.minecraft.mineinabyss.Player.PlayerListener;
-import com.derongan.minecraft.mineinabyss.Relic.Loading.RelicLoader;
-import com.derongan.minecraft.mineinabyss.Relic.RelicCommandExecutor;
-import com.derongan.minecraft.mineinabyss.Relic.RelicDecayTask;
-import com.derongan.minecraft.mineinabyss.Relic.RelicGroundEntity;
-import com.derongan.minecraft.mineinabyss.Relic.RelicUseListener;
-import com.derongan.minecraft.mineinabyss.World.EntityChunkListener;
-import com.derongan.minecraft.mineinabyss.World.WorldCommandExecutor;
+import com.derongan.minecraft.mineinabyss.ascension.AscensionCommandExecutor;
+import com.derongan.minecraft.mineinabyss.ascension.AscensionListener;
+import com.derongan.minecraft.mineinabyss.configuration.ConfigurationManager;
+import com.derongan.minecraft.mineinabyss.player.PlayerData;
+import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager;
+import com.derongan.minecraft.mineinabyss.player.PlayerListener;
+import com.derongan.minecraft.mineinabyss.relic.Loading.RelicLoader;
+import com.derongan.minecraft.mineinabyss.relic.RelicCommandExecutor;
+import com.derongan.minecraft.mineinabyss.relic.RelicDecayTask;
+import com.derongan.minecraft.mineinabyss.relic.RelicGroundEntity;
+import com.derongan.minecraft.mineinabyss.relic.RelicUseListener;
+import com.derongan.minecraft.mineinabyss.world.EntityChunkListener;
+import com.derongan.minecraft.mineinabyss.world.WorldCommandExecutor;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 

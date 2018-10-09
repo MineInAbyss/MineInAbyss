@@ -1,19 +1,15 @@
 package com.derongan.minecraft.mineinabyss;
 
 import com.derongan.minecraft.deeperworld.world.WorldManager;
-import com.derongan.minecraft.mineinabyss.Player.PlayerData;
-import com.derongan.minecraft.mineinabyss.World.AbyssWorldManager;
-import com.derongan.minecraft.mineinabyss.World.AbyssWorldManagerImpl;
-import com.derongan.minecraft.mineinabyss.World.EntityChunkManager;
-import com.derongan.minecraft.mineinabyss.World.EntityChunkManagerImpl;
+import com.derongan.minecraft.mineinabyss.player.PlayerData;
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager;
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl;
+import com.derongan.minecraft.mineinabyss.world.EntityChunkManager;
+import com.derongan.minecraft.mineinabyss.world.EntityChunkManagerImpl;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
