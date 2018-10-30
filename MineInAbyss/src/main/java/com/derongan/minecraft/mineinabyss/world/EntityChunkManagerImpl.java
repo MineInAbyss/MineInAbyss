@@ -43,7 +43,7 @@ public class EntityChunkManagerImpl implements EntityChunkManager {
         try {
             configManager.saveChunkData(chunk, entities);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(String.format("Failed to save chunk data for chunk %s_%s", chunk.getX(), chunk.getZ()));
         }
 
         entities.forEach(a->{

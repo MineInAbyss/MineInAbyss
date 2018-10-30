@@ -34,13 +34,15 @@ public class WorldDataConfigManager {
     public void saveChunkData(Chunk chunk, Collection<ChunkEntity> entities) throws IOException {
         Path path = getChunkDataPath(chunk);
 
-        // Recreate directories if missing
-        path.toFile().getParentFile().mkdirs();
+        if(path.toFile().isFile() && !entities.isEmpty()) {
+            // Recreate directories if missing
+            path.toFile().getParentFile().mkdirs();
 
-        YamlConfiguration config = new YamlConfiguration();
-        config.set(ENTITIES_KEY, entities);
+            YamlConfiguration config = new YamlConfiguration();
+            config.set(ENTITIES_KEY, entities);
 
-        config.save(path.toFile());
+            config.save(path.toFile());
+        }
     }
 
     @VisibleForTesting

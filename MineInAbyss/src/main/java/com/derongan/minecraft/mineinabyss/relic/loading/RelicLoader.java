@@ -1,4 +1,4 @@
-package com.derongan.minecraft.mineinabyss.relic.Loading;
+package com.derongan.minecraft.mineinabyss.relic.loading;
 
 import com.derongan.minecraft.mineinabyss.relic.relics.StandardRelicType;
 import com.derongan.minecraft.mineinabyss.AbyssContext;

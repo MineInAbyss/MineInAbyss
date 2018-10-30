@@ -1,7 +1,7 @@
 package com.derongan.minecraft.mineinabyss.relic;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.relic.Loading.RelicLoader;
+import com.derongan.minecraft.mineinabyss.relic.loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.relic.relics.RelicType;
 import com.derongan.minecraft.mineinabyss.relic.relics.StandardRelicType;
 import com.derongan.minecraft.mineinabyss.world.ChunkEntity;

@@ -6,7 +6,7 @@ import com.derongan.minecraft.mineinabyss.configuration.ConfigurationManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
-import com.derongan.minecraft.mineinabyss.relic.Loading.RelicLoader;
+import com.derongan.minecraft.mineinabyss.relic.loading.RelicLoader;
 import com.derongan.minecraft.mineinabyss.relic.RelicCommandExecutor;
 import com.derongan.minecraft.mineinabyss.relic.RelicDecayTask;
 import com.derongan.minecraft.mineinabyss.relic.RelicGroundEntity;
