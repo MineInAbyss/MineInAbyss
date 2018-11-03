@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum SlightlyOffzRelicType implements RelicType {
-    CAMPFIRE(Material.WOOD_SPADE,
+    CAMPFIRE(Material.WOODEN_SHOVEL,
             3,
             new CampfireRelicBehaviour(),
             "Campfire",

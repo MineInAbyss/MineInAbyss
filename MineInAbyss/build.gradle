@@ -1,6 +1,6 @@
 dependencies {
     compile project(':MineInAbyss-API')
-    compile group: 'org.spigotmc', name: 'spigot', version: project.property("api_version")
+    compile group: 'org.spigotmc', name: 'spigot-api', version: project.property("api_version")
     testCompile "org.mockito:mockito-core:2.+"
 }
 

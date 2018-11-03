@@ -44,7 +44,7 @@ public class IncineratorRelicBehaviour implements UseRelicBehaviour {
                             if (Math.random() > .5) {
                                 player.getWorld().spawnParticle(Particle.SMOKE_LARGE, relative.getLocation(), 1);
                                 player.getWorld().playSound(relative.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 5f, .5f);
-                                player.getWorld().playSound(relative.getLocation(), Sound.ENTITY_LIGHTNING_IMPACT, 5f, .5f);
+                                player.getWorld().playSound(relative.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 5f, .5f);
                             }
 
                             player.getWorld().getNearbyEntities(relative.getLocation(), 3, 3, 3).forEach(b -> {

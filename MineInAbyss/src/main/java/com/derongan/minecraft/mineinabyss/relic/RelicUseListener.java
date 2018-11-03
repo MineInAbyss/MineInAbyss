@@ -22,17 +22,12 @@ import java.util.stream.Stream;
 
 public class RelicUseListener implements Listener {
     public final static Set<Material> passable = Stream.of(Material.AIR,
-            Material.LEAVES,
-            Material.LEAVES_2,
-            Material.YELLOW_FLOWER,
             Material.VINE,
             Material.DIRT,
             Material.GRASS,
-            Material.RED_ROSE,
-            Material.SAPLING,
             Material.BROWN_MUSHROOM,
             Material.RED_MUSHROOM,
-            Material.DOUBLE_PLANT).collect(Collectors.toSet());
+            Material.TALL_GRASS).collect(Collectors.toSet());
 
     private AbyssContext context;
     private AbyssWorldManager worldManager;

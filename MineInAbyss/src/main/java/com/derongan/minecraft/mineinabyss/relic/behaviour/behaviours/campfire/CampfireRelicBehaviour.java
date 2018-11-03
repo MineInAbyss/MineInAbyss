@@ -22,7 +22,7 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
 
     RelicType type;
     List allowedPlacements  = Arrays.asList(Material.GRASS, Material.STONE, Material.DIRT);
-    List foodItems = Arrays.asList(Material.RABBIT, Material.RAW_CHICKEN, Material.RAW_FISH, Material.RAW_BEEF, Material.PORK);
+    List foodItems = Arrays.asList(Material.RABBIT, Material.CHICKEN, Material.COD, Material.SALMON, Material.BEEF, Material.PORKCHOP);
 
     @Override
     public void onUse(PlayerInteractEvent event) {
@@ -107,17 +107,20 @@ public class CampfireRelicBehaviour implements CampfireTimerBehaviour, UseRelicB
                         case RABBIT:
                             is.setType(Material.COOKED_RABBIT);
                             break;
-                        case RAW_CHICKEN:
+                        case CHICKEN:
                             is.setType(Material.COOKED_CHICKEN);
                             break;
-                        case RAW_FISH:
-                            is.setType(Material.COOKED_FISH);
+                        case COD:
+                            is.setType(Material.COOKED_COD);
                             break;
-                        case RAW_BEEF:
+                        case SALMON:
+                            is.setType(Material.COOKED_SALMON);
+                            break;
+                        case BEEF:
                             is.setType(Material.COOKED_BEEF);
                             break;
-                        case PORK:
-                            is.setType(Material.GRILLED_PORK);
+                        case PORKCHOP:
+                            is.setType(Material.COOKED_PORKCHOP);
                             break;
                     }
                     as.setItemInHand(is);

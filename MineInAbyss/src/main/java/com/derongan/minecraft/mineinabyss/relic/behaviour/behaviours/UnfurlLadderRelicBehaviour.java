@@ -9,9 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Item;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Ladder;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -59,7 +62,11 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
                 final Block theBlock = current;
                 modifiedBlocks.add(theBlock);
                 tasks.add(scheduler.scheduleSyncDelayedTask(JavaPlugin.getPlugin(MineInAbyss.class), () -> {
-                    theBlock.setTypeIdAndData(Material.LADDER.getId(), getData(face), false);
+                    Ladder ladder = new Ladder();
+                    ladder.setFacingDirection(face);
+                    BlockState blockState = theBlock.getState();
+                    blockState.setData(ladder);
+                    blockState.update();
                 }, lengthFallen * 2));
                 current = current.getRelative(BlockFace.DOWN);
                 lengthFallen++;
@@ -71,7 +78,7 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
             tasks.add(scheduler.scheduleSyncDelayedTask(JavaPlugin.getPlugin(MineInAbyss.class), ()->{
                 registeredLocations.remove(first);
                 registeredLocations.remove(last);
-                modifiedBlocks.forEach(a -> a.setTypeIdAndData(Material.AIR.getId(), (byte) 0, false));
+                modifiedBlocks.forEach(a -> a.setType(Material.AIR));
 
                 Item item = last.getWorld().dropItem(last.add(.5, -.5, .5), myRelic.getItem());
                 item.setVelocity(item.getVelocity().zero());
@@ -82,7 +89,7 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
             registerCleanupAction(first, () -> {
                 registeredLocations.remove(first);
                 registeredLocations.remove(last);
-                modifiedBlocks.forEach(a -> a.setTypeIdAndData(Material.AIR.getId(), (byte) 0, false));
+                modifiedBlocks.forEach(a -> a.setType(Material.AIR));
 
                 Item item = first.getWorld().dropItem(first.add(.5, 0, .5), myRelic.getItem());
                 item.setVelocity(item.getVelocity().zero());
@@ -93,7 +100,7 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
             registerCleanupAction(last, () -> {
                 registeredLocations.remove(first);
                 registeredLocations.remove(last);
-                modifiedBlocks.forEach(a -> a.setTypeIdAndData(Material.AIR.getId(), (byte) 0, false));
+                modifiedBlocks.forEach(a -> a.setType(Material.AIR));
 
                 Item item = last.getWorld().dropItem(last.add(.5, -.5, .5), myRelic.getItem());
                 item.setVelocity(item.getVelocity().zero());
@@ -103,20 +110,6 @@ public class UnfurlLadderRelicBehaviour implements UseRelicBehaviour, CleanUpWor
         }
     }
 
-    private byte getData(BlockFace face) {
-        switch (face) {
-            case NORTH:
-                return (byte) 2;
-            case SOUTH:
-                return (byte) 3;
-            case WEST:
-                return (byte) 4;
-            case EAST:
-                return (byte) 5;
-            default:
-                return (byte) 0;
-        }
-    }
 
     @Override
     public void setRelicType(RelicType type) {

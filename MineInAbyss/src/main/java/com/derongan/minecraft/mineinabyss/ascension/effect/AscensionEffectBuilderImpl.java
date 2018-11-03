@@ -1,10 +1,10 @@
 package com.derongan.minecraft.mineinabyss.ascension.effect;
 
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.*;
-import net.minecraft.server.v1_12_R1.EnumParticle;
 import org.bukkit.Sound;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -74,17 +74,18 @@ public abstract class AscensionEffectBuilderImpl<E extends AscensionEffect> impl
     }
 
     public static class ParticleAscensionEffectBuilder extends AscensionEffectBuilderImpl<ParticleAscensionEffect> {
-        List<EnumParticle> addParticles;
+        List<Object> addParticles;
 
         public ParticleAscensionEffectBuilder setParticles(List<String> listedParticles){
-            addParticles = listedParticles.stream()
-                    .map(p -> { try { return  EnumParticle.valueOf(p); } catch (IllegalArgumentException iae) { return null; } })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            addParticles = new ArrayList<>();
+//            addParticles = listedParticles.stream()
+//                    .map(p -> { try { return  EnumParticle.valueOf(p); } catch (IllegalArgumentException iae) { return null; } })
+//                    .filter(Objects::nonNull)
+//                    .collect(Collectors.toList());
             return this;
         }
 
-        List<EnumParticle> getParticles(){return addParticles;}
+        List<Object> getParticles(){return addParticles;}
 
         @Override
         public ParticleAscensionEffect build() {
