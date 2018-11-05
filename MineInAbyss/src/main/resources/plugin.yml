@@ -1,7 +1,11 @@
 name: MineInAbyss
 version: @plugin_version@
 author: Derongan
-main: com.derongan.minecraft.mineinabyss.plugin.MineInAbyss
+main: com.derongan.minecraft.mineinabyss.MineInAbyss
+api-version: 1.13
+softdepend: [Multiverse-Core]
+depend: [DeeperWorld]
+
 prefix: MiB
 description: A mod that adds abyss effects
 
@@ -15,9 +19,21 @@ commands:
   relicreload:
     description: Reload relics
     usage: /relicreload
+  pinsreset:
+    describtion: Reset pin effects
+    usage: /pinsreset
   sectionoff:
     description: Cheat
     usage: /sectionoff
   sectionon:
     description: why
     usage: /sectionon
+  curseon:
+    description: Turn on curse
+    usage: /curseon
+  curseoff:
+    description: Turn off curse
+    usage: /curseoff
+  yolo:
+    description: Testing
+    usage: /yolo

@@ -1,8 +1,5 @@
-.idea/modules/
-.idea/libraries/
-.idea/gradle.xml
-.idea/workspace.xml
+.idea/
 .idea/modules.xml
 .gradle/
-gradle/
-MadeInAbyss.iml
+MineInAbyss.iml
+build/

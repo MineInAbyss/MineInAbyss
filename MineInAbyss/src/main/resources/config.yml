@@ -1,92 +1,17 @@
-storage:
-  relicpath: "relics/"
-  sqlitefile: "mineinabyss.db"
-layers:
-  -
-    name: LayerOne
-    offset: 50
-    effects:
-      -
-        name: DizzyAscensionEffect
-        strength: 1
-        durationRemaining: 15
-    sectionOffsets:
-      - [425,83,36]
-      - [2953,515,41]
-      - [4521,563,41]
-  -
-    name: LayerTwo
-    offset: 40
-    effects:
-      -
-        name: DizzyAscensionEffect
-        strength: 2
-        durationRemaining: 22
-    sectionOffsets:
-      - [1673, 19, 24]
-      - [385, 14, 0]
-  -
-    name: LayerThree
-    offset: 30
-    effects:
-      -
-        name: DizzyAscensionEffect
-        strength: 5
-        durationRemaining: 30
-      -
-        name: HallucinatingAscensionEffect
-        strength: 4
-        durationRemaining: 30
-      -
-        name: SoundAscensionEffect
-        strength: 1
-        durationRemaining: 30
-        sounds:
-          - ENTITY_ZOMBIE_AMBIENT
-          - BLOCK_FIRE_AMBIENT
-          - BLOCK_GRASS_STEP
-          - ENTITY_ZOMBIE_STEP
-  -
-    name: LayerFour
-    offset: 25
-    abyssDeathMessage: "{Player} died from ascending on the fourth layer!"
-    effects:
-      -
-        name: DizzyAscensionEffect
-        strength: 10
-        durationRemaining: 30
-      -
-        name: BloodyAscensionEffect
-        strength: 10
-        durationRemaining: 30
-      -
-        name: DamagingAscensionEffect
-        strength: 4
-        durationRemaining: 30
-  -
-    name: LayerFive
-    offset: 20
-    abyssDeathMessage: "{Player} died from ascending on the fifth layer!"
-    effects:
-      -
-        name: DizzyAscensionEffect
-        strength: 10
-        durationRemaining: 30
-      -
-        name: BloodyAscensionEffect
-        strength: 10
-        durationRemaining: 30
-      -
-        name: DamagingAscensionEffect
-        strength: 6
-        durationRemaining: 30
-
-  -
-    name: LayerSix
-    offset: 10
-    abyssDeathMessage: "{Player} died from ascending on the sixth layer!"
-    effects:
-      -
-        name: DeathAscensionEffect
-        strength: 10
-        durationRemaining: 30
+#storage:
+#  relicpath: "relics/"
+#layers:
+#  -
+#    name: Edge of the Abyss
+#    sub: 0-1350 meters
+#    world: LayerOne
+#    effects:
+#      -
+#        name: PotionAscensionEffect
+#        strength: 1
+#        duration: 7
+#        iterations: 3
+#        effects:
+#          - CONFUSION
+#    # Fill this with the section names defined in the deeper world config
+#    sections: [section1]

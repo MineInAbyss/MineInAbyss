@@ -1,2 +1,5 @@
 include 'MineInAbyss-API'
 include 'MineInAbyss'
+
+//Set this to the path to your deeper world directory
+includeBuild '../DeeperWorld'
