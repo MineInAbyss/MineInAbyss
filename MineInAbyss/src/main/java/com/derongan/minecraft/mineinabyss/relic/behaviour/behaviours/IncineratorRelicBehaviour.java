@@ -1,32 +1,20 @@
 package com.derongan.minecraft.mineinabyss.relic.behaviour.behaviours;
 
-import com.derongan.minecraft.mineinabyss.relic.behaviour.CooldownRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.relic.behaviour.UseRelicBehaviour;
 import com.derongan.minecraft.mineinabyss.relic.RelicUseListener;
-import com.derongan.minecraft.mineinabyss.relic.relics.RelicType;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
-public class IncineratorRelicBehaviour implements UseRelicBehaviour, CooldownRelicBehaviour {
-    RelicType type;
-    boolean onCooldown;
-
+public class IncineratorRelicBehaviour implements UseRelicBehaviour {
     @Override
     public void onUse(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR) {
-            event.setCancelled(true);
-        }
-        if (onCooldown) {
-            return;
-        }
-
+        event.setCancelled(true);
         Player player = event.getPlayer();
 
         List<Block> blocks = player.getLineOfSight(RelicUseListener.passable, 100);
@@ -68,17 +56,5 @@ public class IncineratorRelicBehaviour implements UseRelicBehaviour, CooldownRel
                 }
             }
         });
-        CooldownRelicBehaviour.registerCooldown(event.getPlayer(), 200, type);
-        onCooldown = true;
-    }
-
-    @Override
-    public void cooledDown() {
-        onCooldown = false;
-    }
-
-    @Override
-    public void setRelicType(RelicType type) {
-        this.type = type;
     }
 }
