@@ -32,6 +32,9 @@ public interface CampfireTimerBehaviour extends RelicBehaviour {
     static void addBurnTime(int addCoal, Entity entity, Player p){
         CampfireInfo campfire = registeredCampfires.get(entity.getUniqueId());
         if(campfire.coalLeft <= campfire.maxCoal-addCoal) {
+            if(campfire.coalLeft < 0){
+                campfire.coalLeft = 0;
+            }
             ArmorStand as = (ArmorStand) entity;
             ItemStack is = as.getHelmet();
 

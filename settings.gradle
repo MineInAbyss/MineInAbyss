@@ -2,4 +2,7 @@ include 'MineInAbyss-API'
 include 'MineInAbyss'
 
 //Set this to the path to your deeper world directory
-includeBuild '../DeeperWorld'
+boolean inComposite = gradle.parent != null
+if (!inComposite) { //Allows other plugins to use this one through Gradle
+    includeBuild '../DeeperWorld'
+}
