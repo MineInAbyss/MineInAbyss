@@ -7,16 +7,14 @@ The server aims to recreate the world of [Made in Abyss](https://en.wikipedia.or
 You can join our [discord](https://discord.gg/qWAMBSK) for more information about the server.
 
 ## Features
-* Custom Item/Artifact system
+* Custom Item/Artifact system using [Looty](https://github.com/MineInAbyss/Looty)
     * A number of premade artifacts such as [blaze reap](http://madeinabyss.wikia.com/wiki/Blaze_Reap)
     * API for creating own artifacts
-* Extremely deep world using [DeeperWorld](https://github.com/Derongan/DeeperWorld)
+    * Custom loot spawning as entities on map
+* Extremely deep world using [DeeperWorld](https://github.com/MineInAbyss/DeeperWorld)
     * Stacked sections automatically and seamlessly teleported betwen
 * The Curse of Ascension
     * Varying curse effects mimicking the curses in the manga/anime as close as possible
-* Custom loot spawning (in progress)
-    * Automatically generate loot regions based on varying criteria
-    * Items spawn in these areas not as item drops but as interactive 3d models
 
 ## Getting Started
 
