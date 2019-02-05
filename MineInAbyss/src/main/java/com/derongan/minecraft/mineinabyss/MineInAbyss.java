@@ -6,15 +6,8 @@ import com.derongan.minecraft.mineinabyss.configuration.ConfigurationManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
-import com.derongan.minecraft.mineinabyss.relic.loading.RelicLoader;
-import com.derongan.minecraft.mineinabyss.relic.RelicCommandExecutor;
-import com.derongan.minecraft.mineinabyss.relic.RelicDecayTask;
-import com.derongan.minecraft.mineinabyss.relic.RelicGroundEntity;
-import com.derongan.minecraft.mineinabyss.relic.RelicUseListener;
-import com.derongan.minecraft.mineinabyss.world.EntityChunkListener;
 import com.derongan.minecraft.mineinabyss.world.WorldCommandExecutor;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,7 +29,6 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
-        getServer().getPluginManager().registerEvents(new EntityChunkListener(context), this);
 
         PlayerDataConfigManager manager = new PlayerDataConfigManager(context);
 
@@ -45,16 +37,6 @@ public final class MineInAbyss extends JavaPlugin {
                         player.getUniqueId(),
                         manager.loadPlayerData(player))
         );
-
-        Runnable decayTask = new RelicDecayTask(TICKS_BETWEEN);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, decayTask, TICKS_BETWEEN, TICKS_BETWEEN);
-        getServer().getPluginManager().registerEvents(new RelicUseListener(context), this);
-        RelicCommandExecutor relicCommandExecutor = new RelicCommandExecutor(context);
-        this.getCommand("relic").setExecutor(relicCommandExecutor);
-        this.getCommand("relicreload").setExecutor(relicCommandExecutor);
-        this.getCommand("pinsreset").setExecutor(relicCommandExecutor);
-        this.getCommand("relics").setExecutor(relicCommandExecutor);
-        this.getCommand("yolo").setExecutor(relicCommandExecutor);
 
         WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
 
@@ -65,10 +47,6 @@ public final class MineInAbyss extends JavaPlugin {
 
         this.getCommand("curseon").setExecutor(ascensionCommandExecutor);
         this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
-
-        ConfigurationSerialization.registerClass(RelicGroundEntity.class);
-
-        RelicLoader.loadAllRelics(context);
     }
 
     @Override
