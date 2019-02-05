@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public final class MineInAbyss extends JavaPlugin {
     private final int TICKS_BETWEEN = 5;
-    private AbyssContext context;
+    private static AbyssContext context;
 
     @Override
     public void onEnable() {
@@ -73,7 +73,7 @@ public final class MineInAbyss extends JavaPlugin {
         return (MineInAbyss) plugin;
     }
 
-    public AbyssContext getContext() {
+    public static AbyssContext getContext() {
         return context;
     }
 }

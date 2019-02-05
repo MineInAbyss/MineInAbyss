@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/381786368/DeeperWorld.iml" filepath="$PROJECT_DIR$/.idea/modules/381786368/DeeperWorld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/381786368/DeeperWorld_main.iml" filepath="$PROJECT_DIR$/.idea/modules/381786368/DeeperWorld_main.iml" group="DeeperWorld" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/381786368/DeeperWorld_test.iml" filepath="$PROJECT_DIR$/.idea/modules/381786368/DeeperWorld_test.iml" group="DeeperWorld" />
+      <module fileurl="file://$PROJECT_DIR$/MineInAbyss.iml" filepath="$PROJECT_DIR$/MineInAbyss.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MineInAbyss-API/MineInAbyss-API.iml" filepath="$PROJECT_DIR$/.idea/modules/MineInAbyss-API/MineInAbyss-API.iml" group="MineInAbyss-API" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MineInAbyss-API/MineInAbyss-API_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MineInAbyss-API/MineInAbyss-API_main.iml" group="MineInAbyss-API" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MineInAbyss-API/MineInAbyss-API_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MineInAbyss-API/MineInAbyss-API_test.iml" group="MineInAbyss-API" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MineInAbyss/MineInAbyss-MineInAbyss.iml" filepath="$PROJECT_DIR$/.idea/modules/MineInAbyss/MineInAbyss-MineInAbyss.iml" group="MineInAbyss" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MineInAbyss/MineInAbyss-MineInAbyss_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MineInAbyss/MineInAbyss-MineInAbyss_main.iml" group="MineInAbyss" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MineInAbyss/MineInAbyss-MineInAbyss_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MineInAbyss/MineInAbyss-MineInAbyss_test.iml" group="MineInAbyss" />
+    </modules>
+  </component>
+</project>
