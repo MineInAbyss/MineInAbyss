@@ -4,8 +4,6 @@ import com.derongan.minecraft.deeperworld.world.WorldManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager;
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl;
-import com.derongan.minecraft.mineinabyss.world.EntityChunkManager;
-import com.derongan.minecraft.mineinabyss.world.EntityChunkManagerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.Plugin;
@@ -27,15 +25,12 @@ public class AbyssContext {
     private WorldManager realWorldManager;
 
     private AbyssWorldManager worldManager;
-    private EntityChunkManager entityChunkManager;
 
     public AbyssContext(Configuration config) {
         this.config = config;
         worldManager = new AbyssWorldManagerImpl(getConfig());
 
         realWorldManager = Bukkit.getServicesManager().load(WorldManager.class);
-
-        entityChunkManager = new EntityChunkManagerImpl(this);
     }
 
     public Plugin getPlugin() {
@@ -67,9 +62,5 @@ public class AbyssContext {
     }
     public WorldManager getRealWorldManager() {
         return realWorldManager;
-    }
-
-    public EntityChunkManager getEntityChunkManager() {
-        return entityChunkManager;
     }
 }
