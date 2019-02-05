@@ -40,9 +40,6 @@ public final class MineInAbyss extends JavaPlugin {
 
         WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
 
-        this.getCommand("sectionon").setExecutor(worldCommandExecutor);
-        this.getCommand("sectionoff").setExecutor(worldCommandExecutor);
-
         AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
 
         this.getCommand("curseon").setExecutor(ascensionCommandExecutor);

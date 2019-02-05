@@ -10,15 +10,11 @@ prefix: MiB
 description: A mod that adds abyss effects
 
 commands:
-  sectionoff:
-    description: Cheat
-    usage: /sectionoff
-  sectionon:
-    description: why
-    usage: /sectionon
   curseon:
-    description: Turn on curse
-    usage: /curseon
+    description: Turn on the curse of ascension
   curseoff:
-    description: Turn off curse
-    usage: /curseoff
+    description: Turn off the curse of ascension
+
+permissions:
+  mineinabyss.curse.toggle:
+    description: Allows players to toggle the curse of ascension on themselves
