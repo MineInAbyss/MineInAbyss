@@ -111,8 +111,10 @@ public class AscensionListener implements Listener {
             return;
 
         AbyssWorldManager manager = context.getWorldManager();
+        Layer layerOfDeath = manager.getLayerForSection(worldManager.getSectionFor(player.getLocation()));
 
-        Layer layerOfDeath = context.getPlayerDataMap().get(player.getUniqueId()).getCurrentLayer();
+        if (layerOfDeath == null)
+            return;
 
         deathEvent.setDeathMessage(deathEvent.getDeathMessage() + layerOfDeath.getDeathMessage());
     }
