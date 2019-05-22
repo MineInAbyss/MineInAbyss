@@ -61,11 +61,11 @@ To build the project, you need to click on the `Add Configuration` button in the
 
 In the window that opens, press `+`, then click `Gradle`
 
-![Add Gradle config](config window.png)
+![Add Gradle config](config-window.png)
 
 Next, you can select the `Gradle project` by clicking the little folder with the blue square to the right. For our simpler plugins, you will only have one option, but for the main `MineInAbyss` plugin, you want to select the inner `MineInAbyss:MineInAbyss` project. This is because it uses and API which we've separated into a separate Gradle project. Next, in `Tasks` type build. Finally, give the configuration a name. It should end up looking similar to this.
 
-![1558483285872](gradle build config.png)
+![Gradle build configuration](gradle-build-config.png)
 
 If you press `OK`, then click the little green triangle (or `Shift+F10` on Windows) the project should begin to build!
 
@@ -73,11 +73,11 @@ The last thing we'll do is configure a copy path in the `build.gradle`. In your 
 
 Inside, you can uncomment the `copyJar` task, and set the directory to wherever your plugins folder is.
 
-![1558483593031](copyJar.png)
+![copyJar](copyjar.png)
 
 Notice that this registers as a change in git, so sometimes people end up pushing their own `copyJar` task, when everyone else doesn't use that directory. To solve this, you can make a new changelist in IntelliJ, which will stop you from accidentally committing your changes here. The video below shows how:
 
-![change changelist](change changelist.gif)
+![change changelist](change-changelist.gif)
 
 
 
