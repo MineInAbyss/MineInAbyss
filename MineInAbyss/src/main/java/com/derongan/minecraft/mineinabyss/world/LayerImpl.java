@@ -45,6 +45,8 @@ public class LayerImpl implements Layer {
 
     @Override
     public boolean containsSection(Section section) {
+        if(section == null)
+            return false;
         return sections.stream().anyMatch(a->a.getKey().equals(section.getKey()));
     }
 
