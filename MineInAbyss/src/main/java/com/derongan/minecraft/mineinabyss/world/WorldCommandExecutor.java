@@ -24,7 +24,7 @@ public class WorldCommandExecutor implements CommandExecutor {
                 return true;
             }
 
-            if (label.equals("sectionoff")){
+            if (label.equals("sectionoff")) {
                 context.getPlayerDataMap().get(player.getUniqueId()).setAnchored(true);
                 player.sendMessage("Automatic TP disabled");
                 return true;

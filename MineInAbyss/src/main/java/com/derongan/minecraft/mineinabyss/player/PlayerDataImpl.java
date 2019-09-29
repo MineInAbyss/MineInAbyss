@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.player;
 
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect;
+import com.derongan.minecraft.mineinabyss.whistles.WhistleType;
 import com.derongan.minecraft.mineinabyss.world.Layer;
 import org.bukkit.entity.Player;
 
@@ -16,6 +17,7 @@ public class PlayerDataImpl implements PlayerData {
     private double distanceAscended;
 
     private Player player;
+    private WhistleType whistle = WhistleType.BELL;
 
     public PlayerDataImpl(Player player) {
         this.player = player;
@@ -77,5 +79,15 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public void setDistanceAscended(double distanceAscended) {
         this.distanceAscended = distanceAscended;
+    }
+
+    @Override
+    public void setWhistle(WhistleType whistle) {
+        this.whistle = whistle;
+    }
+
+    @Override
+    public WhistleType getWhistle() {
+        return whistle;
     }
 }

@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.player;
 
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect;
+import com.derongan.minecraft.mineinabyss.whistles.WhistleType;
 import com.derongan.minecraft.mineinabyss.world.Layer;
 import org.bukkit.entity.Player;
 
@@ -73,4 +74,9 @@ public interface PlayerData {
      * TODO should this be exposed like this?
      */
     void setDistanceAscended(double distanceAscended);
+
+
+    void setWhistle(WhistleType whistle);
+
+    WhistleType getWhistle();
 }

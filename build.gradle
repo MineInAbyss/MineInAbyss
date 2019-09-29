@@ -17,8 +17,10 @@ subprojects {
             name = 'sonatype'
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
+        maven { url 'https://erethon.de/repo/' } //HeadLib
         mavenLocal()
         jcenter()
+        maven { url 'https://jitpack.io' } //JitPack
     }
 
     dependencies {
