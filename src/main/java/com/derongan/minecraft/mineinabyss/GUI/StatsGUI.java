@@ -78,12 +78,15 @@ public class StatsGUI extends GuiHolder {
     private Layout buildMain() {
         Layout layout = new Layout();
 
+        //Player head
         Element name = Cell.forItemStack(getHead(player), player.getName());
         layout.addElement(0, 0, name);
 
+        //Player's whistle level
         Element whistle = Cell.forItemStack(playerData.getWhistle().getItem());
         layout.addElement(1, 0, whistle);
 
+        //The section the player is currently in
         Section section = context.getRealWorldManager().getSectionFor(player.getLocation());
         String layerName = "Not in a layer", sectionName = "Not in a section";
         if (section != null) {

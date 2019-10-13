@@ -22,6 +22,7 @@ public enum WhistleType {
     }
 
     public ItemStack getItem() {
+        //TODO should return proper whistle models
         ItemStack whistle = new ItemStack(Material.DIAMOND_HOE, 1);
         ItemMeta meta = whistle.getItemMeta();
         meta.setDisplayName(name);

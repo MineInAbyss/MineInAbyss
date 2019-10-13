@@ -2,9 +2,6 @@ package com.derongan.minecraft.mineinabyss.GUI;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
-import com.derongan.minecraft.mineinabyss.Permissions;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,7 +20,7 @@ public class GUICommandExecutor implements CommandExecutor {
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
 
-            if (label.equals("stats")){
+            if (label.equals("stats")) {
                 new StatsGUI(player, JavaPlugin.getPlugin(MineInAbyss.class)).show(player);
                 return true;
             }
