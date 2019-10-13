@@ -1,34 +1,40 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-subprojects {
-    apply plugin: 'java'
+apply plugin: 'java'
 
-    group 'com.derongan.minecraft'
-    version plugin_version+"-SNAPSHOT"
-    sourceCompatibility = 1.8
+group 'com.derongan.minecraft'
+version plugin_version + "-SNAPSHOT"
+sourceCompatibility = 1.8
 
-    repositories {
-        mavenCentral()
-        maven {
-            name = 'spigotmc-repo'
-            url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
-        }
-        maven {
-            name = 'sonatype'
-            url = 'https://oss.sonatype.org/content/groups/public/'
-        }
-        mavenLocal()
-        jcenter()
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
     }
-
-    dependencies {
-        compile group: 'com.derongan.minecraft', name: 'DeeperWorld', version: '1.0-SNAPSHOT'
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
     }
-
-    processResources {
-        from(sourceSets.main.resources.srcDirs) {
-            filter ReplaceTokens, tokens: [plugin_version: plugin_version]
-        }
-    }
-
+    mavenLocal()
+    jcenter()
 }
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    implementation project(':DeeperWorld')
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [plugin_version: plugin_version]
+    }
+}
+
+
+task copyJar(type: Copy) {
+    from jar // here it automatically reads jar file produced from jar task
+    into '/srv/craftbukkit/plugins/'
+}
+
+build.dependsOn copyJar
