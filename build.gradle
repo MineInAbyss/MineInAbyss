@@ -1,11 +1,10 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-subprojects {
-    apply plugin: 'java'
+apply plugin: 'java'
 
-    group 'com.derongan.minecraft'
-    version plugin_version+"-SNAPSHOT"
-    sourceCompatibility = 1.8
+group 'com.derongan.minecraft'
+version plugin_version + "-SNAPSHOT"
+sourceCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -23,14 +22,21 @@ subprojects {
         maven { url 'https://jitpack.io' } //JitPack
     }
 
-    dependencies {
-        compile group: 'com.derongan.minecraft', name: 'DeeperWorld', version: '1.0-SNAPSHOT'
-    }
-
-    processResources {
-        from(sourceSets.main.resources.srcDirs) {
-            filter ReplaceTokens, tokens: [plugin_version: plugin_version]
-        }
-    }
-
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    implementation project(':DeeperWorld')
 }
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [plugin_version: plugin_version]
+    }
+}
+
+
+task copyJar(type: Copy) {
+    from jar // here it automatically reads jar file produced from jar task
+    into '/srv/craftbukkit/plugins/'
+}
+
+build.dependsOn copyJar
