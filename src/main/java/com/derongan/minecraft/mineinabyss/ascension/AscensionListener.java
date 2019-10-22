@@ -53,7 +53,7 @@ public class AscensionListener implements Listener {
 
         double changeY = to.getY() - from.getY();
 
-        PlayerData playerData = context.getPlayerDataMap().get(player.getUniqueId());
+        PlayerData playerData = context.getPlayerData(player);
 
         if (playerData.isAffectedByCurse()) {
             double dist = playerData.getDistanceAscended();

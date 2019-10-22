@@ -1,5 +1,7 @@
 package com.derongan.minecraft.mineinabyss;
 
+import com.derongan.minecraft.guiy.GuiListener;
+import com.derongan.minecraft.mineinabyss.GUI.GUICommandExecutor;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionCommandExecutor;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener;
 import com.derongan.minecraft.mineinabyss.configuration.ConfigurationManager;
@@ -14,8 +16,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 
 public final class MineInAbyss extends JavaPlugin {
-    private final int TICKS_BETWEEN = 5;
     private static AbyssContext context;
+    private final int TICKS_BETWEEN = 5;
+
+    public static MineInAbyss getInstance() {
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MineInAbyss");
+
+        return (MineInAbyss) plugin;
+    }
+
+    public static AbyssContext getContext() {
+        return context;
+    }
 
     @Override
     public void onEnable() {
@@ -27,6 +39,7 @@ public final class MineInAbyss extends JavaPlugin {
         context.setPlugin(this);
         context.setLogger(getLogger());
 
+        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
 
@@ -39,11 +52,13 @@ public final class MineInAbyss extends JavaPlugin {
         );
 
         WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
-
         AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
+        GUICommandExecutor guiCommandExecutor = new GUICommandExecutor(context);
 
         this.getCommand("curseon").setExecutor(ascensionCommandExecutor);
         this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
+        this.getCommand("stats").setExecutor(guiCommandExecutor);
+
     }
 
     @Override
@@ -56,21 +71,10 @@ public final class MineInAbyss extends JavaPlugin {
             try {
                 manager.savePlayerData(data);
             } catch (IOException e) {
-                getLogger().warning("Error saving player data for "+player.getUniqueId());
+                getLogger().warning("Error saving player data for " + player.getUniqueId());
                 e.printStackTrace();
             }
         });
         getLogger().info("onDisable has been invoked!");
-    }
-
-
-    public static MineInAbyss getInstance() {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MineInAbyss");
-
-        return (MineInAbyss) plugin;
-    }
-
-    public static AbyssContext getContext() {
-        return context;
     }
 }

@@ -1,6 +1,9 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply plugin: 'java'
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+    id 'java'
+}
 
 group 'com.derongan.minecraft'
 version plugin_version + "-SNAPSHOT"
@@ -16,13 +19,17 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
+    maven { url 'https://erethon.de/repo/' } //HeadLib
     mavenLocal()
     jcenter()
+    maven { url 'https://jitpack.io' } //JitPack
 }
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
     implementation project(':DeeperWorld')
+    compile 'de.erethon:headlib:3.0.1'
+    implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
 }
 
 processResources {
@@ -32,8 +39,16 @@ processResources {
 }
 
 
+shadowJar {
+    classifier = null
+    dependencies {
+        include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
+        include(dependency('de.erethon:headlib:3.0.1'))
+    }
+}
+
 task copyJar(type: Copy) {
-    from jar // here it automatically reads jar file produced from jar task
+    from shadowJar // here it automatically reads jar file produced from jar task
     into '/srv/craftbukkit/plugins/'
 }
 
