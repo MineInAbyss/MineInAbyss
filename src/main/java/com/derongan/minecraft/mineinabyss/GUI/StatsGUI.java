@@ -2,11 +2,13 @@ package com.derongan.minecraft.mineinabyss.GUI;
 
 import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.guiy.gui.*;
+import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
 import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import de.erethon.headlib.HeadLib;
 import net.md_5.bungee.api.ChatColor;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -18,29 +20,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StatsGUI extends GuiHolder {
-    private Player player;
-    //    private Layout spawns;
-    private MineInAbyss plugin;
+public class StatsGUI extends HistoryGuiHolder {
     private AbyssContext context;
-    private List<Layout> history = new ArrayList<>();
-    private ClickableElement back;
     private List<ClickableElement> mobConfigs = new ArrayList<>();
     private List<ClickableElement> spawnList = new ArrayList<>();
     private FileConfiguration config;
     private PlayerData playerData;
+    private static ChatColor mainColor = ChatColor.RED;
+    private static ChatColor secondaryColor = ChatColor.GOLD;
 
     public StatsGUI(Player player, MineInAbyss plugin) {
         super(6, "Mine In Abyss - Stats", plugin);
-        this.plugin = plugin;
         context = MineInAbyss.getContext();
         playerData = context.getPlayerData(player);
         this.player = player;
-
-        //create back button
-        Element cell = Cell.forItemStack(HeadLib.RED_X.toItemStack("Back"));
-        back = new ClickableElement(cell);
-        back.setClickAction(clickEvent -> backInHistory());
 
         setElement(buildMain());
     }
@@ -55,35 +48,16 @@ public class StatsGUI extends GuiHolder {
         return item;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void addBackButton(Layout layout) {
-        history.add(layout);
-        layout.addElement(8, 5, back);
-    }
-
-    public void backInHistory() {
-        if (history.size() <= 1) {
-            player.closeInventory();
-            return;
-        }
-        Layout previous = history.get(history.size() - 2);
-        history.remove(history.size() - 1);
-
-        setElement(previous);
-    }
-
     private Layout buildMain() {
         Layout layout = new Layout();
 
         //Player head
-        Element name = Cell.forItemStack(getHead(player), player.getName());
+        Element name = Cell.forItemStack(getHead(player), mainColor + player.getName());
         layout.addElement(0, 0, name);
 
         //Player's whistle level
-        Element whistle = Cell.forItemStack(playerData.getWhistle().getItem());
+        ItemStack whistleItem = playerData.getWhistle().getItem();
+        Element whistle = Cell.forItemStack(whistleItem, mainColor + "Whisle: " + whistleItem.getItemMeta().getDisplayName());
         layout.addElement(1, 0, whistle);
 
         //The section the player is currently in
@@ -91,16 +65,24 @@ public class StatsGUI extends GuiHolder {
         String layerName = "Not in a layer", sectionName = "Not in a section";
         if (section != null) {
             layerName = context.getWorldManager().getLayerForSection(section).getName();
-            sectionName = "Section: " + section.getKey().toString().toUpperCase();
+            sectionName = section.getKey().toString().toUpperCase();
         }
 
-        ItemStack layerHead = HeadLib.QUARTZ_L.toItemStack("Layer");
+        ItemStack layerHead = HeadLib.QUARTZ_L.toItemStack(mainColor + "Layer: " + secondaryColor + layerName);
         ItemMeta layerHeadMeta = layerHead.getItemMeta();
-        layerHeadMeta.setLore(Arrays.asList(layerName, sectionName));
+        layerHeadMeta.setLore(Arrays.asList(mainColor + "Section: " + secondaryColor + sectionName));
         layerHead.setItemMeta(layerHeadMeta);
 
         Element layer = Cell.forItemStack(layerHead);
         layout.addElement(2, 0, layer);
+
+        //The player's level
+        Element level = Cell.forItemStack(new ItemStack(Material.EXPERIENCE_BOTTLE), mainColor + "Level: " + ChatColor.GREEN + context.getPlayerData(player).getLevel());
+        layout.addElement(7, 0, level);
+
+        //The player's balance
+        Element balance = Cell.forItemStack(new ItemStack(Material.GOLD_BLOCK), mainColor + "Balance: $" + ChatColor.GOLD + MineInAbyss.getEcon().getBalance(player));
+        layout.addElement(8, 0, balance);
 
         addBackButton(layout);
         return layout;

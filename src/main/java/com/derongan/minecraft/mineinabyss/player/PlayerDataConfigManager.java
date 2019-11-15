@@ -19,6 +19,7 @@ public class PlayerDataConfigManager {
     private static final String ANCHORED_KEY = "anchored";
     private static final String ASCENDED_KEY = "ascended";
     private static final String WHISTLE_KEY = "whistle";
+    private static final String EXP_KEY = "exp";
 
     private AbyssContext context;
 
@@ -39,6 +40,9 @@ public class PlayerDataConfigManager {
             data.setDistanceAscended(config.getDouble(ASCENDED_KEY));
             if (config.contains(WHISTLE_KEY))
                 data.setWhistle(WhistleType.valueOf(config.getString(WHISTLE_KEY)));
+            if(config.contains(EXP_KEY))
+                data.setExp(config.getDouble(EXP_KEY));
+
             return data;
         } else {
             PlayerData data = new PlayerDataImpl(player);
@@ -59,6 +63,7 @@ public class PlayerDataConfigManager {
         config.set(ANCHORED_KEY, playerData.isAnchored());
         config.set(ASCENDED_KEY, playerData.getDistanceAscended());
         config.set(WHISTLE_KEY, playerData.getWhistle().name());
+        config.set(EXP_KEY, playerData.getExp());
 
         config.save(path.toFile());
     }

@@ -1,2 +1,6 @@
 include ':DeeperWorld'
 project(':DeeperWorld').projectDir = new File('../DeeperWorld')
+if(useLocalGuiy) {
+    include ':guiy'
+    project(':guiy').projectDir = new File('../guiy')
+}

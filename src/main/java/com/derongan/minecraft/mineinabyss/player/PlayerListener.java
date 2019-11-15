@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss.player;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -34,5 +35,10 @@ public class PlayerListener implements Listener{
             context.getLogger().warning("Failed to save data for player "+playerQuitEvent.getPlayer().getUniqueId().toString());
             e.printStackTrace();
         }
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent playerDropItemEvent){
+
     }
 }

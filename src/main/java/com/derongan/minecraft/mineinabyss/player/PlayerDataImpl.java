@@ -15,6 +15,7 @@ public class PlayerDataImpl implements PlayerData {
     private boolean anchored;
 
     private double distanceAscended;
+    private double exp;
 
     private Player player;
     private WhistleType whistle = WhistleType.BELL;
@@ -89,5 +90,25 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public WhistleType getWhistle() {
         return whistle;
+    }
+
+    @Override
+    public int getLevel() {
+        return (int) exp/10; //TODO write a proper formula
+    }
+
+    @Override
+    public double getExp() {
+        return exp;
+    }
+
+    @Override
+    public void setExp(double exp) {
+        this.exp = exp;
+    }
+
+    @Override
+    public void addExp(double exp) {
+        this.exp += exp;
     }
 }

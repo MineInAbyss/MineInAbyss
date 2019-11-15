@@ -9,15 +9,34 @@ import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
 import com.derongan.minecraft.mineinabyss.world.WorldCommandExecutor;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 
 public final class MineInAbyss extends JavaPlugin {
     private static AbyssContext context;
+    private static Economy econ = null;
+    private static Permission perms = null;
+    private static Chat chat = null;
     private final int TICKS_BETWEEN = 5;
+
+    public static Economy getEcon() {
+        return econ;
+    }
+
+    public static Permission getPerms() {
+        return perms;
+    }
+
+    public static Chat getChat() {
+        return chat;
+    }
 
     public static MineInAbyss getInstance() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MineInAbyss");
@@ -33,6 +52,16 @@ public final class MineInAbyss extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("On enable has been called");
+
+        //Vault setup
+        if (!setupEconomy()) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+//        setupPermissions();
+//        setupChat();
+
         ConfigurationManager.createConfig(this);
 
         context = new AbyssContext(getConfig());
@@ -58,7 +87,6 @@ public final class MineInAbyss extends JavaPlugin {
         this.getCommand("curseon").setExecutor(ascensionCommandExecutor);
         this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
         this.getCommand("stats").setExecutor(guiCommandExecutor);
-
     }
 
     @Override
@@ -76,5 +104,29 @@ public final class MineInAbyss extends JavaPlugin {
             }
         });
         getLogger().info("onDisable has been invoked!");
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
+
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+        chat = rsp.getProvider();
+        return chat != null;
+    }
+
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        perms = rsp.getProvider();
+        return perms != null;
     }
 }

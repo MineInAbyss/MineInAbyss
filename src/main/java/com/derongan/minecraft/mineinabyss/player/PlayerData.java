@@ -75,8 +75,15 @@ public interface PlayerData {
      */
     void setDistanceAscended(double distanceAscended);
 
-
     void setWhistle(WhistleType whistle);
 
     WhistleType getWhistle();
+
+    int getLevel();
+
+    double getExp();
+
+    void setExp(double exp);
+
+    void addExp(double exp);
 }
