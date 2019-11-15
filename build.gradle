@@ -9,13 +9,6 @@ group 'com.derongan.minecraft'
 version plugin_version + "-SNAPSHOT"
 sourceCompatibility = 1.8
 
-
-ext {
-    //this should always be set to false in "production", enabling it is used to make any local additions to
-    // guiy before they are pushed to guiy's main repo.
-    useLocalGuiy = true
-}
-
 repositories {
     mavenCentral()
     maven {
@@ -37,10 +30,10 @@ dependencies {
     implementation project(':DeeperWorld')
     compile 'de.erethon:headlib:3.0.1'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    if (!useLocalGuiy)
-        implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
-    else
+    if (useLocalGuiy.toBoolean())
         implementation project(':guiy')
+    else
+        implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
 }
 
 processResources {
@@ -55,7 +48,8 @@ shadowJar {
 //    classifier = null
     dependencies {
         include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
-        include(project(':guiy'))
+        if (useLocalGuiy.toBoolean())
+            include(project(':guiy'))
         include(dependency('de.erethon:headlib:3.0.1'))
     }
 }
