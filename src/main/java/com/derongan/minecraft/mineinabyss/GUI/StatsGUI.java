@@ -24,7 +24,6 @@ public class StatsGUI extends HistoryGuiHolder {
     private AbyssContext context;
     private List<ClickableElement> mobConfigs = new ArrayList<>();
     private List<ClickableElement> spawnList = new ArrayList<>();
-    private FileConfiguration config;
     private PlayerData playerData;
     private static ChatColor mainColor = ChatColor.RED;
     private static ChatColor secondaryColor = ChatColor.GOLD;

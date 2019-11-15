@@ -30,6 +30,7 @@ dependencies {
     implementation project(':DeeperWorld')
     compile 'de.erethon:headlib:3.0.1'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+
     if (useLocalGuiy.toBoolean())
         implementation project(':guiy')
     else
@@ -47,9 +48,11 @@ shadowJar {
     getArchiveClassifier().set(null)
 //    classifier = null
     dependencies {
-        include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
         if (useLocalGuiy.toBoolean())
             include(project(':guiy'))
+        else
+            include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
+
         include(dependency('de.erethon:headlib:3.0.1'))
     }
 }

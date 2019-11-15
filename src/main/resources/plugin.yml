@@ -16,6 +16,10 @@ commands:
     description: Turn off the curse of ascension
   stats:
     description: Shows statistics about you!
+  start:
+    description: Shows a list of locations to start the game from!
+  creategondolaspawn:
+    description: Creates a location from which players will be able to spawn
 
 permissions:
   mineinabyss.curse.toggle:

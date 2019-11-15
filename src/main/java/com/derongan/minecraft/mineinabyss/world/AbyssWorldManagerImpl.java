@@ -4,7 +4,6 @@ import com.derongan.minecraft.deeperworld.world.WorldManager;
 import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder;
 import com.derongan.minecraft.mineinabyss.ascension.effect.configuration.EffectConfiguror;
-
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -14,17 +13,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AbyssWorldManagerImpl implements AbyssWorldManager {
-    private List<Layer> layers;
-
-    private Set<World> abyssWorlds;
-
-    private int numLayers;
-
     private static final String LAYER_KEY = "layers";
     private static final String NAME_KEY = "name";
     private static final String SUB_KEY = "sub";
     private static final String SECTION_KEY = "sections";
     private static final String EFFECTS_KEY = "effects";
+    private List<Layer> layers;
+    private Set<World> abyssWorlds;
+    private int numLayers;
 
 
     public AbyssWorldManagerImpl(Configuration config) {
@@ -46,11 +42,11 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
 
         WorldManager worldManager = Bukkit.getServicesManager().load(WorldManager.class);
 
-        List<Section> sections = ((List<String>)map.get(SECTION_KEY)).stream().map(worldManager::getSectionFor).collect(Collectors.toList());
+        List<Section> sections = ((List<String>) map.get(SECTION_KEY)).stream().map(worldManager::getSectionFor).collect(Collectors.toList());
 
         layer.setSections(sections);
 
-        sections.forEach(a->abyssWorlds.add(a.getWorld()));
+        sections.forEach(a -> abyssWorlds.add(a.getWorld()));
 
         List<Map<?, ?>> effectMap = (List<Map<?, ?>>) map.get(EFFECTS_KEY);
         if (effectMap == null)
@@ -78,7 +74,7 @@ public class AbyssWorldManagerImpl implements AbyssWorldManager {
 
     @Override
     public Layer getLayerForSection(Section section) {
-        return layers.stream().filter(a->a.containsSection(section)).findFirst().orElse(null);
+        return layers.stream().filter(a -> a.containsSection(section)).findFirst().orElse(null);
     }
 
     @Override

@@ -25,6 +25,7 @@ public final class MineInAbyss extends JavaPlugin {
     private static Permission perms = null;
     private static Chat chat = null;
     private final int TICKS_BETWEEN = 5;
+    private ConfigurationManager configManager;
 
     public static Economy getEcon() {
         return econ;
@@ -48,6 +49,10 @@ public final class MineInAbyss extends JavaPlugin {
         return context;
     }
 
+    public ConfigurationManager getConfigManager() {
+        return configManager;
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -62,11 +67,9 @@ public final class MineInAbyss extends JavaPlugin {
 //        setupPermissions();
 //        setupChat();
 
-        ConfigurationManager.createConfig(this);
+        loadConfigManager();
 
-        context = new AbyssContext(getConfig());
-        context.setPlugin(this);
-        context.setLogger(getLogger());
+        context = new AbyssContext(this);
 
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
@@ -87,6 +90,8 @@ public final class MineInAbyss extends JavaPlugin {
         this.getCommand("curseon").setExecutor(ascensionCommandExecutor);
         this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
         this.getCommand("stats").setExecutor(guiCommandExecutor);
+        this.getCommand("start").setExecutor(guiCommandExecutor);
+        this.getCommand("creategondolaspawn").setExecutor(guiCommandExecutor);
     }
 
     @Override
@@ -103,9 +108,11 @@ public final class MineInAbyss extends JavaPlugin {
                 e.printStackTrace();
             }
         });
+        configManager.saveSpawnLocConfig();
         getLogger().info("onDisable has been invoked!");
     }
 
+    //economy stuff
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
@@ -128,5 +135,9 @@ public final class MineInAbyss extends JavaPlugin {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         perms = rsp.getProvider();
         return perms != null;
+    }
+
+    public void loadConfigManager() {
+        configManager = new ConfigurationManager(this);
     }
 }
