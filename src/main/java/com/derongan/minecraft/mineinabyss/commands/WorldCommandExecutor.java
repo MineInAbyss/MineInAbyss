@@ -1,4 +1,4 @@
-package com.derongan.minecraft.mineinabyss.world;
+package com.derongan.minecraft.mineinabyss.commands;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import org.bukkit.command.Command;
@@ -19,13 +19,13 @@ public class WorldCommandExecutor implements CommandExecutor {
             Player player = (Player) commandSender;
 
             if (label.equals("sectionon")) {
-                context.getPlayerDataMap().get(player.getUniqueId()).setAnchored(false);
+                context.getPlayerData(player).setAnchored(false);
                 player.sendMessage("Automatic TP enabled");
                 return true;
             }
 
             if (label.equals("sectionoff")) {
-                context.getPlayerDataMap().get(player.getUniqueId()).setAnchored(true);
+                context.getPlayerData(player).setAnchored(true);
                 player.sendMessage("Automatic TP disabled");
                 return true;
             }

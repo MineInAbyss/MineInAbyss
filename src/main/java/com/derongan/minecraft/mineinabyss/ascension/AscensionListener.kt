@@ -1,121 +1,90 @@
-package com.derongan.minecraft.mineinabyss.ascension;
+package com.derongan.minecraft.mineinabyss.ascension
 
-import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent;
-import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent;
-import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent;
-import com.derongan.minecraft.deeperworld.world.WorldManager;
-import com.derongan.minecraft.deeperworld.world.section.Section;
-import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.player.PlayerData;
-import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager;
-import com.derongan.minecraft.mineinabyss.world.Layer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
+import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
+import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
+import com.derongan.minecraft.deeperworld.world.WorldManager
+import com.derongan.minecraft.mineinabyss.AbyssContext
+import com.derongan.minecraft.mineinabyss.MineInAbyss
+import com.derongan.minecraft.mineinabyss.getPlayerData
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.PlayerMoveEvent
+import java.util.*
+import kotlin.math.abs
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-public class AscensionListener implements Listener {
-    private AbyssContext context;
-    private Set<UUID> recentlyMovedPlayers;
-
-    private WorldManager worldManager;
-
-    public AscensionListener(AbyssContext context) {
-        this.context = context;
-
-        worldManager = Bukkit.getServicesManager().load(WorldManager.class);
-        recentlyMovedPlayers = new HashSet<>();
-    }
+class AscensionListener(private val context: AbyssContext) : Listener {
+    private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
+    private val worldManager: WorldManager? = Bukkit.getServicesManager().load(WorldManager::class.java)
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent moveEvent) {
-        Player player = moveEvent.getPlayer();
-
-        if (recentlyMovedPlayers.contains(player.getUniqueId())) {
-            recentlyMovedPlayers.remove(player.getUniqueId());
-            return;
+    fun onPlayerMove(moveEvent: PlayerMoveEvent) {
+        val player = moveEvent.player
+        if (recentlyMovedPlayers.contains(player.uniqueId)) {
+            recentlyMovedPlayers.remove(player.uniqueId)
+            return
         }
 
-        AbyssWorldManager manager = context.getWorldManager();
+        val manager = context.worldManager
+        if (!manager.isAbyssWorld(player.world)) return
 
-        if (!manager.isAbyssWorld(player.getWorld()))
-            return;
+        val from = moveEvent.from
+        val to = moveEvent.to!!
+        val changeY = to.y - from.y
+        val playerData = context.getPlayerData(player)
 
-        Location from = moveEvent.getFrom();
-        Location to = moveEvent.getTo();
-
-        double changeY = to.getY() - from.getY();
-
-        PlayerData playerData = context.getPlayerData(player);
-
-        if (playerData.isAffectedByCurse()) {
-            double dist = playerData.getDistanceAscended();
-            playerData.setDistanceAscended(Math.max(dist + changeY, 0));
-
+        if (playerData.isAffectedByCurse) {
+            val dist = playerData.distanceAscended
+            playerData.distanceAscended = (dist + changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
-                Layer layerForSection = manager.getLayerForSection(worldManager.getSectionFor(moveEvent.getFrom()));
-
-                if (layerForSection != null) {
-                    layerForSection.getAscensionEffects().forEach(a -> {
-                        a.build().applyEffect(player, 10);
-                    });
-                    playerData.setDistanceAscended(0);
-                }
+                val layerForSection = manager.getLayerForSection(worldManager!!.getSectionFor(moveEvent.from))
+                layerForSection.ascensionEffects.forEach { it.build().applyEffect(player, 10) }
+                playerData.distanceAscended = 0.0
             }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
-    private void onPlayerAscend(PlayerAscendEvent e){
-        onPlayerChangeSection(e);
+    private fun onPlayerAscend(e: PlayerAscendEvent) {
+        onPlayerChangeSection(e)
     }
 
     @EventHandler(ignoreCancelled = true)
-    private void onPlayerDescend(PlayerDescendEvent e){
-        onPlayerChangeSection(e);
+    private fun onPlayerDescend(e: PlayerDescendEvent) {
+        onPlayerChangeSection(e)
     }
 
-    private void onPlayerChangeSection(PlayerChangeSectionEvent changeSectionEvent) {
-        if (!context.getPlayerDataMap().get(changeSectionEvent.getPlayer().getUniqueId()).isAnchored()) {
-            recentlyMovedPlayers.add(changeSectionEvent.getPlayer().getUniqueId());
-            AbyssWorldManager manager = context.getWorldManager();
+    private fun onPlayerChangeSection(changeSectionEvent: PlayerChangeSectionEvent) {
+        val player = changeSectionEvent.player
+        if (!context.getPlayerData(player).isAnchored) {
+            recentlyMovedPlayers.add(player.uniqueId)
+            val manager = context.worldManager
+            val fromSection = changeSectionEvent.fromSection
+            val toSection = changeSectionEvent.toSection
+            val fromLayer = manager.getLayerForSection(fromSection)
+            val toLayer = manager.getLayerForSection(toSection)
+            val playerData = getPlayerData(player)
 
-            Section fromSection = changeSectionEvent.getFromSection();
-            Section toSection = changeSectionEvent.getToSection();
-
-            Layer fromLayer = manager.getLayerForSection(fromSection);
-            Layer toLayer = manager.getLayerForSection(toSection);
-
-            if (fromLayer != toLayer) {
-                changeSectionEvent.getPlayer().sendTitle(toLayer.getName(), toLayer.getSub(), 50, 10, 20);
+            if (toSection.toString() == MineInAbyss.getContext().config["hub-section"] && playerData.isIngame) {
+                player.sendTitle("${ChatColor.RED}Cannot return to Orth during a run!", "Use /leave instead", 5, 40, 20)
+                changeSectionEvent.isCancelled = true
+                player.velocity = player.velocity.setY(-0.5)
+            } else if (fromLayer !== toLayer) {
+                player.sendTitle(toLayer.name, toLayer.sub, 50, 10, 20)
             }
-
         } else {
-            changeSectionEvent.setCancelled(true);
+            changeSectionEvent.isCancelled = true
         }
     }
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent deathEvent) {
-        Player player = deathEvent.getEntity();
-
-        // Catching for bad stuff
-        if (player == null)
-            return;
-
-        AbyssWorldManager manager = context.getWorldManager();
-        Layer layerOfDeath = manager.getLayerForSection(worldManager.getSectionFor(player.getLocation()));
-
-        if (layerOfDeath == null)
-            return;
-
-        deathEvent.setDeathMessage(deathEvent.getDeathMessage() + layerOfDeath.getDeathMessage());
+    fun onPlayerDeath(deathEvent: PlayerDeathEvent) {
+        val player = deathEvent.entity
+        val manager = context.worldManager
+        val layerOfDeath = manager.getLayerForSection(worldManager!!.getSectionFor(player.location))
+        deathEvent.deathMessage = deathEvent.deathMessage + layerOfDeath.deathMessage
     }
 }

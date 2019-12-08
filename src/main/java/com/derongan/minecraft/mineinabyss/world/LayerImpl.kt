@@ -1,65 +1,24 @@
-package com.derongan.minecraft.mineinabyss.world;
+package com.derongan.minecraft.mineinabyss.world
 
-import com.derongan.minecraft.deeperworld.world.section.Section;
-import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder;
+import com.derongan.minecraft.deeperworld.world.section.Section
+import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+class LayerImpl(override val name: String, override val sub: String, override val index: Int) : Layer {
+    override var sections: List<Section> = listOf()
+        get() = Collections.unmodifiableList(field)
+    private var effects: List<AscensionEffectBuilder<*>> = mutableListOf()
 
-public class LayerImpl implements Layer {
-    private String layerName;
-    private String layerSub;
-    private int index;
+    override fun containsSection(section: Section): Boolean = sections.any { it.key == section.key }
 
-    private List<Section> sections;
-    private List<AscensionEffectBuilder> effects;
-
-    public LayerImpl(String layerName, String layerSub, int index) {
-        this.layerName = layerName;
-        this.layerSub = layerSub;
-        this.index = index;
-
-        this.effects = new ArrayList<>();
+    fun setEffects(effects: List<AscensionEffectBuilder<*>>) {
+        this.effects = effects
     }
 
-    @Override
-    public String getName() {
-        return layerName;
-    }
+    override val ascensionEffects: List<AscensionEffectBuilder<*>>
+        get() = Collections.unmodifiableList(effects)
 
-    @Override
-    public String getSub() {
-        return layerSub;
-    }
-
-    @Override
-    public int getIndex() {
-        return index;
-    }
-
-    @Override
-    public List<Section> getSections() {
-        return Collections.unmodifiableList(sections);
-    }
-
-    @Override
-    public boolean containsSection(Section section) {
-        if(section == null)
-            return false;
-        return sections.stream().anyMatch(a->a.getKey().equals(section.getKey()));
-    }
-
-    public void setSections(List<com.derongan.minecraft.deeperworld.world.section.Section> sections) {
-        this.sections = sections;
-    }
-
-    public void setEffects(List<AscensionEffectBuilder> effects){
-        this.effects = effects;
-    }
-
-    @Override
-    public List<AscensionEffectBuilder> getAscensionEffects() {
-        return Collections.unmodifiableList(effects);
+    init {
+        effects = ArrayList()
     }
 }

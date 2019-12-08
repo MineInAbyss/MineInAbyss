@@ -1,69 +1,46 @@
-package com.derongan.minecraft.mineinabyss;
+package com.derongan.minecraft.mineinabyss
 
-import com.derongan.minecraft.deeperworld.world.WorldManager;
-import com.derongan.minecraft.mineinabyss.configuration.ConfigurationManager;
-import com.derongan.minecraft.mineinabyss.player.PlayerData;
-import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager;
-import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
+import com.derongan.minecraft.deeperworld.world.WorldManager
+import com.derongan.minecraft.mineinabyss.configuration.MineInAbyssConfig
+import com.derongan.minecraft.mineinabyss.player.PlayerData
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
+import com.derongan.minecraft.mineinabyss.world.Layer
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.configuration.Configuration
+import org.bukkit.entity.Player
+import java.util.*
+import java.util.logging.Logger
 
 /**
  * Stores context for the plugin, such as the plugin instance
  */
-public class AbyssContext {
-    private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
-    private MineInAbyss plugin;
-    private Logger logger;
-    private Configuration config;
-    private ConfigurationManager configManager;
-    private WorldManager realWorldManager;
-    private AbyssWorldManager worldManager;
+class AbyssContext(val plugin: MineInAbyss) {
+    val playerDataMap: Map<UUID, PlayerData> = HashMap()
+    val logger: Logger = plugin.logger
+    val config: Configuration = plugin.config
+    val realWorldManager: WorldManager = Bukkit.getServicesManager().load(WorldManager::class.java)
+            ?: error("World manager not found")
+    val worldManager: AbyssWorldManager = AbyssWorldManagerImpl(config)
+    val configManager: MineInAbyssConfig = MineInAbyssConfig(plugin, this)
 
-    public AbyssContext(MineInAbyss plugin) {
-        this.plugin = plugin;
-        config = plugin.getConfig();
-        logger = plugin.getLogger();
-        configManager = plugin.getConfigManager();
-        worldManager = new AbyssWorldManagerImpl(getConfig());
-        realWorldManager = Bukkit.getServicesManager().load(WorldManager.class);
+
+    fun getPlayerData(player: Player): PlayerData {
+        return playerDataMap[player.uniqueId] ?: error("Player data not found")
     }
 
-    public ConfigurationManager getConfigManager() {
-        return configManager;
+    fun getLayerForLocation(loc: Location?): Layer {
+        return worldManager.getLayerForSection(realWorldManager.getSectionFor(loc))
     }
+}
 
-    public MineInAbyss getPlugin() {
-        return plugin;
-    }
+private val instance by lazy { MineInAbyss.getContext() }
 
-    public Map<UUID, PlayerData> getPlayerDataMap() {
-        return playerDataMap;
-    }
+fun getPlayerData(player: Player): PlayerData {
+    return instance.getPlayerData(player)
+}
 
-    public PlayerData getPlayerData(Player player) {
-        return getPlayerDataMap().get(player.getUniqueId());
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public Configuration getConfig() {
-        return config;
-    }
-
-    public AbyssWorldManager getWorldManager() {
-        return worldManager;
-    }
-
-    public WorldManager getRealWorldManager() {
-        return realWorldManager;
-    }
+fun getLayerForLocation(loc: Location?): Layer {
+    return instance.getLayerForLocation(loc)
 }

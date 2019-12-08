@@ -1,16 +1,15 @@
-package com.derongan.minecraft.mineinabyss.GUI;
+package com.derongan.minecraft.mineinabyss.gui;
 
 import com.derongan.minecraft.deeperworld.world.section.Section;
 import com.derongan.minecraft.guiy.gui.*;
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
+import com.derongan.minecraft.mineinabyss.configuration.ConfigConstants;
 import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import de.erethon.headlib.HeadLib;
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,8 +24,8 @@ public class StatsGUI extends HistoryGuiHolder {
     private List<ClickableElement> mobConfigs = new ArrayList<>();
     private List<ClickableElement> spawnList = new ArrayList<>();
     private PlayerData playerData;
-    private static ChatColor mainColor = ChatColor.RED;
-    private static ChatColor secondaryColor = ChatColor.GOLD;
+    private static ChatColor mainColor = ConfigConstants.mainColor;
+    private static ChatColor secondaryColor = ConfigConstants.secondaryColor;
 
     public StatsGUI(Player player, MineInAbyss plugin) {
         super(6, "Mine In Abyss - Stats", plugin);

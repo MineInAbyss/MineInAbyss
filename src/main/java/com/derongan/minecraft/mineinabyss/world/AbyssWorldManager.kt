@@ -1,26 +1,24 @@
-package com.derongan.minecraft.mineinabyss.world;
+package com.derongan.minecraft.mineinabyss.world
 
-import com.derongan.minecraft.deeperworld.world.section.Section;
-import org.bukkit.World;
-
-import java.util.List;
+import com.derongan.minecraft.deeperworld.world.section.Section
+import org.bukkit.World
 
 /**
  * Manages layers and sections
  */
-public interface AbyssWorldManager {
+interface AbyssWorldManager {
     /**
      * Get all layers in index order.
      * @return All layers
      */
-    List<Layer> getLayers();
+    val layers: List<Layer?>?
 
     /**
      * Check if the world is a world set up for the abyss
      * @param worldName
      * @return
      */
-    boolean isAbyssWorld(World worldName);
+    fun isAbyssWorld(worldName: World): Boolean
 
-    Layer getLayerForSection(Section section);
+    fun getLayerForSection(section: Section): Layer
 }

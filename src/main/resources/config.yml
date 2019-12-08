@@ -13,3 +13,4 @@
 #          - CONFUSION
 #    # Fill this with the section names defined in the deeper world config
 #    sections: [section1]
+adventure-mode: false

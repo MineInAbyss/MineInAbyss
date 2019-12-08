@@ -1,91 +1,81 @@
-package com.derongan.minecraft.mineinabyss.GUI;
+package com.derongan.minecraft.mineinabyss.gui
 
-import com.derongan.minecraft.deeperworld.world.WorldManager;
-import com.derongan.minecraft.guiy.gui.*;
-import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder;
-import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.MineInAbyss;
-import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager;
-import com.derongan.minecraft.mineinabyss.world.Layer;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import com.derongan.minecraft.guiy.gui.*
+import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
+import com.derongan.minecraft.mineinabyss.MineInAbyss
+import com.derongan.minecraft.mineinabyss.getPlayerData
+import net.md_5.bungee.api.ChatColor
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import java.util.*
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+class GondolaGUI(player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Choose Spawn Location", plugin) {
+    private val context = MineInAbyss.getContext()
 
-public class GondolaGUI extends HistoryGuiHolder {
-    public static final String SPAWN_KEY = "spawns";
-    private static ChatColor mainColor = ChatColor.RED;
-    private static ChatColor secondaryColor = ChatColor.GOLD;
-//    private Map<World, ArrayList<Location>> spawnLocations = new HashMap<>();
-    private AbyssContext context;
-
-    public GondolaGUI(Player player, MineInAbyss plugin) {
-        super(6, "Choose Spawn Location", plugin);
-        context = MineInAbyss.getContext();
-        this.player = player;
-
-        setElement(buildMain());
-    }
-
-    private Layout buildMain() {
-        Layout layout = new Layout();
-        FileConfiguration spawnLocConfig = context.getConfigManager().getSpawnLocConfig();
+    private fun buildMain(): Layout? {
+        val layout = Layout()
+        val spawnLocConfig: FileConfiguration = context.configManager.startLocationCM
 
         //TODO separate spawns into groups based on world
-        FillableElement grid = new FillableElement(5, 9);
-
-        List<Map<?, ?>> spawnLayers = spawnLocConfig.getMapList(SPAWN_KEY);
-        spawnLayers.forEach(spawn -> grid.addElement(parseLayer(spawn)));
-
-        layout.addElement(0, 1, grid);
-        addBackButton(layout);
-        return layout;
+        val grid = FillableElement(5, 9)
+        val spawnLayers = spawnLocConfig.getMapList(SPAWN_KEY)
+        spawnLayers.forEach { grid.addElement(parseLayer(it)) }
+        layout.addElement(0, 1, grid)
+        addBackButton(layout)
+        return layout
     }
 
-    private Element parseLayer(Map<?, ?> map) {
-        double cost = 0;
-        if (map.containsKey("cost"))
-            cost = Double.parseDouble((String) map.get("cost"));
-        ItemStack displayItem = ((ItemStack) map.get("display-item")).clone(); //TODO convert to key variable
-        Bukkit.broadcastMessage(displayItem.toString());
-        ItemMeta itemMeta = displayItem.getItemMeta();
+    private fun parseLayer(map: Map<*, *>): Element {
+        val cost = if (map.containsKey(COST_KEY)) (map[COST_KEY] as String).toDouble() else 0.0
+        val displayItem = (map[DISPLAY_ITEM_KEY] as ItemStack?)!!.clone()
+        val itemMeta = displayItem.itemMeta!!
+        val loc = map[LOCATION_KEY] as Location
+        val balance = MineInAbyss.getEcon().getBalance(player)
 
-        Location loc = (Location) map.get("location");
-        if (MineInAbyss.getEcon().getBalance(player) >= cost) {
-            itemMeta.setLore(Arrays.asList(ChatColor.GOLD + "$" + cost));
-            displayItem.setItemMeta(itemMeta);
+        return if (balance >= cost) {
+            itemMeta.lore = listOf("${ChatColor.GOLD}Cost: $$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$balance")
+            displayItem.itemMeta = itemMeta
 
-            ClickableElement button = new ClickableElement(Cell.forItemStack(displayItem));
-            //TODO this should show a fancy title when you click it and check whether you have enough money to afford it
-            double finalCost = cost;
-            button.setClickAction(clickEvent -> {
-                player.teleport(loc);
-                AbyssWorldManager worldManager = MineInAbyss.getContext().getWorldManager();
-                WorldManager realWorldManager = MineInAbyss.getContext().getRealWorldManager();
-                Layer layer = worldManager.getLayerForSection(realWorldManager.getSectionFor(loc));
-                player.sendTitle(layer.getName(), layer.getSub(), 50, 10, 20);
-                MineInAbyss.getEcon().withdrawPlayer(player, finalCost);
+            val button = ClickableElement(Cell.forItemStack(displayItem))
+            button.setClickAction {
+                val layer = MineInAbyss.getContext().getLayerForLocation(loc)
+                val playerData = getPlayerData(player)
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(MineInAbyss.getInstance(), () -> {
-                    player.sendTitle("", String.format("%s%sLet the journey begin", ChatColor.GRAY, ChatColor.ITALIC), 30, 30, 20);
-                }, 80);
+                player.teleport(loc)
+                player.sendTitle(layer.name, layer.sub, 50, 10, 20)
 
-            });
-            return button;
+                MineInAbyss.getEcon().withdrawPlayer(player, cost)
+
+                playerData.descentDate = Date()
+                playerData.expOnDescent = playerData.exp
+                playerData.isIngame = true
+                Bukkit.getScheduler().scheduleSyncDelayedTask(MineInAbyss.getInstance(), {
+                    player.sendTitle("", String.format("%s%sLet the journey begin", ChatColor.GRAY, ChatColor.ITALIC), 30, 30, 20)
+                }, 80)
+            }
+            button
         } else {
-            displayItem.setType(Material.BEDROCK);
-            itemMeta.setDisplayName(ChatColor.STRIKETHROUGH + itemMeta.getDisplayName());
-            itemMeta.setLore(Arrays.asList(ChatColor.RED + "Cannot Afford: $" + cost));
-            displayItem.setItemMeta(itemMeta);
-            return Cell.forItemStack(displayItem);
+            displayItem.type = Material.BARRIER
+            itemMeta.setDisplayName(ChatColor.STRIKETHROUGH.toString() + itemMeta.displayName)
+            itemMeta.lore = listOf("${ChatColor.RED}Cannot Afford: ${ChatColor.GOLD}$$cost", "${ChatColor.RED}You have: ${ChatColor.GOLD}$balance")
+            displayItem.itemMeta = itemMeta
+            Cell.forItemStack(displayItem)
         }
+    }
+
+    companion object {
+        const val SPAWN_KEY: String = "spawns"
+        const val DISPLAY_ITEM_KEY: String = "display-item"
+        private const val COST_KEY: String = "cost"
+        private const val LOCATION_KEY: String = "location"
+    }
+
+    init {
+        this.player = player
+        setElement(buildMain())
     }
 }

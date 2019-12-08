@@ -1,42 +1,24 @@
 package com.derongan.minecraft.mineinabyss;
 
 import com.derongan.minecraft.guiy.GuiListener;
-import com.derongan.minecraft.mineinabyss.GUI.GUICommandExecutor;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionCommandExecutor;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener;
-import com.derongan.minecraft.mineinabyss.configuration.ConfigurationManager;
-import com.derongan.minecraft.mineinabyss.player.PlayerData;
-import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager;
+import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
-import com.derongan.minecraft.mineinabyss.world.WorldCommandExecutor;
-import net.milkbowl.vault.chat.Chat;
+import com.derongan.minecraft.mineinabyss.commands.WorldCommandExecutor;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-
 public final class MineInAbyss extends JavaPlugin {
     private static AbyssContext context;
     private static Economy econ = null;
-    private static Permission perms = null;
-    private static Chat chat = null;
     private final int TICKS_BETWEEN = 5;
-    private ConfigurationManager configManager;
 
     public static Economy getEcon() {
         return econ;
-    }
-
-    public static Permission getPerms() {
-        return perms;
-    }
-
-    public static Chat getChat() {
-        return chat;
     }
 
     public static MineInAbyss getInstance() {
@@ -49,14 +31,12 @@ public final class MineInAbyss extends JavaPlugin {
         return context;
     }
 
-    public ConfigurationManager getConfigManager() {
-        return configManager;
-    }
-
     @Override
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("On enable has been called");
+
+        context = new AbyssContext(this);
 
         //Vault setup
         if (!setupEconomy()) {
@@ -64,24 +44,10 @@ public final class MineInAbyss extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-//        setupPermissions();
-//        setupChat();
-
-        loadConfigManager();
-
-        context = new AbyssContext(this);
 
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
         getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
-
-        PlayerDataConfigManager manager = new PlayerDataConfigManager(context);
-
-        getServer().getOnlinePlayers().forEach((player) ->
-                context.getPlayerDataMap().put(
-                        player.getUniqueId(),
-                        manager.loadPlayerData(player))
-        );
 
         WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
         AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
@@ -91,24 +57,14 @@ public final class MineInAbyss extends JavaPlugin {
         this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
         this.getCommand("stats").setExecutor(guiCommandExecutor);
         this.getCommand("start").setExecutor(guiCommandExecutor);
+        this.getCommand("leave").setExecutor(guiCommandExecutor);
         this.getCommand("creategondolaspawn").setExecutor(guiCommandExecutor);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        PlayerDataConfigManager manager = new PlayerDataConfigManager(context);
-
-        getServer().getOnlinePlayers().forEach(player -> {
-            PlayerData data = context.getPlayerDataMap().get(player.getUniqueId());
-            try {
-                manager.savePlayerData(data);
-            } catch (IOException e) {
-                getLogger().warning("Error saving player data for " + player.getUniqueId());
-                e.printStackTrace();
-            }
-        });
-        configManager.saveSpawnLocConfig();
+        context.getConfigManager().saveAll();
         getLogger().info("onDisable has been invoked!");
     }
 
@@ -123,21 +79,5 @@ public final class MineInAbyss extends JavaPlugin {
         }
         econ = rsp.getProvider();
         return econ != null;
-    }
-
-    private boolean setupChat() {
-        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
-        chat = rsp.getProvider();
-        return chat != null;
-    }
-
-    private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        perms = rsp.getProvider();
-        return perms != null;
-    }
-
-    public void loadConfigManager() {
-        configManager = new ConfigurationManager(this);
     }
 }

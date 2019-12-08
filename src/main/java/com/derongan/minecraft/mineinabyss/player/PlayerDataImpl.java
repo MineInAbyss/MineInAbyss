@@ -5,6 +5,7 @@ import com.derongan.minecraft.mineinabyss.whistles.WhistleType;
 import com.derongan.minecraft.mineinabyss.world.Layer;
 import org.bukkit.entity.Player;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -13,19 +14,51 @@ public class PlayerDataImpl implements PlayerData {
 
     private boolean affectedByCurse;
     private boolean anchored;
+    private boolean ingame = false;
 
     private double distanceAscended;
     private double exp;
+    private double expOnDescent;
 
     private Player player;
     private WhistleType whistle = WhistleType.BELL;
+    private Date descentDate;
+    private List<AscensionEffect> effects;
 
     public PlayerDataImpl(Player player) {
         this.player = player;
         this.affectedByCurse = true;
     }
 
-    private List<AscensionEffect> effects;
+    @Override
+    public double getExpOnDescent() {
+        return expOnDescent;
+    }
+
+    @Override
+    public void setExpOnDescent(double expOnDescent) {
+        this.expOnDescent = expOnDescent;
+    }
+
+    @Override
+    public Date getDescentDate() {
+        return descentDate;
+    }
+
+    @Override
+    public void setDescentDate(Date date) {
+        descentDate = date;
+    }
+
+    @Override
+    public boolean isIngame() {
+        return ingame;
+    }
+
+    @Override
+    public void setIngame(boolean ingame) {
+        this.ingame = ingame;
+    }
 
     @Override
     public Layer getCurrentLayer() {
@@ -83,18 +116,18 @@ public class PlayerDataImpl implements PlayerData {
     }
 
     @Override
-    public void setWhistle(WhistleType whistle) {
-        this.whistle = whistle;
-    }
-
-    @Override
     public WhistleType getWhistle() {
         return whistle;
     }
 
     @Override
+    public void setWhistle(WhistleType whistle) {
+        this.whistle = whistle;
+    }
+
+    @Override
     public int getLevel() {
-        return (int) exp/10; //TODO write a proper formula
+        return (int) exp / 10; //TODO write a proper formula
     }
 
     @Override
