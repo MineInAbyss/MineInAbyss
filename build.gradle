@@ -6,8 +6,12 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.61'
 }
 
-group 'com.derongan.minecraft'
-version plugin_version + "-SNAPSHOT"
+ext.kotlin_version = '1.3.61'
+ext.plugin_path = '' //Put your plugins folder directory here! If it is left as '', jars won't be copied
+
+group = 'com.derongan.minecraft'
+version = plugin_version + "-SNAPSHOT"
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -28,16 +32,16 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.15-R0.1-SNAPSHOT'
     implementation project(':DeeperWorld')
-    compile 'de.erethon:headlib:3.0.1'
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    implementation 'de.erethon:headlib:3.0.2'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
     if (useLocalGuiy.toBoolean())
         implementation project(':guiy')
     else
         implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 processResources {
@@ -48,23 +52,18 @@ processResources {
 
 shadowJar {
     getArchiveClassifier().set(null)
-//    classifier = null
     dependencies {
         if (useLocalGuiy.toBoolean())
             include(project(':guiy'))
         else
             include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
 
-        include(dependency('de.erethon:headlib:3.0.1'))
+        include(dependency('de.erethon:headlib:3.0.2'))
+        include(dependency("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"))
     }
 }
+build.dependsOn shadowJar
 
-task copyJar(type: Copy) {
-    from shadowJar // here it automatically reads jar file produced from jar task
-    into '/srv/craftbukkit/plugins/'
-}
-
-build.dependsOn copyJar
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
@@ -75,3 +74,12 @@ compileTestKotlin {
         jvmTarget = "1.8"
     }
 }
+
+//Move into plugins folder
+if (plugin_path != '') {
+    task copyJar(type: Copy) {
+        from shadowJar // here it automatically reads jar file produced from jar task
+        into plugin_path
+    }
+    build.dependsOn copyJar
+} else println("Skipped copyJar")
