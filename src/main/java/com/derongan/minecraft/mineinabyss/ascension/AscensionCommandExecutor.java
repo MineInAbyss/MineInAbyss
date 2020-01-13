@@ -2,6 +2,7 @@ package com.derongan.minecraft.mineinabyss.ascension;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.Permissions;
+import com.derongan.minecraft.mineinabyss.commands.CommandLabels;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,13 +26,13 @@ public class AscensionCommandExecutor implements CommandExecutor {
                 return true;
             }
 
-            if (label.equals("curseon") && (player.hasPermission(Permissions.TOGGLE_CURSE) || player.hasPermission(Permissions.CURSE_OFF))) {
+            if (label.equals(CommandLabels.CURSEON) && (player.hasPermission(Permissions.TOGGLE_CURSE) || player.hasPermission(Permissions.CURSE_OFF))) {
                 context.getPlayerData(player).setAffectedByCurse(true);
                 player.sendMessage("Curse enabled");
                 return true;
             }
 
-            if (label.equals("curseoff") && (player.hasPermission(Permissions.TOGGLE_CURSE) || player.hasPermission(Permissions.CURSE_ON))) {
+            if (label.equals(CommandLabels.CURSEOFF) && (player.hasPermission(Permissions.TOGGLE_CURSE) || player.hasPermission(Permissions.CURSE_ON))) {
                 context.getPlayerData(player).setAffectedByCurse(false);
                 player.sendMessage("Curse disabled");
                 return true;

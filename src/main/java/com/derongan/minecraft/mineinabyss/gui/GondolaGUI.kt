@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class GondolaGUI(player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Choose Spawn Location", plugin) {
+class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Choose Spawn Location", plugin) {
     private val context = MineInAbyss.getContext()
 
     private fun buildMain(): Layout? {
@@ -40,13 +40,12 @@ class GondolaGUI(player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Cho
             itemMeta.lore = listOf("${ChatColor.GOLD}Cost: $$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$balance")
             displayItem.itemMeta = itemMeta
 
-            val button = ClickableElement(Cell.forItemStack(displayItem))
-            button.setClickAction {
+            val button = ClickableElement(Cell.forItemStack(displayItem)) {
                 val layer = MineInAbyss.getContext().getLayerForLocation(loc)
                 val playerData = getPlayerData(player)
 
                 player.teleport(loc)
-                player.sendTitle(layer.name, layer.sub, 50, 10, 20)
+                player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
                 MineInAbyss.getEcon().withdrawPlayer(player, cost)
 
@@ -75,7 +74,6 @@ class GondolaGUI(player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Cho
     }
 
     init {
-        this.player = player
         setElement(buildMain())
     }
 }

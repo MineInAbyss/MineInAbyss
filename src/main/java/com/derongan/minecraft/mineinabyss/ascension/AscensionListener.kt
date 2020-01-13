@@ -14,7 +14,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.*
-import kotlin.math.abs
 
 class AscensionListener(private val context: AbyssContext) : Listener {
     private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
@@ -40,7 +39,7 @@ class AscensionListener(private val context: AbyssContext) : Listener {
             val dist = playerData.distanceAscended
             playerData.distanceAscended = (dist + changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
-                val layerForSection = manager.getLayerForSection(worldManager!!.getSectionFor(moveEvent.from))
+                val layerForSection = manager.getLayerForSection(worldManager!!.getSectionFor(moveEvent.from) ?: return)
                 layerForSection.ascensionEffects.forEach { it.build().applyEffect(player, 10) }
                 playerData.distanceAscended = 0.0
             }
@@ -84,7 +83,8 @@ class AscensionListener(private val context: AbyssContext) : Listener {
     fun onPlayerDeath(deathEvent: PlayerDeathEvent) {
         val player = deathEvent.entity
         val manager = context.worldManager
-        val layerOfDeath = manager.getLayerForSection(worldManager!!.getSectionFor(player.location))
-        deathEvent.deathMessage = deathEvent.deathMessage + layerOfDeath.deathMessage
+        val section = worldManager!!.getSectionFor(player.location) ?: null
+        val layerOfDeath = section?.let { manager.getLayerForSection(section) }
+        deathEvent.deathMessage = deathEvent.deathMessage + (layerOfDeath?.deathMessage ?: "")
     }
 }

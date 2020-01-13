@@ -16,7 +16,7 @@ import java.util.logging.Logger
 /**
  * Stores context for the plugin, such as the plugin instance
  */
-class AbyssContext(val plugin: MineInAbyss) {
+class AbyssContext(private val plugin: MineInAbyss) {
     val playerDataMap: Map<UUID, PlayerData> = HashMap()
     val logger: Logger = plugin.logger
     val config: Configuration = plugin.config
@@ -30,8 +30,8 @@ class AbyssContext(val plugin: MineInAbyss) {
         return playerDataMap[player.uniqueId] ?: error("Player data not found")
     }
 
-    fun getLayerForLocation(loc: Location?): Layer {
-        return worldManager.getLayerForSection(realWorldManager.getSectionFor(loc))
+    fun getLayerForLocation(loc: Location): Layer? {
+        return worldManager.getLayerForSection(realWorldManager.getSectionFor(loc) ?: return null)
     }
 }
 
@@ -41,6 +41,6 @@ fun getPlayerData(player: Player): PlayerData {
     return instance.getPlayerData(player)
 }
 
-fun getLayerForLocation(loc: Location?): Layer {
+fun getLayerForLocation(loc: Location): Layer? {
     return instance.getLayerForLocation(loc)
 }

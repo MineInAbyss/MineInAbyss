@@ -18,8 +18,8 @@ commands:
     description: Shows statistics about you!
   start:
     description: Shows a list of locations to start the game from!
-  leave:
-    description: Leave your current run
+  stopdescent:
+    description: Stop your current run
   creategondolaspawn:
     description: Creates a location from which players will be able to spawn
 
@@ -30,7 +30,7 @@ permissions:
     description: Allows players to enable the curse of ascension on themselves
   mineinabyss.curse.off:
     description: Allows players to disable the curse of ascension on themselves
-  mineinabyss.leave:
+  mineinabyss.stopdescent:
     description: Allows players to leave a run
   mineinabyss.start:
     description: Allows players to start a run

@@ -5,18 +5,16 @@ import org.bukkit.World
 
 /**
  * Manages layers and sections
+ *
+ * @property layers All layers in index order.
+
  */
 interface AbyssWorldManager {
-    /**
-     * Get all layers in index order.
-     * @return All layers
-     */
-    val layers: List<Layer?>?
+    val layers: List<Layer>
 
     /**
-     * Check if the world is a world set up for the abyss
      * @param worldName
-     * @return
+     * @return whether the world is a world set up for the abyss
      */
     fun isAbyssWorld(worldName: World): Boolean
 

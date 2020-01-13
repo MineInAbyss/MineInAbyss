@@ -1,8 +1,8 @@
 package com.derongan.minecraft.mineinabyss.player;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,10 +42,18 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDeathEvent(PlayerDeathEvent pde) {
+    public void onPlayerDeath(PlayerDeathEvent pde) {
         Player player = pde.getEntity();
         PlayerData playerData = MineInAbyss.getContext().getPlayerData(player);
-        GUICommandExecutor.Companion.leave(playerData);
+
+        if (!playerData.isIngame())
+            return;
+
+        playerData.setIngame(false);
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                "&l    Game Stats:\n" +
+                        "Exp earned:      ${(playerData.exp - playerData.expOnDescent)}\n" +
+                        "Started dive on: ${playerData.descentDate}"));
     }
 
     @EventHandler

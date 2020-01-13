@@ -3,9 +3,10 @@ package com.derongan.minecraft.mineinabyss;
 import com.derongan.minecraft.guiy.GuiListener;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionCommandExecutor;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener;
+import com.derongan.minecraft.mineinabyss.commands.CommandLabels;
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor;
-import com.derongan.minecraft.mineinabyss.player.PlayerListener;
 import com.derongan.minecraft.mineinabyss.commands.WorldCommandExecutor;
+import com.derongan.minecraft.mineinabyss.player.PlayerListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -53,12 +54,12 @@ public final class MineInAbyss extends JavaPlugin {
         AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
         GUICommandExecutor guiCommandExecutor = new GUICommandExecutor(context);
 
-        this.getCommand("curseon").setExecutor(ascensionCommandExecutor);
-        this.getCommand("curseoff").setExecutor(ascensionCommandExecutor);
-        this.getCommand("stats").setExecutor(guiCommandExecutor);
-        this.getCommand("start").setExecutor(guiCommandExecutor);
-        this.getCommand("leave").setExecutor(guiCommandExecutor);
-        this.getCommand("creategondolaspawn").setExecutor(guiCommandExecutor);
+        this.getCommand(CommandLabels.CURSEON).setExecutor(ascensionCommandExecutor);
+        this.getCommand(CommandLabels.CURSEOFF).setExecutor(ascensionCommandExecutor);
+        this.getCommand(CommandLabels.STATS).setExecutor(guiCommandExecutor);
+        this.getCommand(CommandLabels.START).setExecutor(guiCommandExecutor);
+        this.getCommand(CommandLabels.STOP_DESCENT).setExecutor(guiCommandExecutor);
+        this.getCommand(CommandLabels.CREATE_GONDOLA_SPAWN).setExecutor(guiCommandExecutor);
     }
 
     @Override

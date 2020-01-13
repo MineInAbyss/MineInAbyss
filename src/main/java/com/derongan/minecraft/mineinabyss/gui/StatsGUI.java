@@ -1,7 +1,10 @@
 package com.derongan.minecraft.mineinabyss.gui;
 
 import com.derongan.minecraft.deeperworld.world.section.Section;
-import com.derongan.minecraft.guiy.gui.*;
+import com.derongan.minecraft.guiy.gui.Cell;
+import com.derongan.minecraft.guiy.gui.ClickableElement;
+import com.derongan.minecraft.guiy.gui.Element;
+import com.derongan.minecraft.guiy.gui.Layout;
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder;
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
@@ -26,12 +29,13 @@ public class StatsGUI extends HistoryGuiHolder {
     private PlayerData playerData;
     private static ChatColor mainColor = ConfigConstants.mainColor;
     private static ChatColor secondaryColor = ConfigConstants.secondaryColor;
+    private Player player;
 
     public StatsGUI(Player player, MineInAbyss plugin) {
         super(6, "Mine In Abyss - Stats", plugin);
+        this.player = player;
         context = MineInAbyss.getContext();
         playerData = context.getPlayerData(player);
-        this.player = player;
 
         setElement(buildMain());
     }
