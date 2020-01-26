@@ -2,10 +2,11 @@ package com.derongan.minecraft.mineinabyss.player;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
-import org.bukkit.ChatColor;
+import com.mineinabyss.idofront.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -46,14 +47,16 @@ public class PlayerListener implements Listener {
         Player player = pde.getEntity();
         PlayerData playerData = MineInAbyss.getContext().getPlayerData(player);
 
+        //TODO maybe limit this to only the survival server with a config option
+        if (player.getLastDamageCause() != null && player.getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.VOID))
+            pde.setKeepInventory(true);
+
         if (!playerData.isIngame())
             return;
-
         playerData.setIngame(false);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                "&l    Game Stats:\n" +
-                        "Exp earned:      ${(playerData.exp - playerData.expOnDescent)}\n" +
-                        "Started dive on: ${playerData.descentDate}"));
+        player.sendMessage(Messages.translateColors("&l    Game Stats:\n" +
+                "Exp earned:      " + (playerData.getExp() - playerData.getExpOnDescent()) +
+                "Started dive on: " + playerData.getDescentDate()));
     }
 
     @EventHandler

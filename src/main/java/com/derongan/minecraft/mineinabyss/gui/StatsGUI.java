@@ -41,7 +41,6 @@ public class StatsGUI extends HistoryGuiHolder {
     }
 
     public static ItemStack getHead(Player player) {
-        int lifePlayer = (int) player.getHealth();
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skull = (SkullMeta) item.getItemMeta();
         skull.setDisplayName(ChatColor.RESET + player.getName());
@@ -83,7 +82,7 @@ public class StatsGUI extends HistoryGuiHolder {
         layout.addElement(7, 0, level);
 
         //The player's balance
-        Element balance = Cell.forItemStack(new ItemStack(Material.GOLD_BLOCK), mainColor + "Balance: $" + ChatColor.GOLD + MineInAbyss.getEcon().getBalance(player));
+        Element balance = Cell.forItemStack(new ItemStack(Material.GOLD_BLOCK), mainColor + "Balance: " + ChatColor.GOLD + "$" + MineInAbyss.getEcon().getBalance(player));
         layout.addElement(8, 0, balance);
 
         addBackButton(layout);

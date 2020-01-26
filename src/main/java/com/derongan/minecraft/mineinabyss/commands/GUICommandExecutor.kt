@@ -6,7 +6,9 @@ import com.derongan.minecraft.mineinabyss.Permissions
 import com.derongan.minecraft.mineinabyss.getPlayerData
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
-import org.bukkit.ChatColor
+import com.mineinabyss.idofront.error
+import com.mineinabyss.idofront.info
+import com.mineinabyss.idofront.success
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -19,20 +21,14 @@ import java.util.*
 
 class GUICommandExecutor(private val context: AbyssContext) : CommandExecutor {
     private val leaveConfirm = ArrayList<UUID>()
-    private val errorColor = ChatColor.RED
-    private val successColor = ChatColor.GREEN
 
 
     //TODO check out https://www.spigotmc.org/resources/1-13-commandapi.62353/
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         fun String.permitted(vararg labels: String) = sender.hasPermission(this) && labels.contains(command.label)
 
-        fun sendError(message: String) = sender.sendMessage("$errorColor$message")
-        fun sendSuccess(message: String) = sender.sendMessage("$successColor$message")
-        fun sendInfo(message: String) = sender.sendMessage(message)
-
         if (sender !is Player) {
-            sendError("Only players can run this command!")
+            sender.error("Only players can run this command!")
             return false
         }
 
@@ -43,7 +39,7 @@ class GUICommandExecutor(private val context: AbyssContext) : CommandExecutor {
             return true
         } else if (Permissions.START_DESCENT.permitted(CommandLabels.START)) {
             if (playerData.isIngame) {
-                sender.sendMessage(ChatColor.RED.toString() + "You are already ingame!\nYou can leave using /leave")
+                sender.error("You are already ingame!\nYou can leave using /stopdescent")
                 return true
             }
             GondolaGUI(sender, JavaPlugin.getPlugin(MineInAbyss::class.java)).show(sender)
@@ -52,13 +48,12 @@ class GUICommandExecutor(private val context: AbyssContext) : CommandExecutor {
 
         } else if (Permissions.STOP_DESCENT.permitted(CommandLabels.STOP_DESCENT)) {
             if (!playerData.isIngame) {
-                sender.sendMessage(ChatColor.RED.toString() + "You are not currently ingame!\nStart by using /start")
+                sender.error("You are not currently ingame!\nStart by using /start")
             } else if (!leaveConfirm.contains(sender.uniqueId)) {
                 leaveConfirm.add(sender.uniqueId)
-                sendInfo(ChatColor.translateAlternateColorCodes('&',
-                        "&cYou are about to leave the game!!!\n" +
-                                "&lYour progress will be lost&r&c, but any xp and money you earned will stay with you.\n" +
-                                "Type /leave again to leave"))
+                sender.info("&cYou are about to leave the game!!!\n" +
+                        "&lYour progress will be lost&r&c, but any xp and money you earned will stay with you.\n" +
+                        "Type /stopdescent again to leave")
             } else {
                 leaveConfirm.remove(sender.uniqueId)
                 sender.health = 0.0
@@ -90,7 +85,7 @@ class GUICommandExecutor(private val context: AbyssContext) : CommandExecutor {
             spawns.add(map)
             spawnLocConfig.set(GondolaGUI.SPAWN_KEY, spawns)
 
-            sender.sendMessage("Created spawn")
+            sender.success("Created spawn")
             return true
         }
 

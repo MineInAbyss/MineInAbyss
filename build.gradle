@@ -35,6 +35,7 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.15-R0.1-SNAPSHOT'
     compileOnly project(':DeeperWorld')
+    implementation project(':idofront')
     implementation 'de.erethon:headlib:3.0.2'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
@@ -53,7 +54,10 @@ processResources {
 
 shadowJar {
     getArchiveClassifier().set(null)
-    minimize()
+    minimize {
+        exclude(dependency("org.jetbrains.kotlin:.*"))
+        exclude(dependency('de.erethon:headlib:3.0.2'))
+    }
 }
 build.dependsOn shadowJar
 

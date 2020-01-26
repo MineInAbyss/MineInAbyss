@@ -4,6 +4,7 @@ import com.derongan.minecraft.guiy.gui.*
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.getPlayerData
+import com.mineinabyss.idofront.translateColors
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -37,7 +38,7 @@ class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, 
         val balance = MineInAbyss.getEcon().getBalance(player)
 
         return if (balance >= cost) {
-            itemMeta.lore = listOf("${ChatColor.GOLD}Cost: $$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$balance")
+            itemMeta.lore = listOf("${ChatColor.RESET}Cost: ${ChatColor.GOLD}$$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$$balance")
             displayItem.itemMeta = itemMeta
 
             val button = ClickableElement(Cell.forItemStack(displayItem)) {
@@ -53,14 +54,14 @@ class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, 
                 playerData.expOnDescent = playerData.exp
                 playerData.isIngame = true
                 Bukkit.getScheduler().scheduleSyncDelayedTask(MineInAbyss.getInstance(), {
-                    player.sendTitle("", String.format("%s%sLet the journey begin", ChatColor.GRAY, ChatColor.ITALIC), 30, 30, 20)
+                    player.sendTitle("", "${ChatColor.GRAY}${ChatColor.ITALIC}Let the journey begin", 30, 30, 20)
                 }, 80)
             }
             button
         } else {
             displayItem.type = Material.BARRIER
-            itemMeta.setDisplayName(ChatColor.STRIKETHROUGH.toString() + itemMeta.displayName)
-            itemMeta.lore = listOf("${ChatColor.RED}Cannot Afford: ${ChatColor.GOLD}$$cost", "${ChatColor.RED}You have: ${ChatColor.GOLD}$balance")
+            itemMeta.setDisplayName("itemMeta.displayName".translateColors())
+            itemMeta.lore = listOf("${ChatColor.RED}Cannot Afford: ${ChatColor.GOLD}$$cost", "${ChatColor.RED}You have: ${ChatColor.GOLD}$$balance")
             displayItem.itemMeta = itemMeta
             Cell.forItemStack(displayItem)
         }
