@@ -14,6 +14,7 @@ private const val NAME_KEY = "name"
 private const val SUB_KEY = "sub"
 private const val SECTION_KEY = "sections"
 private const val EFFECTS_KEY = "effects"
+private const val DEATH_MESSAGE_KEY = "death-message"
 
 /**
  * @property _layers A private mutable list of layers
@@ -31,7 +32,7 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
     private fun parseLayer(map: Map<*, *>): Layer {
         val layerName = map[NAME_KEY] as String
         val subHeader = map[SUB_KEY] as String
-        val layer = LayerImpl(layerName, subHeader, numLayers++)
+        val layer = LayerImpl(layerName, subHeader, numLayers++, deathMessage = " ${map.getOrDefault(DEATH_MESSAGE_KEY, "in $layerName")}")
         _layers.add(layer)
 
         val worldManager = Bukkit.getServicesManager().load(WorldManager::class.java)!!

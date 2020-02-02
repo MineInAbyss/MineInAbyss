@@ -84,6 +84,7 @@ class GUICommandExecutor(private val context: AbyssContext) : CommandExecutor {
 
             spawns.add(map)
             spawnLocConfig.set(GondolaGUI.SPAWN_KEY, spawns)
+            spawnLocConfig.saveConfig()
 
             sender.success("Created spawn")
             return true
