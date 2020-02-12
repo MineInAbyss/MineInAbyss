@@ -1,2 +1,5 @@
 include ':DeeperWorld'
 project(':DeeperWorld').projectDir = new File('../DeeperWorld')
+
+include ':Geary'
+project(':Geary').projectDir = new File('../geary')

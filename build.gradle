@@ -26,8 +26,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
-    implementation project(':DeeperWorld')
+    compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+    compileOnly project(':DeeperWorld')
+    compileOnly project(':Geary')
+    compileOnly group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
     compile 'de.erethon:headlib:3.0.1'
     implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
 }
@@ -40,7 +42,6 @@ processResources {
 
 
 shadowJar {
-    classifier = null
     dependencies {
         include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
         include(dependency('de.erethon:headlib:3.0.1'))
@@ -49,7 +50,7 @@ shadowJar {
 
 task copyJar(type: Copy) {
     from shadowJar // here it automatically reads jar file produced from jar task
-    into '/srv/craftbukkit/plugins/'
+    into '/home/derongan/servers/1.15.1/plugins'
 }
 
 build.dependsOn copyJar
