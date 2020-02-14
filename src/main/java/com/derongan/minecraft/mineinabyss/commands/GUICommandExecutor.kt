@@ -6,9 +6,9 @@ import com.derongan.minecraft.mineinabyss.Permissions
 import com.derongan.minecraft.mineinabyss.getPlayerData
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
-import com.mineinabyss.idofront.error
-import com.mineinabyss.idofront.info
-import com.mineinabyss.idofront.success
+import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.messaging.success
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

@@ -2,7 +2,7 @@ package com.derongan.minecraft.mineinabyss.player;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
-import com.mineinabyss.idofront.Messages;
+import com.mineinabyss.idofront.messaging.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

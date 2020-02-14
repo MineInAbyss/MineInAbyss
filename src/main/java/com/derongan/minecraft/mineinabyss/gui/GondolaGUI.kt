@@ -4,7 +4,7 @@ import com.derongan.minecraft.guiy.gui.*
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.getPlayerData
-import com.mineinabyss.idofront.translateColors
+import com.mineinabyss.idofront.messaging.translateColors
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.Location
