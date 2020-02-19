@@ -9,8 +9,10 @@ import com.derongan.minecraft.mineinabyss.player.PlayerData;
 import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
 import com.derongan.minecraft.mineinabyss.world.WorldCommandExecutor;
+import com.google.common.collect.Iterators;
 import com.mineinabyss.geary.Geary;
 import com.mineinabyss.geary.PredefinedArtifacts;
+import com.mineinabyss.geary.core.ItemUtil.EntityInitializer;
 import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -18,7 +20,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,7 +33,6 @@ public final class MineInAbyss extends JavaPlugin implements Listener {
   private static AbyssContext context;
   private final int TICKS_BETWEEN = 5;
   private ShapedRecipe recipe;
-  private Geary geary;
 
   public static MineInAbyss getInstance() {
     Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MineInAbyss");
@@ -73,9 +75,10 @@ public final class MineInAbyss extends JavaPlugin implements Listener {
     this.getCommand("stats").setExecutor(guiCommandExecutor);
 
     if (getServer().getPluginManager().isPluginEnabled("Geary")) {
-      geary = (Geary) getServer().getPluginManager().getPlugin("Geary");
-
-      NamespacedKey key = new NamespacedKey(this, "grappling_hook");
+      Geary geary = (Geary) getServer().getPluginManager().getPlugin("Geary");
+      EntityInitializer entityInitializer = () -> PredefinedArtifacts
+          .createGrapplingHook(1.2, 3, 4,
+              Color.YELLOW, 1, 25);
 
       ItemStack itemStack = new ItemStack(Material.DIAMOND_SHOVEL);
       ItemMeta itemMeta = itemStack.getItemMeta();
@@ -84,24 +87,31 @@ public final class MineInAbyss extends JavaPlugin implements Listener {
       itemMeta.setCustomModelData(3);
       itemStack.setItemMeta(itemMeta);
 
-      recipe = new ShapedRecipe(key, itemStack);
-      recipe.shape("III", "ISI", " S ");
-      recipe.setIngredient('S', Material.STRING);
-      recipe.setIngredient('I', Material.IRON_INGOT);
-      getServer().addRecipe(recipe);
+      recipe = geary
+          .createRecipe(new NamespacedKey(this, "grappling_hook"), entityInitializer, itemStack);
+
+      this.recipe.shape("III", "ISI", " S ");
+      this.recipe.setIngredient('S', Material.STRING);
+      this.recipe.setIngredient('I', Material.IRON_INGOT);
+      getServer().addRecipe(this.recipe);
 
       getServer().getPluginManager().registerEvents(this, this);
     }
   }
 
   @EventHandler
-  void onCraftItem(CraftItemEvent craftItemEvent) {
-    if (craftItemEvent.getRecipe().getResult().hasItemMeta() && craftItemEvent.getRecipe()
-        .getResult().getItemMeta().getDisplayName().equals("Grappling Hook")) {
-      geary.attach(
-          () -> PredefinedArtifacts
-              .createGrapplingHook(1.5, 3, 4, Color.fromRGB(142, 89, 60), 1, 25),
-          craftItemEvent.getInventory().getResult());
+  void onPluginDisable(PluginDisableEvent disable) {
+    if (disable.getPlugin().getClass() == Geary.class) {
+      Iterators.removeIf(getServer().recipeIterator(), input -> input.equals(recipe));
+    }
+  }
+
+  @EventHandler
+  void onPluginEnable(PluginEnableEvent enable) {
+    if (enable.getPlugin().getClass() == Geary.class) {
+      if (!Iterators.any(getServer().recipeIterator(), input -> input.equals(recipe))) {
+        getServer().addRecipe(recipe);
+      }
     }
   }
 

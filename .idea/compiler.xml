@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value/1.7/fe8387764ed19460eda4f106849c664f51c07121/auto-value-1.7.jar" />
+        </processorPath>
+        <module name="MineInAbyss.Geary.main" />
+      </profile>
+    </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="DeeperWorld.main" target="1.8" />
       <module name="DeeperWorld.test" target="1.8" />
+      <module name="MineInAbyss.DeeperWorld.main" target="1.8" />
+      <module name="MineInAbyss.DeeperWorld.test" target="1.8" />
       <module name="MineInAbyss.MineInAbyss-API.main" target="1.8" />
       <module name="MineInAbyss.MineInAbyss-API.test" target="1.8" />
       <module name="MineInAbyss.MineInAbyss.main" target="1.8" />

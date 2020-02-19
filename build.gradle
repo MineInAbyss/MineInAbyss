@@ -50,7 +50,7 @@ shadowJar {
 
 task copyJar(type: Copy) {
     from shadowJar // here it automatically reads jar file produced from jar task
-    into '/home/derongan/servers/1.15.1/plugins'
+    into '/home/derongan/servers/1.15.2/plugins'
 }
 
 build.dependsOn copyJar
