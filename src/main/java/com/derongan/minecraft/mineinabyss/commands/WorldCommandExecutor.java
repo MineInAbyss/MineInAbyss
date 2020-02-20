@@ -1,17 +1,15 @@
-package com.derongan.minecraft.mineinabyss.GUI;
+package com.derongan.minecraft.mineinabyss.commands;
 
 import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.MineInAbyss;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class GUICommandExecutor implements CommandExecutor {
+public class WorldCommandExecutor implements CommandExecutor {
     private AbyssContext context;
 
-    public GUICommandExecutor(AbyssContext context) {
+    public WorldCommandExecutor(AbyssContext context) {
         this.context = context;
     }
 
@@ -20,8 +18,15 @@ public class GUICommandExecutor implements CommandExecutor {
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
 
-            if (label.equals("stats")) {
-                new StatsGUI(player, JavaPlugin.getPlugin(MineInAbyss.class)).show(player);
+            if (label.equals("sectionon")) {
+                context.getPlayerData(player).setAnchored(false);
+                player.sendMessage("Automatic TP enabled");
+                return true;
+            }
+
+            if (label.equals("sectionoff")) {
+                context.getPlayerData(player).setAnchored(true);
+                player.sendMessage("Automatic TP disabled");
                 return true;
             }
         }

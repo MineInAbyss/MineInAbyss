@@ -1,17 +1,18 @@
 package com.derongan.minecraft.mineinabyss.whistles;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public enum WhistleType {
-    BELL("Bell", 1),
-    RED_WHISTLE("Red Whistle", 2),
-    BLUE_WHISTLE("Blue Whistle", 3),
-    MOON_WHISTLE("Moon Whistle", 4),
-    BLACK_WHISTLE("Black Whistle", 5),
-    WHITE_WHISTLE("White Whistle", 6);
+    BELL(ChatColor.GOLD + "Bell", 1),
+    RED_WHISTLE(ChatColor.RED + "Red Whistle", 2),
+    BLUE_WHISTLE(ChatColor.BLUE + "Blue Whistle", 3),
+    MOON_WHISTLE(ChatColor.LIGHT_PURPLE + "Moon Whistle", 4),
+    BLACK_WHISTLE(ChatColor.BLACK + "Black Whistle", 5),
+    WHITE_WHISTLE(ChatColor.WHITE + "White Whistle", 6);
 
     private String name;
     private int damageValue;

@@ -1,13 +1,20 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.0.0'
     id 'java'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.61'
 }
 
-group 'com.derongan.minecraft'
-version plugin_version + "-SNAPSHOT"
+ext.kotlin_version = '1.3.61'
+ext.plugin_path = '' //Put your plugins folder directory here! If it is left as '', jars won't be copied
+
+group = 'com.derongan.minecraft'
+version = plugin_version + "-SNAPSHOT"
+
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -26,10 +33,17 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
-    implementation project(':DeeperWorld')
-    compile 'de.erethon:headlib:3.0.1'
-    implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.15-R0.1-SNAPSHOT'
+    compileOnly project(':DeeperWorld')
+    implementation project(':idofront')
+    implementation 'de.erethon:headlib:3.0.2'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+
+    if (useLocalGuiy.toBoolean())
+        implementation project(':guiy')
+    else
+        implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 processResources {
@@ -38,18 +52,31 @@ processResources {
     }
 }
 
-
 shadowJar {
-    classifier = null
-    dependencies {
-        include(dependency('com.github.Mineinabyss:guiy:master-SNAPSHOT'))
-        include(dependency('de.erethon:headlib:3.0.1'))
+    getArchiveClassifier().set(null)
+    minimize {
+        exclude(dependency("org.jetbrains.kotlin:.*"))
+        exclude(dependency('de.erethon:headlib:3.0.2'))
+    }
+}
+build.dependsOn shadowJar
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
-task copyJar(type: Copy) {
-    from shadowJar // here it automatically reads jar file produced from jar task
-    into '/srv/craftbukkit/plugins/'
-}
-
-build.dependsOn copyJar
+//Move into plugins folder
+if (plugin_path != '') {
+    task copyJar(type: Copy) {
+        from shadowJar // here it automatically reads jar file produced from jar task
+        into plugin_path
+    }
+    build.dependsOn copyJar
+} else println("Skipped copyJar")
