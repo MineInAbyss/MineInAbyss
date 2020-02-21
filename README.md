@@ -1,10 +1,10 @@
-![Mine in Abyss](https://user-images.githubusercontent.com/1530104/46649702-e2566300-cb4e-11e8-9837-57a656d4d492.png)
+[![Mine in Abyss](https://user-images.githubusercontent.com/16233018/75004708-02cc4800-543a-11ea-8bb3-a9184d9311a0.png)](https://mineinabyss.com)
 
 # Mine In Abyss
 
 Mine In Abyss is a plugin for spigot that is made for the Mine In Abyss minecraft server.
 The server aims to recreate the world of [Made in Abyss](https://en.wikipedia.org/wiki/Made_in_Abyss) within Minecraft.
-You can join our [Discord](https://discord.gg/qWAMBSK) for more information about the server.
+You can join our [Discord](https://discord.gg/qWAMBSK) for more information about the server. Visit our site [mineinabyss.com](https://mineinabyss.com) for news and our social media links.
 
 ## Features
 * Custom Item/Artifact system using [Geary](https://github.com/MineInAbyss/Geary)
