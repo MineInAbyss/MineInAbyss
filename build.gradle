@@ -39,13 +39,14 @@ dependencies {
     implementation 'de.erethon:headlib:3.0.2'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
+    compileOnly project(':geary')
+    compileOnly group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
+
     if (useLocalGuiy.toBoolean())
         implementation project(':guiy')
     else
         implementation 'com.github.Mineinabyss:guiy:master-SNAPSHOT'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compileOnly project(':Geary')
-    compileOnly group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
 }
 
 processResources {

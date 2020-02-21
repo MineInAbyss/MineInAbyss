@@ -7,8 +7,16 @@ import com.derongan.minecraft.mineinabyss.commands.CommandLabels;
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor;
 import com.derongan.minecraft.mineinabyss.commands.WorldCommandExecutor;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
+import com.mineinabyss.geary.GearyService;
+import com.mineinabyss.geary.PredefinedArtifacts;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +25,7 @@ public final class MineInAbyss extends JavaPlugin {
     private static AbyssContext context;
     private static Economy econ = null;
     private final int TICKS_BETWEEN = 5;
+    private GearyService gearyService;
 
     public static Economy getEcon() {
         return econ;
@@ -44,6 +53,29 @@ public final class MineInAbyss extends JavaPlugin {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        //Geary setup
+        if (setupGeary()) {
+            ItemStack itemStack = new ItemStack(Material.DIAMOND_SHOVEL);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setCustomModelData(3);
+            itemMeta.setDisplayName("Grappling Hook");
+            itemStack.setItemMeta(itemMeta);
+            ShapedRecipe recipe = gearyService.createRecipe(new NamespacedKey(this, "grappling_hook"),
+                () -> PredefinedArtifacts
+                    .createGrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1, 25), itemStack);
+
+            recipe.shape("III", "ISI", " S ");
+            recipe.setIngredient('I', Material.IRON_INGOT);
+            recipe.setIngredient('S', Material.STRING);
+
+            getServer().addRecipe(recipe);
+        } else {
+            getLogger().warning(String
+                .format("[%s] - Geary service not found! No items have been added!",
+                    getDescription().getName()));
+
         }
 
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
@@ -80,5 +112,19 @@ public final class MineInAbyss extends JavaPlugin {
         }
         econ = rsp.getProvider();
         return econ != null;
+    }
+
+    private boolean setupGeary() {
+        if(getServer().getPluginManager().isPluginEnabled("Geary")) {
+            RegisteredServiceProvider<GearyService> rsp = getServer().getServicesManager().getRegistration(GearyService.class);
+            if(rsp == null){
+                return false;
+            }
+
+            gearyService = rsp.getProvider();
+            return gearyService != null;
+        }
+
+        return false;
     }
 }
