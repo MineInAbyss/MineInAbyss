@@ -7,3 +7,6 @@ if(useLocalGuiy.toBoolean()) {
 }
 include 'idofront'
 project(':idofront').projectDir = new File('../idofront')
+
+include 'geary'
+project(':geary').projectDir = new File('../geary')

@@ -4,7 +4,7 @@ author: Derongan
 main: com.derongan.minecraft.mineinabyss.MineInAbyss
 api-version: '1.15'
 softdepend: [Multiverse-Core]
-depend: [DeeperWorld, Vault]
+depend: [DeeperWorld, Vault, Geary]
 
 prefix: MiB
 description: A mod that adds abyss effects
