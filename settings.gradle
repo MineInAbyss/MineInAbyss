@@ -5,8 +5,11 @@ if(useLocalGuiy.toBoolean()) {
     include ':guiy'
     project(':guiy').projectDir = new File('../guiy')
 }
-include 'idofront'
-project(':idofront').projectDir = new File('../idofront')
+
+if(useLocalIdofront.toBoolean()) {
+    include 'idofront'
+    project(':idofront').projectDir = new File('../idofront')
+}
 
 include 'geary'
 project(':geary').projectDir = new File('../geary')
