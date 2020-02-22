@@ -64,7 +64,7 @@ public final class MineInAbyss extends JavaPlugin {
             itemStack.setItemMeta(itemMeta);
             ShapedRecipe recipe = gearyService.createRecipe(new NamespacedKey(this, "grappling_hook"),
                 () -> PredefinedArtifacts
-                    .createGrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1, 25), itemStack);
+                    .createGrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1, 64), itemStack);
 
             recipe.shape("III", "ISI", " S ");
             recipe.setIngredient('I', Material.IRON_INGOT);
