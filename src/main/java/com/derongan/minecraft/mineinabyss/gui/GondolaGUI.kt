@@ -1,9 +1,15 @@
 package com.derongan.minecraft.mineinabyss.gui
 
-import com.derongan.minecraft.guiy.gui.*
+import com.derongan.minecraft.guiy.gui.ClickableElement
+import com.derongan.minecraft.guiy.gui.Element
+import com.derongan.minecraft.guiy.gui.FillableElement
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
+import com.derongan.minecraft.guiy.helpers.toCell
+import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
+import com.derongan.minecraft.guiy.kotlin_dsl.setElement
 import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.getPlayerData
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.translateColors
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
@@ -17,31 +23,28 @@ import java.util.*
 class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Choose Spawn Location", plugin) {
     private val context = MineInAbyss.getContext()
 
-    private fun buildMain(): Layout? {
-        val layout = Layout()
-        val spawnLocConfig: FileConfiguration = context.configManager.startLocationCM
-
+    private fun buildMain() = guiyLayout {
         //TODO separate spawns into groups based on world
-        val grid = FillableElement(5, 9)
-        val spawnLayers = spawnLocConfig.getMapList(SPAWN_KEY)
-        spawnLayers.forEach { grid.addElement(parseLayer(it)) }
-        layout.addElement(0, 1, grid)
-        addBackButton(layout)
-        return layout
+        setElement(0, 1, FillableElement(5, 9)){
+            val spawnLocConfig: FileConfiguration = context.configManager.startLocationCM
+            val spawnLayers = spawnLocConfig.getMapList(SPAWN_KEY)
+            addAll(spawnLayers.map { parseLayer(it) })
+        }
+        addBackButton(this)
     }
 
     private fun parseLayer(map: Map<*, *>): Element {
         val cost = if (map.containsKey(COST_KEY)) (map[COST_KEY] as String).toDouble() else 0.0
         val displayItem = (map[DISPLAY_ITEM_KEY] as ItemStack?)!!.clone()
-        val itemMeta = displayItem.itemMeta!!
         val loc = map[LOCATION_KEY] as Location
         val balance = MineInAbyss.getEcon().getBalance(player)
 
         return if (balance >= cost) {
-            itemMeta.lore = listOf("${ChatColor.RESET}Cost: ${ChatColor.GOLD}$$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$$balance")
-            displayItem.itemMeta = itemMeta
+            displayItem.editItemMeta {
+                lore = listOf("${ChatColor.RESET}Cost: ${ChatColor.GOLD}$$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$$balance")
+            }
 
-            val button = ClickableElement(Cell.forItemStack(displayItem)) {
+            val button = ClickableElement(displayItem.toCell()) {
                 val layer = MineInAbyss.getContext().getLayerForLocation(loc)
                 val playerData = getPlayerData(player)
 
@@ -60,10 +63,11 @@ class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, 
             button
         } else {
             displayItem.type = Material.BARRIER
-            itemMeta.setDisplayName("itemMeta.displayName".translateColors())
-            itemMeta.lore = listOf("${ChatColor.RED}Cannot Afford: ${ChatColor.GOLD}$$cost", "${ChatColor.RED}You have: ${ChatColor.GOLD}$$balance")
-            displayItem.itemMeta = itemMeta
-            Cell.forItemStack(displayItem)
+            displayItem.editItemMeta {
+                setDisplayName("itemMeta.displayName".translateColors())
+                lore = listOf("${ChatColor.RED}Cannot Afford: ${ChatColor.GOLD}$$cost", "${ChatColor.RED}You have: ${ChatColor.GOLD}$$balance")
+            }
+            displayItem.toCell()
         }
     }
 

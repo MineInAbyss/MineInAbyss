@@ -54,12 +54,12 @@ public class StatsGUI extends HistoryGuiHolder {
 
         //Player head
         Element name = Cell.forItemStack(getHead(player), mainColor + player.getName());
-        layout.addElement(0, 0, name);
+        layout.setElement(0, 0, name);
 
         //Player's whistle level
         ItemStack whistleItem = playerData.getWhistle().getItem();
         Element whistle = Cell.forItemStack(whistleItem, mainColor + "Whisle: " + whistleItem.getItemMeta().getDisplayName());
-        layout.addElement(1, 0, whistle);
+        layout.setElement(1, 0, whistle);
 
         //The section the player is currently in
         Section section = context.getRealWorldManager().getSectionFor(player.getLocation());
@@ -75,15 +75,15 @@ public class StatsGUI extends HistoryGuiHolder {
         layerHead.setItemMeta(layerHeadMeta);
 
         Element layer = Cell.forItemStack(layerHead);
-        layout.addElement(2, 0, layer);
+        layout.setElement(2, 0, layer);
 
         //The player's level
         Element level = Cell.forItemStack(new ItemStack(Material.EXPERIENCE_BOTTLE), mainColor + "Level: " + ChatColor.GREEN + context.getPlayerData(player).getLevel());
-        layout.addElement(7, 0, level);
+        layout.setElement(7, 0, level);
 
         //The player's balance
         Element balance = Cell.forItemStack(new ItemStack(Material.GOLD_BLOCK), mainColor + "Balance: " + ChatColor.GOLD + "$" + MineInAbyss.getEcon().getBalance(player));
-        layout.addElement(8, 0, balance);
+        layout.setElement(8, 0, balance);
 
         addBackButton(layout);
         return layout;

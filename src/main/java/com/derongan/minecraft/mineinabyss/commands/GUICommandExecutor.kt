@@ -53,7 +53,7 @@ class GUICommandExecutor(private val context: AbyssContext) : CommandExecutor {
                 leaveConfirm.add(sender.uniqueId)
                 sender.info("&cYou are about to leave the game!!!\n" +
                         "&lYour progress will be lost&r&c, but any xp and money you earned will stay with you.\n" +
-                        "Type /stopdescent again to leave")
+                        "Type /stopdescent again to leave", '&')
             } else {
                 leaveConfirm.remove(sender.uniqueId)
                 sender.health = 0.0
