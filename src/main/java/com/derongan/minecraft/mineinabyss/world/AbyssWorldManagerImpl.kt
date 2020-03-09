@@ -27,20 +27,21 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
         get() = ImmutableList.copyOf(_layers)
     private val abyssWorlds: MutableSet<World> = hashSetOf()
     private var numLayers = 0
+    private val worldManager by lazy { Bukkit.getServicesManager().load(WorldManager::class.java)!! }
 
     @Suppress("UNCHECKED_CAST")
     private fun parseLayer(map: Map<*, *>): Layer {
         val layerName = map[NAME_KEY] as String
         val subHeader = map[SUB_KEY] as String
+
         val layer = LayerImpl(layerName, subHeader, numLayers++, deathMessage = " ${map.getOrDefault(DEATH_MESSAGE_KEY, "in $layerName")}")
         _layers.add(layer)
 
-        val worldManager = Bukkit.getServicesManager().load(WorldManager::class.java)!!
-        val sections = (map[SECTION_KEY] as List<String>).map { worldManager.getSectionFor(it) }
+        val sections = (map[SECTION_KEY] as List<String>).mapNotNull { worldManager.getSectionFor(it) }
         layer.sections = sections
         sections.forEach { abyssWorlds.add(it.world) }
 
-        val effectMap = map[EFFECTS_KEY] as List<Map<*, *>?>? ?: emptyList<Map<*, *>>()
+        val effectMap = map[EFFECTS_KEY] as List<Map<*, *>?>? ?: emptyList()
         layer.setEffects(effectMap.mapNotNull { parseAscensionEffects(it) })
         return layer
     }
