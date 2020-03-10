@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss.ascension
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
+import com.derongan.minecraft.deeperworld.world.Point
 import com.derongan.minecraft.deeperworld.world.WorldManager
 import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.MineInAbyss
@@ -35,12 +36,26 @@ class AscensionListener(private val context: AbyssContext) : Listener {
         val changeY = to.y - from.y
         val playerData = context.getPlayerData(player)
 
+
+
         if (playerData.isAffectedByCurse) {
+
+            val section = worldManager!!.getSectionFor(moveEvent.from) ?: return
+            val layer = manager.getLayerForSection(section)
+            var reg = section.region;
+
+            var localCords = Point(to) - reg.midPoint()
+            var distFromShaft = localCords.length()
+
+            // todo check if in any curse region and apply that insted
+            var distFactor = (distFromShaft -layer.maxCurseRadius) /( layer.minCurseRadius - layer.maxCurseRadius)
+            distFactor = distFactor.coerceIn(0.0,1.0);
+            var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
+
             val dist = playerData.distanceAscended
-            playerData.distanceAscended = (dist + changeY).coerceAtLeast(0.0)
+            playerData.distanceAscended = (dist + curseFactor * changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
-                val layerForSection = manager.getLayerForSection(worldManager!!.getSectionFor(moveEvent.from) ?: return)
-                layerForSection.ascensionEffects.forEach { it.build().applyEffect(player, 10) }
+                layer.ascensionEffects.forEach { it.build().applyEffect(player, 10) }
                 playerData.distanceAscended = 0.0
             }
         }
