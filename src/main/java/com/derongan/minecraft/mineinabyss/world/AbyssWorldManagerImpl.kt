@@ -32,7 +32,13 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
     private fun parseLayer(map: Map<*, *>): Layer {
         val layerName = map[NAME_KEY] as String
         val subHeader = map[SUB_KEY] as String
-        val layer = LayerImpl(layerName, subHeader, numLayers++, deathMessage = " ${map.getOrDefault(DEATH_MESSAGE_KEY, "in $layerName")}")
+        val layer = LayerImpl(layerName, subHeader, numLayers++, deathMessage = " ${map.getOrDefault(DEATH_MESSAGE_KEY, "in $layerName")}",
+                maxCurseMultiplier = map["maxCurseMultiplier"] as Float,
+                minCurseMultiplier =  map["minCurseMultiplier"] as Float,
+                maxCurseRadius = map["maxCurseRadius"] as Float,
+                minCurseRadius = map["minCurseRadius"] as Float,
+                curseOverrideRegions = emptyList()
+        )
         _layers.add(layer)
 
         val worldManager = Bukkit.getServicesManager().load(WorldManager::class.java)!!

@@ -42,15 +42,22 @@ class AscensionListener(private val context: AbyssContext) : Listener {
 
             val section = worldManager!!.getSectionFor(moveEvent.from) ?: return
             val layer = manager.getLayerForSection(section)
-            var reg = section.region;
+            val reg = section.region
 
-            var localCords = Point(to) - reg.midPoint()
-            var distFromShaft = localCords.length()
+            val localCords = Point(to) - reg.midPoint()
+            val distFromShaft = localCords.length()
 
-            // todo check if in any curse region and apply that insted
-            var distFactor = (distFromShaft -layer.maxCurseRadius) /( layer.minCurseRadius - layer.maxCurseRadius)
-            distFactor = distFactor.coerceIn(0.0,1.0);
+            val distFactor =((distFromShaft -layer.maxCurseRadius) /( layer.minCurseRadius - layer.maxCurseRadius)).coerceIn(0.0,1.0)
             var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
+
+
+            var overridePri = 0
+            for(r in layer.curseOverrideRegions ){
+                if(r.region.contains(localCords) && r.priority > overridePri){
+                    curseFactor = r.strength
+                    overridePri = r.priority
+                }
+            }
 
             val dist = playerData.distanceAscended
             playerData.distanceAscended = (dist + curseFactor * changeY).coerceAtLeast(0.0)
