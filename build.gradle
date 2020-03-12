@@ -5,6 +5,7 @@ plugins {
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
+    id 'maven-publish'
 }
 
 group = 'com.derongan.minecraft'
@@ -63,6 +64,24 @@ repositories {
         }
     }
     maven { url 'https://jitpack.io' } //JitPack
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/MineInAbyss/MineInAbyss")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
 
 dependencies {
