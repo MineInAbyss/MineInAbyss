@@ -14,7 +14,7 @@ import java.util.*
  * @property isAffectedByCurse Whether the player is affected by the curse of ascending in the abyss.
  * @property isAnchored Whether the player will ignore automatic movement between sections.
  * @property ascensionEffects The mutable list of current effects on this player.
- * @property distanceAscended The distance the player has ascended since last being affected by the curse.
+ * @property curseAccrued The distance the player has ascended since last being affected by the curse.
  *
  * TODO should this be exposed like this?
  * @property whistle The type of whistle the player currently holds.
@@ -30,7 +30,7 @@ interface PlayerData {
     var isAffectedByCurse: Boolean
     var isAnchored: Boolean
     val ascensionEffects: List<AscensionEffect>
-    var distanceAscended: Double
+    var curseAccrued: Double
     var whistle: WhistleType
     val level: Int
     var exp: Double
