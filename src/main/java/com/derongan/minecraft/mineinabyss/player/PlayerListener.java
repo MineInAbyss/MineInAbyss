@@ -54,9 +54,9 @@ public class PlayerListener implements Listener {
         if (!playerData.isIngame())
             return;
         playerData.setIngame(false);
-        player.sendMessage(Messages.translateColors("&l    Game Stats:\n" +
-                "Exp earned:      " + (playerData.getExp() - playerData.getExpOnDescent()) +
-                "Started dive on: " + playerData.getDescentDate()));
+        player.sendMessage(Messages.color("&6&lGame Stats:\n" +
+                "&6Exp earned:&7 " + (playerData.getExp() - playerData.getExpOnDescent()) + "\n" +
+                "&6Started dive on:&7 " + playerData.getDescentDate()));
     }
 
     @EventHandler
