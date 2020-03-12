@@ -2,7 +2,6 @@ package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
-import java.awt.geom.FlatteningPathIterator
 
 interface Layer {
     /**

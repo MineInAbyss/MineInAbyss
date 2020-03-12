@@ -6,10 +6,9 @@ import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
 import com.derongan.minecraft.deeperworld.world.Point
 import com.derongan.minecraft.deeperworld.world.WorldManager
 import com.derongan.minecraft.mineinabyss.MineInAbyss
-import com.derongan.minecraft.mineinabyss.getPlayerData
+import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
 import com.derongan.minecraft.mineinabyss.abyssContext
-import com.derongan.minecraft.mineinabyss.playerData
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
