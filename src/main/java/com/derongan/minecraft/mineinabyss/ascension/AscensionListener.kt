@@ -8,8 +8,10 @@ import com.derongan.minecraft.deeperworld.world.WorldManager
 import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.getPlayerData
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -36,36 +38,45 @@ class AscensionListener(private val context: AbyssContext) : Listener {
         val changeY = to.y - from.y
         val playerData = context.getPlayerData(player)
 
-
-
-        if (playerData.isAffectedByCurse) {
-
-            val section = worldManager!!.getSectionFor(moveEvent.from) ?: return
+        if (player.isFlying) {
+            playerData.distanceAscended = 0.0
+        } else if (playerData.isAffectedByCurse) {
+            val section = worldManager!!.getSectionFor(to) ?: return
             val layer = manager.getLayerForSection(section)
-            val reg = section.region
-
-            val localCords = Point(to) - reg.midPoint()
-            val distFromShaft = localCords.length()
-
-            val distFactor =((distFromShaft -layer.maxCurseRadius) /( layer.minCurseRadius - layer.maxCurseRadius)).coerceIn(0.0,1.0)
-            var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
-
-
-            var overridePri = 0
-            for(r in layer.curseOverrideRegions ){
-                if(r.region.contains(localCords) && r.priority > overridePri){
-                    curseFactor = r.strength
-                    overridePri = r.priority
-                }
-            }
+            var curseFactor = getCurseStrength(manager, to)
 
             val dist = playerData.distanceAscended
             playerData.distanceAscended = (dist + curseFactor * changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
-                layer.ascensionEffects.forEach { it.build().applyEffect(player, 10) }
-                playerData.distanceAscended = 0.0
+
+
+                layer.ascensionEffects.forEach {
+
+                    it.build().applyEffect(player, 10) }
+                playerData.distanceAscended -= 10
             }
         }
+    }
+
+    private fun getCurseStrength(manager: AbyssWorldManager, to: Location): Double {
+        val section = worldManager!!.getSectionFor(to) ?: return 1.0
+        val layer = manager.getLayerForSection(section)
+        val reg = section.region
+
+        val localCords = Point(to) - reg.midPoint()
+        val distFromShaft = localCords.length()
+
+        val distFactor = ((distFromShaft - layer.maxCurseRadius) / (layer.minCurseRadius - layer.maxCurseRadius)).coerceIn(0.0, 1.0)
+        var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
+
+        var overridePri = 0
+        for (r in layer.curseOverrideRegions) {
+            if (r.region.contains(localCords) && r.priority > overridePri) {
+                curseFactor = r.strength
+                overridePri = r.priority
+            }
+        }
+        return curseFactor.coerceAtLeast(0.0)
     }
 
     @EventHandler(ignoreCancelled = true)

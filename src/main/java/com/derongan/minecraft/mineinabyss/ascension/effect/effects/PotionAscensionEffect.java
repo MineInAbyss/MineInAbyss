@@ -16,10 +16,13 @@ public class PotionAscensionEffect extends AbstractAscensionEffect{
 
     @Override
     public void applyEffect(Player player) {
-        for(PotionEffectType e:effectsToApply){
-            if (player.getPotionEffect(e) != null)
-                return;
-            player.addPotionEffect(new PotionEffect(e, durationRemaining, strength));
+        for(PotionEffectType potionEffectType:effectsToApply){
+            PotionEffect ced = player.getPotionEffect(potionEffectType);
+            int curDur = 0;
+            if (ced != null) {
+                curDur = ced.getDuration();
+            }
+            player.addPotionEffect(new PotionEffect(potionEffectType, durationRemaining+curDur, strength));
         }
     }
 
