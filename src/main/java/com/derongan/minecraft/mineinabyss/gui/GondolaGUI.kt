@@ -8,9 +8,11 @@ import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
 import com.derongan.minecraft.guiy.kotlin_dsl.setElement
 import com.derongan.minecraft.mineinabyss.MineInAbyss
-import com.derongan.minecraft.mineinabyss.getPlayerData
+import com.derongan.minecraft.mineinabyss.abyssContext
+import com.derongan.minecraft.mineinabyss.mineInAbyss
+import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.translateColors
+import com.mineinabyss.idofront.messaging.color
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -20,13 +22,12 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, "Choose Spawn Location", plugin) {
-    private val context = MineInAbyss.getContext()
+class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Location", mineInAbyss) {
 
     private fun buildMain() = guiyLayout {
         //TODO separate spawns into groups based on world
         setElement(0, 1, FillableElement(5, 9)){
-            val spawnLocConfig: FileConfiguration = context.configManager.startLocationCM
+            val spawnLocConfig: FileConfiguration = abyssContext.configManager.startLocationCM
             val spawnLayers = spawnLocConfig.getMapList(SPAWN_KEY)
             addAll(spawnLayers.map { parseLayer(it) })
         }
@@ -46,7 +47,7 @@ class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, 
 
             val button = ClickableElement(displayItem.toCell()) {
                 val layer = MineInAbyss.getContext().getLayerForLocation(loc)
-                val playerData = getPlayerData(player)
+                val playerData = player.playerData
 
                 player.teleport(loc)
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
@@ -64,8 +65,8 @@ class GondolaGUI(val player: Player, plugin: MineInAbyss) : HistoryGuiHolder(6, 
         } else {
             displayItem.type = Material.BARRIER
             displayItem.editItemMeta {
-                setDisplayName("itemMeta.displayName".translateColors())
-                lore = listOf("${ChatColor.RED}Cannot Afford: ${ChatColor.GOLD}$$cost", "${ChatColor.RED}You have: ${ChatColor.GOLD}$$balance")
+                setDisplayName("&m$displayName".color())
+                lore = listOf("&cCannot Afford: &6$$cost", "&cYou have: &6$$balance".color())
             }
             displayItem.toCell()
         }

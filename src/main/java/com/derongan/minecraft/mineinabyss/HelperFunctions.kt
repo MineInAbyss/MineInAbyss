@@ -1,6 +1,8 @@
 package com.derongan.minecraft.mineinabyss
 
-import org.bukkit.Bukkit
+import org.bukkit.plugin.java.JavaPlugin
 
-
-public fun debug(message: String) = Bukkit.broadcastMessage(message)
+/**
+ * A reference to the MineInAbyss plugin
+ */
+val mineInAbyss: MineInAbyss by lazy { JavaPlugin.getPlugin(MineInAbyss::class.java) }

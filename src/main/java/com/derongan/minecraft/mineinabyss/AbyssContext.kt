@@ -25,7 +25,6 @@ class AbyssContext(private val plugin: MineInAbyss) {
     val worldManager: AbyssWorldManager = AbyssWorldManagerImpl(config)
     val configManager: MineInAbyssConfig = MineInAbyssConfig(plugin, this)
 
-
     fun getPlayerData(player: Player): PlayerData {
         return playerDataMap[player.uniqueId] ?: error("Player data not found")
     }
@@ -35,12 +34,6 @@ class AbyssContext(private val plugin: MineInAbyss) {
     }
 }
 
-private val instance by lazy { MineInAbyss.getContext() }
+val abyssContext: AbyssContext by lazy { MineInAbyss.getContext() }
 
-fun getPlayerData(player: Player): PlayerData {
-    return instance.getPlayerData(player)
-}
-
-fun getLayerForLocation(loc: Location): Layer? {
-    return instance.getLayerForLocation(loc)
-}
+val Player.playerData get() = abyssContext.getPlayerData(this)
