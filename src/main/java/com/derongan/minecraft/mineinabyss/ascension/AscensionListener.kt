@@ -38,12 +38,12 @@ class AscensionListener(private val context: AbyssContext) : Listener {
         val changeY = to.y - from.y
         val playerData = context.getPlayerData(player)
 
-        if (player.isFlying) {
+        if (player.isInvulnerable) {
             playerData.distanceAscended = 0.0
         } else if (playerData.isAffectedByCurse) {
             val section = worldManager!!.getSectionFor(to) ?: return
             val layer = manager.getLayerForSection(section)
-            var curseFactor = getCurseStrength(manager, to)
+            val curseFactor = getCurseStrength(manager, to)
 
             val dist = playerData.distanceAscended
             playerData.distanceAscended = (dist + curseFactor * changeY).coerceAtLeast(0.0)
