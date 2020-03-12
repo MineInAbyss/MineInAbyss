@@ -24,7 +24,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class MineInAbyss extends JavaPlugin {
     private static AbyssContext context;
     private static Economy econ = null;
-    private final int TICKS_BETWEEN = 5;
     private GearyService gearyService;
 
     public static Economy getEcon() {
@@ -80,11 +79,11 @@ public final class MineInAbyss extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
-        getServer().getPluginManager().registerEvents(new AscensionListener(context), this);
+        getServer().getPluginManager().registerEvents(new AscensionListener(), this);
 
         WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
-        AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor(context);
-        GUICommandExecutor guiCommandExecutor = new GUICommandExecutor(context);
+        AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor();
+        GUICommandExecutor guiCommandExecutor = new GUICommandExecutor();
 
         this.getCommand(CommandLabels.CURSEON).setExecutor(ascensionCommandExecutor);
         this.getCommand(CommandLabels.CURSEOFF).setExecutor(ascensionCommandExecutor);

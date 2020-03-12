@@ -30,7 +30,6 @@ public class WorldCommandExecutor implements CommandExecutor {
                 return true;
             }
         }
-
         return false;
     }
 }
