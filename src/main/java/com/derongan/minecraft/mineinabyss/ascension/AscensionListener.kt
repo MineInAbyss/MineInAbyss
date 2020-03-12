@@ -39,21 +39,21 @@ class AscensionListener : Listener {
         val playerData = player.playerData
 
         if (player.isInvulnerable) {
-            playerData.distanceAscended = 0.0
+            playerData.curseAccululated = 0.0
         } else if (playerData.isAffectedByCurse) {
             val section = worldManager!!.getSectionFor(to) ?: return
             val layer = manager.getLayerForSection(section)
             val curseFactor = getCurseStrength(manager, to)
 
-            val dist = playerData.distanceAscended
-            playerData.distanceAscended = (dist + curseFactor * changeY).coerceAtLeast(0.0)
+            val dist = playerData.curseAccululated
+            playerData.curseAccululated = (dist + curseFactor * changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
 
 
                 layer.ascensionEffects.forEach {
 
                     it.build().applyEffect(player, 10) }
-                playerData.distanceAscended -= 10
+                playerData.curseAccululated -= 10
             }
         }
     }

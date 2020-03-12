@@ -41,7 +41,7 @@ public class PlayerDataConfigManager {
             PlayerData data = new PlayerDataImpl(player);
             data.setAffectedByCurse(config.getBoolean(AFFECTABLE_KEY));
             data.setAnchored(config.getBoolean(ANCHORED_KEY));
-            data.setDistanceAscended(config.getDouble(ASCENDED_KEY));
+            data.setCurseAccululated(config.getDouble(ASCENDED_KEY));
             if (config.contains(WHISTLE_KEY)) data.setWhistle(WhistleType.valueOf(config.getString(WHISTLE_KEY)));
             if (config.contains(EXP_KEY)) data.setExp(config.getDouble(EXP_KEY));
             if (config.contains(DESCENT_DATE_KEY)) data.setDescentDate((Date) config.get(DESCENT_DATE_KEY));
@@ -65,7 +65,7 @@ public class PlayerDataConfigManager {
         config.set(UUID_KEY, playerData.getPlayer().getUniqueId().toString());
         config.set(AFFECTABLE_KEY, playerData.isAffectedByCurse());
         config.set(ANCHORED_KEY, playerData.isAnchored());
-        config.set(ASCENDED_KEY, playerData.getDistanceAscended());
+        config.set(ASCENDED_KEY, playerData.getCurseAccululated());
         config.set(WHISTLE_KEY, playerData.getWhistle().name());
         config.set(EXP_KEY, playerData.getExp());
         config.set(DESCENT_DATE_KEY, playerData.getDescentDate());
