@@ -11,7 +11,7 @@ class PlayerDataImpl(override val player: Player) : PlayerData {
     override var isAffectedByCurse = true
     override var isAnchored: Boolean = false
     override var isIngame: Boolean = false
-    override var curseAccululated = 0.0
+    override var curseAccrued = 0.0
     override var exp = 0.0
     override var expOnDescent = 0.0
     override var whistle: WhistleType = WhistleType.BELL
