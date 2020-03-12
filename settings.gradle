@@ -1,6 +1,3 @@
-include ':DeeperWorld'
-project(':DeeperWorld').projectDir = new File('../DeeperWorld')
-
 if(useLocalGuiy.toBoolean()) {
     include ':guiy'
     project(':guiy').projectDir = new File('../guiy')
@@ -11,5 +8,12 @@ if(useLocalIdofront.toBoolean()) {
     project(':idofront').projectDir = new File('../idofront')
 }
 
-include 'geary'
-project(':geary').projectDir = new File('../geary')
+if(useLocalGeary.toBoolean()) {
+    include 'geary'
+    project(':geary').projectDir = new File('../geary')
+}
+
+if(useLocalDeeperWorld.toBoolean()) {
+    include 'DeeperWorld'
+    project(':DeeperWorld').projectDir = new File('../DeeperWorld')
+}
