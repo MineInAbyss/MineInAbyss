@@ -38,6 +38,33 @@ interface Layer {
     val ascensionEffects: List<AscensionEffectBuilder<*>>
 
     /**
+     * the radius at which the curse has maxium effect
+     */
+    val maxCurseRadius: Float
+
+    /**
+     * the radius at which curse has min effect
+     */
+    val minCurseRadius: Float
+
+
+    /**
+     * effectively multiply the distance you travel up by this amount when you are closer then minCurseRadius away.
+     */
+    val minCurseMultiplier : Float
+
+    /**
+     * effectively multiply the distance you travel up by this amount when you are further then maxCurseRadius away.
+     */
+    val maxCurseMultiplier : Float
+
+    /**
+     * regions that have custom curse levels
+     */
+    val curseOverrideRegions : List<CurseRegion>
+
+
+    /**
      * Get custom death message suffix for this layer
      * @return The custom death suffix to use
      */
