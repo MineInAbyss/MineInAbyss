@@ -3,12 +3,15 @@ package com.derongan.minecraft.mineinabyss.ascension
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
+import com.derongan.minecraft.deeperworld.world.Point
 import com.derongan.minecraft.deeperworld.world.WorldManager
 import com.derongan.minecraft.mineinabyss.MineInAbyss
-import com.derongan.minecraft.mineinabyss.abyssContext
 import com.derongan.minecraft.mineinabyss.playerData
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.abyssContext
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -35,15 +38,45 @@ class AscensionListener : Listener {
         val changeY = to.y - from.y
         val playerData = player.playerData
 
-        if (playerData.isAffectedByCurse) {
-            val dist = playerData.distanceAscended
-            playerData.distanceAscended = (dist + changeY).coerceAtLeast(0.0)
+        if (player.isInvulnerable) {
+            playerData.curseAccrued = 0.0
+        } else if (playerData.isAffectedByCurse) {
+            val section = worldManager!!.getSectionFor(to) ?: return
+            val layer = manager.getLayerForSection(section)
+            val curseFactor = getCurseStrength(manager, to)
+
+            val dist = playerData.curseAccrued
+            playerData.curseAccrued = (dist + curseFactor * changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
-                val layerForSection = manager.getLayerForSection(worldManager!!.getSectionFor(moveEvent.from) ?: return)
-                layerForSection.ascensionEffects.forEach { it.build().applyEffect(player, 10) }
-                playerData.distanceAscended = 0.0
+
+
+                layer.ascensionEffects.forEach {
+
+                    it.build().applyEffect(player, 10) }
+                playerData.curseAccrued -= 10
             }
         }
+    }
+
+    private fun getCurseStrength(manager: AbyssWorldManager, to: Location): Double {
+        val section = worldManager!!.getSectionFor(to) ?: return 1.0
+        val layer = manager.getLayerForSection(section)
+        val reg = section.region
+
+        val localCords = Point(to) - reg.midPoint()
+        val distFromShaft = localCords.length()
+
+        val distFactor = ((distFromShaft - layer.maxCurseRadius) / (layer.minCurseRadius - layer.maxCurseRadius)).coerceIn(0.0, 1.0)
+        var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
+
+        var overridePri = 0
+        for (r in layer.curseOverrideRegions) {
+            if (r.region.contains(localCords) && r.priority > overridePri) {
+                curseFactor = r.strength
+                overridePri = r.priority
+            }
+        }
+        return curseFactor.coerceAtLeast(0.0)
     }
 
     @EventHandler(ignoreCancelled = true)
