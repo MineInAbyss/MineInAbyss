@@ -100,7 +100,7 @@ dependencies {
     else implementation group: 'com.mineinabyss', name: 'idofront', version: '0.1.+'
 
     if (useLocalDeeperWorld.toBoolean()) implementation project(':DeeperWorld')
-    else implementation group: 'com.derongan.minecraft', name: 'DeeperWorld', version: '0.1.+'
+    else implementation group: 'com.derongan.minecraft', name: 'deeperworld', version: '0.1.+'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
