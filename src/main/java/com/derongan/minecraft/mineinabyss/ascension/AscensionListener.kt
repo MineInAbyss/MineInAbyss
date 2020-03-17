@@ -12,19 +12,45 @@ import com.derongan.minecraft.mineinabyss.abyssContext
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.vehicle.VehicleMoveEvent
 import java.util.*
 
 class AscensionListener : Listener {
     private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
     private val worldManager: WorldManager? = Bukkit.getServicesManager().load(WorldManager::class.java)
 
+
+
+
     @EventHandler(ignoreCancelled = true)
     fun onPlayerMove(moveEvent: PlayerMoveEvent) {
         val player = moveEvent.player
+        val from = moveEvent.from
+        val to = moveEvent.to?:return
+
+        handleCurse(player, to, from)
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onMove(moveEvent: VehicleMoveEvent) {
+        val from = moveEvent.from
+        val to = moveEvent.to?:return
+
+        for (passenger in moveEvent.vehicle.passengers){
+            if(passenger!=null && passenger is Player){
+                //compiler is dumb
+                val player = passenger as Player
+                handleCurse(player, to, from)
+            }
+        }
+    }
+
+    private fun handleCurse(player: Player, to: Location, from: Location) {
         if (recentlyMovedPlayers.contains(player.uniqueId)) {
             recentlyMovedPlayers.remove(player.uniqueId)
             return
@@ -33,8 +59,7 @@ class AscensionListener : Listener {
         val manager = abyssContext.worldManager
         if (!manager.isAbyssWorld(player.world)) return
 
-        val from = moveEvent.from
-        val to = moveEvent.to!!
+
         val changeY = to.y - from.y
         val playerData = player.playerData
 
@@ -52,7 +77,8 @@ class AscensionListener : Listener {
 
                 layer.ascensionEffects.forEach {
 
-                    it.build().applyEffect(player, 10) }
+                    it.build().applyEffect(player, 10)
+                }
                 playerData.curseAccrued -= 10
             }
         }
