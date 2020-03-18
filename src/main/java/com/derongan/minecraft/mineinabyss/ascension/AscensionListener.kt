@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 import java.util.*
 
@@ -110,6 +111,15 @@ class AscensionListener : Listener {
 
     @EventHandler(ignoreCancelled = true)
     private fun onPlayerDescend(e: PlayerDescendEvent) = onPlayerChangeSection(e)
+
+
+    @EventHandler
+    fun onEnterVehicle(e: VehicleEnterEvent){
+        val player = e.entered
+        if(player is Player) {
+            handleCurse(player, player.location, e.vehicle.location)
+        }
+    }
 
     private fun onPlayerChangeSection(changeSectionEvent: PlayerChangeSectionEvent) {
         val player = changeSectionEvent.player
