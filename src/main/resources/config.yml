@@ -3,6 +3,9 @@
 #    name: Edge of the Abyss
 #    sub: 0-1350 meters
 #    world: LayerOne
+#    depth:
+#      start: 0
+#      end: 1350
 #    effects:
 #      -
 #        name: PotionAscensionEffect

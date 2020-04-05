@@ -63,6 +63,16 @@ interface Layer {
      */
     val curseOverrideRegions : List<CurseRegion>
 
+    /**
+     * starting depth of this layer.
+     */
+    val startDepth: Int
+
+    /**
+     * end depth of this layer.
+     */
+    val endDepth: Int
+
 
     /**
      * Get custom death message suffix for this layer
