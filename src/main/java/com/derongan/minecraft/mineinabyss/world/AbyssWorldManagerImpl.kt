@@ -39,7 +39,9 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
                 minCurseMultiplier =  map["minCurseMultiplier"] as? Float ?: 0.5f,
                 maxCurseRadius = map["maxCurseRadius"] as? Float ?: 1000f,
                 minCurseRadius = map["minCurseRadius"] as? Float ?: 2000f,
-                curseOverrideRegions = emptyList()
+                curseOverrideRegions = emptyList(),
+                startDepth = (map["depth"] as? Map<*, *>?)?.get("start") as? Int ?: 0,
+                endDepth = (map["depth"] as? Map<*, *>?)?.get("end") as? Int ?: 0
         )
         _layers.add(layer)
 

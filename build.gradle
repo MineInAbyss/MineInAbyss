@@ -91,7 +91,7 @@ dependencies {
     compileOnly group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
 
     if (useLocalGeary.toBoolean()) implementation project(':geary')
-    else implementation group: 'com.mineinabyss', name: 'geary', version: '0.1.3.alpha.10'
+    else implementation group: 'com.mineinabyss', name: 'geary', version: '1.0.0+'
 
     if (useLocalGuiy.toBoolean()) implementation project(':guiy')
     else implementation group: 'com.derongan.minecraft', name: 'guiy', version: '0.1.+'
