@@ -12,7 +12,7 @@ group = 'com.derongan.minecraft'
 version = plugin_version
 
 if (project.hasProperty("buildNo")) {
-    version += "." + buildNo
+    version += "-" + buildNo
 }
 
 sourceCompatibility = 1.8
