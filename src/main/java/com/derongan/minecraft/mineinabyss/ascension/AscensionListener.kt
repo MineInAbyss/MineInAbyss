@@ -117,7 +117,7 @@ class AscensionListener : Listener {
     fun onEnterVehicle(e: VehicleEnterEvent){
         val player = e.entered
         if(player is Player) {
-            handleCurse(player, player.location, e.vehicle.location)
+            handleCurse(player, from = player.location,to = e.vehicle.location)
         }
     }
 
