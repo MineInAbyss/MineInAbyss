@@ -35,8 +35,8 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
         val subHeader = map[SUB_KEY] as String
 
         val layer = LayerImpl(layerName, subHeader, numLayers++, deathMessage = " ${map.getOrDefault(DEATH_MESSAGE_KEY, "in $layerName")}",
-                maxCurseMultiplier = map["maxCurseMultiplier"] as? Float ?: 2f,
-                minCurseMultiplier =  map["minCurseMultiplier"] as? Float ?: 0.5f,
+                maxCurseMultiplier = map["maxCurseMultiplier"] as? Float ?: 1f, //default to this effect being off
+                minCurseMultiplier = map["minCurseMultiplier"] as? Float ?: 1f,
                 maxCurseRadius = map["maxCurseRadius"] as? Float ?: 1000f,
                 minCurseRadius = map["minCurseRadius"] as? Float ?: 2000f,
                 curseOverrideRegions = emptyList(),

@@ -6,9 +6,9 @@ import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
 import com.derongan.minecraft.deeperworld.world.Point
 import com.derongan.minecraft.deeperworld.world.WorldManager
 import com.derongan.minecraft.mineinabyss.MineInAbyss
+import com.derongan.minecraft.mineinabyss.abyssContext
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
-import com.derongan.minecraft.mineinabyss.abyssContext
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -23,16 +23,13 @@ import java.util.*
 
 class AscensionListener : Listener {
     private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
-    private val worldManager: WorldManager? = Bukkit.getServicesManager().load(WorldManager::class.java)
-
-
-
+    private val worldManager: WorldManager = Bukkit.getServicesManager().load(WorldManager::class.java)!!
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerMove(moveEvent: PlayerMoveEvent) {
         val player = moveEvent.player
         val from = moveEvent.from
-        val to = moveEvent.to?:return
+        val to = moveEvent.to ?: return
 
         handleCurse(player, to, from)
     }
@@ -40,15 +37,11 @@ class AscensionListener : Listener {
     @EventHandler(ignoreCancelled = true)
     fun onMove(moveEvent: VehicleMoveEvent) {
         val from = moveEvent.from
-        val to = moveEvent.to?:return
+        val to = moveEvent.to
 
-        for (passenger in moveEvent.vehicle.passengers){
-            if(passenger!=null && passenger is Player){
-                //compiler is dumb
-                val player = passenger as Player
-                handleCurse(player, to, from)
-            }
-        }
+        for (passenger in moveEvent.vehicle.passengers)
+            if (passenger != null && passenger is Player)
+                handleCurse(passenger, to, from)
     }
 
     private fun handleCurse(player: Player, to: Location, from: Location) {
@@ -67,17 +60,16 @@ class AscensionListener : Listener {
         if (player.isInvulnerable) {
             playerData.curseAccrued = 0.0
         } else if (playerData.isAffectedByCurse) {
-            val section = worldManager!!.getSectionFor(to) ?: return
+            val section = worldManager.getSectionFor(to) ?: return
             val layer = manager.getLayerForSection(section)
+            //TODO this scaling mechanic has been found to confuse players due to lack of feedback to the user.
+            // It also appears to be inaccurate with the show's explanation of the curse.
             val curseFactor = getCurseStrength(manager, to)
 
             val dist = playerData.curseAccrued
             playerData.curseAccrued = (dist + curseFactor * changeY).coerceAtLeast(0.0)
             if (dist >= 10) {
-
-
                 layer.ascensionEffects.forEach {
-
                     it.build().applyEffect(player, 10)
                 }
                 playerData.curseAccrued -= 10
@@ -86,7 +78,7 @@ class AscensionListener : Listener {
     }
 
     private fun getCurseStrength(manager: AbyssWorldManager, to: Location): Double {
-        val section = worldManager!!.getSectionFor(to) ?: return 1.0
+        val section = worldManager.getSectionFor(to) ?: return 1.0
         val layer = manager.getLayerForSection(section)
         val reg = section.region
 
@@ -112,12 +104,11 @@ class AscensionListener : Listener {
     @EventHandler(ignoreCancelled = true)
     private fun onPlayerDescend(e: PlayerDescendEvent) = onPlayerChangeSection(e)
 
-
     @EventHandler
-    fun onEnterVehicle(e: VehicleEnterEvent){
+    fun onEnterVehicle(e: VehicleEnterEvent) {
         val player = e.entered
-        if(player is Player) {
-            handleCurse(player, from = player.location,to = e.vehicle.location)
+        if (player is Player) {
+            handleCurse(player, from = player.location, to = e.vehicle.location)
         }
     }
 
