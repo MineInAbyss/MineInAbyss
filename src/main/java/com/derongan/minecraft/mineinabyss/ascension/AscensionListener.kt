@@ -39,9 +39,9 @@ class AscensionListener : Listener {
         val from = moveEvent.from
         val to = moveEvent.to
 
-        for (passenger in moveEvent.vehicle.passengers)
-            if (passenger != null && passenger is Player)
-                handleCurse(passenger, to, from)
+        moveEvent.vehicle.passengers.filterIsInstance<Player>().forEach { passenger ->
+            handleCurse(passenger, to, from)
+        }
     }
 
     private fun handleCurse(player: Player, to: Location, from: Location) {
