@@ -3,14 +3,13 @@ package com.derongan.minecraft.mineinabyss.ascension
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
+import com.derongan.minecraft.deeperworld.player.PlayerManager
 import com.derongan.minecraft.deeperworld.world.Point
 import com.derongan.minecraft.deeperworld.world.WorldManager
-import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.abyssContext
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -114,20 +113,15 @@ class AscensionListener : Listener {
 
     private fun onPlayerChangeSection(changeSectionEvent: PlayerChangeSectionEvent) {
         val player = changeSectionEvent.player
-        if (!abyssContext.getPlayerData(player).isAnchored) {
+        if (PlayerManager.playerCanTeleport(player)) {
             recentlyMovedPlayers.add(player.uniqueId)
             val manager = abyssContext.worldManager
             val fromSection = changeSectionEvent.fromSection
             val toSection = changeSectionEvent.toSection
             val fromLayer = manager.getLayerForSection(fromSection)
             val toLayer = manager.getLayerForSection(toSection)
-            val playerData = player.playerData
 
-            if (toSection.toString() == MineInAbyss.getContext().config["hub-section"] && playerData.isIngame) {
-                player.sendTitle("${ChatColor.RED}Cannot return to Orth during a run!", "Use /leave instead", 5, 40, 20)
-                changeSectionEvent.isCancelled = true
-                player.velocity = player.velocity.setY(-0.5)
-            } else if (fromLayer !== toLayer) {
+            if (fromLayer !== toLayer) {
                 player.sendTitle(toLayer.name, toLayer.sub, 50, 10, 20)
             }
         } else {
@@ -139,7 +133,7 @@ class AscensionListener : Listener {
     fun onPlayerDeath(deathEvent: PlayerDeathEvent) {
         val player = deathEvent.entity
         val manager = abyssContext.worldManager
-        val section = worldManager!!.getSectionFor(player.location)
+        val section = worldManager.getSectionFor(player.location)
         val layerOfDeath = section?.let { manager.getLayerForSection(section) }
         deathEvent.deathMessage = deathEvent.deathMessage + (layerOfDeath?.deathMessage ?: "")
     }

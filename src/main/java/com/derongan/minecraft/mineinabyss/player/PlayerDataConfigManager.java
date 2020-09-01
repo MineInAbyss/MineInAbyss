@@ -18,7 +18,6 @@ import java.util.UUID;
 public class PlayerDataConfigManager {
     private static final String UUID_KEY = "uuid";
     private static final String AFFECTABLE_KEY = "affectable";
-    private static final String ANCHORED_KEY = "anchored";
     private static final String ASCENDED_KEY = "ascended";
     private static final String WHISTLE_KEY = "whistle";
     private static final String EXP_KEY = "exp";
@@ -40,7 +39,6 @@ public class PlayerDataConfigManager {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(path.toFile());
             PlayerData data = new PlayerDataImpl(player);
             data.setAffectedByCurse(config.getBoolean(AFFECTABLE_KEY));
-            data.setAnchored(config.getBoolean(ANCHORED_KEY));
             data.setCurseAccrued(config.getDouble(ASCENDED_KEY));
             if (config.contains(WHISTLE_KEY)) data.setWhistle(WhistleType.valueOf(config.getString(WHISTLE_KEY)));
             if (config.contains(EXP_KEY)) data.setExp(config.getDouble(EXP_KEY));
@@ -64,7 +62,6 @@ public class PlayerDataConfigManager {
         YamlConfiguration config = new YamlConfiguration();
         config.set(UUID_KEY, playerData.getPlayer().getUniqueId().toString());
         config.set(AFFECTABLE_KEY, playerData.isAffectedByCurse());
-        config.set(ANCHORED_KEY, playerData.isAnchored());
         config.set(ASCENDED_KEY, playerData.getCurseAccrued());
         config.set(WHISTLE_KEY, playerData.getWhistle().name());
         config.set(EXP_KEY, playerData.getExp());

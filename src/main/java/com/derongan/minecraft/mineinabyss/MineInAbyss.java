@@ -1,11 +1,9 @@
 package com.derongan.minecraft.mineinabyss;
 
 import com.derongan.minecraft.guiy.GuiListener;
-import com.derongan.minecraft.mineinabyss.ascension.AscensionCommandExecutor;
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener;
-import com.derongan.minecraft.mineinabyss.commands.CommandLabels;
+import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor;
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor;
-import com.derongan.minecraft.mineinabyss.commands.WorldCommandExecutor;
 import com.derongan.minecraft.mineinabyss.geary.AbyssLocationSystem;
 import com.derongan.minecraft.mineinabyss.geary.DepthMeter;
 import com.derongan.minecraft.mineinabyss.player.PlayerListener;
@@ -99,16 +97,9 @@ public final class MineInAbyss extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
         getServer().getPluginManager().registerEvents(new AscensionListener(), this);
 
-        WorldCommandExecutor worldCommandExecutor = new WorldCommandExecutor(context);
-        AscensionCommandExecutor ascensionCommandExecutor = new AscensionCommandExecutor();
-        GUICommandExecutor guiCommandExecutor = new GUICommandExecutor();
-
-        this.getCommand(CommandLabels.CURSEON).setExecutor(ascensionCommandExecutor);
-        this.getCommand(CommandLabels.CURSEOFF).setExecutor(ascensionCommandExecutor);
-        this.getCommand(CommandLabels.STATS).setExecutor(guiCommandExecutor);
-        this.getCommand(CommandLabels.START).setExecutor(guiCommandExecutor);
-        this.getCommand(CommandLabels.STOP_DESCENT).setExecutor(guiCommandExecutor);
-        this.getCommand(CommandLabels.CREATE_GONDOLA_SPAWN).setExecutor(guiCommandExecutor);
+        //register command executors
+        new AscensionCommandExecutor();
+        new GUICommandExecutor();
     }
 
     @NotNull

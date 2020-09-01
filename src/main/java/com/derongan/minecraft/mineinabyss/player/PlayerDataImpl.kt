@@ -9,7 +9,6 @@ import java.util.*
 class PlayerDataImpl(override val player: Player) : PlayerData {
     override var currentLayer: Layer? = null
     override var isAffectedByCurse = true
-    override var isAnchored: Boolean = false
     override var isIngame: Boolean = false
     override var curseAccrued = 0.0
     override var exp = 0.0
