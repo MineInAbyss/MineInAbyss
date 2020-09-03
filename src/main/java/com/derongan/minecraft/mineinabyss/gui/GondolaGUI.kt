@@ -38,7 +38,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
         val cost = if (map.containsKey(COST_KEY)) (map[COST_KEY] as String).toDouble() else 0.0
         val displayItem = (map[DISPLAY_ITEM_KEY] as ItemStack?)!!.clone()
         val loc = map[LOCATION_KEY] as Location
-        val balance = MineInAbyss.getEcon().getBalance(player)
+        val balance = MineInAbyss.econ.getBalance(player)
 
         return if (balance >= cost) {
             displayItem.editItemMeta {
@@ -46,18 +46,18 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
             }
 
             val button = ClickableElement(displayItem.toCell()) {
-                val layer = MineInAbyss.getContext().getLayerForLocation(loc)
+                val layer = MineInAbyss.context.getLayerForLocation(loc)
                 val playerData = player.playerData
 
                 player.teleport(loc)
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
-                MineInAbyss.getEcon().withdrawPlayer(player, cost)
+                MineInAbyss.econ.withdrawPlayer(player, cost)
 
                 playerData.descentDate = Date()
                 playerData.expOnDescent = playerData.exp
                 playerData.isIngame = true
-                Bukkit.getScheduler().scheduleSyncDelayedTask(MineInAbyss.getInstance(), {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(MineInAbyss.instance, {
                     player.sendTitle("", "${ChatColor.GRAY}${ChatColor.ITALIC}Let the journey begin", 30, 30, 20)
                 }, 80)
             }

@@ -1,175 +1,138 @@
-package com.derongan.minecraft.mineinabyss;
+package com.derongan.minecraft.mineinabyss
 
-import com.derongan.minecraft.guiy.GuiListener;
-import com.derongan.minecraft.mineinabyss.ascension.AscensionListener;
-import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor;
-import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor;
-import com.derongan.minecraft.mineinabyss.geary.AbyssLocationSystem;
-import com.derongan.minecraft.mineinabyss.geary.DepthMeter;
-import com.derongan.minecraft.mineinabyss.player.PlayerListener;
-import com.google.common.collect.ImmutableSet;
-import com.mineinabyss.geary.GearyService;
-import com.mineinabyss.geary.ecs.component.components.equipment.Durability;
-import com.mineinabyss.geary.ecs.component.components.grappling.GrapplingHook;
-import com.mineinabyss.geary.ecs.component.components.rendering.DisplayState;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import com.derongan.minecraft.guiy.GuiListener
+import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
+import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
+import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
+import com.derongan.minecraft.mineinabyss.geary.AbyssLocationSystem
+import com.derongan.minecraft.mineinabyss.geary.DepthMeter
+import com.derongan.minecraft.mineinabyss.player.PlayerListener
+import com.google.common.collect.ImmutableSet
+import com.mineinabyss.geary.GearyService
+import com.mineinabyss.geary.ecs.component.components.equipment.Durability
+import com.mineinabyss.geary.ecs.component.components.grappling.GrapplingHook
+import com.mineinabyss.geary.ecs.component.components.rendering.DisplayState
+import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
+import net.milkbowl.vault.economy.Economy
+import org.bukkit.Bukkit
+import org.bukkit.Color
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.ShapedRecipe
+import org.bukkit.plugin.java.JavaPlugin
 
-import java.util.Iterator;
-
-public final class MineInAbyss extends JavaPlugin {
-
-    private static AbyssContext context;
-    private static Economy econ = null;
-    private GearyService gearyService;
-
-    public static Economy getEcon() {
-        return econ;
-    }
-
-    public static MineInAbyss getInstance() {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("MineInAbyss");
-
-        return (MineInAbyss) plugin;
-    }
-
-    public static AbyssContext getContext() {
-        return context;
-    }
-
-    @Override
-    public void onEnable() {
+class MineInAbyss : JavaPlugin() {
+    private var gearyService: GearyService? = null
+    @ExperimentalCommandDSL
+    override fun onEnable() {
         // Plugin startup logic
-        getLogger().info("On enable has been called");
-
-        context = new AbyssContext(this);
+        logger.info("On enable has been called")
+        AbyssContext
 
         //Vault setup
         if (!setupEconomy()) {
-            getLogger().severe(String
-                    .format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+            logger.severe(String.format("[%s] - Disabled due to no Vault dependency found!", description.name))
+            server.pluginManager.disablePlugin(this)
+            return
         }
 
         //Geary setup
         if (setupGeary()) {
-            NamespacedKey grapplingRecipeKey = new NamespacedKey(this, "grappling_hook");
-            NamespacedKey starCompassRecipeKey = new NamespacedKey(this, "star_compas");
-
-            Iterator<Recipe> recipeIterator = getServer().recipeIterator();
+            val grapplingRecipeKey = NamespacedKey(this, "grappling_hook")
+            val starCompassRecipeKey = NamespacedKey(this, "star_compas")
+            val recipeIterator = server.recipeIterator()
 
             // Remove recipes if already loaded. This way changes will take effect properly.
             // TODO change to config based (in geary or mine in abyss) instead of manual.
             while (recipeIterator.hasNext()) {
-                Recipe r = recipeIterator.next();
-                if (r instanceof ShapedRecipe) {
+                val r = recipeIterator.next()
+                if (r is ShapedRecipe) {
                     if (ImmutableSet.of(grapplingRecipeKey, starCompassRecipeKey)
-                            .contains(((ShapedRecipe) r).getKey())) {
-                        recipeIterator.remove();
+                                    .contains(r.key)) {
+                        recipeIterator.remove()
                     }
                 }
             }
-
-            getServer().addRecipe(getGrapplingHookRecipe(grapplingRecipeKey));
-            getServer().addRecipe(getStarCompassRecipe(starCompassRecipeKey));
-
-            gearyService.addSystem(new AbyssLocationSystem(context), this);
+            server.addRecipe(getGrapplingHookRecipe(grapplingRecipeKey))
+            server.addRecipe(getStarCompassRecipe(starCompassRecipeKey))
+            gearyService!!.addSystem(AbyssLocationSystem(AbyssContext), this)
         } else {
-            getLogger().warning(String
-                    .format("[%s] - Geary service not found! No items have been added!",
-                            getDescription().getName()));
-
+            logger.warning(String.format("[%s] - Geary service not found! No items have been added!",
+                    description.name))
         }
-
-        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerListener(context), this);
-        getServer().getPluginManager().registerEvents(new AscensionListener(), this);
+        server.pluginManager.registerEvents(GuiListener(this), this)
+        server.pluginManager.registerEvents(PlayerListener(AbyssContext), this)
+        server.pluginManager.registerEvents(AscensionListener(), this)
 
         //register command executors
-        new AscensionCommandExecutor();
-        new GUICommandExecutor();
+        AscensionCommandExecutor()
+        GUICommandExecutor()
     }
 
-    @NotNull
-    private ShapedRecipe getGrapplingHookRecipe(NamespacedKey grapplingRecipeKey) {
-        ItemStack itemStack = new ItemStack(Material.DIAMOND_SHOVEL);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName("Grappling Hook");
-        itemMeta.setCustomModelData(3);
-        itemStack.setItemMeta(itemMeta);
-
-        gearyService.attachToItemStack(ImmutableSet
-                .of(new GrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1),
-                        new Durability(64), new DisplayState(3)), itemStack);
-
-        ShapedRecipe recipe = new ShapedRecipe(grapplingRecipeKey, itemStack);
-
-        recipe.shape("III", "ISI", " S ");
-        recipe.setIngredient('I', Material.IRON_INGOT);
-        recipe.setIngredient('S', Material.STRING);
-        return recipe;
+    private fun getGrapplingHookRecipe(grapplingRecipeKey: NamespacedKey): ShapedRecipe {
+        val itemStack = ItemStack(Material.DIAMOND_SHOVEL)
+        val itemMeta = itemStack.itemMeta
+        itemMeta!!.setDisplayName("Grappling Hook")
+        itemMeta.setCustomModelData(3)
+        itemStack.itemMeta = itemMeta
+        gearyService!!.attachToItemStack(ImmutableSet
+                .of(GrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1),
+                        Durability(64), DisplayState(3)), itemStack)
+        val recipe = ShapedRecipe(grapplingRecipeKey, itemStack)
+        recipe.shape("III", "ISI", " S ")
+        recipe.setIngredient('I', Material.IRON_INGOT)
+        recipe.setIngredient('S', Material.STRING)
+        return recipe
     }
 
-    @NotNull
-    private ShapedRecipe getStarCompassRecipe(NamespacedKey starCompassRecipeKey) {
-        ItemStack itemStack = new ItemStack(Material.COMPASS);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName("Star Compass");
-        itemStack.setItemMeta(itemMeta);
-
-        gearyService.attachToItemStack(ImmutableSet.of(new DepthMeter(250), new DisplayState(1)), itemStack);
-
-        ShapedRecipe recipe = new ShapedRecipe(starCompassRecipeKey, itemStack);
-
-        recipe.shape(" I ", "IPI", " I ");
-        recipe.setIngredient('I', Material.GLASS);
-        recipe.setIngredient('P', Material.PRISMARINE_CRYSTALS);
-        return recipe;
+    private fun getStarCompassRecipe(starCompassRecipeKey: NamespacedKey): ShapedRecipe {
+        val itemStack = ItemStack(Material.COMPASS)
+        val itemMeta = itemStack.itemMeta
+        itemMeta!!.setDisplayName("Star Compass")
+        itemStack.itemMeta = itemMeta
+        gearyService!!.attachToItemStack(ImmutableSet.of(DepthMeter(250), DisplayState(1)), itemStack)
+        val recipe = ShapedRecipe(starCompassRecipeKey, itemStack)
+        recipe.shape(" I ", "IPI", " I ")
+        recipe.setIngredient('I', Material.GLASS)
+        recipe.setIngredient('P', Material.PRISMARINE_CRYSTALS)
+        return recipe
     }
 
-    @Override
-    public void onDisable() {
+    override fun onDisable() {
         // Plugin shutdown logic
-        context.getConfigManager().saveAll();
-        getLogger().info("onDisable has been invoked!");
+        AbyssContext.configManager.saveAll()
+        logger.info("onDisable has been invoked!")
     }
 
     //economy stuff
-    private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
+    private fun setupEconomy(): Boolean {
+        if (server.pluginManager.getPlugin("Vault") == null) {
+            return false
         }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        econ = rsp.getProvider();
-        return econ != null;
+        val rsp = server.servicesManager.getRegistration(Economy::class.java) ?: return false
+        econ = rsp.provider
+        return econ != null
     }
 
-    private boolean setupGeary() {
-        if (getServer().getPluginManager().isPluginEnabled("Geary")) {
-            RegisteredServiceProvider<GearyService> rsp = getServer().getServicesManager().getRegistration(GearyService.class);
-            if (rsp == null) {
-                return false;
-            }
-
-            gearyService = rsp.getProvider();
-            return gearyService != null;
+    private fun setupGeary(): Boolean {
+        if (server.pluginManager.isPluginEnabled("Geary")) {
+            val rsp = server.servicesManager.getRegistration(GearyService::class.java) ?: return false
+            gearyService = rsp.provider
+            return gearyService != null
         }
+        return false
+    }
 
-        return false;
+    companion object {
+        @JvmStatic
+        var econ: Economy? = null
+            private set
+        @JvmStatic
+        val instance: MineInAbyss?
+            get() {
+                val plugin = Bukkit.getServer().pluginManager.getPlugin("MineInAbyss")
+                return plugin as MineInAbyss?
+            }
     }
 }

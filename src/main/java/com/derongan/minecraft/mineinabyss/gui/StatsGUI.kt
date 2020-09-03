@@ -21,7 +21,7 @@ import net.md_5.bungee.api.ChatColor as CC
 class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss - Stats", mineInAbyss) {
     private val col1 = ConfigConstants.mainColor
     private val col2 = ConfigConstants.secondaryColor
-    private val context: AbyssContext = MineInAbyss.getContext()
+    private val context: AbyssContext = MineInAbyss.context
     private val mobConfigs: List<ClickableElement> = ArrayList()
     private val spawnList: List<ClickableElement> = ArrayList()
     private val playerData: PlayerData = context.getPlayerData(player)
@@ -52,7 +52,7 @@ class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss 
         setElement(7, 0, Material.EXPERIENCE_BOTTLE.toCell("${col1}Level: ${CC.GREEN}${context.getPlayerData(player).level}"))
 
         //The player's balance
-        setElement(8, 0, Material.GOLD_BLOCK.toCell("${col1}Balance: ${CC.GOLD}$${MineInAbyss.getEcon().getBalance(player)}"))
+        setElement(8, 0, Material.GOLD_BLOCK.toCell("${col1}Balance: ${CC.GOLD}$${MineInAbyss.econ.getBalance(player)}"))
 
         addBackButton(this)
     }

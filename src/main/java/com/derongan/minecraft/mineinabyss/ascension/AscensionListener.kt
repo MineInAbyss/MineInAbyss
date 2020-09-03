@@ -3,13 +3,12 @@ package com.derongan.minecraft.mineinabyss.ascension
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
-import com.derongan.minecraft.deeperworld.player.PlayerManager
+import com.derongan.minecraft.deeperworld.services.PlayerManager
+import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.Point
-import com.derongan.minecraft.deeperworld.world.WorldManager
 import com.derongan.minecraft.mineinabyss.abyssContext
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -22,7 +21,6 @@ import java.util.*
 
 class AscensionListener : Listener {
     private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
-    private val worldManager: WorldManager = Bukkit.getServicesManager().load(WorldManager::class.java)!!
 
     @EventHandler(ignoreCancelled = true)
     fun onPlayerMove(moveEvent: PlayerMoveEvent) {
@@ -59,7 +57,7 @@ class AscensionListener : Listener {
         if (player.isInvulnerable) {
             playerData.curseAccrued = 0.0
         } else if (playerData.isAffectedByCurse) {
-            val section = worldManager.getSectionFor(to) ?: return
+            val section = WorldManager.getSectionFor(to) ?: return
             val layer = manager.getLayerForSection(section)
             //TODO this scaling mechanic has been found to confuse players due to lack of feedback to the user.
             // It also appears to be inaccurate with the show's explanation of the curse.
@@ -77,12 +75,12 @@ class AscensionListener : Listener {
     }
 
     private fun getCurseStrength(manager: AbyssWorldManager, to: Location): Double {
-        val section = worldManager.getSectionFor(to) ?: return 1.0
+        val section = WorldManager.getSectionFor(to) ?: return 1.0
         val layer = manager.getLayerForSection(section)
         val reg = section.region
 
-        val localCords = Point(to) - reg.midPoint()
-        val distFromShaft = localCords.length()
+        val localCords = Point(to.x.toInt(), to.z.toInt()) - reg.center
+        val distFromShaft = localCords.length
 
         val distFactor = ((distFromShaft - layer.maxCurseRadius) / (layer.minCurseRadius - layer.maxCurseRadius)).coerceIn(0.0, 1.0)
         var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
@@ -133,7 +131,7 @@ class AscensionListener : Listener {
     fun onPlayerDeath(deathEvent: PlayerDeathEvent) {
         val player = deathEvent.entity
         val manager = abyssContext.worldManager
-        val section = worldManager.getSectionFor(player.location)
+        val section = WorldManager.getSectionFor(player.location)
         val layerOfDeath = section?.let { manager.getLayerForSection(section) }
         deathEvent.deathMessage = deathEvent.deathMessage + (layerOfDeath?.deathMessage ?: "")
     }

@@ -54,7 +54,7 @@ dependencies {
 
     implementation 'com.mineinabyss:geary:1.0.+'
     implementation 'com.derongan.minecraft:guiy:0.1.+'
-    implementation 'com.mineinabyss:idofront:0.3.1+'
+    implementation 'com.mineinabyss:idofront:0.3.24'
     compileOnly 'com.derongan.minecraft:deeperworld:0.1.4-alpha.21'
 
 }

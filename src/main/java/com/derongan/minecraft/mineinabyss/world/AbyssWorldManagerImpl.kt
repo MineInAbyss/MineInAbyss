@@ -1,11 +1,10 @@
 package com.derongan.minecraft.mineinabyss.world
 
-import com.derongan.minecraft.deeperworld.world.WorldManager
+import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
 import com.derongan.minecraft.mineinabyss.ascension.effect.configuration.EffectConfiguror
 import com.google.common.collect.ImmutableList
-import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.configuration.Configuration
 
@@ -27,7 +26,6 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
         get() = ImmutableList.copyOf(_layers)
     private val abyssWorlds: MutableSet<World> = hashSetOf()
     private var numLayers = 0
-    private val worldManager by lazy { Bukkit.getServicesManager().load(WorldManager::class.java)!! }
 
     @Suppress("UNCHECKED_CAST")
     private fun parseLayer(map: Map<*, *>): Layer {
@@ -45,7 +43,7 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
         )
         _layers.add(layer)
 
-        val sections = (map[SECTION_KEY] as List<String>).mapNotNull { worldManager.getSectionFor(it) }
+        val sections = (map[SECTION_KEY] as List<String>).mapNotNull { WorldManager.getSectionFor(it) }
         layer.sections = sections
         sections.forEach { abyssWorlds.add(it.world) }
 
