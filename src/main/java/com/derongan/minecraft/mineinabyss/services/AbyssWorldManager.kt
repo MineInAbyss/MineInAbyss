@@ -1,6 +1,8 @@
-package com.derongan.minecraft.mineinabyss.world
+package com.derongan.minecraft.mineinabyss.services
 
 import com.derongan.minecraft.deeperworld.world.section.Section
+import com.derongan.minecraft.mineinabyss.world.Layer
+import com.mineinabyss.idofront.plugin.getService
 import org.bukkit.World
 
 /**
@@ -10,6 +12,8 @@ import org.bukkit.World
 
  */
 interface AbyssWorldManager {
+    companion object : AbyssWorldManager by getService()
+
     val layers: List<Layer>
 
     /**

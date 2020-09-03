@@ -2,11 +2,12 @@ package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.section.Section
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
 import com.derongan.minecraft.mineinabyss.ascension.effect.configuration.EffectConfiguror
+import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
 import com.google.common.collect.ImmutableList
 import org.bukkit.World
-import org.bukkit.configuration.Configuration
 
 private const val LAYER_KEY = "layers"
 private const val NAME_KEY = "name"
@@ -20,7 +21,7 @@ private const val DEATH_MESSAGE_KEY = "death-message"
  * @property layers An immutable list of layers accessible to outside classes
  * @property abyssWorlds A list of worlds that are part of the abyss
  */
-class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
+class AbyssWorldManagerImpl : AbyssWorldManager {
     private val _layers: MutableList<Layer> = mutableListOf()
     override val layers: List<Layer>
         get() = ImmutableList.copyOf(_layers)
@@ -60,6 +61,6 @@ class AbyssWorldManagerImpl(config: Configuration) : AbyssWorldManager {
     override fun isAbyssWorld(worldName: World) = abyssWorlds.contains(worldName)
 
     init {
-        config.getMapList(LAYER_KEY).forEach { parseLayer(it) }
+        AbyssContext.config.getMapList(LAYER_KEY).forEach { parseLayer(it) }
     }
 }

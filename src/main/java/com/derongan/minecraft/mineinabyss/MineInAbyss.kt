@@ -7,6 +7,8 @@ import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
 import com.derongan.minecraft.mineinabyss.geary.AbyssLocationSystem
 import com.derongan.minecraft.mineinabyss.geary.DepthMeter
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
+import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
 import com.google.common.collect.ImmutableSet
 import com.mineinabyss.geary.GearyService
 import com.mineinabyss.geary.ecs.component.components.equipment.Durability
@@ -17,6 +19,7 @@ import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.plugin.getPlugin
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.registerService
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Color
 import org.bukkit.Material
@@ -66,10 +69,11 @@ class MineInAbyss : JavaPlugin() {
 
         // Remove recipes if already loaded. This way changes will take effect properly.
 
+        registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
         registerEvents(
                 GuiListener(this),
-                PlayerListener(AbyssContext),
-                AscensionListener()
+                PlayerListener,
+                AscensionListener
         )
         //register command executors
         AscensionCommandExecutor

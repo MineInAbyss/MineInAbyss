@@ -1,72 +1,63 @@
-package com.derongan.minecraft.mineinabyss.player;
+package com.derongan.minecraft.mineinabyss.player
 
-import com.derongan.minecraft.mineinabyss.AbyssContext;
-import com.derongan.minecraft.mineinabyss.MineInAbyss;
-import com.mineinabyss.idofront.messaging.Messages;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerExpChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import com.derongan.minecraft.mineinabyss.AbyssContext
+import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
+import com.derongan.minecraft.mineinabyss.MineInAbyss.Companion.econ
+import com.derongan.minecraft.mineinabyss.playerData
+import com.mineinabyss.idofront.destructure.component1
+import com.mineinabyss.idofront.destructure.component2
+import com.mineinabyss.idofront.messaging.color
+import com.mineinabyss.idofront.messaging.logWarn
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.PlayerExpChangeEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import java.io.IOException
 
-import java.io.IOException;
+object PlayerListener : Listener {
+    private val playerDataConfigManager = AbyssContext.configManager.playerDataCM
 
-public class PlayerListener implements Listener {
-    private AbyssContext context;
-    private PlayerDataConfigManager playerDataConfigManager;
-
-    public PlayerListener(AbyssContext context) {
-        this.context = context;
-        this.playerDataConfigManager = context.getConfigManager().getPlayerDataCM();
+    @EventHandler
+    fun onPlayerJoin(joinEvent: PlayerJoinEvent) {
+        AbyssContext.playerDataMap[joinEvent.player.uniqueId] = playerDataConfigManager.loadPlayerData(joinEvent.player)
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent joinEvent) {
-        context.getPlayerDataMap().put(
-                joinEvent.getPlayer().getUniqueId(),
-                playerDataConfigManager.loadPlayerData(joinEvent.getPlayer())
-        );
-    }
-
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
-        PlayerData data = context.getPlayerDataMap().remove(playerQuitEvent.getPlayer().getUniqueId());
+    fun onPlayerLeave(playerQuitEvent: PlayerQuitEvent) {
+        val data: PlayerData = AbyssContext.playerDataMap.remove(playerQuitEvent.player.uniqueId) ?: return
         try {
-            playerDataConfigManager.savePlayerData(data);
-        } catch (IOException e) {
-            context.getLogger().warning("Failed to save data for player " + playerQuitEvent.getPlayer().getUniqueId().toString());
-            e.printStackTrace();
+            playerDataConfigManager.savePlayerData(data)
+        } catch (e: IOException) {
+            logWarn("Failed to save data for player ${playerQuitEvent.player.uniqueId}")
+            e.printStackTrace()
         }
     }
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent pde) {
-        Player player = pde.getEntity();
-        PlayerData playerData = MineInAbyss.getContext().getPlayerData(player);
+    fun onPlayerDeath(pde: PlayerDeathEvent) {
+        val player = pde.entity
+        val playerData = getPlayerData(player)
 
         //TODO maybe limit this to only the survival server with a config option
-        if (player.getLastDamageCause() != null && player.getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.VOID))
-            pde.setKeepInventory(true);
-
-        if (!playerData.isIngame())
-            return;
-        playerData.setIngame(false);
-        player.sendMessage(Messages.color("&6&lGame Stats:\n" +
-                "&6Exp earned:&7 " + (playerData.getExp() - playerData.getExpOnDescent()) + "\n" +
-                "&6Started dive on:&7 " + playerData.getDescentDate()));
+        if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) pde.keepInventory = true
+        if (!playerData.isIngame) return
+        playerData.isIngame = false
+        player.sendMessage("""
+            &6&lGame Stats:
+            &6Exp earned:&7 ${playerData.exp - playerData.expOnDescent}
+            &6Started dive on:&7 ${playerData.descentDate}
+            """.trimIndent().color())
     }
 
     @EventHandler
-    public void onPlayerGainEXP(PlayerExpChangeEvent pexpce) {
-        int amount = pexpce.getAmount();
-        if (amount <= 0)
-            return;
-
-        Player player = pexpce.getPlayer();
-        MineInAbyss.getEcon().depositPlayer(player, amount);
-        context.getPlayerData(player).addExp(amount);
+    fun onPlayerGainEXP(e: PlayerExpChangeEvent) {
+        val (player, amount) = e
+        if (amount <= 0) return
+        econ?.depositPlayer(player, amount.toDouble())
+        player.playerData.addExp(amount.toDouble())
     }
+
 }

@@ -4,7 +4,6 @@ import com.derongan.minecraft.mineinabyss.AbyssContext;
 import com.derongan.minecraft.mineinabyss.MineInAbyss;
 import com.derongan.minecraft.mineinabyss.configuration.ConfigConstants;
 import com.derongan.minecraft.mineinabyss.whistles.WhistleType;
-import com.derongan.minecraft.mineinabyss.world.AbyssWorldManager;
 import com.google.common.annotations.VisibleForTesting;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -33,7 +32,6 @@ public class PlayerDataConfigManager {
 
     public PlayerData loadPlayerData(Player player) {
         Path path = getPlayerDataPath(player);
-        AbyssWorldManager manager = context.getWorldManager();
 
         if (path.toFile().exists()) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(path.toFile());
