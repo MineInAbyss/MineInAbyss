@@ -49,7 +49,7 @@ class AbyssWorldManagerImpl : AbyssWorldManager {
         sections.forEach { abyssWorlds.add(it.world) }
 
         val effectMap = map[EFFECTS_KEY] as List<Map<*, *>?>? ?: emptyList()
-        layer.setEffects(effectMap.mapNotNull { parseAscensionEffects(it) })
+        layer.ascensionEffects = effectMap.mapNotNull { parseAscensionEffects(it) }
         return layer
     }
 

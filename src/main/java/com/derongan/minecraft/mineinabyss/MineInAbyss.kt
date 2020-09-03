@@ -62,7 +62,7 @@ class MineInAbyss : JavaPlugin() {
 
             server.addRecipe(getGrapplingHookRecipe(grapplingRecipeKey))
             server.addRecipe(getStarCompassRecipe(starCompassRecipeKey))
-            gearyService.addSystem(AbyssLocationSystem(AbyssContext), this)
+            gearyService.addSystem(AbyssLocationSystem(), this)
         } else {
             logger.warning("[${description.name}] - Geary service not found! No items have been added!")
         }

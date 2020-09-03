@@ -7,10 +7,11 @@ import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
 import com.derongan.minecraft.guiy.kotlin_dsl.setElement
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.MineInAbyss
-import com.derongan.minecraft.mineinabyss.abyssContext
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.playerData
+import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.color
 import net.md_5.bungee.api.ChatColor
@@ -27,7 +28,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
     private fun buildMain() = guiyLayout {
         //TODO separate spawns into groups based on world
         setElement(0, 1, FillableElement(5, 9)){
-            val spawnLocConfig: FileConfiguration = abyssContext.configManager.startLocationCM
+            val spawnLocConfig: FileConfiguration = AbyssContext.configManager.startLocationCM
             val spawnLayers = spawnLocConfig.getMapList(SPAWN_KEY)
             addAll(spawnLayers.map { parseLayer(it) })
         }
@@ -38,7 +39,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
         val cost = if (map.containsKey(COST_KEY)) (map[COST_KEY] as String).toDouble() else 0.0
         val displayItem = (map[DISPLAY_ITEM_KEY] as ItemStack?)!!.clone()
         val loc = map[LOCATION_KEY] as Location
-        val balance = MineInAbyss.econ.getBalance(player)
+        val balance = MineInAbyss.econ!!.getBalance(player)
 
         return if (balance >= cost) {
             displayItem.editItemMeta {
@@ -46,18 +47,18 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
             }
 
             val button = ClickableElement(displayItem.toCell()) {
-                val layer = MineInAbyss.context.getLayerForLocation(loc)
+                val layer = loc.layer
                 val playerData = player.playerData
 
                 player.teleport(loc)
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
-                MineInAbyss.econ.withdrawPlayer(player, cost)
+                MineInAbyss.econ?.withdrawPlayer(player, cost)
 
                 playerData.descentDate = Date()
                 playerData.expOnDescent = playerData.exp
                 playerData.isIngame = true
-                Bukkit.getScheduler().scheduleSyncDelayedTask(MineInAbyss.instance, {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(mineInAbyss, {
                     player.sendTitle("", "${ChatColor.GRAY}${ChatColor.ITALIC}Let the journey begin", 30, 30, 20)
                 }, 80)
             }
