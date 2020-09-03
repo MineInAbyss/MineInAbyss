@@ -8,7 +8,7 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
 
 @ExperimentalCommandDSL
-class AscensionCommandExecutor : IdofrontCommandExecutor() {
+object AscensionCommandExecutor : IdofrontCommandExecutor() {
     override val commands = commands(mineInAbyss) {
         shared {
             noPermissionMessage = "The abyss laughs at your naivety"

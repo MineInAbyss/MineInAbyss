@@ -1,6 +1,6 @@
 package com.derongan.minecraft.mineinabyss.commands
 
-import com.derongan.minecraft.mineinabyss.abyssContext
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 @ExperimentalCommandDSL
-class GUICommandExecutor : IdofrontCommandExecutor() {
+object GUICommandExecutor : IdofrontCommandExecutor() {
     private val leaveConfirm = ArrayList<UUID>()
 
     override val commands = commands(mineInAbyss) {
@@ -63,7 +63,7 @@ class GUICommandExecutor : IdofrontCommandExecutor() {
             val cost by intArg { default = 0 }
 
             playerAction {
-                val spawnLocConfig = abyssContext.configManager.startLocationCM
+                val spawnLocConfig = AbyssContext.configManager.startLocationCM
                 val spawns = spawnLocConfig.getMapList(GondolaGUI.SPAWN_KEY)
                 var displayItem = player.inventory.itemInMainHand.clone()
 

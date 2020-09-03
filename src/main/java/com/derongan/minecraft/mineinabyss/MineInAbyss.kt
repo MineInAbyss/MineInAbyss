@@ -13,8 +13,11 @@ import com.mineinabyss.geary.ecs.component.components.equipment.Durability
 import com.mineinabyss.geary.ecs.component.components.grappling.GrapplingHook
 import com.mineinabyss.geary.ecs.component.components.rendering.DisplayState
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
+import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.plugin.getPlugin
+import com.mineinabyss.idofront.plugin.getServiceOrNull
+import com.mineinabyss.idofront.plugin.registerEvents
 import net.milkbowl.vault.economy.Economy
-import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -23,7 +26,8 @@ import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
 
 class MineInAbyss : JavaPlugin() {
-    private var gearyService: GearyService? = null
+    private val gearyService = getServiceOrNull<GearyService>("Geary")
+
     @ExperimentalCommandDSL
     override fun onEnable() {
         // Plugin startup logic
@@ -31,108 +35,88 @@ class MineInAbyss : JavaPlugin() {
         AbyssContext
 
         //Vault setup
-        if (!setupEconomy()) {
-            logger.severe(String.format("[%s] - Disabled due to no Vault dependency found!", description.name))
+        if (econ == null) {
+            logger.severe("[${description.name}] - Disabled due to no Vault dependency found!")
             server.pluginManager.disablePlugin(this)
             return
         }
 
         //Geary setup
-        if (setupGeary()) {
+        if (gearyService != null) {
             val grapplingRecipeKey = NamespacedKey(this, "grappling_hook")
             val starCompassRecipeKey = NamespacedKey(this, "star_compas")
             val recipeIterator = server.recipeIterator()
 
             // Remove recipes if already loaded. This way changes will take effect properly.
             // TODO change to config based (in geary or mine in abyss) instead of manual.
-            while (recipeIterator.hasNext()) {
-                val r = recipeIterator.next()
+            recipeIterator.forEachRemaining { r ->
                 if (r is ShapedRecipe) {
-                    if (ImmutableSet.of(grapplingRecipeKey, starCompassRecipeKey)
-                                    .contains(r.key)) {
+                    if (setOf(grapplingRecipeKey, starCompassRecipeKey).contains(r.key)) {
                         recipeIterator.remove()
                     }
                 }
             }
+
             server.addRecipe(getGrapplingHookRecipe(grapplingRecipeKey))
             server.addRecipe(getStarCompassRecipe(starCompassRecipeKey))
-            gearyService!!.addSystem(AbyssLocationSystem(AbyssContext), this)
+            gearyService.addSystem(AbyssLocationSystem(AbyssContext), this)
         } else {
-            logger.warning(String.format("[%s] - Geary service not found! No items have been added!",
-                    description.name))
+            logger.warning("[${description.name}] - Geary service not found! No items have been added!")
         }
-        server.pluginManager.registerEvents(GuiListener(this), this)
-        server.pluginManager.registerEvents(PlayerListener(AbyssContext), this)
-        server.pluginManager.registerEvents(AscensionListener(), this)
 
+        // Remove recipes if already loaded. This way changes will take effect properly.
+
+        registerEvents(
+                GuiListener(this),
+                PlayerListener(AbyssContext),
+                AscensionListener()
+        )
         //register command executors
-        AscensionCommandExecutor()
-        GUICommandExecutor()
+        AscensionCommandExecutor
+        GUICommandExecutor
     }
 
     private fun getGrapplingHookRecipe(grapplingRecipeKey: NamespacedKey): ShapedRecipe {
-        val itemStack = ItemStack(Material.DIAMOND_SHOVEL)
-        val itemMeta = itemStack.itemMeta
-        itemMeta!!.setDisplayName("Grappling Hook")
-        itemMeta.setCustomModelData(3)
-        itemStack.itemMeta = itemMeta
-        gearyService!!.attachToItemStack(ImmutableSet
-                .of(GrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1),
-                        Durability(64), DisplayState(3)), itemStack)
-        val recipe = ShapedRecipe(grapplingRecipeKey, itemStack)
-        recipe.shape("III", "ISI", " S ")
-        recipe.setIngredient('I', Material.IRON_INGOT)
-        recipe.setIngredient('S', Material.STRING)
-        return recipe
+        val itemStack = ItemStack(Material.DIAMOND_SHOVEL).editItemMeta {
+            setDisplayName("Grappling Hook")
+            setCustomModelData(3)
+        }
+        gearyService!!.attachToItemStack(setOf(
+                GrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1),
+                Durability(64),
+                DisplayState(3)
+        ), itemStack)
+
+        return ShapedRecipe(grapplingRecipeKey, itemStack).apply {
+            shape("III", "ISI", " S ")
+            setIngredient('I', Material.IRON_INGOT)
+            setIngredient('S', Material.STRING)
+        }
     }
 
     private fun getStarCompassRecipe(starCompassRecipeKey: NamespacedKey): ShapedRecipe {
-        val itemStack = ItemStack(Material.COMPASS)
-        val itemMeta = itemStack.itemMeta
-        itemMeta!!.setDisplayName("Star Compass")
-        itemStack.itemMeta = itemMeta
+        val itemStack = ItemStack(Material.COMPASS).editItemMeta {
+            setDisplayName("Star Compass")
+        }
         gearyService!!.attachToItemStack(ImmutableSet.of(DepthMeter(250), DisplayState(1)), itemStack)
-        val recipe = ShapedRecipe(starCompassRecipeKey, itemStack)
-        recipe.shape(" I ", "IPI", " I ")
-        recipe.setIngredient('I', Material.GLASS)
-        recipe.setIngredient('P', Material.PRISMARINE_CRYSTALS)
-        return recipe
+        return ShapedRecipe(starCompassRecipeKey, itemStack).apply {
+            shape(" I ", "IPI", " I ")
+            setIngredient('I', Material.GLASS)
+            setIngredient('P', Material.PRISMARINE_CRYSTALS)
+        }
     }
 
     override fun onDisable() {
         // Plugin shutdown logic
-        AbyssContext.configManager.saveAll()
         logger.info("onDisable has been invoked!")
-    }
-
-    //economy stuff
-    private fun setupEconomy(): Boolean {
-        if (server.pluginManager.getPlugin("Vault") == null) {
-            return false
-        }
-        val rsp = server.servicesManager.getRegistration(Economy::class.java) ?: return false
-        econ = rsp.provider
-        return econ != null
-    }
-
-    private fun setupGeary(): Boolean {
-        if (server.pluginManager.isPluginEnabled("Geary")) {
-            val rsp = server.servicesManager.getRegistration(GearyService::class.java) ?: return false
-            gearyService = rsp.provider
-            return gearyService != null
-        }
-        return false
+        AbyssContext.configManager.saveAll()
     }
 
     companion object {
         @JvmStatic
-        var econ: Economy? = null
-            private set
+        val econ = getServiceOrNull<Economy>("Vault")
+
         @JvmStatic
-        val instance: MineInAbyss?
-            get() {
-                val plugin = Bukkit.getServer().pluginManager.getPlugin("MineInAbyss")
-                return plugin as MineInAbyss?
-            }
+        val instance: MineInAbyss? by lazy { getPlugin() }
     }
 }
