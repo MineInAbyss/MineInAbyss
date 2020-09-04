@@ -32,8 +32,7 @@ class LayerImpl(
     @Transient
     override val deathMessage = "$_deathMessage in $name"
 
-
-    override fun containsSection(section: Section): Boolean = sections.any { it.key == section.key }
+    override fun contains(section: Section): Boolean = sections.any { it.key == section.key }
 }
 
 @Serializable

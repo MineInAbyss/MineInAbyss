@@ -22,6 +22,7 @@ data class PotionAscensionEffect(
 ) : AbstractAscensionEffect() {
     @Transient
     override val duration = TickUtils.milisecondsToTicks(secDuration * 1000)
+
     @Transient
     val effectsToApply = _effectsToApply.mapNotNull { PotionEffectType.getByName(it) }
 

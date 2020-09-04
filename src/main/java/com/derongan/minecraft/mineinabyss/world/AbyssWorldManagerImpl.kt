@@ -24,7 +24,7 @@ class AbyssWorldManagerImpl : AbyssWorldManager {
     private val abyssWorlds = mutableSetOf<World>()
     private var numLayers = 0
 
-    override fun getLayerForSection(section: Section) = _layers.first { it.containsSection(section) }
+    override fun getLayerForSection(section: Section) = _layers.first { section in it }
 
     override fun isAbyssWorld(worldName: World) = abyssWorlds.contains(worldName)
 

@@ -11,12 +11,12 @@ abstract class AbstractAscensionEffect : AscensionEffect {
     var elapsed = 0
 
     override fun applyEffect(player: Player, ticks: Int) {
-            mineInAbyss.schedule {
-                waitFor(offset)
-                repeat(iterations) {
-                    applyEffect(player)
-                    waitFor(duration.toLong())
-                }
+        mineInAbyss.schedule {
+            waitFor(offset)
+            repeat(iterations) {
+                applyEffect(player)
+                waitFor(duration.toLong())
+            }
         }
     }
 

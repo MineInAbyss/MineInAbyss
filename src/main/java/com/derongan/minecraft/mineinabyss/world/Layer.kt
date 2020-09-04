@@ -34,6 +34,5 @@ interface Layer {
     val sections: List<Section>
 
     /** Returns whether or not this layer contains this section */
-    fun containsSection(section: Section): Boolean
-
+    operator fun contains(section: Section): Boolean
 }
