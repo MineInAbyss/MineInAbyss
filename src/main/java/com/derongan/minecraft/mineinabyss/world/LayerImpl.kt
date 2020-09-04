@@ -2,28 +2,37 @@ package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
+@Serializable
 class LayerImpl(
         override val name: String,
         override val sub: String,
-        override val index: Int,
-        override val deathMessage: String?,
-        override val maxCurseRadius: Float,
-        override val minCurseRadius: Float,
-        override val minCurseMultiplier: Float,
-        override val maxCurseMultiplier: Float,
-        override val curseOverrideRegions: List<CurseRegion>,
-        override val startDepth: Int,
-        override val endDepth: Int
+        @SerialName("deathMessage")
+        private val _deathMessage: String?,
+        override val maxCurseRadius: Float = 2000f,
+        override val minCurseRadius: Float = 1000f,
+        override val minCurseMultiplier: Float = 1f,
+        override val maxCurseMultiplier: Float = 1f,
+        override val curseOverrideRegions: List<CurseRegion> = emptyList(),
+        val depth: Depth = Depth(0, 0),
+        override val ascensionEffects: List<AscensionEffectBuilder<*>> = emptyList(),
+        override val sections: List<Section> = emptyList(),
 ) : Layer {
-    private var effects: List<AscensionEffectBuilder<*>> = mutableListOf()
+    override val startDepth: Int get() = depth.start
+    override val endDepth: Int get() = depth.end
 
-    override var ascensionEffects: List<AscensionEffectBuilder<*>>
-        get() = effects.toList()
-        set(value) { effects = value}
+    @Transient
+    override val deathMessage = "$_deathMessage in $name"
 
-    override var sections: List<Section> = listOf()
-        get() = field.toList()
 
     override fun containsSection(section: Section): Boolean = sections.any { it.key == section.key }
 }
+
+@Serializable
+class Depth(
+        val start: Int,
+        val end: Int
+)

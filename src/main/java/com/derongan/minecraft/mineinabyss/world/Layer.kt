@@ -6,7 +6,6 @@ import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilde
 /**
  * @property name the name of this Layer. This name may not match the world name.
  * @property sub The sub header.
- * @property index The index of this Layer. Higher layers have lower index.
  * @property sections The sections in this layer. This list is immutable.
  * @property ascensionEffects The effects of ascending on this layer.
  * @property maxCurseRadius The radius at which the curse has maximum effect.
@@ -23,8 +22,7 @@ import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilde
 interface Layer {
     val name: String?
     val sub: String?
-    val index: Int
-    val sections: List<Section?>?
+    val deathMessage: String? get() = " in the depths of the abyss"
     val ascensionEffects: List<AscensionEffectBuilder<*>>
     val maxCurseRadius: Float
     val minCurseRadius: Float
@@ -33,7 +31,7 @@ interface Layer {
     val curseOverrideRegions: List<CurseRegion>
     val startDepth: Int
     val endDepth: Int
-    val deathMessage: String? get() = " in the depths of the abyss"
+    val sections: List<Section>
 
     /** Returns whether or not this layer contains this section */
     fun containsSection(section: Section): Boolean

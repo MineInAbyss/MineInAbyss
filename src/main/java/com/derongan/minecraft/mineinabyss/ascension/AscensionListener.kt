@@ -62,7 +62,7 @@ object AscensionListener : Listener {
 //                val curseFactor = getCurseStrength(to)
 
                 val dist = curseAccrued
-                curseAccrued = (dist /*+ curseFactor * changeY*/).coerceAtLeast(0.0)
+                curseAccrued = (dist + /*curseFactor * */changeY).coerceAtLeast(0.0)
                 if (dist >= 10) {
                     layer.ascensionEffects.forEach {
                         it.build().applyEffect(player, 10)

@@ -5,6 +5,7 @@ plugins {
     id 'idea'
     id 'com.github.johnrengelman.shadow'
     id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'maven-publish'
     id 'io.github.0ffz.github-packages'
 }
@@ -21,7 +22,6 @@ java {
 
 repositories {
     mavenCentral()
-    mavenLocal()
     jcenter()
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
@@ -30,7 +30,9 @@ repositories {
     maven githubPackage.invoke("MineInAbyss/DeeperWorld")
     maven githubPackage.invoke("MineInAbyss/Idofront")
     maven githubPackage.invoke("MineInAbyss/geary")
+    maven githubPackage.invoke("MineInAbyss/KotlinSpice")
     maven { url 'https://jitpack.io' } //JitPack
+    mavenLocal()
 }
 
 publishing {
@@ -47,6 +49,7 @@ publishing {
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$server_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compileOnly "org.cultofclang.minecraft:kotlinspice:$kotlin_version+"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 //    compileOnly 'com.badlogicgames.ashley:ashley:1.7.3'
 
@@ -84,6 +87,6 @@ if (project.hasProperty("plugin_path") && plugin_path) {
         into plugin_path
     }
     build.dependsOn copyJar
-    if (useLocalDeeperWorld.toBoolean())
-        build.dependsOn gradle.includedBuild("DeeperWorld").task(':copyJar')
+//    if (useLocalDeeperWorld.toBoolean())
+//        build.dependsOn gradle.includedBuild("DeeperWorld").task(':copyJar')
 }
