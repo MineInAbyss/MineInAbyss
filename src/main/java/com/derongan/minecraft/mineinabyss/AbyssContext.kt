@@ -11,7 +11,6 @@ import java.util.*
 internal object AbyssContext {
     val playerDataMap = mutableMapOf<UUID, PlayerData>()
     val logger = mineInAbyss.logger
-    val config = mineInAbyss.config
     val configManager = MineInAbyssConfig(mineInAbyss)
 
     fun getPlayerData(player: Player): PlayerData {

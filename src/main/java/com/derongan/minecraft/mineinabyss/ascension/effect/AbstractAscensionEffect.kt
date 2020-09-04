@@ -14,8 +14,8 @@ abstract class AbstractAscensionEffect : AscensionEffect {
             mineInAbyss.schedule {
                 waitFor(offset)
                 repeat(iterations) {
-                    waitFor(duration.toLong())
                     applyEffect(player)
+                    waitFor(duration.toLong())
                 }
         }
     }
