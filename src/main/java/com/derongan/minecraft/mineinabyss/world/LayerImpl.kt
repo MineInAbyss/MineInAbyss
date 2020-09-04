@@ -1,7 +1,7 @@
 package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.world.section.Section
-import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
+import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -18,7 +18,8 @@ class LayerImpl(
         override val maxCurseMultiplier: Float = 1f,
         override val curseOverrideRegions: List<CurseRegion> = emptyList(),
         val depth: Depth = Depth(0, 0),
-        override val ascensionEffects: List<AscensionEffectBuilder<*>> = emptyList(),
+        @SerialName("effects")
+        override val ascensionEffects: List<AscensionEffect> = emptyList(),
         override val sections: List<Section> = emptyList(),
 ) : Layer {
     override val startDepth: Int get() = depth.start

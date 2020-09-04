@@ -1,14 +1,20 @@
-package com.derongan.minecraft.mineinabyss.ascension.effect.effects;
+package com.derongan.minecraft.mineinabyss.ascension.effect.effects
 
-import org.bukkit.entity.Player;
+import com.derongan.minecraft.mineinabyss.ascension.effect.AbstractAscensionEffect
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
-public class DeathAscensionEffect extends AbstractAscensionEffect {
-    public DeathAscensionEffect(int offset, int strength, int duration, int iterations) {
-        super(offset, strength, duration, iterations);
+@Serializable
+@SerialName("death")
+data class DeathAscensionEffect(
+        override val offset: Long = 0,
+        override val duration: Int = 0,
+        override val iterations: Int = 0
+) : AbstractAscensionEffect() {
+    override fun applyEffect(player: Player) {
+        player.health = 0.0
     }
 
-    @Override
-    void applyEffect(Player player) {
-        player.setHealth(0.0D);
-    }
+    override fun clone() = copy()
 }

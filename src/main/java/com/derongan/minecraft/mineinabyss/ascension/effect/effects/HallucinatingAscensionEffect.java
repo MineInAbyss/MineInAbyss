@@ -1,11 +1,6 @@
 package com.derongan.minecraft.mineinabyss.ascension.effect.effects;
 
-import com.derongan.minecraft.mineinabyss.spoofing.SpoofedEntityLiving;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
-
+/*
 public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
     private List<SpoofedEntityLiving> stands = new ArrayList<SpoofedEntityLiving>();
 
@@ -84,3 +79,4 @@ public class HallucinatingAscensionEffect extends AbstractAscensionEffect {
 //        con.sendPacket(new PacketPlayOutEntityEquipment(stand.getId(), EnumItemSlot.OFFHAND, shears));
 //    }
 }
+*/

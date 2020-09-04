@@ -1,7 +1,7 @@
 package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.world.section.Section
-import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffectBuilder
+import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
 
 /**
  * @property name the name of this Layer. This name may not match the world name.
@@ -23,7 +23,7 @@ interface Layer {
     val name: String?
     val sub: String?
     val deathMessage: String? get() = " in the depths of the abyss"
-    val ascensionEffects: List<AscensionEffectBuilder<*>>
+    val ascensionEffects: List<AscensionEffect>
     val maxCurseRadius: Float
     val minCurseRadius: Float
     val minCurseMultiplier: Float
