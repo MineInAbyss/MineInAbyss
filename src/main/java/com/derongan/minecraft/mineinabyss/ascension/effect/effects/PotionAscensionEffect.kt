@@ -1,7 +1,8 @@
 package com.derongan.minecraft.mineinabyss.ascension.effect.effects
 
 import com.derongan.minecraft.mineinabyss.ascension.effect.AbstractAscensionEffect
-import com.derongan.minecraft.mineinabyss.util.TickUtils
+import com.mineinabyss.idofront.time.TimeSpan
+import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -13,23 +14,19 @@ import org.bukkit.potion.PotionEffectType
 @SerialName("potion")
 data class PotionAscensionEffect(
         val strength: Int = 1,
-        override val offset: Long = 0,
+        override val offset: TimeSpan = 0.ticks,
         override val iterations: Int = 1,
-        @SerialName("duration")
-        val secDuration: Int,
+        override val duration: TimeSpan,
         @SerialName("effects")
         private val _effectsToApply: List<String>
 ) : AbstractAscensionEffect() {
-    @Transient
-    override val duration = TickUtils.milisecondsToTicks(secDuration * 1000)
-
     @Transient
     val effectsToApply = _effectsToApply.mapNotNull { PotionEffectType.getByName(it) }
 
     override fun applyEffect(player: Player) {
         for (potionEffectType in effectsToApply) {
-            val totalDuration = (player.getPotionEffect(potionEffectType)?.duration ?: 0) + duration
-            player.addPotionEffect(PotionEffect(potionEffectType, totalDuration, strength))
+            val totalDuration = (player.getPotionEffect(potionEffectType)?.duration ?: 0) + duration.ticks
+            player.addPotionEffect(PotionEffect(potionEffectType, totalDuration.toInt(), strength))
         }
     }
 

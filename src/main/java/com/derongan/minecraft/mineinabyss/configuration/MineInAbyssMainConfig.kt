@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.configuration
 
 import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import com.derongan.minecraft.mineinabyss.ascension.effect.EffectRegistration
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.world.LayerImpl
@@ -12,6 +13,9 @@ internal object MineInAbyssMainConfig : IdofrontConfig<MineInAbyssMainConfig.Dat
         Data.serializer(),
         format = Yaml(
                 serializersModule = EffectRegistration.module,
+                configuration = YamlConfiguration(
+                        extensionDefinitionPrefix = "x-"
+                )
         )
 ) {
     @Serializable

@@ -118,7 +118,7 @@ class MineInAbyss : JavaPlugin() {
 
     companion object {
         @JvmStatic
-        val econ = getServiceOrNull<Economy>("Vault")
+        val econ by lazy { getServiceOrNull<Economy>("Vault") }
 
         @JvmStatic
         val instance: MineInAbyss? by lazy { getPlugin() }

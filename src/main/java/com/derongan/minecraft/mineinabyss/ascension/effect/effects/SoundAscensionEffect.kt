@@ -5,6 +5,7 @@ import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.mineinabyss.idofront.operators.minus
 import com.mineinabyss.idofront.operators.plus
 import com.mineinabyss.idofront.operators.times
+import com.mineinabyss.idofront.time.TimeSpan
 import com.okkero.skedule.schedule
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,9 +18,9 @@ import kotlin.random.Random
 @SerialName("sound")
 data class SoundAscensionEffect(
         val sounds: List<Sound>,
-        override val offset: Long,
+        override val offset: TimeSpan,
         override val iterations: Int,
-        override val duration: Int
+        override val duration: TimeSpan
 ) : AbstractAscensionEffect() {
     override fun applyEffect(player: Player) { //TODO do not play sounds too quickly together
         val soundLocation = player.location + (Vector.getRandom() * 5 - Vector(2.5, 2.5, 2.5))

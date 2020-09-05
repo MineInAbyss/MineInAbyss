@@ -53,7 +53,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
                 player.teleport(loc)
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
-                MineInAbyss.econ?.withdrawPlayer(player, cost)
+                MineInAbyss.econ!!.withdrawPlayer(player, cost)
 
                 playerData.descentDate = Date()
                 playerData.expOnDescent = playerData.exp
