@@ -11,8 +11,7 @@ import kotlinx.serialization.Transient
 class LayerImpl(
         override val name: String,
         override val sub: String,
-        @SerialName("deathMessage")
-        private val _deathMessage: String?,
+        override val deathMessage: String? = "in the depths of the abyss",
         override val maxCurseRadius: Float = 2000f,
         override val minCurseRadius: Float = 1000f,
         override val minCurseMultiplier: Float = 1f,
@@ -28,9 +27,6 @@ class LayerImpl(
     override val sections: List<Section> = _sections.mapNotNull { WorldManager.Companion.getSectionFor(it) }
     override val startDepth: Int get() = depth.start
     override val endDepth: Int get() = depth.end
-
-    @Transient
-    override val deathMessage = "$_deathMessage in $name"
 
     override fun contains(section: Section): Boolean = sections.any { it.key == section.key }
 }

@@ -10,12 +10,11 @@ import kotlinx.serialization.Serializable
 import org.bukkit.Color
 import org.bukkit.Particle
 import org.bukkit.entity.Player
-import kotlin.time.ExperimentalTime
 
 //TODO not sure if anything else needs to be updated with this
 @Serializable
 @SerialName("particles")
-data class ParticleAscensionEffect @ExperimentalTime constructor(
+data class ParticleAscensionEffect constructor(
         val count: Int,
         override val offset: TimeSpan,
         override val duration: TimeSpan,

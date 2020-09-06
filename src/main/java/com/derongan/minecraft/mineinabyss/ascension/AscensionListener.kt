@@ -131,7 +131,7 @@ object AscensionListener : Listener {
         val section = player.location.section ?: return
         val layerOfDeath = section.layer ?: return
         deathEvent.apply {
-            deathMessage += layerOfDeath.deathMessage
+            deathMessage += " ${layerOfDeath.deathMessage}"
         }
     }
 }

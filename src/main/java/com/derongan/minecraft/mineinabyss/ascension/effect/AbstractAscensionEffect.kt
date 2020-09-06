@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss.ascension.effect
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.mineinabyss.idofront.time.TimeSpan
 import com.okkero.skedule.schedule
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 abstract class AbstractAscensionEffect : AscensionEffect {
@@ -16,6 +17,7 @@ abstract class AbstractAscensionEffect : AscensionEffect {
                 applyEffect(player)
                 waitFor(duration.ticks)
             }
+            cleanUp(Bukkit.getPlayer(player.uniqueId) ?: player) //get new player reference if player relogged
         }
     }
 

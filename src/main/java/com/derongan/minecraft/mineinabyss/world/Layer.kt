@@ -22,7 +22,7 @@ import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
 interface Layer {
     val name: String?
     val sub: String?
-    val deathMessage: String? get() = " in the depths of the abyss"
+    val deathMessage: String? get() = "in the depths of the abyss"
     val ascensionEffects: List<AscensionEffect>
     val maxCurseRadius: Float
     val minCurseRadius: Float

@@ -3,11 +3,13 @@ package com.derongan.minecraft.mineinabyss.player
 import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
 import com.derongan.minecraft.mineinabyss.MineInAbyss.Companion.econ
+import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
 import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.logWarn
+import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
@@ -27,7 +29,17 @@ object PlayerListener : Listener {
 
     @EventHandler
     fun onPlayerLeave(playerQuitEvent: PlayerQuitEvent) {
-        val data: PlayerData = AbyssContext.playerDataMap.remove(playerQuitEvent.player.uniqueId) ?: return
+        val (player) = playerQuitEvent
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.run {
+            modifiers.filter {
+                it.name == MaxHealthChangeEffect.CURSE_MAX_HEALTH
+                        && !MaxHealthChangeEffect.activeEffects.contains(it)
+            }.forEach {
+                removeModifier(it)
+            }
+        }
+
+        val data: PlayerData = AbyssContext.playerDataMap.remove(player.uniqueId) ?: return
         try {
             playerDataConfigManager.savePlayerData(data)
         } catch (e: IOException) {
