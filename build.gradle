@@ -52,8 +52,8 @@ dependencies {
     implementation "com.okkero.skedule:skedule:1.2.6"
     implementation 'de.erethon:headlib:3.0.4'
 
-    implementation 'com.mineinabyss:geary:1.0.+'
-    implementation 'com.derongan.minecraft:guiy:0.1.+'
+    implementation 'com.mineinabyss:geary:1.0.3'
+    implementation 'com.derongan.minecraft:guiy:0.1.0-alpha.7'
     implementation 'com.mineinabyss:idofront:0.3.25'
     compileOnly 'com.derongan.minecraft:deeperworld:0.2.23'
 }
