@@ -17,7 +17,7 @@ jobs:
       - name: Build with Gradle
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew -PbuildNo=${{ github.run_number }} shadow
+        run: ./gradlew shadow
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0
         with:

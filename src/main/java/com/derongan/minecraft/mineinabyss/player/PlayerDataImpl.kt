@@ -6,7 +6,10 @@ import com.derongan.minecraft.mineinabyss.world.Layer
 import org.bukkit.entity.Player
 import java.util.*
 
-class PlayerDataImpl(override val player: Player) : PlayerData {
+//TODO use kotlinx.serialization
+class PlayerDataImpl(
+        override val player: Player
+) : PlayerData {
     override var currentLayer: Layer? = null
     override var isAffectedByCurse = true
     override var isIngame: Boolean = false
