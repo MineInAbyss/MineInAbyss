@@ -5,7 +5,7 @@ import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.player.PlayerDataConfigManager
 import java.io.File
 
-class MineInAbyssConfig(private val plugin: MineInAbyss, context: AbyssContext?) {
+class MineInAbyssConfig(private val plugin: MineInAbyss) {
     val startLocationCM: ConfigManager
     val playerDataCM: PlayerDataConfigManager
 
@@ -41,6 +41,6 @@ class MineInAbyssConfig(private val plugin: MineInAbyss, context: AbyssContext?)
     init {
         createConfig()
         startLocationCM = ConfigManager(plugin, File(plugin.dataFolder, "spawn-locs.yml"))
-        playerDataCM = PlayerDataConfigManager(context)
+        playerDataCM = PlayerDataConfigManager(AbyssContext)
     }
 }

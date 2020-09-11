@@ -1,19 +1,13 @@
-if(useLocalGuiy.toBoolean()) {
-    include ':guiy'
-    project(':guiy').projectDir = new File('../guiy')
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
+        id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
+        id 'com.github.johnrengelman.shadow' version '6.0.0'
+        id 'io.github.0ffz.github-packages' version '1.0.3'
+    }
 }
 
-if(useLocalIdofront.toBoolean()) {
-    include 'idofront'
-    project(':idofront').projectDir = new File('../idofront')
-}
-
-if(useLocalGeary.toBoolean()) {
-    include 'geary'
-    project(':geary').projectDir = new File('../geary')
-}
-
-if(useLocalDeeperWorld.toBoolean()) {
-    include 'DeeperWorld'
-    project(':DeeperWorld').projectDir = new File('../DeeperWorld')
-}
+if(useLocalGuiy.toBoolean()) includeBuild '../guiy'
+if(useLocalIdofront.toBoolean()) includeBuild '../idofront'
+if(useLocalGeary.toBoolean()) includeBuild '../geary'
+if(useLocalDeeperWorld.toBoolean()) includeBuild '../DeeperWorld'

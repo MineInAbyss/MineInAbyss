@@ -1,15 +1,16 @@
 package com.derongan.minecraft.mineinabyss.commands
 
-import com.derongan.minecraft.mineinabyss.abyssContext
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.playerData
-import com.mineinabyss.idofront.commands.Command.PlayerExecution
-import com.mineinabyss.idofront.commands.IdofrontCommandExecutor
-import com.mineinabyss.idofront.commands.arguments.IntArg
-import com.mineinabyss.idofront.commands.arguments.StringArg
-import com.mineinabyss.idofront.commands.onExecuteByPlayer
+import com.mineinabyss.idofront.commands.arguments.intArg
+import com.mineinabyss.idofront.commands.arguments.stringArg
+import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
+import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
+import com.mineinabyss.idofront.commands.execution.stopCommand
+import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
@@ -20,29 +21,30 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class GUICommandExecutor : IdofrontCommandExecutor() {
+@ExperimentalCommandDSL
+object GUICommandExecutor : IdofrontCommandExecutor() {
     private val leaveConfirm = ArrayList<UUID>()
 
-    private val PlayerExecution.playerData get() = player.playerData
-
     override val commands = commands(mineInAbyss) {
-        command(CommandLabels.STATS) {
-            onExecuteByPlayer {
+        "stats" {
+            "subcommand" {
+
+            }
+            playerAction {
                 StatsGUI(player).show(player)
             }
         }
-        command(CommandLabels.START) {
-            onExecuteByPlayer {
-                if (playerData.isIngame) {
-                    sender.error("You are already ingame!\nYou can leave using /stopdescent")
-                    return@onExecuteByPlayer
-                }
+        "start" command@{
+            playerAction {
+                if (player.playerData.isIngame)
+                    //TODO allow access to stopCommand directly from here
+                    this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
                 GondolaGUI(player).show(player)
             }
         }
-        command(CommandLabels.STOP_DESCENT) {
-            onExecuteByPlayer {
-                if (!playerData.isIngame) {
+        "stopdescent" {
+            playerAction {
+                if (!player.playerData.isIngame) {
                     sender.error("You are not currently ingame!\nStart by using /start")
                 } else if (!leaveConfirm.contains(player.uniqueId)) {
                     leaveConfirm.add(player.uniqueId)
@@ -56,12 +58,12 @@ class GUICommandExecutor : IdofrontCommandExecutor() {
                 }
             }
         }
-        command(CommandLabels.CREATE_GONDOLA_SPAWN) {
-            val displayName by +StringArg("display name") { default = "" }
-            val cost by +IntArg("cost") { default = 0 }
+        "creategondolaspawn" {
+            val displayName by stringArg { default = "" }
+            val cost by intArg { default = 0 }
 
-            onExecuteByPlayer {
-                val spawnLocConfig = abyssContext.configManager.startLocationCM
+            playerAction {
+                val spawnLocConfig = AbyssContext.configManager.startLocationCM
                 val spawns = spawnLocConfig.getMapList(GondolaGUI.SPAWN_KEY)
                 var displayItem = player.inventory.itemInMainHand.clone()
 
@@ -75,7 +77,7 @@ class GUICommandExecutor : IdofrontCommandExecutor() {
                     addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
                 }
 
-                val map = HashMap<String, Any>()
+                val map = mutableMapOf<String, Any>()
                 map["location"] = player.location
                 map["display-item"] = displayItem
                 if (cost != 0)
