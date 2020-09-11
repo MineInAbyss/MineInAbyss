@@ -1,19 +1,36 @@
-#layers:
-#  -
-#    name: Edge of the Abyss
-#    sub: 0-1350 meters
-#    world: LayerOne
-#    depth:
-#      start: 0
-#      end: 1350
-#    effects:
-#      -
-#        name: PotionAscensionEffect
-#        strength: 1
-#        duration: 7
-#        iterations: 3
-#        effects:
-#          - CONFUSION
-#    # Fill this with the section names defined in the deeper world config
-#    sections: [section1]
-adventure-mode: false
+# Example config:
+
+# Extensions
+x-particles-vomit: &vomit
+  count: 30
+  duration: 10
+  iterations: 6
+  offset: 3s
+  particles: [SLIME]
+
+# Layer config uses DeeperWorld sections
+# effect names are each effect class' @SerialName
+storage:
+  relicpath: "relics/"
+layers:
+  - name: Orth
+    sub: City of the Great Pit
+    deathMessage: in the city of Orth
+    depth:
+      start: -1
+      end: 0
+    sections: [city]
+  - name: Edge of the Abyss
+    sub: 0-1350 meters
+    deathMessage: on the Edge of the Abyss
+    depth:
+      start: 0
+      end: 1350
+    effects:
+      - !<potion>
+        strength: 2
+        duration: 3s
+        effects: [HUNGER]
+      - !<particles>
+        <<: *vomit
+    sections: [l1s1,l1s2,l1s3,l1s4,l1s5,l1s6]
