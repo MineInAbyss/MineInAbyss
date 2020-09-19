@@ -1,9 +1,9 @@
-package com.derongan.minecraft.mineinabyss.configuration;
+package com.derongan.minecraft.mineinabyss.configuration
 
-import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatColor
 
-public class ConfigConstants {
-    public final static String PLAYER_DATA_DIR = "player";
-    public final static ChatColor mainColor = ChatColor.RED;
-    public final static ChatColor secondaryColor = ChatColor.GOLD;
+object ConfigConstants {
+    const val PLAYER_DATA_DIR = "player"
+    val mainColor = ChatColor.RED
+    val secondaryColor = ChatColor.GOLD
 }

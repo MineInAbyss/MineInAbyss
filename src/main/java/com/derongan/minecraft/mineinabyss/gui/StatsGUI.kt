@@ -35,9 +35,6 @@ class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss 
     private fun buildMain() = guiyLayout {
         //Player head
         setElement(0, 0, getHead(player).toCell(col1.toString() + player.name))
-        //Whistle
-        val whistleItem = playerData.whistle.item
-        setElement(1, 0, whistleItem.toCell(col1.toString() + "Whisle: " + whistleItem.itemMeta?.displayName))
 
         //The section the player is currently in
         val section = player.location.section

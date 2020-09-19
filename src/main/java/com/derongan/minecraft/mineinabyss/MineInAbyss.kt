@@ -4,6 +4,7 @@ import com.derongan.minecraft.guiy.GuiListener
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
+import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.geary.AbyssLocationSystem
 import com.derongan.minecraft.mineinabyss.geary.DepthMeter
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
@@ -16,7 +17,6 @@ import com.mineinabyss.geary.ecs.component.components.grappling.GrapplingHook
 import com.mineinabyss.geary.ecs.component.components.rendering.DisplayState
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.plugin.getPlugin
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.plugin.registerService
@@ -35,7 +35,9 @@ class MineInAbyss : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         logger.info("On enable has been called")
+
         AbyssContext
+        PlayerDataConfig
 
         //Vault setup
         if (econ == null) {
@@ -113,14 +115,11 @@ class MineInAbyss : JavaPlugin() {
     override fun onDisable() {
         // Plugin shutdown logic
         logger.info("onDisable has been invoked!")
-        AbyssContext.configManager.saveAll()
+        PlayerDataConfig.saveAll()
     }
 
     companion object {
         @JvmStatic
         val econ by lazy { getServiceOrNull<Economy>("Vault") }
-
-        @JvmStatic
-        val instance: MineInAbyss? by lazy { getPlugin() }
     }
 }

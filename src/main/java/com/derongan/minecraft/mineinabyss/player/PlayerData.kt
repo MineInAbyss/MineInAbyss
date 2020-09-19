@@ -1,7 +1,6 @@
 package com.derongan.minecraft.mineinabyss.player
 
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
-import com.derongan.minecraft.mineinabyss.whistles.WhistleType
 import com.derongan.minecraft.mineinabyss.world.Layer
 import org.bukkit.entity.Player
 import java.util.*
@@ -29,7 +28,6 @@ interface PlayerData {
     var isAffectedByCurse: Boolean
     val ascensionEffects: List<AscensionEffect>
     var curseAccrued: Double
-    var whistle: WhistleType
     val level: Int
     var exp: Double
     var expOnDescent: Double
