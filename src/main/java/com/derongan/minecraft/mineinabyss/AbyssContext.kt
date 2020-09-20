@@ -7,7 +7,7 @@ import java.util.*
 /**
  * Stores context for the plugin, such as the plugin instance
  */
-object AbyssContext {
+internal object AbyssContext {
     val playerDataMap = mutableMapOf<UUID, PlayerData>()
     val logger = mineInAbyss.logger
 
