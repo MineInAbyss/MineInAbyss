@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.commands
 
-import com.derongan.minecraft.mineinabyss.AbyssContext
+import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
+import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
@@ -16,9 +17,8 @@ import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.serialization.toSerializable
 import org.bukkit.Material
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
 import java.util.*
 
 @ExperimentalCommandDSL
@@ -37,7 +37,7 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
         "start" command@{
             playerAction {
                 if (player.playerData.isIngame)
-                    //TODO allow access to stopCommand directly from here
+                //TODO allow access to stopCommand directly from here
                     this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
                 GondolaGUI(player).show(player)
             }
@@ -63,29 +63,27 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
             val cost by intArg { default = 0 }
 
             playerAction {
-                val spawnLocConfig = AbyssContext.configManager.startLocationCM
-                val spawns = spawnLocConfig.getMapList(GondolaGUI.SPAWN_KEY)
-                var displayItem = player.inventory.itemInMainHand.clone()
+                SpawnLocationsConfig.data.spawns
+                val displayItem = player.inventory.itemInMainHand
 
                 if (displayItem.type == Material.AIR)
-                    displayItem = ItemStack(Material.GRASS_BLOCK)
+                    displayItem.type = Material.GRASS_BLOCK
 
                 displayItem.editItemMeta {
-                    if (displayName != "")
+                    if (displayName.isNotEmpty())
                         setDisplayName(displayName)
-                    addItemFlags(ItemFlag.HIDE_ATTRIBUTES) //TODO probably better to add these tags to the serialized items
-                    addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
+//                    addItemFlags(ItemFlag.HIDE_ATTRIBUTES) //TODO probably better to add these tags to the serialized items
+//                    addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
                 }
 
-                val map = mutableMapOf<String, Any>()
-                map["location"] = player.location
-                map["display-item"] = displayItem
-                if (cost != 0)
-                    map["cost"] = cost
-
-                spawns.add(map)
-                spawnLocConfig.set(GondolaGUI.SPAWN_KEY, spawns)
-                spawnLocConfig.saveConfig()
+                SpawnLocationsConfig.data.spawns.add(
+                        SpawnLocation(
+                                location = player.location,
+                                displayItem = displayItem.toSerializable(),
+                                cost = cost
+                        )
+                )
+                SpawnLocationsConfig.queueSave()
 
                 sender.success("Created spawn")
             }

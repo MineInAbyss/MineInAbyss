@@ -4,6 +4,7 @@ import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
 import com.derongan.minecraft.mineinabyss.MineInAbyss.Companion.econ
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
+import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
@@ -20,11 +21,9 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.io.IOException
 
 object PlayerListener : Listener {
-    private val playerDataConfigManager = AbyssContext.configManager.playerDataCM
-
     @EventHandler
     fun onPlayerJoin(joinEvent: PlayerJoinEvent) {
-        AbyssContext.playerDataMap[joinEvent.player.uniqueId] = playerDataConfigManager.loadPlayerData(joinEvent.player)
+        AbyssContext.playerDataMap[joinEvent.player.uniqueId] = PlayerDataConfig.loadPlayerData(joinEvent.player)
     }
 
     @EventHandler
@@ -41,7 +40,7 @@ object PlayerListener : Listener {
 
         val data: PlayerData = AbyssContext.playerDataMap.remove(player.uniqueId) ?: return
         try {
-            playerDataConfigManager.savePlayerData(data)
+            PlayerDataConfig.savePlayerData(data)
         } catch (e: IOException) {
             logWarn("Failed to save data for player ${playerQuitEvent.player.uniqueId}")
             e.printStackTrace()

@@ -1,6 +1,5 @@
 package com.derongan.minecraft.mineinabyss
 
-import com.derongan.minecraft.mineinabyss.configuration.MineInAbyssConfig
 import com.derongan.minecraft.mineinabyss.player.PlayerData
 import org.bukkit.entity.Player
 import java.util.*
@@ -11,7 +10,6 @@ import java.util.*
 internal object AbyssContext {
     val playerDataMap = mutableMapOf<UUID, PlayerData>()
     val logger = mineInAbyss.logger
-    val configManager = MineInAbyssConfig(mineInAbyss)
 
     fun getPlayerData(player: Player): PlayerData {
         return playerDataMap[player.uniqueId] ?: error("Player data not found")
