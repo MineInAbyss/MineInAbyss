@@ -18,7 +18,7 @@ object PlayerDataConfig {
         val path = getPlayerDataPath(player).toFile()
         return if (path.exists())
             Yaml(configuration = YamlConfiguration(
-                    strictMode = false //ignore unnecessary old tags in player data
+                    strictMode = false //ignore unnecessary old tags in player data for easier migration
             )).decodeFromString(PlayerDataImpl.serializer(), path.readLines().joinToString(separator = "\n"))
         else PlayerDataImpl(player.uniqueId)
     }

@@ -4,6 +4,7 @@ import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
 import com.derongan.minecraft.mineinabyss.world.Layer
 import com.mineinabyss.idofront.serialization.UUIDSerializer
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -15,14 +16,15 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-//TODO use kotlinx.serialization
 @Serializable
 class PlayerDataImpl(
-        @Serializable(with=UUIDSerializer::class)
+        @Serializable(with = UUIDSerializer::class)
         val uuid: UUID, //TODO pass this from file name somehow
-        override var currentLayer: Layer? = null,
+        @SerialName("affectable")
         override var isAffectedByCurse: Boolean = true,
+        @SerialName("ingame")
         override var isIngame: Boolean = false,
+        @SerialName("ascended")
         override var curseAccrued: Double = 0.0,
         override var exp: Double = 0.0,
         override var expOnDescent: Double = 0.0,
@@ -30,7 +32,12 @@ class PlayerDataImpl(
         override var descentDate: Date? = null,
 ) : PlayerData {
     @Transient
+    override var currentLayer: Layer? = null
+
+    @Transient
     override val player: Player = Bukkit.getPlayer(uuid) ?: error("UUID of player data doesn't match a player")
+
+    @Transient
     private val effects: MutableList<AscensionEffect> = mutableListOf()
     override val ascensionEffects get() = effects.toList()
     override val level: Int get() = exp.toInt() / 10 //TODO write a proper formula
