@@ -24,7 +24,7 @@ class LayerImpl(
         val _sections: List<String> = emptyList(),
 ) : Layer {
     @Transient
-    override val sections: List<Section> = _sections.mapNotNull { WorldManager.Companion.getSectionFor(it) }
+    override val sections: List<Section> = _sections.mapNotNull { WorldManager.getSectionFor(it) }
     override val startDepth: Int get() = depth.start
     override val endDepth: Int get() = depth.end
 

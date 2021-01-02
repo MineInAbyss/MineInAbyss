@@ -1,7 +1,7 @@
 package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.world.section.Section
-import com.derongan.minecraft.mineinabyss.configuration.MineInAbyssMainConfig
+import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
 import org.bukkit.World
 
@@ -18,7 +18,7 @@ private const val DEATH_MESSAGE_KEY = "death-message"
  * @property abyssWorlds A list of worlds that are part of the abyss
  */
 class AbyssWorldManagerImpl : AbyssWorldManager {
-    private var _layers: List<Layer> = MineInAbyssMainConfig.data.layers
+    private var _layers: List<Layer> = MIAConfig.data.layers
     override val layers: List<Layer>
         get() = _layers.toList()
     private val abyssWorlds = mutableSetOf<World>()

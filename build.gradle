@@ -55,7 +55,7 @@ dependencies {
     implementation 'com.mineinabyss:geary:1.0.3'
     implementation 'com.derongan.minecraft:guiy:0.1.0-alpha.7'
     implementation 'com.mineinabyss:idofront:0.3.25'
-    compileOnly 'com.derongan.minecraft:deeperworld:0.2.23'
+    compileOnly 'com.derongan.minecraft:deeperworld:0.3.32'
 }
 
 shadowJar {
