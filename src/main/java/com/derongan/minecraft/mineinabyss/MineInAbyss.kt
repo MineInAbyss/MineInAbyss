@@ -73,9 +73,9 @@ class MineInAbyss : JavaPlugin() {
 
         registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
         registerEvents(
-                GuiListener(this),
-                PlayerListener,
-                AscensionListener
+            GuiListener(this),
+            PlayerListener,
+            AscensionListener
         )
         //register command executors
         AscensionCommandExecutor
@@ -87,11 +87,13 @@ class MineInAbyss : JavaPlugin() {
             setDisplayName("Grappling Hook")
             setCustomModelData(3)
         }
-        gearyService!!.attachToItemStack(setOf(
+        gearyService!!.attachToItemStack(
+            setOf(
                 GrapplingHook(1.3, 3, 4, Color.fromRGB(142, 89, 60), 1),
                 Durability(64),
                 DisplayState(3)
-        ), itemStack)
+            ), itemStack
+        )
 
         return ShapedRecipe(grapplingRecipeKey, itemStack).apply {
             shape("III", "ISI", " S ")

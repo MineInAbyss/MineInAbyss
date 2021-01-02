@@ -11,7 +11,10 @@ import com.mineinabyss.geary.ecs.system.IteratingSystem
 import org.bukkit.ChatColor
 import org.bukkit.Location
 
-class AbyssLocationSystem : IteratingSystem(Family.builder().setAll(setOf(Activated::class.java, DepthMeter::class.java)).build()) {
+//TODO switch to new Geary ECS
+class AbyssLocationSystem : IteratingSystem(
+    Family.builder().setAll(setOf(Activated::class.java, DepthMeter::class.java)).build()
+) {
 
     override fun update(gearyEntity: GearyEntity?) {
         val entity = gearyEntity!!
@@ -25,7 +28,13 @@ class AbyssLocationSystem : IteratingSystem(Family.builder().setAll(setOf(Activa
             } else {
                 val accuracy = entity.getComponent(DepthMeter::class.java).accuracy
                 val depth = accuracy * (getDepth(layer, section, player.location) / accuracy)
-                player.sendMessage("${ChatColor.ITALIC}${ChatColor.DARK_AQUA}The compass spins. You are suddenly aware that you are about ${ChatColor.AQUA}${pluralizeMeters(depth)}${ChatColor.DARK_AQUA} deep in ${ChatColor.AQUA}${layer.name}.")
+                player.sendMessage(
+                    "${ChatColor.ITALIC}${ChatColor.DARK_AQUA}The compass spins. You are suddenly aware that you are about ${ChatColor.AQUA}${
+                        pluralizeMeters(
+                            depth
+                        )
+                    }${ChatColor.DARK_AQUA} deep in ${ChatColor.AQUA}${layer.name}."
+                )
             }
         }
 
@@ -54,7 +63,8 @@ class AbyssLocationSystem : IteratingSystem(Family.builder().setAll(setOf(Activa
         val minecraftDepth = currentSectionTop + (256 - location.y)
         val layerDepth = layer.endDepth - layer.startDepth
 
-        return (layer.startDepth + minecraftDepth / totalDepth * layerDepth).toInt().coerceAtMost(layer.endDepth).coerceAtLeast(layer.startDepth)
+        return (layer.startDepth + minecraftDepth / totalDepth * layerDepth).toInt()
+            .coerceIn(layer.startDepth, layer.endDepth)
     }
 
     fun pluralizeMeters(count: Int): String {

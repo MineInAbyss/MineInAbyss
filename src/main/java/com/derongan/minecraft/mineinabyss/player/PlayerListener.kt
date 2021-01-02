@@ -56,11 +56,13 @@ object PlayerListener : Listener {
         if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) pde.keepInventory = true
         if (!playerData.isIngame) return
         playerData.isIngame = false
-        player.sendMessage("""
+        player.sendMessage(
+            """
             &6&lGame Stats:
             &6Exp earned:&7 ${playerData.exp - playerData.expOnDescent}
             &6Started dive on:&7 ${playerData.descentDate}
-            """.trimIndent().color())
+            """.trimIndent().color()
+        )
     }
 
     @EventHandler

@@ -18,18 +18,18 @@ import java.util.*
 
 @Serializable
 class PlayerDataImpl(
-        @Serializable(with = UUIDSerializer::class)
-        val uuid: UUID, //TODO pass this from file name somehow
-        @SerialName("affectable")
-        override var isAffectedByCurse: Boolean = true,
-        @SerialName("ingame")
-        override var isIngame: Boolean = false,
-        @SerialName("ascended")
-        override var curseAccrued: Double = 0.0,
-        override var exp: Double = 0.0,
-        override var expOnDescent: Double = 0.0,
-        @Serializable(with = DateAsLongSerializer::class)
-        override var descentDate: Date? = null,
+    @Serializable(with = UUIDSerializer::class)
+    val uuid: UUID, //TODO pass this from file name somehow
+    @SerialName("affectable")
+    override var isAffectedByCurse: Boolean = true,
+    @SerialName("ingame")
+    override var isIngame: Boolean = false,
+    @SerialName("ascended")
+    override var curseAccrued: Double = 0.0,
+    override var exp: Double = 0.0,
+    override var expOnDescent: Double = 0.0,
+    @Serializable(with = DateAsLongSerializer::class)
+    override var descentDate: Date? = null,
 ) : PlayerData {
     @Transient
     override var currentLayer: Layer? = null

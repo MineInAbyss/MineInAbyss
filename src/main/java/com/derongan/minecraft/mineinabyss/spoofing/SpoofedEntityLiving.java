@@ -1,8 +1,5 @@
 package com.derongan.minecraft.mineinabyss.spoofing;
 
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
-
 //TODO fix for 1.13
 public class SpoofedEntityLiving {
 //    private EntityLiving entity;

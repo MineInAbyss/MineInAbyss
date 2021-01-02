@@ -3,8 +3,8 @@ version: @plugin_version@
 author: Derongan
 main: com.derongan.minecraft.mineinabyss.MineInAbyss
 api-version: '1.16'
-softdepend: [Multiverse-Core, Geary, KotlinSpice]
-depend: [DeeperWorld, Vault]
+softdepend: [ Multiverse-Core, Geary, KotlinSpice ]
+depend: [ DeeperWorld, Vault ]
 
 prefix: MiB
 description: A mod that adds abyss effects

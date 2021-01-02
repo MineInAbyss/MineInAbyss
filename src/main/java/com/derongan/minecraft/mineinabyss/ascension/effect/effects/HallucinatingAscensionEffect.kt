@@ -9,11 +9,12 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("hallucination")
 data class HallucinatingAscensionEffect(
-        override val offset: TimeSpan,
-        override val duration: TimeSpan,
-        override val iterations: Int
+    override val offset: TimeSpan,
+    override val duration: TimeSpan,
+    override val iterations: Int
 ) : AbstractAscensionEffect() {
 //    private val stands: List<SpoofedEntityLiving> = ArrayList<SpoofedEntityLiving>()
+
     override fun cleanUp(player: Player) {
 //        PlayerConnection con = ((CraftPlayer) player).getHandle().playerConnection;
 //        stands.forEach(stand -> stand.destroy(con));
@@ -40,6 +41,7 @@ data class HallucinatingAscensionEffect(
 //            });
 //        }
     } //
+
     //    private EntityArmorStand getNewArmorStand(Player player) {
     //        EntityArmorStand stand = new EntityArmorStand(((CraftWorld) player.getWorld()).getHandle());
     //        stand.setBasePlate(true);

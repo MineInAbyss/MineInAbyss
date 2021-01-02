@@ -19,11 +19,11 @@ import kotlin.math.abs
 @Serializable
 @SerialName("maxHealth")
 data class MaxHealthChangeEffect constructor(
-        val addMaxHealth: Double,
-        override val offset: TimeSpan = 0.ticks,
-        override val duration: TimeSpan,
-        override val iterations: Int = 1,
-        val minHealth: Double? = null,
+    val addMaxHealth: Double,
+    override val offset: TimeSpan = 0.ticks,
+    override val duration: TimeSpan,
+    override val iterations: Int = 1,
+    val minHealth: Double? = null,
 ) : AbstractAscensionEffect() {
     @Transient
     var modifier: AttributeModifier? = null

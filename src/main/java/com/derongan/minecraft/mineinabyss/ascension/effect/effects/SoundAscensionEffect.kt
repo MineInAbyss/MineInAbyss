@@ -17,10 +17,10 @@ import kotlin.random.Random
 @Serializable
 @SerialName("sound")
 data class SoundAscensionEffect(
-        val sounds: List<Sound>,
-        override val offset: TimeSpan,
-        override val iterations: Int,
-        override val duration: TimeSpan
+    val sounds: List<Sound>,
+    override val offset: TimeSpan,
+    override val iterations: Int,
+    override val duration: TimeSpan
 ) : AbstractAscensionEffect() {
     override fun applyEffect(player: Player) { //TODO do not play sounds too quickly together
         val soundLocation = player.location + (Vector.getRandom() * 5 - Vector(2.5, 2.5, 2.5))

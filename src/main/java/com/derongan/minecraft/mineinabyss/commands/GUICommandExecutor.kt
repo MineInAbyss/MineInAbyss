@@ -48,10 +48,13 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                     sender.error("You are not currently ingame!\nStart by using /start")
                 } else if (!leaveConfirm.contains(player.uniqueId)) {
                     leaveConfirm.add(player.uniqueId)
-                    sender.info("""
-                                &cYou are about to leave the game!!!
-                                &lYour progress will be lost&r&c, but any xp and money you earned will stay with you.
-                                Type /stopdescent again to leave""".trimIndent().color())
+                    sender.info(
+                        """
+                        &cYou are about to leave the game!!!
+                        &lYour progress will be lost&r&c, but any xp and money you earned will stay with you.
+                        Type /stopdescent again to leave
+                        """.trimIndent().color()
+                    )
                 } else {
                     leaveConfirm.remove(player.uniqueId)
                     player.health = 0.0
@@ -77,11 +80,11 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                 }
 
                 SpawnLocationsConfig.data.spawns.add(
-                        SpawnLocation(
-                                location = player.location,
-                                displayItem = displayItem.toSerializable(),
-                                cost = cost
-                        )
+                    SpawnLocation(
+                        location = player.location,
+                        displayItem = displayItem.toSerializable(),
+                        cost = cost
+                    )
                 )
                 SpawnLocationsConfig.queueSave()
 

@@ -17,9 +17,11 @@ object PlayerDataConfig {
     fun loadPlayerData(player: Player): PlayerData {
         val path = getPlayerDataPath(player).toFile()
         return if (path.exists())
-            Yaml(configuration = YamlConfiguration(
+            Yaml(
+                configuration = YamlConfiguration(
                     strictMode = false //ignore unnecessary old tags in player data for easier migration
-            )).decodeFromString(PlayerDataImpl.serializer(), path.readLines().joinToString(separator = "\n"))
+                )
+            ).decodeFromString(PlayerDataImpl.serializer(), path.readLines().joinToString(separator = "\n"))
         else PlayerDataImpl(player.uniqueId)
     }
 
@@ -28,18 +30,22 @@ object PlayerDataConfig {
         val path = getPlayerDataPath(playerData.player).toFile()
         path.parentFile.mkdirs()
 
-        path.writeText(Yaml(configuration = YamlConfiguration(
-                encodeDefaults = false
-        )).encodeToString(PlayerDataImpl.serializer(), playerData))
+        path.writeText(
+            Yaml(
+                configuration = YamlConfiguration(
+                    encodeDefaults = false
+                )
+            ).encodeToString(PlayerDataImpl.serializer(), playerData)
+        )
     }
 
     @VisibleForTesting
     fun getPlayerDataPath(player: Player): Path {
         val uuid = player.uniqueId
         return mineInAbyss.dataFolder
-                .toPath()
-                .resolve(ConfigConstants.PLAYER_DATA_DIR)
-                .resolve("$uuid.yml")
+            .toPath()
+            .resolve(ConfigConstants.PLAYER_DATA_DIR)
+            .resolve("$uuid.yml")
     }
 
     fun saveAll() {
@@ -55,6 +61,8 @@ object PlayerDataConfig {
     }
 
     init {
-        Bukkit.getServer().onlinePlayers.forEach { player -> AbyssContext.playerDataMap[player.uniqueId] = loadPlayerData(player) }
+        Bukkit.getServer().onlinePlayers.forEach { player ->
+            AbyssContext.playerDataMap[player.uniqueId] = loadPlayerData(player)
+        }
     }
 }

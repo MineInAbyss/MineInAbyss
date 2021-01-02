@@ -31,8 +31,8 @@ class AbyssWorldManagerImpl : AbyssWorldManager {
     init {
         //add all worlds into abyssWorlds
         _layers.flatMap { it.sections }
-                .map { it.world }
-                .distinct()
-                .forEach { abyssWorlds.add(it) }
+            .map { it.world }
+            .distinct()
+            .forEach { abyssWorlds.add(it) }
     }
 }

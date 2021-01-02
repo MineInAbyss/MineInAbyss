@@ -81,7 +81,9 @@ object AscensionListener : Listener {
         val localCords = Point(to.x.toInt(), to.z.toInt()) - reg.center
         val distFromShaft = localCords.length
 
-        val distFactor = ((distFromShaft - layer.maxCurseRadius) / (layer.minCurseRadius - layer.maxCurseRadius)).coerceIn(0.0, 1.0)
+        val distFactor = ((distFromShaft - layer.maxCurseRadius) / (layer.minCurseRadius - layer.maxCurseRadius))
+            .coerceIn(0.0, 1.0)
+
         var curseFactor = layer.maxCurseMultiplier - distFactor * (layer.maxCurseMultiplier - layer.minCurseMultiplier)
 
         var overridePri = 0

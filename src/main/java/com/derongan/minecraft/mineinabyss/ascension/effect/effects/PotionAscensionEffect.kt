@@ -13,12 +13,12 @@ import org.bukkit.potion.PotionEffectType
 @Serializable
 @SerialName("potion")
 data class PotionAscensionEffect(
-        val strength: Int = 1,
-        override val offset: TimeSpan = 0.ticks,
-        override val iterations: Int = 1,
-        override val duration: TimeSpan,
-        @SerialName("effects")
-        private val _effectsToApply: List<String>
+    val strength: Int = 1,
+    override val offset: TimeSpan = 0.ticks,
+    override val iterations: Int = 1,
+    override val duration: TimeSpan,
+    @SerialName("effects")
+    private val _effectsToApply: List<String>
 ) : AbstractAscensionEffect() {
     @Transient
     val effectsToApply = _effectsToApply.mapNotNull { PotionEffectType.getByName(it) }

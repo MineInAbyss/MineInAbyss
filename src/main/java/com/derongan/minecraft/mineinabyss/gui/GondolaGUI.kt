@@ -38,7 +38,10 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
 
         return if (balance >= cost) {
             displayItem.editItemMeta {
-                lore = listOf("${ChatColor.RESET}Cost: ${ChatColor.GOLD}$$cost", "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$$balance")
+                lore = listOf(
+                    "${ChatColor.RESET}Cost: ${ChatColor.GOLD}$$cost",
+                    "${ChatColor.WHITE}You have: ${ChatColor.GOLD}$$balance"
+                )
             }
 
             val button = ClickableElement(displayItem.toCell()) {

@@ -9,20 +9,20 @@ import org.bukkit.Location
 import java.io.File
 
 internal object SpawnLocationsConfig : IdofrontConfig<SpawnLocationsConfig.Data>(
-        mineInAbyss,
-        Data.serializer(),
-        File(mineInAbyss.dataFolder, "spawn-locs.yml")
+    mineInAbyss,
+    Data.serializer(),
+    File(mineInAbyss.dataFolder, "spawn-locs.yml")
 ) {
     @Serializable
     class Data(
-            val spawns: MutableList<SpawnLocation>
+        val spawns: MutableList<SpawnLocation>
     )
 }
 
 @Serializable
 data class SpawnLocation(
-        @Serializable(with = LocationSerializer::class)
-        val location: Location,
-        val displayItem: SerializableItemStack,
-        val cost: Int,
+    @Serializable(with = LocationSerializer::class)
+    val location: Location,
+    val displayItem: SerializableItemStack,
+    val cost: Int,
 )

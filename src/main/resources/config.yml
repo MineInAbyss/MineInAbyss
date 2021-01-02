@@ -6,7 +6,7 @@ x-particles-vomit: &vomit
   duration: 10
   iterations: 6
   offset: 3s
-  particles: [SLIME]
+  particles: [ SLIME ]
 
 # Layer config uses DeeperWorld sections
 # effect names are each effect class' @SerialName
@@ -19,7 +19,7 @@ layers:
     depth:
       start: -1
       end: 0
-    sections: [city]
+    sections: [ city ]
   - name: Edge of the Abyss
     sub: 0-1350 meters
     deathMessage: on the Edge of the Abyss
@@ -30,7 +30,7 @@ layers:
       - !<potion>
         strength: 2
         duration: 3s
-        effects: [HUNGER]
+        effects: [ HUNGER ]
       - !<particles>
         <<: *vomit
-    sections: [l1s1,l1s2,l1s3,l1s4,l1s5,l1s6]
+    sections: [ l1s1,l1s2,l1s3,l1s4,l1s5,l1s6 ]

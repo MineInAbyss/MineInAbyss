@@ -50,7 +50,10 @@ class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss 
         setElement(7, 0, Material.EXPERIENCE_BOTTLE.toCell("${col1}Level: ${CC.GREEN}${playerData.level}"))
 
         //The player's balance
-        setElement(8, 0, Material.GOLD_BLOCK.toCell("${col1}Balance: ${CC.GOLD}$${MineInAbyss.econ!!.getBalance(player)}"))
+        setElement(
+            8, 0,
+            Material.GOLD_BLOCK.toCell("${col1}Balance: ${CC.GOLD}$${MineInAbyss.econ!!.getBalance(player)}")
+        )
 
         addBackButton(this)
     }

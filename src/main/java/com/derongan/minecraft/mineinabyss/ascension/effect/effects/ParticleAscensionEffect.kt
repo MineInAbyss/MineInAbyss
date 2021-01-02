@@ -15,11 +15,11 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("particles")
 data class ParticleAscensionEffect constructor(
-        val count: Int,
-        override val offset: TimeSpan,
-        override val duration: TimeSpan,
-        override val iterations: Int,
-        private val particles: List<Particle>
+    val count: Int,
+    override val offset: TimeSpan,
+    override val duration: TimeSpan,
+    override val iterations: Int,
+    private val particles: List<Particle>
 ) : AbstractAscensionEffect() {
     override fun applyEffect(player: Player) {
         particles.forEach { addParticlesAroundHead(player, it) }
