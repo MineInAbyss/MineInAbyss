@@ -35,9 +35,7 @@ internal object MIAConfig : IdofrontConfig<MIAConfig.Data>(
         private val hubSectionName: String = "orth",
     ) {
         val hubSection by lazy {
-            WorldManager.getSectionFor(hubSectionName).also {
-                if (it == null) AbyssContext.logger.warning("No hub section can be found")
-            }
+            WorldManager.getSectionFor(hubSectionName) ?: error("Section $hubSectionName was not found for the hub.")
         }
     }
 }

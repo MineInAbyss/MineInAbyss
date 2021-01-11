@@ -47,12 +47,10 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
         }
         "storage" {
             playerAction {
-                MIAConfig.data.hubSection?.let {
-                    if (it.key == WorldManager.getSectionFor(player.location)?.key)
-                        player.openHubStorage()
-                    else
-                        sender.error("You are not in the hub area")
-                }
+                if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location))
+                    player.openHubStorage()
+                else
+                    sender.error("You are not in the hub area")
             }
         }
         "stopdescent" {
