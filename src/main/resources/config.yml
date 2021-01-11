@@ -34,3 +34,4 @@ layers:
       - !<particles>
         <<: *vomit
     sections: [ l1s1,l1s2,l1s3,l1s4,l1s5,l1s6 ]
+hubSectionName: city

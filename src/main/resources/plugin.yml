@@ -20,6 +20,8 @@ commands:
     description: Shows a list of locations to start the game from!
   stopdescent:
     description: Stop your current run
+  storage:
+    description: Open your hub storage
   creategondolaspawn:
     description: Creates a location from which players will be able to spawn
 

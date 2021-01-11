@@ -18,10 +18,11 @@ version plugin_version
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+    // maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://erethon.de/repo/' } //HeadLib
     maven { url 'http://nexus.okkero.com/repository/maven-releases/' }
+    maven { url 'https://repo.codemc.io/repository/nms/' }
     maven githubPackage.invoke("MineInAbyss/guiy")
     maven githubPackage.invoke("MineInAbyss/DeeperWorld")
     maven githubPackage.invoke("MineInAbyss/Idofront")
@@ -46,7 +47,9 @@ dependencies {
     compileOnly "org.spigotmc:spigot-api:$server_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compileOnly "org.cultofclang.minecraft:kotlinspice:$kotlin_version+"
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly ('com.github.MilkBowl:VaultAPI:1.7') {
+        exclude group: 'org.bukkit'
+    }
 //    compileOnly 'com.badlogicgames.ashley:ashley:1.7.3'
 
     implementation "com.okkero.skedule:skedule:1.2.6"
