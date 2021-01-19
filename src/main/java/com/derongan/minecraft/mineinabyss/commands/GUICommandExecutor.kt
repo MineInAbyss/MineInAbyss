@@ -1,11 +1,14 @@
 package com.derongan.minecraft.mineinabyss.commands
 
+import com.derongan.minecraft.deeperworld.services.WorldManager
+import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.playerData
+import com.derongan.minecraft.mineinabyss.player.openHubStorage
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
@@ -40,6 +43,14 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                 //TODO allow access to stopCommand directly from here
                     this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
                 GondolaGUI(player).show(player)
+            }
+        }
+        "storage" {
+            playerAction {
+                if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location))
+                    player.openHubStorage()
+                else
+                    sender.error("You are not in the hub area")
             }
         }
         "stopdescent" {

@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss.configuration
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.derongan.minecraft.deeperworld.services.WorldManager
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.ascension.effect.EffectRegistration
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.world.LayerImpl
@@ -33,6 +34,8 @@ internal object MIAConfig : IdofrontConfig<MIAConfig.Data>(
         val layers: List<LayerImpl>, //TODO way of changing the serializer from service
         private val hubSectionName: String = "orth",
     ) {
-        val hubSection by lazy { WorldManager.getSectionFor(hubSectionName) }
+        val hubSection by lazy {
+            WorldManager.getSectionFor(hubSectionName) ?: error("Section $hubSectionName was not found for the hub.")
+        }
     }
 }
