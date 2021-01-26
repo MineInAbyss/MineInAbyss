@@ -17,7 +17,7 @@ import kotlin.random.Random
 @Serializable
 @SerialName("sound")
 data class SoundAscensionEffect(
-    val sounds: List<Sound>,
+    val sounds: List<String>,
     override val offset: TimeSpan,
     override val iterations: Int,
     override val duration: TimeSpan
