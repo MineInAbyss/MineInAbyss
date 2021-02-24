@@ -12,10 +12,10 @@ abstract class AbstractAscensionEffect : AscensionEffect {
 
     override fun applyEffect(player: Player, ticks: Int) {
         mineInAbyss.schedule {
-            waitFor(offset.ticks)
+            waitFor(offset.inTicks)
             repeat(iterations) {
                 applyEffect(player)
-                waitFor(duration.ticks)
+                waitFor(duration.inTicks)
             }
             cleanUp(Bukkit.getPlayer(player.uniqueId) ?: player) //get new player reference if player relogged
         }
@@ -24,7 +24,7 @@ abstract class AbstractAscensionEffect : AscensionEffect {
     abstract fun applyEffect(player: Player)
 
     override val isDone: Boolean
-        get() = duration.millis <= 0
+        get() = duration.inMillis <= 0
 
     override fun cleanUp(player: Player) {}
 }

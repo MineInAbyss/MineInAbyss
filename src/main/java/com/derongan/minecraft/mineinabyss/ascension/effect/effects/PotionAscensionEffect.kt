@@ -25,7 +25,7 @@ data class PotionAscensionEffect(
 
     override fun applyEffect(player: Player) {
         for (potionEffectType in effectsToApply) {
-            val totalDuration = (player.getPotionEffect(potionEffectType)?.duration ?: 0) + duration.ticks
+            val totalDuration = (player.getPotionEffect(potionEffectType)?.duration ?: 0) + duration.inTicks
             player.addPotionEffect(PotionEffect(potionEffectType, totalDuration.toInt(), strength))
         }
     }
