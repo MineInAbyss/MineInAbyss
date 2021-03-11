@@ -1,5 +1,8 @@
 [![Mine in Abyss](https://user-images.githubusercontent.com/16233018/75004708-02cc4800-543a-11ea-8bb3-a9184d9311a0.png)](https://mineinabyss.com)
 
+[![Maven](https://badgen.net/maven/v/metadata-url/repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml)](https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss)
+[![Discord](https://badgen.net/discord/members/QXPCk2y)](https://discord.gg/QXPCk2y)
+
 # Mine In Abyss
 
 Mine In Abyss is a Spigot plugin made for the Mine In Abyss Minecraft server.
