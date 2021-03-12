@@ -10,7 +10,7 @@ plugins {
 
 apply from: 'https://raw.githubusercontent.com/MineInAbyss/shared-gradle/master/common.gradle'
 
-group 'com.derongan.minecraft'
+group 'com.mineinabyss'
 version plugin_version
 
 repositories {
@@ -37,6 +37,7 @@ publishing {
     }
     publications {
         maven(MavenPublication) {
+            artifactId = "mineinabyss"
             from(components.java)
         }
     }
