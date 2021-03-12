@@ -18,24 +18,25 @@ repositories {
     jcenter()
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
-    maven { url 'https://erethon.de/repo/' } //HeadLib
-    maven { url 'http://nexus.okkero.com/repository/maven-releases/' }
     maven { url 'https://repo.codemc.io/repository/nms/' }
-    maven githubPackage.invoke("MineInAbyss/guiy")
-    maven githubPackage.invoke("MineInAbyss/DeeperWorld")
-    maven githubPackage.invoke("MineInAbyss/Idofront")
-    maven githubPackage.invoke("MineInAbyss/geary")
-    maven githubPackage.invoke("MineInAbyss/KotlinSpice")
-    maven { url 'https://jitpack.io' } //JitPack
-    mavenLocal()
+    maven { url 'https://repo.mineinabyss.com/releases' }
+    maven { url 'https://erethon.de/repo/' } //HeadLib
+    maven { url 'https://jitpack.io' }
+//    mavenLocal()
 }
 
 publishing {
     repositories {
-        maven githubPackage.invoke("MineInAbyss/MineInAbyss")
+        maven {
+            url = "https://repo.mineinabyss.com/releases"
+            credentials {
+                username = findProperty('mineinabyssMavenUsername')
+                password = findProperty('mineinabyssMavenPassword')
+            }
+        }
     }
     publications {
-        gpr(MavenPublication) {
+        maven(MavenPublication) {
             from(components.java)
         }
     }
@@ -45,21 +46,19 @@ dependencies {
     compileOnly "org.spigotmc:spigot-api:$server_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    compileOnly platform("com.mineinabyss:kotlinspice:1.4.10-10")
-    compileOnly "com.okkero.skedule:skedule"
+    compileOnly platform("com.mineinabyss:kotlinspice:$kotlin_version+")
+    compileOnly 'com.github.okkero:skedule'
+    compileOnly 'de.erethon:headlib'
 
     compileOnly('com.github.MilkBowl:VaultAPI:1.7') {
         exclude group: 'org.bukkit'
     }
-//    compileOnly 'com.badlogicgames.ashley:ashley:1.7.3'
 
-    implementation "com.okkero.skedule:skedule:1.2.6"
-    implementation 'de.erethon:headlib:3.0.4'
+    compileOnly 'com.mineinabyss:geary-spigot:0.2.26'
+    compileOnly 'com.derongan.minecraft:deeperworld:0.3.41'
 
-    implementation 'com.mineinabyss:geary-spigot:0.2.21'
-    implementation 'com.derongan.minecraft:guiy:0.1.0-alpha.7'
-    implementation "com.mineinabyss:idofront:0.5.6"
-    compileOnly 'com.derongan.minecraft:deeperworld:0.3.40'
+    implementation 'com.derongan.minecraft:guiy:0.1.0-alpha'
+    implementation "com.mineinabyss:idofront:0.5.8"
 }
 
 shadowJar {

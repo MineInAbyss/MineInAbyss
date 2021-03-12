@@ -1,7 +1,9 @@
 [![Mine in Abyss](https://user-images.githubusercontent.com/16233018/75004708-02cc4800-543a-11ea-8bb3-a9184d9311a0.png)](https://mineinabyss.com)
 
+[![Java CI with Gradle](https://github.com/MineInAbyss/MineInAbyss/actions/workflows/gradle-ci.yml/badge.svg)](https://github.com/MineInAbyss/MineInAbyss/actions/workflows/gradle-ci.yml)
 [![Maven](https://badgen.net/maven/v/metadata-url/repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml)](https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss)
 [![Discord](https://badgen.net/discord/members/QXPCk2y)](https://discord.gg/QXPCk2y)
+[![Contribute](https://shields.io/badge/Contribute-e57be5?logo=github%20sponsors&style=flat&logoColor=white)](https://github.com/MineInAbyss/MineInAbyss/wiki/Setup-and-Contribution-Guide)
 
 # Mine In Abyss
 
@@ -26,10 +28,22 @@ You can join our [Discord](https://discord.gg/qWAMBSK) for more information abou
 
 Please read our [Setup and Contribution guide](https://github.com/MineInAbyss/MineInAbyss/wiki/Setup-and-Contribution-Guide).
 
-#### Additional plugin dependencies
+### Additional plugin dependencies
 - [DeeperWorld](https://github.com/MineInAbyss/DeeperWorld)
 - [Vault](https://www.spigotmc.org/resources/vault.34315/)
 
-##### Optional:
+#### Optional:
 - [Multiverse](https://www.spigotmc.org/resources/multiverse-core.390/) (or other multi-world plugins if needed)
 - [Geary](https://github.com/MineInAbyss/Geary) and [Looty](https://github.com/MineInAbyss/Looty) (to use relics)
+
+### Gradle
+
+```groovy
+repositories {
+    maven { url 'https://repo.mineinabyss.com/releases' }
+}
+
+dependencies {
+    implementation 'com.mineinabyss:mineinabyss:<version>'
+}
+```
