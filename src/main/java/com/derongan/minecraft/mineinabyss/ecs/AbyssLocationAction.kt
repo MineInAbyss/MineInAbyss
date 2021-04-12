@@ -4,11 +4,10 @@ import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.deeperworld.world.section.section
 import com.derongan.minecraft.mineinabyss.world.Layer
 import com.derongan.minecraft.mineinabyss.world.layer
-import com.mineinabyss.geary.ecs.GearyEntity
-import com.mineinabyss.geary.ecs.actions.GearyAction
-import com.mineinabyss.geary.ecs.components.get
-import com.mineinabyss.geary.ecs.components.parent
-import com.mineinabyss.geary.minecraft.components.toBukkit
+import com.mineinabyss.geary.ecs.api.actions.GearyAction
+import com.mineinabyss.geary.ecs.api.entities.GearyEntity
+import com.mineinabyss.geary.ecs.entities.parent
+import com.mineinabyss.geary.minecraft.access.toBukkit
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.ChatColor.*

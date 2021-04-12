@@ -8,8 +8,7 @@ import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
-import com.mineinabyss.geary.ecs.engine.Engine
-import com.mineinabyss.geary.ecs.types.GearyEntityType
+import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.minecraft.dsl.attachToGeary
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.plugin.getServiceOrNull
@@ -39,7 +38,7 @@ class MineInAbyss : JavaPlugin() {
         //Geary setup
         //TODO make a serviceRegistered function idofront
         if (getServiceOrNull<Engine>(plugin = "Geary") != null) {
-            attachToGeary<GearyEntityType> {
+            attachToGeary {
                 autoscanComponents()
                 autoscanActions()
             }
