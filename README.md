@@ -1,4 +1,4 @@
-[![Mine in Abyss](https://user-images.githubusercontent.com/16233018/116149432-23cca080-a6b0-11eb-9557-b22140782398.png)](https://mineinabyss.com)
+[![Mine in Abyss](https://user-images.githubusercontent.com/16233018/116150394-4e6b2900-a6b1-11eb-8efb-ac5542c4d8d0.png)](https://mineinabyss.com)
 
 [![Java CI with Gradle](https://github.com/MineInAbyss/MineInAbyss/actions/workflows/gradle-ci.yml/badge.svg)](https://github.com/MineInAbyss/MineInAbyss/actions/workflows/gradle-ci.yml)
 [![Maven](https://badgen.net/maven/v/metadata-url/repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml)](https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss)
