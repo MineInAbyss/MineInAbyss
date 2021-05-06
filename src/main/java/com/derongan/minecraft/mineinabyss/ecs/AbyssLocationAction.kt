@@ -7,7 +7,6 @@ import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.geary.ecs.api.actions.GearyAction
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.entities.parent
-import com.mineinabyss.geary.minecraft.access.toBukkit
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.ChatColor.*
@@ -18,10 +17,11 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("mineinabyss:show_depth")
 class AbyssLocationAction : GearyAction() {
-    override fun runOn(entity: GearyEntity): Boolean {
-        val (accuracy) = entity.get<DepthMeter>() ?: return false
-        val player = entity.parent?.toBukkit<Player>() ?: return false
+    private val GearyEntity.depthMeter by get<DepthMeter>()
 
+    override fun GearyEntity.run(): Boolean {
+        val player = parent?.get<Player>() ?: return false
+        val accuracy = depthMeter.accuracy
         val section = player.location.section
         val layer: Layer? = section?.layer
 
@@ -32,7 +32,7 @@ class AbyssLocationAction : GearyAction() {
             player.sendMessage(
                 """
                 $ITALIC${DARK_AQUA}The compass spins.
-                You are suddenly aware that you are about $AQUA${pluralizeMeters(depth)} $DARK_AQUA deep in $AQUA${layer.name}.
+                You are suddenly aware that you are about $AQUA${pluralizeMeters(depth)}$DARK_AQUA deep in $AQUA${layer.name}.
                 """.trimIndent()
             )
         }

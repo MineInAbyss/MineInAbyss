@@ -17,7 +17,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
-import java.util.*
 import net.md_5.bungee.api.ChatColor as CC
 
 class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss - Stats", mineInAbyss) {
@@ -39,7 +38,7 @@ class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss 
         //The section the player is currently in
         val section = player.location.section
         val layerName = section?.let { section.layer?.name } ?: "Not in a layer"
-        val sectionName = section?.key?.toString()?.toUpperCase() ?: "Not in a section"
+        val sectionName = section?.key?.toString()?.uppercase() ?: "Not in a section"
 
         setElement(2, 0, HeadLib.QUARTZ_L.toItemStack().editItemMeta {
             setDisplayName("${col1}Layer: $col2$layerName")
