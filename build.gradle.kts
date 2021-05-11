@@ -41,11 +41,11 @@ dependencies {
         exclude(group ="org.bukkit")
     }
 
-    compileOnly("com.mineinabyss:geary-spigot:0.3.29")
-    compileOnly("com.derongan.minecraft:deeperworld:0.3.41")
+    compileOnly("com.mineinabyss:geary-spigot:0.4.42")
+    compileOnly("com.derongan.minecraft:deeperworld:0.3.47")
 
     implementation("com.derongan.minecraft:guiy:0.1.0-alpha")
-    implementation("com.mineinabyss:idofront:0.5.8")
+    implementation("com.mineinabyss:idofront:0.6.13")
 }
 
 
