@@ -5,6 +5,8 @@ import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
+import com.derongan.minecraft.mineinabyss.ecs.systems.PinActivatorSystem
+import com.derongan.minecraft.mineinabyss.ecs.systems.PinDropperSystem
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
@@ -41,6 +43,10 @@ class MineInAbyss : JavaPlugin() {
             attachToGeary {
                 autoscanComponents()
                 autoscanActions()
+
+                systems(
+                    PinActivatorSystem()
+                )
             }
         } else logger.warning("Geary service not found! No items have been added!")
 
@@ -50,7 +56,8 @@ class MineInAbyss : JavaPlugin() {
         registerEvents(
             GuiListener(this),
             PlayerListener,
-            AscensionListener
+            AscensionListener,
+            PinDropperSystem()
         )
         //register command executors
         AscensionCommandExecutor

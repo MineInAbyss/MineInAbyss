@@ -10,6 +10,8 @@ prefix: MiB
 description: A mod that adds abyss effects
 
 commands:
+  mineinabyss:
+    aliases: [ mia ]
   curseon:
     description: Turn on the curse of ascension
   curseoff:

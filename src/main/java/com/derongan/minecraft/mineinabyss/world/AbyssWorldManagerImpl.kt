@@ -24,9 +24,11 @@ class AbyssWorldManagerImpl : AbyssWorldManager {
     private val abyssWorlds = mutableSetOf<World>()
     private var numLayers = 0
 
+    override fun isAbyssWorld(worldName: World) = abyssWorlds.contains(worldName)
+
     override fun getLayerForSection(section: Section) = _layers.first { section in it }
 
-    override fun isAbyssWorld(worldName: World) = abyssWorlds.contains(worldName)
+    override fun getLayerFor(name: String) = _layers.find { it.name == name }
 
     init {
         //add all worlds into abyssWorlds

@@ -11,7 +11,7 @@ import kotlinx.serialization.Transient
 class LayerImpl(
     override val name: String,
     override val sub: String,
-    override val deathMessage: String? = "in the depths of the abyss",
+    override val deathMessage: String = "in the depths of the abyss",
     override val maxCurseRadius: Float = 2000f,
     override val minCurseRadius: Float = 1000f,
     override val minCurseMultiplier: Float = 1f,

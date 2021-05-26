@@ -4,11 +4,15 @@ import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
+import com.derongan.minecraft.mineinabyss.ecs.components.ActivePins
+import com.derongan.minecraft.mineinabyss.ecs.components.DescentContext
 import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.player.openHubStorage
+import com.mineinabyss.geary.ecs.prefab.PrefabKey
+import com.mineinabyss.geary.minecraft.access.geary
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
@@ -29,6 +33,20 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
     private val leaveConfirm = ArrayList<UUID>()
 
     override val commands = commands(mineInAbyss) {
+        ("mineinabyss" / "mia") {
+            "pin" {
+                "add" {
+                    val key by arg<PrefabKey> {
+                        parseBy { PrefabKey.of(passed) }
+                    }
+
+                    playerAction {
+                        val pins = geary(player).getOrSet { ActivePins() }
+                        pins.active.add(key)
+                    }
+                }
+            }
+        }
         "stats" {
             "subcommand" {
 
@@ -42,7 +60,12 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                 if (player.playerData.isIngame)
                 //TODO allow access to stopCommand directly from here
                     this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
-                GondolaGUI(player).show(player)
+
+                geary(player).apply {
+                    set(DescentContext())
+                    getOrSet<ActivePins> { ActivePins() }
+                }
+//                    GondolaGUI(player).show(player)
             }
         }
         "storage" {
