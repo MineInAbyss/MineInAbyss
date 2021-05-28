@@ -10,8 +10,8 @@ import com.derongan.minecraft.guiy.kotlin_dsl.setElement
 import com.derongan.minecraft.mineinabyss.MineInAbyss
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
+import com.derongan.minecraft.mineinabyss.ecs.components.playerData
 import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.color
@@ -52,10 +52,10 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
                 MineInAbyss.econ!!.withdrawPlayer(player, cost.toDouble())
-
-                playerData.descentDate = Date()
-                playerData.expOnDescent = playerData.exp
-                playerData.isIngame = true
+                //TODO start descent
+//                playerData.descentDate = Date()
+//                playerData.expOnDescent = playerData.exp
+//                playerData.isIngame = true
                 Bukkit.getScheduler().scheduleSyncDelayedTask(mineInAbyss, {
                     player.sendTitle("", "${ChatColor.GRAY}${ChatColor.ITALIC}Let the journey begin", 30, 30, 20)
                 }, 80)

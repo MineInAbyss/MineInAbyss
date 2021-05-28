@@ -1,7 +1,7 @@
 package com.derongan.minecraft.mineinabyss.commands
 
+import com.derongan.minecraft.mineinabyss.ecs.components.playerData
 import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction

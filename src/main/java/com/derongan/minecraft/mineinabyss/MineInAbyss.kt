@@ -4,7 +4,8 @@ import com.derongan.minecraft.guiy.GuiListener
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
-import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
+import com.derongan.minecraft.mineinabyss.ecs.components.ActivePins
+import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinActivatorSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinDropperSystem
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
@@ -18,6 +19,7 @@ import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.plugin.registerService
 import kotlinx.serialization.InternalSerializationApi
 import net.milkbowl.vault.economy.Economy
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 class MineInAbyss : JavaPlugin() {
@@ -26,9 +28,6 @@ class MineInAbyss : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         logger.info("On enable has been called")
-
-        AbyssContext
-        PlayerDataConfig
 
         //Vault setup
         if (econ == null) {
@@ -47,6 +46,12 @@ class MineInAbyss : JavaPlugin() {
                 systems(
                     PinActivatorSystem()
                 )
+                bukkitEntityAccess {
+                    onEntityRegister<Player> {
+                        //TODO Kotlin bug (?) Sees type as Unit unless specified explicitly
+                        getOrSetPersisting<ActivePins> { ActivePins() }
+                    }
+                }
             }
         } else logger.warning("Geary service not found! No items have been added!")
 
@@ -57,8 +62,11 @@ class MineInAbyss : JavaPlugin() {
             GuiListener(this),
             PlayerListener,
             AscensionListener,
-            PinDropperSystem()
+            PinDropperSystem(),
+            OrthReturnSystem
         )
+
+
         //register command executors
         AscensionCommandExecutor
         GUICommandExecutor

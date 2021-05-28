@@ -7,7 +7,7 @@ import com.derongan.minecraft.deeperworld.services.PlayerManager
 import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.Point
 import com.derongan.minecraft.deeperworld.world.section.section
-import com.derongan.minecraft.mineinabyss.playerData
+import com.derongan.minecraft.mineinabyss.ecs.components.playerData
 import com.derongan.minecraft.mineinabyss.world.isAbyssWorld
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1

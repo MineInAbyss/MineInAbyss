@@ -46,7 +46,7 @@ dependencies {
     compileOnly("com.derongan.minecraft:deeperworld:0.3.47")
 
     implementation("com.derongan.minecraft:guiy:0.1.0-alpha")
-    implementation("com.mineinabyss:idofront:0.6.13")
+    implementation("com.mineinabyss:idofront:0.6.14")
 }
 
 

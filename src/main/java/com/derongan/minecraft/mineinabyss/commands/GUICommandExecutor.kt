@@ -6,10 +6,9 @@ import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
 import com.derongan.minecraft.mineinabyss.ecs.components.ActivePins
 import com.derongan.minecraft.mineinabyss.ecs.components.DescentContext
-import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
+import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.player.openHubStorage
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 import com.mineinabyss.geary.minecraft.access.geary
@@ -30,8 +29,6 @@ import java.util.*
 
 @ExperimentalCommandDSL
 object GUICommandExecutor : IdofrontCommandExecutor() {
-    private val leaveConfirm = ArrayList<UUID>()
-
     override val commands = commands(mineInAbyss) {
         ("mineinabyss" / "mia") {
             "pin" {
@@ -57,13 +54,10 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
         }
         "start" command@{
             playerAction {
-                if (player.playerData.isIngame)
-                //TODO allow access to stopCommand directly from here
-                    this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
-
                 geary(player).apply {
-                    set(DescentContext())
-                    getOrSet<ActivePins> { ActivePins() }
+                    if (has<DescentContext>())
+                        this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
+                    setPersisting(DescentContext())
                 }
 //                    GondolaGUI(player).show(player)
             }
@@ -76,22 +70,24 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                     sender.error("You are not in the hub area")
             }
         }
-        "stopdescent" {
+        "stopdescent" command@{
             playerAction {
-                if (!player.playerData.isIngame) {
-                    sender.error("You are not currently ingame!\nStart by using /start")
-                } else if (!leaveConfirm.contains(player.uniqueId)) {
-                    leaveConfirm.add(player.uniqueId)
-                    sender.info(
-                        """
+                with(geary(player)) {
+                    val descent = get<DescentContext>()
+                        ?: this@command.stopCommand("You are not currently ingame!\nStart by using /start")
+                    if (!descent.confirmedLeave) {
+                        descent.confirmedLeave = true
+                        sender.info(
+                            """
                         &cYou are about to leave the game!!!
                         &lYour progress will be lost&r&c, but any xp and money you earned will stay with you.
                         Type /stopdescent again to leave
                         """.trimIndent().color()
-                    )
-                } else {
-                    leaveConfirm.remove(player.uniqueId)
-                    player.health = 0.0
+                        )
+                    } else {
+                        player.health = 0.0
+                        OrthReturnSystem.removeDescentContext(player)
+                    }
                 }
             }
         }
