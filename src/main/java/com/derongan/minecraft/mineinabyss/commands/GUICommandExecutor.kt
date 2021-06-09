@@ -4,9 +4,10 @@ import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
-import com.derongan.minecraft.mineinabyss.ecs.components.ActivePins
+import com.derongan.minecraft.mineinabyss.ecs.components.pins.ActivePins
 import com.derongan.minecraft.mineinabyss.ecs.components.DescentContext
 import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
+import com.derongan.minecraft.mineinabyss.gui.pins.PinMenu
 import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.player.openHubStorage
@@ -38,9 +39,15 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                     }
 
                     playerAction {
-                        val pins = geary(player).getOrSet { ActivePins() }
-                        pins.active.add(key)
+                        val pins = geary(player).getOrSetPersisting { ActivePins() }
+                        pins.add(key)
                     }
+                }
+            }
+
+            "pins" {
+                playerAction {
+                    PinMenu(player).show(player)
                 }
             }
         }

@@ -1,16 +1,21 @@
-package com.derongan.minecraft.mineinabyss.ecs.components
+package com.derongan.minecraft.mineinabyss.ecs.components.pins
 
 import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 @SerialName("mineinabyss:active_pins")
 @AutoscanComponent
 class ActivePins(
-    val active: MutableSet<PrefabKey> = mutableSetOf()
-) {
+    private val active: MutableSet<PrefabKey> = mutableSetOf()
+): MutableSet<PrefabKey> by active {
+    @Transient
     internal val loadedEntities = mutableMapOf<PrefabKey, GearyEntity>()
+
+    override fun remove(element: PrefabKey): Boolean =
+        loadedEntities.remove(element)?.removeEntity() != null
 }

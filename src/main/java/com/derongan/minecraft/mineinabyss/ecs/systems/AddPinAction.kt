@@ -1,7 +1,8 @@
 package com.derongan.minecraft.mineinabyss.ecs.systems
 
-import com.derongan.minecraft.mineinabyss.ecs.components.PinDrop
-import com.derongan.minecraft.mineinabyss.gui.PinSelectionMenu
+import com.derongan.minecraft.mineinabyss.ecs.components.DescentContext
+import com.derongan.minecraft.mineinabyss.ecs.components.pins.PinDrop
+import com.derongan.minecraft.mineinabyss.gui.pins.AbyssalPinSelectionMenu
 import com.mineinabyss.geary.ecs.api.actions.GearyAction
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.entities.parent
@@ -18,18 +19,17 @@ class AddPinAction : GearyAction() {
 
     override fun GearyEntity.run(): Boolean {
         val parent = parent ?: return false
-//        val activePins = parent.get<ActivePins>() ?: return false
-//        val context = parent.get<DescentContext>() ?: return false
+        val context = parent.get<DescentContext>() ?: return false
         val player = parent.get<Player>() ?: return false
-//        if (drop.layerName in context.acquiredPins) return false
-
-        PinSelectionMenu(player).show(player)
-//        val prefab = PrefabManager.getPrefabsFor("looty").random()
-//        activePins.active.add(prefab)
-//        context.acquiredPins[drop.layerName] = prefab
 
         inventoryContext.removeItem()
         removeEntity()
+
+        if (drop.layerKey in context.pinUsedLayers) return false
+
+        context.pinUsedLayers += drop.layerKey
+        AbyssalPinSelectionMenu(player).show(player)
+
         return true
     }
 }

@@ -1,10 +1,12 @@
 package com.derongan.minecraft.mineinabyss.ecs.systems
 
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
-import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
 import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
+import com.derongan.minecraft.mineinabyss.ecs.components.pins.ActivePins
 import com.derongan.minecraft.mineinabyss.ecs.components.DescentContext
+import com.derongan.minecraft.mineinabyss.ecs.components.pins.OrthPins
+import com.mineinabyss.geary.ecs.api.GearyComponent
 import com.mineinabyss.geary.minecraft.access.geary
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info
@@ -27,7 +29,12 @@ object OrthReturnSystem : Listener {
     @EventHandler
     fun PlayerDescendEvent.onDescend() {
         if (fromSection != MIAConfig.data.hubSection) return
-        geary(player).set(DescentContext())
+        geary(player) {
+            set(DescentContext())
+
+            val addPins = get<OrthPins>()?.selected ?: setOf()
+            set<ActivePins>(ActivePins(addPins.toMutableSet()))
+        }
     }
 
     @OptIn(ExperimentalTime::class)
@@ -42,5 +49,6 @@ object OrthReturnSystem : Listener {
         """.trimIndent().color()
         )
         gearyPlayer.remove<DescentContext>()
+        gearyPlayer.remove<ActivePins>()
     }
 }

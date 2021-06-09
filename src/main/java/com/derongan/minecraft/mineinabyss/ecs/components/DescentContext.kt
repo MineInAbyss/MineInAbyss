@@ -1,5 +1,7 @@
 package com.derongan.minecraft.mineinabyss.ecs.components
 
+import com.derongan.minecraft.mineinabyss.world.Layer
+import com.derongan.minecraft.mineinabyss.world.LayerKey
 import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 import kotlinx.serialization.KSerializer
@@ -21,7 +23,7 @@ class DescentContext(
     val startDate: Date = Date(),
     var expOnDescent: Double = 0.0,
 ) {
-    val acquiredPins = mutableMapOf<String, PrefabKey>()
+    val pinUsedLayers = mutableSetOf<LayerKey>()
 
     //TODO implement
     val lowestDepth: Int = 0

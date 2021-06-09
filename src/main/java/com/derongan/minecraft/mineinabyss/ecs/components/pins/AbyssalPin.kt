@@ -1,13 +1,11 @@
-package com.derongan.minecraft.mineinabyss.ecs.components
+package com.derongan.minecraft.mineinabyss.ecs.components.pins
 
 import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@SerialName("mineinabyss:abyssal_pin")
 @AutoscanComponent
-@SerialName("mineinabyss:pin")
-class Pin(
-    val weight: Int = 0
-) {
+class AbyssalPin {
 }

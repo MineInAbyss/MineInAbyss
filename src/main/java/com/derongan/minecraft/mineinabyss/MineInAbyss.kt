@@ -4,7 +4,7 @@ import com.derongan.minecraft.guiy.GuiListener
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
-import com.derongan.minecraft.mineinabyss.ecs.components.ActivePins
+import com.derongan.minecraft.mineinabyss.ecs.components.pins.ActivePins
 import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinActivatorSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinDropperSystem

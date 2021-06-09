@@ -1,19 +1,17 @@
-package com.derongan.minecraft.mineinabyss.gui
+package com.derongan.minecraft.mineinabyss.gui.pins
 
 import com.derongan.minecraft.guiy.gui.GuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.button
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
-import com.derongan.minecraft.mineinabyss.ecs.components.ActivePins
+import com.derongan.minecraft.mineinabyss.ecs.components.pins.ActivePins
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.mineinabyss.geary.ecs.prefab.PrefabManager
 import com.mineinabyss.geary.minecraft.access.geary
 import com.mineinabyss.looty.ecs.components.LootyType
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
-class PinSelectionMenu(
+class AbyssalPinSelectionMenu(
     private val player: Player
 ): GuiHolder(3, "Select a Pin", mineInAbyss) {
     val gearyPlayer = geary(player)
@@ -23,9 +21,10 @@ class PinSelectionMenu(
     }
 
     private fun buildMain() = guiyLayout {
-        val pins = gearyPlayer.get<ActivePins>() ?: return@guiyLayout
-        PrefabManager.getPrefabsFor("looty")//.asSequence()
-            .filter { it !in pins.active }
+        val activePins = gearyPlayer.get<ActivePins>() ?: return@guiyLayout
+        //TODO efficiently get all prefabs with AbyssalPin components
+        PrefabManager.getPrefabsFor("looty").asSequence()
+            .filter { it !in activePins }
             .shuffled()
             .take(3)
             .mapNotNull {
@@ -33,7 +32,7 @@ class PinSelectionMenu(
             }
             .forEachIndexed { i, (key, item) ->
                 button(i * 2 + 2, 1, item.toCell()) {
-                    pins.active += key
+                    activePins += key
                     player.closeInventory()
                 }
             }

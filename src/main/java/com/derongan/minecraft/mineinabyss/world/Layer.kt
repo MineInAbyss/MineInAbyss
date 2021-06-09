@@ -20,6 +20,7 @@ import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
  * @property deathMessage Custom death message suffix for this Layer.
  */
 interface Layer {
+    val key: LayerKey
     val name: String
     val sub: String
     val deathMessage: String

@@ -19,16 +19,14 @@ private const val DEATH_MESSAGE_KEY = "death-message"
  */
 class AbyssWorldManagerImpl : AbyssWorldManager {
     private var _layers: List<Layer> = MIAConfig.data.layers
-    override val layers: List<Layer>
-        get() = _layers.toList()
+    override val layers = _layers.associateBy { it.key }
     private val abyssWorlds = mutableSetOf<World>()
-    private var numLayers = 0
 
-    override fun isAbyssWorld(worldName: World) = abyssWorlds.contains(worldName)
+    override fun isAbyssWorld(world: World) = world in abyssWorlds
 
     override fun getLayerForSection(section: Section) = _layers.first { section in it }
 
-    override fun getLayerFor(name: String) = _layers.find { it.name == name }
+    override fun getLayerFor(key: LayerKey) = layers[key]
 
     init {
         //add all worlds into abyssWorlds

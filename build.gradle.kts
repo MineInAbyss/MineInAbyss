@@ -26,6 +26,7 @@ repositories {
     mineInAbyss()
     maven("https://erethon.de/repo/")
     maven("https://jitpack.io")
+    maven("https://repo.vshnv.tech/")
 //    mavenLocal()
 }
 
@@ -42,19 +43,17 @@ dependencies {
     }
 
     compileOnly("com.mineinabyss:geary-spigot:0.4.42")
-    compileOnly("com.mineinabyss:looty:0.3")
+    compileOnly("com.mineinabyss:looty:0.3.13")
     compileOnly("com.derongan.minecraft:deeperworld:0.3.47")
 
-    implementation("com.derongan.minecraft:guiy:0.1.0-alpha")
+    implementation("com.derongan.minecraft:guiy:0.1.10")
     implementation("com.mineinabyss:idofront:0.6.14")
 }
 
 
 tasks {
     shadowJar {
-        minimize {
-            exclude(dependency("de.erethon:headlib:."))
-        }
+        minimize()
 
         relocate("com.derongan.minecraft.guiy", "${project.group}.${project.name}.guiy".toLowerCase())
         relocate("com.mineinabyss.idofront", "${project.group}.${project.name}.idofront".toLowerCase())
