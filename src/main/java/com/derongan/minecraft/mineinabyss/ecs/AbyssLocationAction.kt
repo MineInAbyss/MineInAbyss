@@ -31,8 +31,8 @@ class AbyssLocationAction : GearyAction() {
             val depth = accuracy * (getDepth(layer, section, player.location) / accuracy)
             player.sendMessage(
                 """
-                $ITALIC${DARK_AQUA}The compass spins.
-                You are suddenly aware that you are about $AQUA${pluralizeMeters(depth)}$DARK_AQUA deep in $AQUA${layer.name}.
+                $DARK_AQUA${ITALIC}The needle spins.
+                ${DARK_AQUA}You suddenly become aware that you are in the ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the Abyss.
                 """.trimIndent()
             )
         }
