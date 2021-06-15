@@ -51,7 +51,7 @@ class AbyssLocationAction : GearyAction() {
                     currentSectionTop = totalDepth
                 }
                 totalDepth += if (index != numSections - 1) {
-                    s.referenceBottom.y.toInt()
+                    s.referenceTop.y.toInt()
                 } else {
                     // This isn't totally accurate since there is overlap with the next layer, but 256 is a good best guess.
                     256
