@@ -31,8 +31,8 @@ class AbyssLocationAction : GearyAction() {
             val depth = accuracy * (getDepth(layer, section, player.location) / accuracy)
             player.sendMessage(
                 """
-                $ITALIC${DARK_AQUA}The compass spins.
-                You are suddenly aware that you are about $AQUA${pluralizeMeters(depth)}$DARK_AQUA deep in $AQUA${layer.name}.
+                $DARK_AQUA${ITALIC}The needle spins.
+                ${DARK_AQUA}You suddenly become aware that you are in the ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the Abyss.
                 """.trimIndent()
             )
         }
@@ -51,7 +51,7 @@ class AbyssLocationAction : GearyAction() {
                     currentSectionTop = totalDepth
                 }
                 totalDepth += if (index != numSections - 1) {
-                    s.referenceBottom.y.toInt()
+                    s.referenceTop.y.toInt()
                 } else {
                     // This isn't totally accurate since there is overlap with the next layer, but 256 is a good best guess.
                     256
