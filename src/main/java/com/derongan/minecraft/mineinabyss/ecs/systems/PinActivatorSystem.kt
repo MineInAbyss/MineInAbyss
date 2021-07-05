@@ -5,14 +5,15 @@ import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.ecs.api.engine.entity
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.api.systems.TickingSystem
+import com.mineinabyss.geary.ecs.engine.iteration.QueryResult
 import com.mineinabyss.geary.ecs.entities.addParent
 import com.mineinabyss.geary.ecs.entities.addPrefab
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 
 class PinActivatorSystem : TickingSystem() {
-    private val pins by get<ActivePins>()
+    private val QueryResult.pins by get<ActivePins>()
 
-    override fun GearyEntity.tick() {
+    override fun QueryResult.tick() {
         val activate: Set<PrefabKey> = pins - pins.loadedEntities.keys
         val inactive: Map<PrefabKey, GearyEntity> = pins.loadedEntities - pins
         pins.loadedEntities -= inactive.keys
@@ -20,7 +21,7 @@ class PinActivatorSystem : TickingSystem() {
         activate.forEach { key ->
             val prefab = key.toEntity() ?: return@forEach
             val entity = Engine.entity {
-                addParent(this@tick)
+                addParent(entity)
                 addPrefab(prefab)
             }
             pins.loadedEntities[key] = entity

@@ -30,7 +30,7 @@ object OrthReturnSystem : Listener {
     fun PlayerDescendEvent.onDescend() {
         if (fromSection != MIAConfig.data.hubSection) return
         geary(player) {
-            set(DescentContext())
+            setPersisting(DescentContext())
 
             val addPins = get<OrthPins>()?.selected ?: setOf()
             set<ActivePins>(ActivePins(addPins.toMutableSet()))
@@ -49,6 +49,9 @@ object OrthReturnSystem : Listener {
         """.trimIndent().color()
         )
         gearyPlayer.remove<DescentContext>()
-        gearyPlayer.remove<ActivePins>()
+        gearyPlayer.get<ActivePins>()?.let {
+            it.clear()
+            gearyPlayer.remove<ActivePins>()
+        }
     }
 }

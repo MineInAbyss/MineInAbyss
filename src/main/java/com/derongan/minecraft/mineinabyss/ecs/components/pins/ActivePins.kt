@@ -12,10 +12,19 @@ import kotlinx.serialization.Transient
 @AutoscanComponent
 class ActivePins(
     private val active: MutableSet<PrefabKey> = mutableSetOf()
-): MutableSet<PrefabKey> by active {
+) : MutableSet<PrefabKey> by active {
     @Transient
     internal val loadedEntities = mutableMapOf<PrefabKey, GearyEntity>()
 
-    override fun remove(element: PrefabKey): Boolean =
-        loadedEntities.remove(element)?.removeEntity() != null
+    override fun remove(element: PrefabKey): Boolean {
+        active.remove(element)
+        return loadedEntities.remove(element)?.removeEntity() != null
+    }
+
+    //TODO when component removal events are added, move this behaviour there
+    override fun clear() {
+        active.clear()
+        loadedEntities.values.forEach { it.removeEntity() }
+        loadedEntities.clear()
+    }
 }

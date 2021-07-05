@@ -42,7 +42,7 @@ dependencies {
         exclude(group ="org.bukkit")
     }
 
-    compileOnly("com.mineinabyss:geary-spigot:0.4.42")
+    compileOnly("com.mineinabyss:geary-spigot:0.5.45")
     compileOnly("com.mineinabyss:looty:0.3.13")
     compileOnly("com.derongan.minecraft:deeperworld:0.3.47")
 
