@@ -1,7 +1,8 @@
-package com.derongan.minecraft.mineinabyss.ecs
+package com.derongan.minecraft.mineinabyss.ecs.actions
 
 import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.deeperworld.world.section.section
+import com.derongan.minecraft.mineinabyss.ecs.DepthMeter
 import com.derongan.minecraft.mineinabyss.world.Layer
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.geary.ecs.api.actions.GearyAction
