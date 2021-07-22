@@ -9,15 +9,21 @@ import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.messaging.color
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
+import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
+import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.potion.PotionType
 import java.io.IOException
 
 object PlayerListener : Listener {
@@ -73,4 +79,18 @@ object PlayerListener : Listener {
         player.playerData.addExp(amount.toDouble())
     }
 
+    @EventHandler
+    fun PlayerItemConsumeEvent.onPlayerConsume() {
+        if (item.type == Material.MILK_BUCKET) {
+            isCancelled = true
+            player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
+        }
+        if (item.type == Material.POTION) {
+            val meta = item.itemMeta as PotionMeta
+            if (meta.basePotionData.type == PotionType.TURTLE_MASTER) {
+                isCancelled = true
+                player.error("${ChatColor.BOLD}Turtle Master Potions ${ChatColor.RED}have been disabled")
+            }
+        }
+    }
 }
