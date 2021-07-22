@@ -81,17 +81,13 @@ object PlayerListener : Listener {
     }
 
     @EventHandler
-    fun PlayerItemConsumeEvent.onPlayerConsume() {
-        if (item.type == Material.MILK_BUCKET) {
-            isCancelled = true
-            player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
-        }
-    }
-
-    @EventHandler
     fun EntityPotionEffectEvent.onPlayerHit() {
         if (entity is Player) {
-            if (cause != EntityPotionEffectEvent.Cause.COMMAND) {
+            if (cause == EntityPotionEffectEvent.Cause.MILK) {
+                isCancelled = true
+                (entity as Player).error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
+            }
+            else if (cause != EntityPotionEffectEvent.Cause.COMMAND) {
                 if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
                     isCancelled = true
                     (entity as Player).error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
