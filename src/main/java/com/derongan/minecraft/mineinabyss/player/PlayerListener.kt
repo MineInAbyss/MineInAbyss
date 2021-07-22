@@ -14,16 +14,17 @@ import com.mineinabyss.idofront.messaging.logWarn
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.inventory.meta.PotionMeta
-import org.bukkit.potion.PotionType
+import org.bukkit.potion.PotionEffectType
 import java.io.IOException
 
 object PlayerListener : Listener {
@@ -85,11 +86,16 @@ object PlayerListener : Listener {
             isCancelled = true
             player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
         }
-        if (item.type == Material.POTION) {
-            val meta = item.itemMeta as PotionMeta
-            if (meta.basePotionData.type == PotionType.TURTLE_MASTER) {
-                isCancelled = true
-                player.error("${ChatColor.BOLD}Turtle Master Potions ${ChatColor.RED}have been disabled")
+    }
+
+    @EventHandler
+    fun EntityPotionEffectEvent.onPlayerHit() {
+        if (entity is Player) {
+            if (cause != EntityPotionEffectEvent.Cause.COMMAND) {
+                if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
+                    isCancelled = true
+                    (entity as Player).error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
+                }
             }
         }
     }
