@@ -82,16 +82,15 @@ object PlayerListener : Listener {
 
     @EventHandler
     fun EntityPotionEffectEvent.onPlayerHit() {
-        if (entity is Player) {
-            if (cause == EntityPotionEffectEvent.Cause.MILK) {
+        val player = entity as? Player ?: return
+        if (cause == EntityPotionEffectEvent.Cause.MILK) {
+            isCancelled = true
+            player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
+        }
+        else if (cause != EntityPotionEffectEvent.Cause.COMMAND) {
+            if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
                 isCancelled = true
-                (entity as Player).error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
-            }
-            else if (cause != EntityPotionEffectEvent.Cause.COMMAND) {
-                if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
-                    isCancelled = true
-                    (entity as Player).error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
-                }
+                player.error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
             }
         }
     }
