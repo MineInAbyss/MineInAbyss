@@ -87,7 +87,7 @@ object PlayerListener : Listener {
             isCancelled = true
             player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
         }
-        else if (cause != EntityPotionEffectEvent.Cause.COMMAND) {
+        else if (cause != EntityPotionEffectEvent.Cause.PLUGIN && cause != EntityPotionEffectEvent.Cause.COMMAND) {
             if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
                 isCancelled = true
                 player.error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
