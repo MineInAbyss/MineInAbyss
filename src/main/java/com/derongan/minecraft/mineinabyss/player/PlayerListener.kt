@@ -2,7 +2,6 @@ package com.derongan.minecraft.mineinabyss.player
 
 import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
-import com.derongan.minecraft.mineinabyss.MineInAbyss.Companion.econ
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.playerData
@@ -69,7 +68,7 @@ object PlayerListener : Listener {
     fun onPlayerGainEXP(e: PlayerExpChangeEvent) {
         val (player, amount) = e
         if (amount <= 0) return
-        econ?.depositPlayer(player, amount.toDouble())
+        AbyssContext.econ?.depositPlayer(player, amount.toDouble())
         player.playerData.addExp(amount.toDouble())
     }
 

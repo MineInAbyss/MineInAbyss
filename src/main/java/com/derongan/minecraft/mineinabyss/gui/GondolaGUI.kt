@@ -7,7 +7,7 @@ import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
 import com.derongan.minecraft.guiy.kotlin_dsl.setElement
-import com.derongan.minecraft.mineinabyss.MineInAbyss
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
 import com.derongan.minecraft.mineinabyss.mineInAbyss
@@ -34,7 +34,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
     private fun parseLayer(spawnLoc: SpawnLocation): Element {
         val (loc, _, cost) = spawnLoc
         val displayItem = spawnLoc.displayItem.toItemStack()
-        val balance = MineInAbyss.econ!!.getBalance(player) //TODO !!
+        val balance = AbyssContext.econ!!.getBalance(player) //TODO !!
 
         return if (balance >= cost) {
             displayItem.editItemMeta {
@@ -51,7 +51,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
                 player.teleport(loc)
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
-                MineInAbyss.econ!!.withdrawPlayer(player, cost.toDouble())
+                AbyssContext.econ!!.withdrawPlayer(player, cost.toDouble())
 
                 playerData.descentDate = Date()
                 playerData.expOnDescent = playerData.exp

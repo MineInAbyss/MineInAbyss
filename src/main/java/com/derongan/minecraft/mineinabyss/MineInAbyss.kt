@@ -14,22 +14,22 @@ import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.plugin.registerService
+import com.mineinabyss.idofront.slimjar.LibraryLoaderInjector
 import kotlinx.serialization.InternalSerializationApi
-import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.java.JavaPlugin
 
 class MineInAbyss : JavaPlugin() {
     @InternalSerializationApi
     @ExperimentalCommandDSL
     override fun onEnable() {
-        // Plugin startup logic
-        logger.info("On enable has been called")
+        LibraryLoaderInjector.inject(this)
 
+        // Initialize singletons
         AbyssContext
         PlayerDataConfig
 
         //Vault setup
-        if (econ == null) {
+        if (AbyssContext.econ == null) {
             logger.severe("Disabled due to no Vault dependency found!")
             server.pluginManager.disablePlugin(this)
             return
@@ -55,10 +55,5 @@ class MineInAbyss : JavaPlugin() {
         //register command executors
         AscensionCommandExecutor
         GUICommandExecutor
-    }
-
-    companion object {
-        @JvmStatic
-        val econ by lazy { getServiceOrNull<Economy>("Vault") }
     }
 }

@@ -1,71 +1,44 @@
-import com.mineinabyss.kotlinSpice
-import com.mineinabyss.mineInAbyss
-import com.mineinabyss.sharedSetup
+val idofrontVersion: String by project
 
 plugins {
-    java
-    idea
-    `maven-publish`
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    kotlin("jvm")
+    id("com.mineinabyss.conventions.kotlin")
+    id("com.mineinabyss.conventions.papermc")
+    id("com.mineinabyss.conventions.publication")
     kotlin("plugin.serialization")
-    id("com.mineinabyss.shared-gradle") version "0.0.6"
 }
 
-sharedSetup()
-
-val kotlinVersion: String by project
-val serverVersion: String by project
-
 repositories {
-    mavenCentral()
-    jcenter()
-    maven("https://hub.spigotmc.org/nexus/content/groups/public/")
-    maven("https://oss.sonatype.org/content/groups/public/")
-    maven("https://repo.codemc.io/repository/nms/")
-    mineInAbyss()
-    maven("https://erethon.de/repo/")
     maven("https://jitpack.io")
-//    mavenLocal()
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:$serverVersion")
-    compileOnly(kotlin("stdlib-jdk8"))
+    // Plugin deps
+    compileOnly("com.mineinabyss:geary-platform-papermc:0.6.49")
+    compileOnly("com.mineinabyss:geary-commons-papermc:0.1.2")
+    compileOnly("com.mineinabyss:looty:0.3.17")
+    compileOnly("com.derongan.minecraft:deeperworld:0.3.58")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group ="org.bukkit") }
 
-    kotlinSpice("$kotlinVersion+")
+    // From plugin deps
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json")
+    compileOnly("com.charleskorn.kaml:kaml")
     compileOnly("com.github.okkero:skedule")
-    compileOnly("de.erethon:headlib")
 
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
-        exclude(group ="org.bukkit")
-    }
-
-    compileOnly("com.mineinabyss:geary-spigot:0.4.42")
-    compileOnly("com.derongan.minecraft:deeperworld:0.3.47")
-
-    implementation("com.derongan.minecraft:guiy:0.1.0-alpha")
-    implementation("com.mineinabyss:idofront:0.6.13")
+    // Shaded
+    implementation("com.github.DRE2N:HeadLib:7e2d443678")
+    implementation("com.derongan.minecraft:guiy:0.1.10")
+    implementation("com.mineinabyss:idofront:$idofrontVersion")
 }
 
 
 tasks {
     shadowJar {
-        minimize {
-            exclude(dependency("de.erethon:headlib:."))
-        }
-
-        relocate("com.derongan.minecraft.guiy", "${project.group}.${project.name}.guiy".toLowerCase())
-        relocate("com.mineinabyss.idofront", "${project.group}.${project.name}.idofront".toLowerCase())
+//        minimize()
+//        relocate("com.derongan.minecraft.guiy", "${project.group}.${project.name}.guiy".toLowerCase())
+//        relocate("com.mineinabyss.idofront", "${project.group}.${project.name}.idofront".toLowerCase())
     }
 
     build {
         dependsOn(shadowJar)
-    }
-}
-
-publishing {
-    mineInAbyss(project) {
-        from(components["java"])
     }
 }
