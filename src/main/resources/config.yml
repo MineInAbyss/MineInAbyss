@@ -20,6 +20,8 @@ layers:
       start: -1
       end: 0
     sections: [ city ]
+    blockBlacklist:
+      - LADDER
   - name: Edge of the Abyss
     sub: 0-1350 meters
     deathMessage: on the Edge of the Abyss
@@ -34,4 +36,6 @@ layers:
       - !<particles>
         <<: *vomit
     sections: [ l1s1,l1s2,l1s3,l1s4,l1s5,l1s6 ]
+    blockBlacklist:
+      - LADDER
 hubSectionName: city

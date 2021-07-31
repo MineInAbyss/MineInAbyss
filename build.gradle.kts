@@ -5,10 +5,12 @@ plugins {
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.publication")
     kotlin("plugin.serialization")
+    kotlin("jvm")
 }
 
 repositories {
     maven("https://jitpack.io")
+    mavenCentral()
 }
 
 dependencies {

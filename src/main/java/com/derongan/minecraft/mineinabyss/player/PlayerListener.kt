@@ -5,6 +5,7 @@ import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.playerData
+import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.messaging.color
@@ -12,6 +13,7 @@ import com.mineinabyss.idofront.messaging.logWarn
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
@@ -70,6 +72,13 @@ object PlayerListener : Listener {
         if (amount <= 0) return
         AbyssContext.econ?.depositPlayer(player, amount.toDouble())
         player.playerData.addExp(amount.toDouble())
+    }
+
+    @EventHandler
+    fun BlockPlaceEvent.place(){
+        if(player.location.layer?.blockBlacklist?.contains(blockPlaced.type) == true){
+            isCancelled = true
+        }
     }
 
 }
