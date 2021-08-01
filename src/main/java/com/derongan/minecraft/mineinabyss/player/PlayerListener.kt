@@ -9,6 +9,7 @@ import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.messaging.color
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
@@ -77,6 +78,7 @@ object PlayerListener : Listener {
     @EventHandler
     fun BlockPlaceEvent.place(){
         if(player.location.layer?.blockBlacklist?.contains(blockPlaced.type) == true){
+            player.error("You may not place this block on this layer.")
             isCancelled = true
         }
     }
