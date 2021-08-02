@@ -3,7 +3,6 @@ package com.derongan.minecraft.mineinabyss.world
 import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
-import com.derongan.minecraft.mineinabyss.serializers.BlockTypeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -22,7 +21,7 @@ class LayerImpl(
     val depth: Depth = Depth(0, 0),
     @SerialName("effects")
     override val ascensionEffects: List<AscensionEffect> = emptyList(),
-    override val blockBlacklist: List<@Serializable(with = BlockTypeSerializer::class) Material> = emptyList(),
+    override val blockBlacklist: List<Material> = emptyList(),
     @SerialName("sections")
     val _sections: List<String> = emptyList(),
 
