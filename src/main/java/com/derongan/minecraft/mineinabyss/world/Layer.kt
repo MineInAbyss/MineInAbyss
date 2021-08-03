@@ -2,6 +2,7 @@ package com.derongan.minecraft.mineinabyss.world
 
 import com.derongan.minecraft.deeperworld.world.section.Section
 import com.derongan.minecraft.mineinabyss.ascension.effect.AscensionEffect
+import org.bukkit.Material
 
 /**
  * @property name the name of this Layer. This name may not match the world name.
@@ -32,6 +33,7 @@ interface Layer {
     val startDepth: Int
     val endDepth: Int
     val sections: List<Section>
+    val blockBlacklist: List<Material>
 
     /** Returns whether or not this layer contains this section */
     operator fun contains(section: Section): Boolean
