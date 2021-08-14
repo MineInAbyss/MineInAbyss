@@ -13,6 +13,7 @@ import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
+import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -29,7 +30,7 @@ object AscensionListener : Listener {
     @EventHandler(ignoreCancelled = true)
     fun onPlayerMove(moveEvent: PlayerMoveEvent) {
         val (player, from, to) = moveEvent
-        handleCurse(player, from, to ?: return)
+        handleCurse(player, from, to)
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -38,6 +39,15 @@ object AscensionListener : Listener {
 
         moveEvent.vehicle.passengers.filterIsInstance<Player>().forEach { passenger ->
             handleCurse(passenger, from, to)
+        }
+    }
+
+    @EventHandler
+    fun EntityMoveEvent.entityMove() {
+        if(entity.passengers.isNotEmpty()) {
+            entity.passengers.filterIsInstance<Player>().forEach { passenger ->
+                handleCurse(passenger, from, to)
+            }
         }
     }
 
