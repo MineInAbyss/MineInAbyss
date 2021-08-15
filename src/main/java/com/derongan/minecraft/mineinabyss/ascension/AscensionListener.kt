@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 import java.util.*
@@ -49,6 +50,13 @@ object AscensionListener : Listener {
                 handleCurse(passenger, from, to)
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun PlayerTeleportEvent.onTeleport() {
+        val (player, from, to) = this
+        if (this.cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || this.cause == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
+            handleCurse(player, from, to)
     }
 
     private fun handleCurse(player: Player, from: Location, to: Location) {
