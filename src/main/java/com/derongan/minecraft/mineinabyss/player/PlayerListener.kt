@@ -16,6 +16,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
+import org.bukkit.block.Block
 import org.bukkit.block.data.Ageable
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -134,6 +135,7 @@ object PlayerListener : Listener {
             Material.POTATOES -> arrayOf(ItemStack(Material.POTATO, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
             Material.BEETROOTS -> arrayOf(ItemStack(Material.BEETROOT, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
             Material.NETHER_WART -> arrayOf(ItemStack(Material.NETHER_WART, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
+            Material.COCOA -> arrayOf(ItemStack(Material.COCOA_BEANS, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
             else -> return
         }
 
