@@ -38,7 +38,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
 import java.io.IOException
-
+import kotlin.random.Random
 
 object PlayerListener : Listener {
     @EventHandler
@@ -94,8 +94,8 @@ object PlayerListener : Listener {
     }
 
     @EventHandler
-    fun BlockPlaceEvent.place(){
-        if(player.location.layer?.blockBlacklist?.contains(blockPlaced.type) == true){
+    fun BlockPlaceEvent.place() {
+        if (player.location.layer?.blockBlacklist?.contains(blockPlaced.type) == true) {
             player.error("You may not place this block on this layer.")
             isCancelled = true
         }
@@ -107,8 +107,7 @@ object PlayerListener : Listener {
         if (cause == EntityPotionEffectEvent.Cause.MILK) {
             isCancelled = true
             player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
-        }
-        else if (cause != EntityPotionEffectEvent.Cause.PLUGIN && cause != EntityPotionEffectEvent.Cause.COMMAND) {
+        } else if (cause != EntityPotionEffectEvent.Cause.PLUGIN && cause != EntityPotionEffectEvent.Cause.COMMAND) {
             if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE || newEffect?.type == PotionEffectType.SLOW_FALLING) {
                 isCancelled = true
                 player.error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
@@ -118,47 +117,72 @@ object PlayerListener : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun PlayerInteractEvent.onPlayerHarvest() {
-        val block = clickedBlock
-        var fortuneMultiplier = 0
+        val block = clickedBlock ?: return
 
         if (!hasBlock() || hand != EquipmentSlot.HAND || action != Action.RIGHT_CLICK_BLOCK) return
 
         val handItem = player.inventory.itemInMainHand
 
-        if (handItem.type != Material.AIR && handItem.itemMeta.enchants.contains(Enchantment.LOOT_BONUS_BLOCKS)) {
-            fortuneMultiplier = handItem.itemMeta.getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS)
+        val blockList = mapOf<Material, Array<ItemDrop>>(
+            Material.WHEAT to arrayOf(ItemDrop(Material.WHEAT, 1..3)),
+            Material.CARROTS to arrayOf(ItemDrop(Material.CARROT, 1..3)),
+            Material.POTATOES to arrayOf(ItemDrop(Material.POTATO, 1..3)),
+            Material.BEETROOTS to arrayOf(ItemDrop(Material.BEETROOT, 1..3)),
+            Material.NETHER_WART to arrayOf(ItemDrop(Material.NETHER_WART, 1..3)),
+            Material.COCOA to arrayOf(ItemDrop(Material.COCOA_BEANS, 1..3)),
+            Material.MELON to arrayOf(ItemDrop(Material.MELON_SLICE, 1..3)),
+            Material.PUMPKIN to arrayOf(ItemDrop(Material.PUMPKIN, 1..1, false))
+        )
+
+        val drops: Array<ItemDrop> = blockList[block.type] ?: return
+
+        if (block.blockData is Ageable) {
+            val aging: Ageable = block.blockData as Ageable
+
+            if (aging.age != aging.maximumAge) return
+
+            val breakCrop = BlockBreakEvent(block, player)
+            Bukkit.getPluginManager().callEvent(breakCrop)
+            if (breakCrop.isCancelled) return
+
+            aging.age = 0
+            block.blockData = aging
+        } else {
+            val breakBlock = BlockBreakEvent(block, player)
+            Bukkit.getPluginManager().callEvent(breakBlock)
+            if (breakBlock.isCancelled) return
+
+            block.type = Material.AIR // Break block
         }
-
-        val crops: Array<ItemStack> = when (block?.type) {
-            Material.WHEAT -> arrayOf(ItemStack(Material.WHEAT, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
-            Material.CARROTS -> arrayOf(ItemStack(Material.CARROT, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
-            Material.POTATOES -> arrayOf(ItemStack(Material.POTATO, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
-            Material.BEETROOTS -> arrayOf(ItemStack(Material.BEETROOT, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
-            Material.NETHER_WART -> arrayOf(ItemStack(Material.NETHER_WART, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
-            Material.COCOA -> arrayOf(ItemStack(Material.COCOA_BEANS, 1 + (Math.random() * (2 + fortuneMultiplier)).toInt()))
-            else -> return
-        }
-
-        if(block.blockData !is Ageable) return
-
-        val aging: Ageable = block.blockData as Ageable
-
-        if (aging.age != aging.maximumAge) return
-
-        val breakCrop = BlockBreakEvent(block, player)
-        Bukkit.getPluginManager().callEvent(breakCrop)
-        if (breakCrop.isCancelled) return
-
-        aging.age = 0
-        block.blockData = aging
 
         player.swingMainHand()
 
-        for (drop in crops) { dropCrop(block.location, drop) }
+        fun applyFortune(count: Int): Int {
+            var level = handItem.itemMeta?.getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS) ?: return count
+
+            // Do we have bonus drops?
+            return if (Random.nextDouble() > 2/(level+2)) {
+                // Yes, how many extra drops?
+                count + (2..level+1).random()
+            } else {
+                count
+            }
+        }
+
+        for (drop in drops) {
+            dropItems(block.location, ItemStack(drop.material, if(drop.applyFortune) applyFortune(drop.dropAmount.random()) else drop.dropAmount.random()))
+        }
+
     }
 
-    private fun dropCrop(loc: Location, drop: ItemStack) {
+    private fun dropItems(loc: Location, drop: ItemStack) {
         loc.world.dropItem(loc.add(Vector.getRandom().subtract(Vector(.5, .5, .5)).multiply(0.5)), drop).velocity =
             Vector.getRandom().add(Vector(-.5, +.5, -.5)).normalize().multiply(.15)
     }
 }
+
+data class ItemDrop(
+    val material: Material,
+    val dropAmount: IntRange,
+    val applyFortune: Boolean = true
+)
