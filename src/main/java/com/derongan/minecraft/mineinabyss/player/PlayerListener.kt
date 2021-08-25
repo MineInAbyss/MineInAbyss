@@ -123,7 +123,7 @@ object PlayerListener : Listener {
 
         val handItem = player.inventory.itemInMainHand
 
-        val blockList = mapOf<Material, Array<ItemDrop>>(
+        val blockList = mapOf(
             Material.WHEAT to arrayOf(ItemDrop(Material.WHEAT, 1..3)),
             Material.CARROTS to arrayOf(ItemDrop(Material.CARROT, 1..3)),
             Material.POTATOES to arrayOf(ItemDrop(Material.POTATO, 1..3)),
@@ -158,7 +158,13 @@ object PlayerListener : Listener {
         player.swingMainHand()
 
         fun applyFortune(count: Int): Int {
-            var level = handItem.itemMeta?.getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS) ?: return count
+            if (handItem.type != Material.WOODEN_HOE &&
+                handItem.type != Material.STONE_HOE &&
+                handItem.type != Material.IRON_HOE &&
+                handItem.type != Material.GOLDEN_HOE &&
+                handItem.type != Material.DIAMOND_HOE &&
+                handItem.type != Material.NETHERITE_HOE) return count
+            val level = handItem.itemMeta?.getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS) ?: return count
 
             // Do we have bonus drops?
             return if (Random.nextDouble() > 2/(level+2)) {
