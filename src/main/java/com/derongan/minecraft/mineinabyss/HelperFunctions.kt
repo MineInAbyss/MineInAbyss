@@ -21,6 +21,9 @@ val mineInAbyss: MineInAbyss by lazy { getPlugin() }
 fun harvestPlant(block: Block, player: Player): Boolean {
     val handItem = player.inventory.itemInMainHand
 
+    if (handItem.type == Material.SHEARS) return false
+    if (handItem.type == block.type) return false
+
     @Suppress("RemoveExplicitTypeArguments")
     val blockList = mapOf<Material, Set<ItemDrop>>(
         Material.WHEAT to setOf(ItemDrop(Material.WHEAT, 1..3)),
