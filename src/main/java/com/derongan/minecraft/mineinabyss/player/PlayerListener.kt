@@ -66,8 +66,9 @@ object PlayerListener : Listener {
         val playerData = getPlayerData(entity)
         val cause = entity.lastDamageCause?.cause
 
-        //TODO maybe limit this to only the survival server with a config option
-        if (cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
+        if ((cause == EntityDamageEvent.DamageCause.VOID || cause == EntityDamageEvent.DamageCause.CUSTOM) &&
+            entity.location.block.type == Material.VOID_AIR &&
+            MIAConfig.data.keepInvInVoid) keepInventory = true
         if (!playerData.isIngame) return
         playerData.isIngame = false
         entity.sendMessage(

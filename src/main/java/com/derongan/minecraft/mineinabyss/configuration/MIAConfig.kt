@@ -26,11 +26,13 @@ internal object MIAConfig : IdofrontConfig<MIAConfig.Data>(
 
     /**
      * @param layers A list of all the layers and sections composing them to be registered.
+     * @param keepInvInVoid Specifies if keepinventory should be enabled if player dies in void.
      * @property hubSection The hub section of the abyss, a safe place for living and trading.
      */
     @Serializable
     class Data(
         val storage: Storage,
+        val keepInvInVoid: Boolean,
         val layers: List<LayerImpl>, //TODO way of changing the serializer from service
         private val hubSectionName: String = "orth",
     ) {
