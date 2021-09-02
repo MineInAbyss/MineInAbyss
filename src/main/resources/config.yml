@@ -12,6 +12,7 @@ x-particles-vomit: &vomit
 # effect names are each effect class' @SerialName
 storage:
   relicpath: "relics/"
+keepInvInVoid: true
 layers:
   - name: Orth
     sub: City of the Great Pit
