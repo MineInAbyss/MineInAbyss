@@ -3,16 +3,19 @@ package com.derongan.minecraft.mineinabyss.player
 import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
+import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.harvestPlant
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -20,6 +23,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByBlockEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -33,13 +37,12 @@ import java.io.IOException
 
 object PlayerListener : Listener {
     @EventHandler
-    fun onPlayerJoin(joinEvent: PlayerJoinEvent) {
-        AbyssContext.playerDataMap[joinEvent.player.uniqueId] = PlayerDataConfig.loadPlayerData(joinEvent.player)
+    fun PlayerJoinEvent.onPlayerJoin() {
+        AbyssContext.playerDataMap[player.uniqueId] = PlayerDataConfig.loadPlayerData(player)
     }
 
     @EventHandler
-    fun onPlayerLeave(playerQuitEvent: PlayerQuitEvent) {
-        val (player) = playerQuitEvent
+    fun PlayerQuitEvent.onPlayerLeave() {
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.run {
             modifiers.filter {
                 it.name == MaxHealthChangeEffect.CURSE_MAX_HEALTH
@@ -53,21 +56,21 @@ object PlayerListener : Listener {
         try {
             PlayerDataConfig.savePlayerData(data)
         } catch (e: IOException) {
-            logWarn("Failed to save data for player ${playerQuitEvent.player.uniqueId}")
+            logWarn("Failed to save data for player ${player.uniqueId}")
             e.printStackTrace()
         }
     }
 
     @EventHandler
-    fun onPlayerDeath(pde: PlayerDeathEvent) {
-        val player = pde.entity
-        val playerData = getPlayerData(player)
+    fun PlayerDeathEvent.onPlayerDeath() {
+        val playerData = getPlayerData(entity)
+        val cause = entity.lastDamageCause?.cause
 
         //TODO maybe limit this to only the survival server with a config option
-        if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) pde.keepInventory = true
+        if (cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
         if (!playerData.isIngame) return
         playerData.isIngame = false
-        player.sendMessage(
+        entity.sendMessage(
             """
             &6&lGame Stats:
             &6Exp earned:&7 ${playerData.exp - playerData.expOnDescent}
@@ -77,8 +80,7 @@ object PlayerListener : Listener {
     }
 
     @EventHandler
-    fun onPlayerGainEXP(e: PlayerExpChangeEvent) {
-        val (player, amount) = e
+    fun PlayerExpChangeEvent.onPlayerGainEXP() {
         if (amount <= 0) return
         AbyssContext.econ?.depositPlayer(player, amount.toDouble())
         player.playerData.addExp(amount.toDouble())

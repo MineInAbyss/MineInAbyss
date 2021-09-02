@@ -29,16 +29,13 @@ object AscensionListener : Listener {
     private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
 
     @EventHandler(ignoreCancelled = true)
-    fun onPlayerMove(moveEvent: PlayerMoveEvent) {
-        val (player, from, to) = moveEvent
+    fun PlayerMoveEvent.onPlayerMove() {
         handleCurse(player, from, to)
     }
 
     @EventHandler(ignoreCancelled = true)
-    fun onMove(moveEvent: VehicleMoveEvent) {
-        val (_, from, to) = moveEvent
-
-        moveEvent.vehicle.passengers.filterIsInstance<Player>().forEach { passenger ->
+    fun VehicleMoveEvent.onMove() {
+        vehicle.passengers.filterIsInstance<Player>().forEach { passenger ->
             handleCurse(passenger, from, to)
         }
     }
@@ -54,8 +51,8 @@ object AscensionListener : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun PlayerTeleportEvent.onTeleport() {
-        val (player, from, to) = this
-        if (this.cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || this.cause == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
+        if (this.cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL ||
+            this.cause == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
             handleCurse(player, from, to)
     }
 
@@ -121,10 +118,10 @@ object AscensionListener : Listener {
     private fun onPlayerDescend(e: PlayerDescendEvent) = onPlayerChangeSection(e)
 
     @EventHandler
-    fun onEnterVehicle(e: VehicleEnterEvent) {
-        val player = e.entered
+    fun VehicleEnterEvent.onEnterVehicle() {
+        val player = entered
         if (player is Player) {
-            handleCurse(player, from = player.location, to = e.vehicle.location)
+            handleCurse(player, from = player.location, to = vehicle.location)
         }
     }
 
@@ -146,11 +143,10 @@ object AscensionListener : Listener {
     }
 
     @EventHandler
-    fun onPlayerDeath(deathEvent: PlayerDeathEvent) {
-        val (player) = deathEvent
-        val section = player.location.section ?: return
+    fun PlayerDeathEvent.onPlayerDeath() {
+        val section = entity.location.section ?: return
         val layerOfDeath = section.layer ?: return
-        deathEvent.apply {
+        apply {
             deathMessage += " ${layerOfDeath.deathMessage}"
         }
     }
