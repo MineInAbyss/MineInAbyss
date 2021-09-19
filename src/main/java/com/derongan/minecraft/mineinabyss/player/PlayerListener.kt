@@ -18,6 +18,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.Sound
+import org.bukkit.SoundCategory
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageEvent
@@ -114,6 +116,7 @@ object PlayerListener : Listener {
 
         if (harvestPlant(block, player)) {
             player.swingMainHand()
+            block.world.playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
         }
     }
 
