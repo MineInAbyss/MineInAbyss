@@ -36,9 +36,10 @@ class HarvestAction : GearyAction() {
                 item.editItemMeta {
                     damage += 1
                 }
-
                 if (item.itemMeta.damage >= item.type.maxDurability) {
                     item.subtract()
+                    player.world
+                        .playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
                     break // stop loop
                 }
                 ++totalHarvested
