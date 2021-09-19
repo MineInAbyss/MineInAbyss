@@ -5,6 +5,7 @@ import com.mineinabyss.geary.ecs.api.actions.GearyAction
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.entities.parent
 import com.mineinabyss.idofront.items.damage
+import com.mineinabyss.idofront.items.editItemMeta
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Sound
@@ -38,7 +39,7 @@ class HarvestAction : GearyAction() {
 
         // Damage item if we harvested at least one plant
         if (totalHarvested > 0) {
-            item.damage = item.damage?.plus((1 + (0.25 * totalHarvested).toInt()))
+            item.editItemMeta { damage = damage.plus(totalHarvested) }
             player.swingMainHand()
             block.world
                 .playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
