@@ -33,13 +33,20 @@ class HarvestAction : GearyAction() {
         for (relativePos in BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[sickle.radius]) {
             val block = BlockUtil.relative(block, relativePos) ?: continue
             if (harvestPlant(block, player)) {
+                item.editItemMeta {
+                    damage += 1
+                }
+
+                if (item.itemMeta.damage >= item.type.maxDurability) {
+                    item.subtract()
+                    break // stop loop
+                }
                 ++totalHarvested
             }
         }
 
         // Damage item if we harvested at least one plant
         if (totalHarvested > 0) {
-            item.editItemMeta { damage = damage.plus(totalHarvested) }
             player.swingMainHand()
             block.world
                 .playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
