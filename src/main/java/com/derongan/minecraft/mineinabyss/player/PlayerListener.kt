@@ -13,13 +13,13 @@ import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
 import org.bukkit.ChatColor
+import org.bukkit.Sound
+import org.bukkit.SoundCategory
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.Sound
-import org.bukkit.SoundCategory
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageEvent
@@ -61,12 +61,20 @@ object PlayerListener : Listener {
     }
 
     @EventHandler
-    fun onPlayerDeath(pde: PlayerDeathEvent) {
-        val player = pde.entity
+    fun PlayerDeathEvent.onPlayerDeath() {
+        val player = entity
         val playerData = getPlayerData(player)
 
+        if (!playerData.keepInvStatus) {
+            for (itemStack in entity.inventory) {
+                if (itemStack == null) return
+                player.world.dropItemNaturally(player.location, itemStack)
+                player.inventory.removeItem(itemStack)
+            }
+        }
+
         //TODO maybe limit this to only the survival server with a config option
-        if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) pde.keepInventory = true
+        if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
         if (!playerData.isIngame) return
         playerData.isIngame = false
         player.sendMessage(
