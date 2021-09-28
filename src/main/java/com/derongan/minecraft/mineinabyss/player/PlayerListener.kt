@@ -66,11 +66,8 @@ object PlayerListener : Listener {
         val playerData = getPlayerData(player)
 
         if (!playerData.keepInvStatus) {
-            for (itemStack in entity.inventory) {
-                if (itemStack == null) return
-                player.world.dropItemNaturally(player.location, itemStack)
-                player.inventory.removeItem(itemStack)
-            }
+            entity.inventory.contents.filterNotNull().forEach { player.world.dropItemNaturally(player.location, it) }
+            player.inventory.clear()
         }
 
         //TODO maybe limit this to only the survival server with a config option
