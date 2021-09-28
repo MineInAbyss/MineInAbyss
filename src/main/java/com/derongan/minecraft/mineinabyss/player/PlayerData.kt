@@ -11,6 +11,7 @@ import java.util.*
  *
  * Change with caution. You are responsible for moving the player so data is not out of sync.
  * @property isAffectedByCurse Whether the player is affected by the curse of ascending in the abyss.
+ * @property keepInvStatus Whether the player keeps their inventory upon death.
  * @property ascensionEffects The mutable list of current effects on this player.
  * @property curseAccrued The distance the player has ascended since last being affected by the curse.
  *
@@ -26,6 +27,7 @@ interface PlayerData {
     val player: Player
     var currentLayer: Layer?
     var isAffectedByCurse: Boolean
+    var keepInvStatus: Boolean
     val ascensionEffects: List<AscensionEffect>
     var curseAccrued: Double
     val level: Int

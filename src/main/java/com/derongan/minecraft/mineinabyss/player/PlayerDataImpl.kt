@@ -30,6 +30,7 @@ class PlayerDataImpl(
     override var expOnDescent: Double = 0.0,
     @Serializable(with = DateAsLongSerializer::class)
     override var descentDate: Date? = null,
+    override var keepInvStatus: Boolean = true,
 ) : PlayerData {
     @Transient
     override var currentLayer: Layer? = null

@@ -14,6 +14,10 @@ commands:
     description: Turn on the curse of ascension
   curseoff:
     description: Turn off the curse of ascension
+  keepinvon:
+    description: Turn on Keep Inventory
+  keepinvoff:
+    description: Turn off Keep Inventory
   stats:
     description: Shows statistics about you!
   start:
@@ -32,6 +36,12 @@ permissions:
     description: Allows players to enable the curse of ascension on themselves
   mineinabyss.curse.off:
     description: Allows players to disable the curse of ascension on themselves
+  mineinabyss.keepinv.toggle:
+    description: Allows players to toggle Keep Inventory on themselves
+  mineinabyss.keepinv.on:
+    description: Allows players to enable Keep Inventory on others
+  mineinabyss.keepinv.off:
+    description: Allows players to disable Keep Inventory on others
   mineinabyss.stopdescent:
     description: Allows players to leave a run
   mineinabyss.start:
