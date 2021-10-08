@@ -1,6 +1,5 @@
 package com.derongan.minecraft.mineinabyss
 
-import com.derongan.minecraft.guiy.GuiListener
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
@@ -14,7 +13,7 @@ import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.plugin.registerService
-import com.mineinabyss.idofront.slimjar.LibraryLoaderInjector
+import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
 import kotlinx.serialization.InternalSerializationApi
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -22,7 +21,7 @@ class MineInAbyss : JavaPlugin() {
     @InternalSerializationApi
     @ExperimentalCommandDSL
     override fun onEnable() {
-        LibraryLoaderInjector.inject(this)
+        IdofrontSlimjar.loadToLibraryLoader(this)
 
         // Initialize singletons
         AbyssContext
@@ -48,7 +47,7 @@ class MineInAbyss : JavaPlugin() {
 
         registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
         registerEvents(
-            GuiListener(this),
+            // GuiListener(this),
             PlayerListener,
             AscensionListener
         )
