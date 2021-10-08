@@ -21,7 +21,7 @@ class MineInAbyss : JavaPlugin() {
     @InternalSerializationApi
     @ExperimentalCommandDSL
     override fun onEnable() {
-        IdofrontSlimjar.loadGlobally(this)
+        IdofrontSlimjar.loadToLibraryLoader(this)
 
         // Initialize singletons
         AbyssContext
