@@ -4,6 +4,8 @@ package com.derongan.minecraft.mineinabyss.commands
 object CommandLabels {
     const val CURSEON = "curseon"
     const val CURSEOFF = "curseoff"
+    const val KEEPINVON = "keepinvon"
+    const val KEEPINVOFF = "keepinvoff"
     const val STATS = "stats"
     const val START = "start"
     const val STOP_DESCENT = "stopdescent"

@@ -13,12 +13,14 @@ import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
+import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 import java.util.*
@@ -29,7 +31,7 @@ object AscensionListener : Listener {
     @EventHandler(ignoreCancelled = true)
     fun onPlayerMove(moveEvent: PlayerMoveEvent) {
         val (player, from, to) = moveEvent
-        handleCurse(player, from, to ?: return)
+        handleCurse(player, from, to)
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -39,6 +41,22 @@ object AscensionListener : Listener {
         moveEvent.vehicle.passengers.filterIsInstance<Player>().forEach { passenger ->
             handleCurse(passenger, from, to)
         }
+    }
+
+    @EventHandler
+    fun EntityMoveEvent.entityMove() {
+        if(entity.passengers.isNotEmpty()) {
+            entity.passengers.filterIsInstance<Player>().forEach { passenger ->
+                handleCurse(passenger, from, to)
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun PlayerTeleportEvent.onTeleport() {
+        val (player, from, to) = this
+        if (this.cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || this.cause == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
+            handleCurse(player, from, to)
     }
 
     private fun handleCurse(player: Player, from: Location, to: Location) {

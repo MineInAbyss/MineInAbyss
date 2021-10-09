@@ -4,11 +4,9 @@ import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
 import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
-import com.derongan.minecraft.mineinabyss.gui.GondolaGUI
-import com.derongan.minecraft.mineinabyss.gui.StatsGUI
 import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.player.openHubStorage
+import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
@@ -34,7 +32,7 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
 
             }
             playerAction {
-                StatsGUI(player).show(player)
+                // StatsGUI(player).show(player)
             }
         }
         "start" command@{
@@ -42,7 +40,7 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
                 if (player.playerData.isIngame)
                 //TODO allow access to stopCommand directly from here
                     this@command.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
-                GondolaGUI(player).show(player)
+                // GondolaGUI(player).show(player)
             }
         }
         "storage" {
