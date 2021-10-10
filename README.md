@@ -1,11 +1,11 @@
-[![Mine in Abyss](https://user-images.githubusercontent.com/16233018/116150394-4e6b2900-a6b1-11eb-8efb-ac5542c4d8d0.png)](https://mineinabyss.com)
+<div align="center">
 
+[![Mine in Abyss](https://user-images.githubusercontent.com/16233018/116150394-4e6b2900-a6b1-11eb-8efb-ac5542c4d8d0.png)](https://mineinabyss.com)
 [![Java CI with Gradle](https://github.com/MineInAbyss/MineInAbyss/actions/workflows/gradle-ci.yml/badge.svg)](https://github.com/MineInAbyss/MineInAbyss/actions/workflows/gradle-ci.yml)
 [![Maven](https://badgen.net/maven/v/metadata-url/repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml)](https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss)
 [![Discord](https://badgen.net/discord/members/QXPCk2y)](https://discord.gg/QXPCk2y)
 [![Contribute](https://shields.io/badge/Contribute-e57be5?logo=github%20sponsors&style=flat&logoColor=white)](https://github.com/MineInAbyss/MineInAbyss/wiki/Setup-and-Contribution-Guide)
-
-# Mine In Abyss
+</div>
 
 Mine In Abyss is a Spigot plugin made for the Mine In Abyss Minecraft server.
 The server aims to recreate the world of [Made in Abyss](https://en.wikipedia.org/wiki/Made_in_Abyss) within Minecraft.
