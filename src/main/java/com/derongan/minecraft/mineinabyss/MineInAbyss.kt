@@ -3,6 +3,7 @@ package com.derongan.minecraft.mineinabyss
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
+import com.derongan.minecraft.mineinabyss.commands.UtilityCommandExecutor
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
@@ -54,5 +55,6 @@ class MineInAbyss : JavaPlugin() {
         //register command executors
         AscensionCommandExecutor
         GUICommandExecutor
+        UtilityCommandExecutor
     }
 }

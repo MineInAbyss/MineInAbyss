@@ -99,3 +99,7 @@ data class ItemDrop(
     val dropAmount: IntRange,
     val applyFortune: Boolean = true
 )
+
+inline fun <reified T : Enum<T>> enumValueOfOrNull(name: String): T? {
+    return enumValues<T>().find { it.name.lowercase() == name.lowercase() }
+}

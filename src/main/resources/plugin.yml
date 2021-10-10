@@ -28,6 +28,8 @@ commands:
     description: Open your hub storage
   creategondolaspawn:
     description: Creates a location from which players will be able to spawn
+  clearcontainers:
+    description: Clears a specific item from all containers in a given layer (or all layers if not specified)
 
 permissions:
   mineinabyss.curse.toggle:
