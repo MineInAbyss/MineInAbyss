@@ -31,6 +31,9 @@ class PlayerDataImpl(
     @Serializable(with = DateAsLongSerializer::class)
     override var descentDate: Date? = null,
     override var keepInvStatus: Boolean = true,
+    override var showPvPMessage: Boolean = true,
+    override var pvpUndecided: Boolean = true,
+    override var pvpStatus: Boolean = false
 ) : PlayerData {
     @Transient
     override var currentLayer: Layer? = null

@@ -35,6 +35,9 @@ interface PlayerData {
     var expOnDescent: Double
     var descentDate: Date?
     var isIngame: Boolean
+    var showPvPMessage: Boolean
+    var pvpUndecided: Boolean
+    var pvpStatus: Boolean
 
     /**
      * Add an effect to the player

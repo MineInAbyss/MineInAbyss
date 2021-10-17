@@ -6,6 +6,8 @@ object CommandLabels {
     const val CURSEOFF = "curseoff"
     const val KEEPINVON = "keepinvon"
     const val KEEPINVOFF = "keepinvoff"
+    const val PVPON = "pvpon"
+    const val PVPOFF = "pvpoff"
     const val STATS = "stats"
     const val START = "start"
     const val STOP_DESCENT = "stopdescent"
