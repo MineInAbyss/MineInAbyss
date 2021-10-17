@@ -177,13 +177,25 @@ object PlayerListener : Listener {
 
     @EventHandler
     fun EntityDamageByEntityEvent.playerCombatSystem() {
-        val player = entity as Player
-        val attacker = damager as Player
-        val projectile = damager as Projectile
-        val data = player.playerData
+        val player = entity as? Player ?: return
 
-        if (damager == projectile) isCancelled = true
-        if (data.pvpStatus && attacker.playerData.pvpStatus) return
-        else isCancelled = true
+        val attacker: Player = when (damager) {
+            is Projectile -> {
+                (damager as Projectile).shooter as? Player ?: return
+            }
+            is Player -> {
+                (damager as Player)
+            }
+            else -> {
+                return
+            }
+        }
+
+        if (
+            player.playerData.pvpStatus && attacker.playerData.pvpStatus
+            && player.uniqueId != attacker.uniqueId //
+        ) return
+
+        isCancelled = true
     }
 }
