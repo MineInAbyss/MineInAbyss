@@ -192,8 +192,8 @@ object PlayerListener : Listener {
         }
 
         if (
-            player.playerData.pvpStatus && attacker.playerData.pvpStatus
-            && player.uniqueId != attacker.uniqueId //
+            (player.playerData.pvpStatus && attacker.playerData.pvpStatus)
+            || player == attacker
         ) return
 
         isCancelled = true
