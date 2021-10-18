@@ -7,6 +7,7 @@ import com.derongan.minecraft.mineinabyss.commands.UtilityCommandExecutor
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.systems.SoulbindListener
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
 import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.minecraft.dsl.gearyAddon
@@ -50,7 +51,8 @@ class MineInAbyss : JavaPlugin() {
         registerEvents(
             // GuiListener(this),
             PlayerListener,
-            AscensionListener
+            AscensionListener,
+            SoulbindListener
         )
         //register command executors
         AscensionCommandExecutor

@@ -7,11 +7,16 @@ import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.harvestPlant
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.layer
+import com.mineinabyss.geary.minecraft.components.Soulbound
+import com.mineinabyss.geary.minecraft.store.decodeComponents
+import com.mineinabyss.geary.minecraft.store.encodeComponentsTo
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
+import com.mineinabyss.looty.tracking.toGearyOrNull
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -32,6 +37,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffectType
 import java.io.IOException
+
 
 object PlayerListener : Listener {
     @EventHandler
@@ -65,10 +71,19 @@ object PlayerListener : Listener {
         val player = entity
         val playerData = getPlayerData(player)
 
-        if (!playerData.keepInvStatus) {
-            entity.inventory.contents.filterNotNull().forEach { player.world.dropItemNaturally(player.location, it) }
-            player.inventory.clear()
-        }
+        //if (!playerData.keepInvStatus) {
+            player.inventory.contents.filterNotNull().forEach {
+                val item = it.toGearyOrNull(player)
+
+                item?.get<Soulbound>()?.owner.broadcastVal("owner: ")
+                if (item?.get<Soulbound>()?.owner == player.uniqueId) {
+                    itemsToKeep += it
+                    drops -= it
+                    item.get<Soulbound>()?.owner.broadcastVal("owner: ")
+                }
+                return@forEach
+            }
+        //}
 
         //TODO maybe limit this to only the survival server with a config option
         if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
@@ -124,5 +139,4 @@ object PlayerListener : Listener {
             block.world.playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
         }
     }
-
 }
