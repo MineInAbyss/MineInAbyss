@@ -8,15 +8,13 @@ import com.derongan.minecraft.mineinabyss.harvestPlant
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.geary.minecraft.components.Soulbound
-import com.mineinabyss.geary.minecraft.store.decodeComponents
-import com.mineinabyss.geary.minecraft.store.encodeComponentsTo
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
-import com.mineinabyss.looty.tracking.toGearyOrNull
+import com.mineinabyss.looty.tracking.toGearyFromUUIDOrNull
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -71,19 +69,20 @@ object PlayerListener : Listener {
         val player = entity
         val playerData = getPlayerData(player)
 
-        //if (!playerData.keepInvStatus) {
+        // Would be removed for adventure
+        if (!playerData.keepInvStatus) {
             player.inventory.contents.filterNotNull().forEach {
-                val item = it.toGearyOrNull(player)
+                val item = it.toGearyFromUUIDOrNull() ?: return
 
-                item?.get<Soulbound>()?.owner.broadcastVal("owner: ")
-                if (item?.get<Soulbound>()?.owner == player.uniqueId) {
+                item.get<Soulbound>()?.owner.broadcastVal("owner: ")
+                if (item.get<Soulbound>()?.owner == player.uniqueId) {
                     itemsToKeep += it
                     drops -= it
                     item.get<Soulbound>()?.owner.broadcastVal("owner: ")
                 }
                 return@forEach
             }
-        //}
+        }
 
         //TODO maybe limit this to only the survival server with a config option
         if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
