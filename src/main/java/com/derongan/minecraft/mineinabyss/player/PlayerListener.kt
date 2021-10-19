@@ -7,14 +7,11 @@ import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.harvestPlant
 import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.layer
-import com.mineinabyss.geary.minecraft.components.Soulbound
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
-import com.mineinabyss.looty.tracking.toGearyFromUUIDOrNull
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -68,21 +65,6 @@ object PlayerListener : Listener {
     fun PlayerDeathEvent.onPlayerDeath() {
         val player = entity
         val playerData = getPlayerData(player)
-
-        // Would be removed for adventure
-        if (!playerData.keepInvStatus) {
-            player.inventory.contents.filterNotNull().forEach {
-                val item = it.toGearyFromUUIDOrNull() ?: return
-
-                item.get<Soulbound>()?.owner.broadcastVal("owner: ")
-                if (item.get<Soulbound>()?.owner == player.uniqueId) {
-                    itemsToKeep += it
-                    drops -= it
-                    item.get<Soulbound>()?.owner.broadcastVal("owner: ")
-                }
-                return@forEach
-            }
-        }
 
         if (playerData.keepInvStatus) {
             player.inventory.contents.filterNotNull().forEach {
