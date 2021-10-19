@@ -2,7 +2,11 @@ package com.derongan.minecraft.mineinabyss.systems
 
 import com.mineinabyss.idofront.messaging.logInfo
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.Component.join
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.TextColor.color
+import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Field
@@ -33,11 +37,39 @@ object CustomEnchants {
 
 }
 
-fun ItemStack.addCustomEnchant(enchantment: CustomEnchantment, lvl: Int, extraLore: Component = Component.text("")) {
+fun ItemStack.addCustomEnchant(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "") {
     addEnchantment(enchantment, lvl)
+    updateEnchantmentLore(enchantment, lvl, extraLore)
+}
+
+fun ItemStack.updateEnchantmentLore(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "") {
     val lore: MutableList<Component> = lore() ?: mutableListOf()
-    lore.add(0, enchantment.displayName(lvl).append(extraLore))
-    lore(lore)
+
+    val check = lore.firstOrNull {
+        PlainTextComponentSerializer.plainText().serialize(it) ==
+                PlainTextComponentSerializer.plainText().serialize(
+                    join(
+                        JoinConfiguration.separator(Component.space()),
+                        enchantment.displayName(lvl),
+                        Component.text(extraLore).color(enchantment.loreColor).decoration(
+                            TextDecoration.ITALIC, false
+                        )
+                    )
+                )
+    }
+
+    if (check == null) {
+        lore.add(
+            0, join(
+                JoinConfiguration.separator(Component.space()),
+                enchantment.displayName(lvl),
+                Component.text(extraLore).color(enchantment.loreColor).decoration(
+                    TextDecoration.ITALIC, false
+                )
+            )
+        )
+        lore(lore)
+    }
 }
 
 fun ItemStack.removeCustomEnchant(enchantment: Enchantment) {

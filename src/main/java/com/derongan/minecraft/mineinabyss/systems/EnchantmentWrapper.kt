@@ -18,7 +18,7 @@ class EnchantmentWrapper(
     private val namespace: String,
     private val name: String,
     private val maxLvl: Int,
-    private val loreColor: TextColor = color(150, 10, 10)
+    val loreColor: TextColor = color(150, 10, 10)
 ) : CustomEnchantment(namespace) {
     override fun canEnchantItem(item: ItemStack): Boolean {
         return true
