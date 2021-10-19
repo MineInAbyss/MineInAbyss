@@ -84,6 +84,13 @@ object PlayerListener : Listener {
             }
         }
 
+        if (playerData.keepInvStatus) {
+            player.inventory.contents.filterNotNull().forEach {
+                itemsToKeep += it
+                drops -= it
+            }
+        }
+
         //TODO maybe limit this to only the survival server with a config option
         if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
         if (!playerData.isIngame) return
