@@ -14,11 +14,11 @@ import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.okkero.skedule.BukkitSchedulerController
 import com.okkero.skedule.schedule
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.block.Container
 import org.bukkit.command.CommandSender
@@ -31,24 +31,26 @@ object UtilityCommandExecutor : IdofrontCommandExecutor() {
             val enchantmentLevel by intArg { default = 1 }
 
             playerAction {
-
                 val parsedEnchant =
                     CustomEnchants.enchantmentList.firstOrNull {
-                        it.key.key == availableEnchantment
-                    }
-                        ?: command.stopCommand("No such enchantment: $availableEnchantment. \nExpected $availableEnchantment")
+                        it.key.key == availableEnchantment.lowercase()
+                    } ?: (command.stopCommand(
+                        "No such enchantment: $availableEnchantment. " +
+                                "\nAvailable ones are: " +
+                                "${ChatColor.BOLD}${CustomEnchants.enchantmentList.map { it.key.key }}"
+                    ))
 
                 val levelRange =
                     (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
 
                 if (enchantmentLevel == 0) {
+
                     player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
-                    sender.success("The $parsedEnchant enchantment was removed from this item.")
+                    sender.success("Removed ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}from this item.")
                 }
-                if (enchantmentLevel <= parsedEnchant.maxLevel) {
-                    availableEnchantment.broadcastVal("enchants: ")
-                    if (levelRange.first == levelRange.last) sender.success("Applied $parsedEnchant to this item.")
-                    else sender.success("Applied $parsedEnchant $enchantmentLevel to this item.")
+                if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
+                    if (levelRange.first == levelRange.last) sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}to this item.")
+                    else sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} $enchantmentLevel ${ChatColor.GREEN}to this item.")
                     player.inventory.itemInMainHand.addCustomEnchant(
                         parsedEnchant as EnchantmentWrapper,
                         enchantmentLevel
@@ -96,8 +98,8 @@ object UtilityCommandExecutor : IdofrontCommandExecutor() {
         val worldsToBeChecked = layer.sections.groupBy { it.world }
         worldsToBeChecked.forEach { (world, sections) ->
             sections.forEach { section ->
-                for (x in (section.region.a.x / 16)..(section.region.b.x / 16)){
-                    for(z in (section.region.a.z / 16)..(section.region.b.z / 16)){
+                for (x in (section.region.a.x / 16)..(section.region.b.x / 16)) {
+                    for (z in (section.region.a.z / 16)..(section.region.b.z / 16)) {
                         val chunk = world.getChunkAt(x, z)
                         chunk.load()
                         val containers = chunk.tileEntities
