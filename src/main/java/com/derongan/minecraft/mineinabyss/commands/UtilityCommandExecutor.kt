@@ -3,13 +3,20 @@ package com.derongan.minecraft.mineinabyss.commands
 import com.derongan.minecraft.mineinabyss.enumValueOfOrNull
 import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.systems.CustomEnchants
+import com.derongan.minecraft.mineinabyss.systems.EnchantmentWrapper
+import com.derongan.minecraft.mineinabyss.systems.addCustomEnchant
+import com.derongan.minecraft.mineinabyss.systems.removeCustomEnchant
 import com.derongan.minecraft.mineinabyss.world.Layer
+import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.messaging.success
 import com.okkero.skedule.BukkitSchedulerController
 import com.okkero.skedule.schedule
 import org.bukkit.Material
@@ -19,6 +26,38 @@ import org.bukkit.command.CommandSender
 @ExperimentalCommandDSL
 object UtilityCommandExecutor : IdofrontCommandExecutor() {
     override val commands = commands(mineInAbyss) {
+        "abyssenchant"{
+            val availableEnchantment by stringArg()
+            val enchantmentLevel by intArg { default = 1 }
+
+            playerAction {
+
+                val parsedEnchant =
+                    CustomEnchants.enchantmentList.firstOrNull {
+                        it.key.key == availableEnchantment
+                    }
+                        ?: command.stopCommand("No such enchantment: $availableEnchantment. \nExpected $availableEnchantment")
+
+                val levelRange =
+                    (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
+
+                if (enchantmentLevel == 0) {
+                    player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
+                    sender.success("The $parsedEnchant enchantment was removed from this item.")
+                }
+                if (enchantmentLevel <= parsedEnchant.maxLevel) {
+                    availableEnchantment.broadcastVal("enchants: ")
+                    if (levelRange.first == levelRange.last) sender.success("Applied $parsedEnchant to this item.")
+                    else sender.success("Applied $parsedEnchant $enchantmentLevel to this item.")
+                    player.inventory.itemInMainHand.addCustomEnchant(
+                        parsedEnchant as EnchantmentWrapper,
+                        enchantmentLevel
+                    )
+                }
+                if (enchantmentLevel > levelRange.last) command.stopCommand("Level exceeds this enchantments max level.")
+            }
+        }
+
         "clearcontainers"{
             val itemToClear by stringArg()
             val layerToClear by stringArg { default = "all" }
