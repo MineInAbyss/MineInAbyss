@@ -18,6 +18,7 @@ class EnchantmentWrapper(
     private val namespace: String,
     private val name: String,
     private val maxLvl: Int,
+    private val allowedItems: EnchantmentTarget,
     val loreColor: TextColor = color(150, 10, 10)
 ) : CustomEnchantment(namespace) {
     override fun canEnchantItem(item: ItemStack): Boolean {
@@ -50,6 +51,10 @@ class EnchantmentWrapper(
         return maxLvl
     }
 
+    override fun getItemTarget(): EnchantmentTarget {
+        return allowedItems
+    }
+
     override fun isTradeable(): Boolean {
         TODO("Not yet implemented")
     }
@@ -67,10 +72,6 @@ class EnchantmentWrapper(
     }
 
     override fun getActiveSlots(): MutableSet<EquipmentSlot> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getItemTarget(): EnchantmentTarget {
         TODO("Not yet implemented")
     }
 
