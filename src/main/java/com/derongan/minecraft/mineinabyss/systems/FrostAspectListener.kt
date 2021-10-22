@@ -1,7 +1,6 @@
 package com.derongan.minecraft.mineinabyss.systems
 
 import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.time.TimeSpan
 import com.okkero.skedule.schedule
 import org.bukkit.entity.LivingEntity
@@ -24,8 +23,6 @@ object FrostAspectListener : Listener {
         val lastTime = System.currentTimeMillis()
 
         if (item.containsEnchantment(CustomEnchants.FROST_ASPECT)) {
-            length.broadcastVal("length: ")
-            damageTimer.broadcastVal("damage: ")
             mineInAbyss.schedule {
                 do {
                     val lastFreezeTime = System.currentTimeMillis()
@@ -33,7 +30,10 @@ object FrostAspectListener : Listener {
                         entity.freezeTicks = entity.maxFreezeTicks
                         freezeTimePassed += System.currentTimeMillis() - lastFreezeTime
                         waitFor(1)
-                    } while ((freezeTimePassed < damageTimer) && ((entity.freezeTicks == entity.maxFreezeTicks) || (entity.freezeTicks in (1 until entity.maxFreezeTicks))))
+                    } while ((freezeTimePassed < damageTimer) &&
+                        ((entity.freezeTicks == entity.maxFreezeTicks) ||
+                                (entity.freezeTicks in (1 until entity.maxFreezeTicks)))
+                    )
 
                     freezeTimePassed = 0L
                     (entity as LivingEntity).damage(1.0)
