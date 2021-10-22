@@ -9,6 +9,7 @@ import com.derongan.minecraft.mineinabyss.systems.addCustomEnchant
 import com.derongan.minecraft.mineinabyss.systems.removeCustomEnchant
 import com.derongan.minecraft.mineinabyss.world.Layer
 import com.mineinabyss.idofront.commands.arguments.intArg
+import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
@@ -21,24 +22,25 @@ import com.okkero.skedule.schedule
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.block.Container
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 
 @ExperimentalCommandDSL
-object UtilityCommandExecutor : IdofrontCommandExecutor() {
+object UtilityCommandExecutor : IdofrontCommandExecutor(), TabCompleter {
     override val commands = commands(mineInAbyss) {
         "abyssenchant"{
-            val availableEnchantment by stringArg()
+            val options = CustomEnchants.enchantmentList.map { it.key.toString() }
+            val availableEnchantment by optionArg(options) {
+                parseErrorMessage = { "No such enchantment: $passed. \nAvailable ones are: \n$options" }
+            }
             val enchantmentLevel by intArg { default = 1 }
 
             playerAction {
                 val parsedEnchant =
                     CustomEnchants.enchantmentList.firstOrNull {
-                        it.key.key == availableEnchantment.lowercase()
-                    } ?: (command.stopCommand(
-                        "No such enchantment: $availableEnchantment. " +
-                                "\nAvailable ones are: " +
-                                "${ChatColor.BOLD}${CustomEnchants.enchantmentList.map { it.key.key }}"
-                    ))
+                        it.key.toString() == availableEnchantment.lowercase()
+                    } ?: (command.stopCommand(""))
 
                 val levelRange =
                     (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
@@ -122,5 +124,22 @@ object UtilityCommandExecutor : IdofrontCommandExecutor() {
             }
         }
         sender.info("Finished layer ${layer.name}")
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<String>
+    ): List<String> {
+        if (command.name != "abyssenchant") return emptyList()
+        return when (args.size) {
+            1 -> CustomEnchants.enchantmentList.map { it.key.toString() }
+            2 -> {
+                val enchant = CustomEnchants.enchantmentList.find { it.key.toString() == args[0] }
+                ((enchant?.startLevel ?: 0)..(enchant?.maxLevel ?: 0)).map { it.toString() }
+            }
+            else -> emptyList()
+        }
     }
 }
