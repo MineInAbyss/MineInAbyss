@@ -12,8 +12,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 object FrostAspectListener : Listener {
 
     @EventHandler
-    fun EntityDamageByEntityEvent.onFrostAspectHit() {//
-        val damager = damager as Player
+    fun EntityDamageByEntityEvent.onFrostAspectHit() {
+        val damager = damager as? Player ?: return
         val item = damager.inventory.itemInMainHand
         val enchantLvl = item.getEnchantmentLevel(CustomEnchants.FROST_ASPECT)
         val length = TimeSpan(10000).inSeconds.times(enchantLvl) // Multiplied duration by level.
