@@ -30,6 +30,7 @@ interface Layer {
     val minCurseMultiplier: Float
     val maxCurseMultiplier: Float
     val curseOverrideRegions: List<CurseRegion>
+    val hasPvPDefault: Boolean
     val startDepth: Int
     val endDepth: Int
     val sections: List<Section>

@@ -2,12 +2,9 @@ package com.derongan.minecraft.mineinabyss.player
 
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
-import com.derongan.minecraft.deeperworld.services.WorldManager
-import com.derongan.minecraft.deeperworld.world.section.inSectionOverlap
 import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
-import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.harvestPlant
 import com.derongan.minecraft.mineinabyss.playerData
@@ -17,8 +14,6 @@ import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logWarn
-import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -34,7 +29,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerExpChangeEvent
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffectType
 import java.io.IOException
@@ -133,39 +131,9 @@ object PlayerListener : Listener {
     }
 
     @EventHandler
-    fun PlayerMoveEvent.onLeaveOrth() {
-        val loc = player.location
-        val data = player.playerData
-
-        if (MIAConfig.data.hubSection == WorldManager.getSectionFor(loc) && loc.inSectionOverlap && data.showPvPMessage) {
-            player.sendMessage(
-                """
-                ${ChatColor.GREEN}Do you wish to enable PVP in the ${ChatColor.DARK_GREEN}${ChatColor.BOLD}Abyss?
-                ${ChatColor.GREEN}Only players with PVP enabled can engage in combat with others.
-                ${ChatColor.GREEN}This can only be changed in ${ChatColor.GOLD}${ChatColor.BOLD}Orth.
-                """.trimIndent()
-            )
-            val yes = TextComponent("${ChatColor.DARK_GREEN}${ChatColor.BOLD}Yes")
-            val no = TextComponent("${ChatColor.DARK_RED}${ChatColor.BOLD}No")
-
-            player.sendMessage(yes)
-            player.sendMessage(no)
-
-            yes.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pvpon")
-            no.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pvpoff")
-            data.showPvPMessage = false
-        }
-
-    }
-
-    //If Player doesn't choose, and hasn't chosen before
-    @EventHandler
-    fun PlayerDescendEvent.onEnterAbyss() {
-        val data = player.playerData
-
-        if (data.pvpUndecided) {
-            player.performCommand("pvpoff")
-            data.showPvPMessage = false //Negates a repeated message due to no decision
+    fun PlayerDescendEvent.onEnterPvPLayer() {
+        if (toSection.layer?.hasPvPDefault == true && !player.playerData.pvpStatus) {
+            player.error("PVP is always enabled below this point.")
         }
     }
 
@@ -191,8 +159,8 @@ object PlayerListener : Listener {
             }
         }
 
-        if (
-            (player.playerData.pvpStatus && attacker.playerData.pvpStatus)
+        if ((player.location.layer?.hasPvPDefault == true)
+            || (player.playerData.pvpStatus && attacker.playerData.pvpStatus)
             || player == attacker
         ) return
 

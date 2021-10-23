@@ -21,6 +21,7 @@ class LayerImpl(
     val depth: Depth = Depth(0, 0),
     @SerialName("effects")
     override val ascensionEffects: List<AscensionEffect> = emptyList(),
+    override val hasPvPDefault: Boolean = false,
     override val blockBlacklist: List<Material> = emptyList(),
     @SerialName("sections")
     val _sections: List<String> = emptyList(),
