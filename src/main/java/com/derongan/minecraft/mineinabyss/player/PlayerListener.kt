@@ -33,6 +33,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffectType
 import java.io.IOException
 
+
 object PlayerListener : Listener {
     @EventHandler
     fun onPlayerJoin(joinEvent: PlayerJoinEvent) {
@@ -65,9 +66,11 @@ object PlayerListener : Listener {
         val player = entity
         val playerData = getPlayerData(player)
 
-        if (!playerData.keepInvStatus) {
-            entity.inventory.contents.filterNotNull().forEach { player.world.dropItemNaturally(player.location, it) }
-            player.inventory.clear()
+        if (playerData.keepInvStatus) {
+            player.inventory.contents.filterNotNull().forEach {
+                itemsToKeep += it
+                drops -= it
+            }
         }
 
         //TODO maybe limit this to only the survival server with a config option
@@ -124,5 +127,4 @@ object PlayerListener : Listener {
             block.world.playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
         }
     }
-
 }
