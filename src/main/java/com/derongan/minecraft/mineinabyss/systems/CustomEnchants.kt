@@ -13,9 +13,10 @@ import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Field
 
 object CustomEnchants {
+    val enchantmentList = mutableListOf<Enchantment>()
     val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, color(150, 10, 10))
     val FROST_ASPECT =
-        EnchantmentWrapper("frostaspect", "Frost Aspect", 1, EnchantmentTarget.WEAPON, color(0, 100, 220))
+        EnchantmentWrapper("frostaspect", "Frost Aspect", 2, EnchantmentTarget.WEAPON, color(0, 100, 220))
 
 
     fun register() {
@@ -38,6 +39,7 @@ object CustomEnchants {
             e.printStackTrace()
         }
         if (registered) {
+            enchantmentList.add(enchantment)
             logInfo("Enchantment Registered")
         }
     }
