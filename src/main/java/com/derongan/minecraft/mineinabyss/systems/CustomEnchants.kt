@@ -8,15 +8,22 @@ import net.kyori.adventure.text.format.TextColor.color
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.enchantments.EnchantmentTarget
 import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Field
 
 object CustomEnchants {
-    val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, color(150, 10, 10))
+    val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, color(150, 10, 10))
+    val FROST_ASPECT =
+        EnchantmentWrapper("frostaspect", "Frost Aspect", 1, EnchantmentTarget.WEAPON, color(0, 100, 220))
+
 
     fun register() {
         val registered: Boolean = Enchantment.values().contains(SOULBOUND)
         if (!registered) registerEnchantment(SOULBOUND)
+
+        val registered2: Boolean = Enchantment.values().contains(FROST_ASPECT)
+        if (!registered2) registerEnchantment(FROST_ASPECT)
     }
 
     private fun registerEnchantment(enchantment: Enchantment) {
