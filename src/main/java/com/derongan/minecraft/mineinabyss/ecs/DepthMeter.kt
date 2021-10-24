@@ -8,5 +8,7 @@ import kotlinx.serialization.Serializable
 @SerialName("mineinabyss:depthmeter")
 @AutoscanComponent
 data class DepthMeter(
-    val accuracy: Int = 1
+    val sectionXOffset: Int = 16384,
+    val sectionYOffset: Int = 480,
+    val abyssStartingHeightInOrth: Int = 10
 )
