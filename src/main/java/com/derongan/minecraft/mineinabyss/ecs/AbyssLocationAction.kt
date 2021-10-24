@@ -1,6 +1,8 @@
 package com.derongan.minecraft.mineinabyss.ecs
 
+import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.section.section
+import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.world.Layer
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.geary.ecs.api.actions.GearyAction
@@ -26,21 +28,26 @@ class AbyssLocationAction : GearyAction() {
         val section = player.location.section
         val layer: Layer? = section?.layer
 
-        if (layer == null) {
-            player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
-        } else {
-            val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
-            player.sendMessage(
-                """
+        if (layer?.name != null) {
+            if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location)) {
+                player.sendMessage(
+                    """
                 $DARK_AQUA${ITALIC}The needle spins.
-                ${DARK_AQUA}You suddenly become aware that you are in the ${layer.name} ${DARK_AQUA}and ${AQUA}${
-                    pluralizeMeters(
-                        depth
-                    )
-                } ${DARK_AQUA}deep into the Abyss.
+                ${DARK_AQUA}You suddenly become aware that you are in ${layer.name}${DARK_AQUA}.""".trimIndent()
+                )
+                return true
+            }
+            if (MIAConfig.data.hubSection != WorldManager.getSectionFor(player.location)){
+                val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
+                player.sendMessage(
+                    """
+                $DARK_AQUA${ITALIC}The needle spins.
+                ${DARK_AQUA}You suddenly become aware that you are in the
+                ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the ${GREEN}Abyss${DARK_AQUA}.
                 """.trimIndent()
-            )
-        }
+                )
+            }
+        } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
         return true
     }
 

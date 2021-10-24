@@ -10,5 +10,5 @@ import kotlinx.serialization.Serializable
 data class DepthMeter(
     val sectionXOffset: Int = 16384,
     val sectionYOffset: Int = 480,
-    val abyssStartingHeightInOrth: Int = 10
+    val abyssStartingHeightInOrth: Int = 0
 )
