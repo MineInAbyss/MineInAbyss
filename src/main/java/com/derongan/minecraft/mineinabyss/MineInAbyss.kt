@@ -7,9 +7,7 @@ import com.derongan.minecraft.mineinabyss.commands.UtilityCommandExecutor
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
-import com.derongan.minecraft.mineinabyss.systems.CustomEnchants
-import com.derongan.minecraft.mineinabyss.systems.FrostAspectListener
-import com.derongan.minecraft.mineinabyss.systems.SoulSystem
+import com.derongan.minecraft.mineinabyss.systems.*
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
 import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.minecraft.dsl.gearyAddon
@@ -59,7 +57,10 @@ class MineInAbyss : JavaPlugin() {
             // GuiListener(this),
             PlayerListener,
             AscensionListener,
-            FrostAspectListener
+            FrostAspectListener,
+            BirdSwatterListener,
+            JawBreakerListener,
+            BaneOfKuongatariListener
         )
         //register command executors
         AscensionCommandExecutor

@@ -32,11 +32,8 @@ class EnchantmentWrapper(
     override fun displayName(level: Int): Component {
         val component = Component.text(name).color(loreColor).decoration(TextDecoration.ITALIC, false)
 
-        if (level != maxLvl) {
-            component.append(Component.text(" $level"))
-        }
-
-        return component
+        return if (startLevel == maxLvl) component
+                else component.append(Component.text(" $level"))
     }
 
     override fun translationKey(): String {
@@ -52,7 +49,11 @@ class EnchantmentWrapper(
     }
 
     override fun getItemTarget(): EnchantmentTarget {
-        return allowedItems
+        return allowedItems // Implement custom targets
+    }
+
+    override fun conflictsWith(other: Enchantment): Boolean {
+        TODO("Not yet implemented")
     }
 
     override fun isTradeable(): Boolean {
@@ -68,7 +69,7 @@ class EnchantmentWrapper(
     }
 
     override fun getDamageIncrease(level: Int, entityCategory: EntityCategory): Float {
-        TODO("Not yet implemented")
+        TODO("Not yet implemented") // Implement custom categories
     }
 
     override fun getActiveSlots(): MutableSet<EquipmentSlot> {
@@ -80,10 +81,6 @@ class EnchantmentWrapper(
     }
 
     override fun isCursed(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun conflictsWith(other: Enchantment): Boolean {
         TODO("Not yet implemented")
     }
 }

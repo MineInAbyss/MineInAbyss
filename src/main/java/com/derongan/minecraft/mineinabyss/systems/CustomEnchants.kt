@@ -17,14 +17,18 @@ object CustomEnchants {
     val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, color(150, 10, 10))
     val FROST_ASPECT =
         EnchantmentWrapper("frostaspect", "Frost Aspect", 2, EnchantmentTarget.WEAPON, color(0, 100, 220))
+    val BIRD_SWATTER = EnchantmentWrapper("birdswatter", "Bird Swatter", 5, EnchantmentTarget.WEAPON, color(0,200,60))
+    val JAW_BREAKER = EnchantmentWrapper("jawbreaker", "Jaw Breaker", 3, EnchantmentTarget.WEAPON, color(150,20,150))
+    val BANE_OF_KUONGATARI = EnchantmentWrapper("baneofkuongatari", "Bane of Kuongatari", 1, EnchantmentTarget.WEAPON, color(0,200,80))
 
 
     fun register() {
-        val registered: Boolean = Enchantment.values().contains(SOULBOUND)
-        if (!registered) registerEnchantment(SOULBOUND)
+        if (!Enchantment.values().contains(SOULBOUND)) registerEnchantment(SOULBOUND)
+        if (!Enchantment.values().contains(FROST_ASPECT)) registerEnchantment(FROST_ASPECT)
+        if (!Enchantment.values().contains(BIRD_SWATTER)) registerEnchantment(BIRD_SWATTER)
+        if (!Enchantment.values().contains(JAW_BREAKER)) registerEnchantment(JAW_BREAKER)
+        if (!Enchantment.values().contains(BANE_OF_KUONGATARI)) registerEnchantment(BANE_OF_KUONGATARI)
 
-        val registered2: Boolean = Enchantment.values().contains(FROST_ASPECT)
-        if (!registered2) registerEnchantment(FROST_ASPECT)
     }
 
     private fun registerEnchantment(enchantment: Enchantment) {
@@ -47,8 +51,17 @@ object CustomEnchants {
 }
 
 fun ItemStack.addCustomEnchant(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "") {
+    removeCustomEnchant(enchantment)
+    updateEnchantmentLore(enchantment, lvl, extraLore)
     addEnchantment(enchantment, lvl)
     updateEnchantmentLore(enchantment, lvl, extraLore)
+}
+
+// Lore is not removed correctly
+fun ItemStack.removeCustomEnchant(enchantment: Enchantment) {
+    val lore: MutableList<Component> = lore() ?: mutableListOf()
+    lore.removeIf { it.contains(enchantment.displayName(getEnchantmentLevel(enchantment))) }
+    removeEnchantment(enchantment)
 }
 
 fun ItemStack.updateEnchantmentLore(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "") {
@@ -81,8 +94,4 @@ fun ItemStack.updateEnchantmentLore(enchantment: EnchantmentWrapper, lvl: Int, e
     }
 }
 
-fun ItemStack.removeCustomEnchant(enchantment: Enchantment) {
-    val lore: MutableList<Component> = lore() ?: mutableListOf()
-    lore.removeIf { it.contains(enchantment.displayName(getEnchantmentLevel(enchantment))) }
-    removeEnchantment(enchantment)
-}
+
