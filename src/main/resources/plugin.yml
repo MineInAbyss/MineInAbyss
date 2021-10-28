@@ -10,6 +10,8 @@ prefix: MiB
 description: A mod that adds abyss effects
 
 commands:
+  abyssenchant:
+    description: Apply custom enchantments onto items
   curseon:
     description: Turn on the curse of ascension
   curseoff:
@@ -36,6 +38,8 @@ commands:
     description: Clears a specific item from all containers in a given layer (or all layers if not specified)
 
 permissions:
+  mineinabyss.abyssenchant:
+    description: Allows players to apply custom enchantments onto items
   mineinabyss.curse.toggle:
     description: Allows players to toggle the curse of ascension on themselves
   mineinabyss.curse.on:
