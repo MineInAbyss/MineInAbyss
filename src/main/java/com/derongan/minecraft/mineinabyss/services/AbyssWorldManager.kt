@@ -22,5 +22,5 @@ interface AbyssWorldManager {
      */
     fun isAbyssWorld(worldName: World): Boolean
 
-    fun getLayerForSection(section: Section): Layer
+    fun getLayerForSection(section: Section): Layer?
 }

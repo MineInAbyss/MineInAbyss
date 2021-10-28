@@ -19,8 +19,8 @@ repositories {
 dependencies {
     // Plugin deps
     compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
-    compileOnly("com.mineinabyss:geary-commons-papermc:0.1.6")
-    compileOnly("com.mineinabyss:looty:0.3.28")
+    compileOnly("com.mineinabyss:geary-commons-papermc:0.1.11")
+    compileOnly("com.mineinabyss:looty:0.3.32")
     compileOnly("com.derongan.minecraft:deeperworld:0.3.68")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
 

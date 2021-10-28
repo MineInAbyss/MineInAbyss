@@ -2,6 +2,7 @@ package com.derongan.minecraft.mineinabyss.commands
 
 //TODO add all the commands
 object CommandLabels {
+    const val ABYSSENCHANT = "abyssenchant"
     const val CURSEON = "curseon"
     const val CURSEOFF = "curseoff"
     const val KEEPINVON = "keepinvon"

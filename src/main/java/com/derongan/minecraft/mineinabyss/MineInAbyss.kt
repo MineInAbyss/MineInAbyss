@@ -7,6 +7,9 @@ import com.derongan.minecraft.mineinabyss.commands.UtilityCommandExecutor
 import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.systems.CustomEnchants
+import com.derongan.minecraft.mineinabyss.systems.FrostAspectListener
+import com.derongan.minecraft.mineinabyss.systems.SoulSystem
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
 import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.minecraft.dsl.gearyAddon
@@ -28,6 +31,8 @@ class MineInAbyss : JavaPlugin() {
         AbyssContext
         PlayerDataConfig
 
+        CustomEnchants.register()
+
         //Vault setup
         if (AbyssContext.econ == null) {
             logger.severe("Disabled due to no Vault dependency found!")
@@ -41,6 +46,9 @@ class MineInAbyss : JavaPlugin() {
             gearyAddon {
                 autoscanComponents()
                 autoscanActions()
+                systems(
+                    SoulSystem
+                )
             }
         } else logger.warning("Geary service not found! No items have been added!")
 
@@ -50,7 +58,8 @@ class MineInAbyss : JavaPlugin() {
         registerEvents(
             // GuiListener(this),
             PlayerListener,
-            AscensionListener
+            AscensionListener,
+            FrostAspectListener
         )
         //register command executors
         AscensionCommandExecutor
