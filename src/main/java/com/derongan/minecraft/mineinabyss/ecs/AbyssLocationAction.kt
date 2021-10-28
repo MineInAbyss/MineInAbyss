@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 import org.bukkit.ChatColor.*
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import kotlin.math.roundToInt
 
 //TODO switch to new Geary ECS
 @Serializable
@@ -71,8 +72,8 @@ class AbyssLocationAction : GearyAction() {
         location: Location
     ): Int {
 
-        val numSectionsDeep =
-            (location.x / sectionXOffset).toInt() //number of sections under Orth. If in Orth, this should be 0
+        //number of sections under Orth. If in Orth, this should be 0
+        val numSectionsDeep = (location.x / sectionXOffset).roundToInt()
 
         return (location.y - abyssStartingHeightInOrth - (numSectionsDeep * sectionYOffset)).toInt()
     }
