@@ -1,4 +1,4 @@
-package com.derongan.minecraft.mineinabyss.gui
+package com.mineinabyss.mineinabyss.core.gui
 
 import com.derongan.minecraft.guiy.gui.ClickableElement
 import com.derongan.minecraft.guiy.gui.Element
@@ -7,12 +7,12 @@ import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
 import com.derongan.minecraft.guiy.kotlin_dsl.setElement
-import com.derongan.minecraft.mineinabyss.MineInAbyss
-import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
-import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
-import com.derongan.minecraft.mineinabyss.ecs.components.playerData
-import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.world.layer
+import com.mineinabyss.mineinabyss.core.MineInAbyss
+import com.mineinabyss.mineinabyss.core.configuration.SpawnLocation
+import com.mineinabyss.mineinabyss.core.configuration.SpawnLocationsConfig
+import com.mineinabyss.mineinabyss.core.ecs.components.playerData
+import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.core.world.layer
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.color
 import net.md_5.bungee.api.ChatColor

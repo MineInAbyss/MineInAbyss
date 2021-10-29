@@ -1,0 +1,46 @@
+package com.mineinabyss.components.layer
+
+import com.derongan.minecraft.deeperworld.services.WorldManager
+import com.derongan.minecraft.deeperworld.world.section.Section
+import com.mineinabyss.components.AscensionEffect
+import com.mineinabyss.components.LayerKey
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import org.bukkit.Material
+
+/**
+ * @property name the name of this Layer. This name may not match the world name.
+ * @property sub The sub header.
+ * @property sections The sections in this layer. This list is immutable.
+ * @property ascensionEffects The effects of ascending on this layer.
+ * @property startDepth Starting depth of this layer.
+ * @property endDepth End depth of this layer.
+ * @property deathMessage Custom death message suffix for this Layer.
+ */
+@Serializable
+class Layer(
+    val name: String,
+    val sub: String,
+    val deathMessage: String = "in the depths of the abyss",
+    val depth: Depth = Depth(0, 0),
+    @SerialName("effects")
+    val ascensionEffects: List<AscensionEffect> = emptyList(),
+    val blockBlacklist: List<Material> = emptyList(),
+    @SerialName("sections")
+    val _sections: List<String> = emptyList(),
+) {
+    @Transient
+    val sections: List<Section> = _sections.mapNotNull { WorldManager.getSectionFor(it) }
+    val startDepth: Int get() = depth.start
+    val endDepth: Int get() = depth.end
+    val key: LayerKey get() = LayerKey(name)
+
+    operator fun contains(section: Section): Boolean = sections.any { it.key == section.key }
+}
+
+@Serializable
+class Depth(
+    val start: Int,
+    val end: Int
+)

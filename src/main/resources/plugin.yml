@@ -1,7 +1,7 @@
 name: MineInAbyss
 version: ${plugin_version}
 author: Derongan
-main: com.derongan.minecraft.mineinabyss.MineInAbyss
+main: com.mineinabyss.plugin.MineInAbyssPluginImpl
 api-version: 1.17
 softdepend: [ Multiverse-Core ] #FIXME depend on two plugins (Geary and DeeperWorld) breaks LibraryLoaderInjector
 depend: [ Vault, Geary, DeeperWorld, Guiy ]
