@@ -1,4 +1,4 @@
-package com.derongan.minecraft.mineinabyss.gui
+package com.mineinabyss.mineinabyss.core.gui
 
 import com.derongan.minecraft.guiy.gui.ClickableElement
 import com.derongan.minecraft.guiy.gui.Element
@@ -7,12 +7,12 @@ import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
 import com.derongan.minecraft.guiy.kotlin_dsl.setElement
-import com.derongan.minecraft.mineinabyss.AbyssContext
-import com.derongan.minecraft.mineinabyss.configuration.SpawnLocation
-import com.derongan.minecraft.mineinabyss.configuration.SpawnLocationsConfig
-import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.playerData
-import com.derongan.minecraft.mineinabyss.world.layer
+import com.mineinabyss.mineinabyss.core.MineInAbyss
+import com.mineinabyss.mineinabyss.core.configuration.SpawnLocation
+import com.mineinabyss.mineinabyss.core.configuration.SpawnLocationsConfig
+import com.mineinabyss.mineinabyss.core.ecs.components.playerData
+import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.core.world.layer
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.color
 import net.md_5.bungee.api.ChatColor
@@ -34,7 +34,7 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
     private fun parseLayer(spawnLoc: SpawnLocation): Element {
         val (loc, _, cost) = spawnLoc
         val displayItem = spawnLoc.displayItem.toItemStack()
-        val balance = AbyssContext.econ!!.getBalance(player) //TODO !!
+        val balance = MineInAbyss.econ!!.getBalance(player) //TODO !!
 
         return if (balance >= cost) {
             displayItem.editItemMeta {
@@ -51,11 +51,11 @@ class GondolaGUI(val player: Player) : HistoryGuiHolder(6, "Choose Spawn Locatio
                 player.teleport(loc)
                 player.sendTitle((layer?.name) ?: "Outside the abyss", (layer?.sub) ?: "A land of mystery", 50, 10, 20)
 
-                AbyssContext.econ!!.withdrawPlayer(player, cost.toDouble())
-
-                playerData.descentDate = Date()
-                playerData.expOnDescent = playerData.exp
-                playerData.isIngame = true
+                MineInAbyss.econ!!.withdrawPlayer(player, cost.toDouble())
+                //TODO start descent
+//                playerData.descentDate = Date()
+//                playerData.expOnDescent = playerData.exp
+//                playerData.isIngame = true
                 Bukkit.getScheduler().scheduleSyncDelayedTask(mineInAbyss, {
                     player.sendTitle("", "${ChatColor.GRAY}${ChatColor.ITALIC}Let the journey begin", 30, 30, 20)
                 }, 80)

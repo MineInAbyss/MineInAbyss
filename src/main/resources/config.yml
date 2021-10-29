@@ -10,8 +10,17 @@ x-particles-vomit: &vomit
 
 # Layer config uses DeeperWorld sections
 # effect names are each effect class' @SerialName
-storage:
-  relicpath: "relics/"
+features:
+  - !<anticheese> {}
+  - !<curse> {}
+  - !<descent> {}
+  - !<enchants> {}
+  - !<exp> {}
+  - !<gondolas> {}
+  - !<hub_storage> {}
+  - !<layers> {}
+  - !<pins> {}
+  - !<relics> {}
 layers:
   - name: Orth
     sub: City of the Great Pit

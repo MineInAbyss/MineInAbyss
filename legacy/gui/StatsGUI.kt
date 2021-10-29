@@ -1,16 +1,17 @@
-package com.derongan.minecraft.mineinabyss.gui
+package com.mineinabyss.mineinabyss.core.gui
 
 import com.derongan.minecraft.deeperworld.world.section.section
 import com.derongan.minecraft.guiy.gui.ClickableElement
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
-import com.derongan.minecraft.mineinabyss.AbyssContext
-import com.derongan.minecraft.mineinabyss.configuration.ConfigConstants
-import com.derongan.minecraft.mineinabyss.mineInAbyss
-import com.derongan.minecraft.mineinabyss.player.PlayerData
-import com.derongan.minecraft.mineinabyss.playerData
-import com.derongan.minecraft.mineinabyss.world.layer
+import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.mineinabyss.core.configuration.ConfigConstants
+import com.mineinabyss.mineinabyss.core.ecs.components.PlayerData
+import com.mineinabyss.mineinabyss.core.ecs.components.playerData
+import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.core.world.layer
+import com.mineinabyss.geary.minecraft.access.geary
 import com.mineinabyss.idofront.items.editItemMeta
 import de.erethon.headlib.HeadLib
 import org.bukkit.Material
@@ -24,8 +25,7 @@ class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss 
     private val col2 = ConfigConstants.secondaryColor
     private val mobConfigs: List<ClickableElement> = ArrayList()
     private val spawnList: List<ClickableElement> = ArrayList()
-    private val playerData: PlayerData = player.playerData
-
+    private val playerData = player.playerData
 
     init {
         setElement(buildMain())
