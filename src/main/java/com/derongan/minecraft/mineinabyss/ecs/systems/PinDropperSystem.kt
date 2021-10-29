@@ -3,8 +3,9 @@ package com.derongan.minecraft.mineinabyss.ecs.systems
 import com.derongan.minecraft.mineinabyss.ecs.components.DescentContext
 import com.derongan.minecraft.mineinabyss.ecs.components.pins.PinDrop
 import com.derongan.minecraft.mineinabyss.world.layer
-import com.mineinabyss.geary.minecraft.access.geary
-import com.mineinabyss.geary.minecraft.events.Events
+import com.mineinabyss.geary.ecs.api.actions.GearyAction
+import com.mineinabyss.geary.minecraft.access.toGeary
+import com.mineinabyss.geary.minecraft.components.Events
 import com.mineinabyss.geary.minecraft.store.encode
 import com.mineinabyss.idofront.items.editItemMeta
 import de.erethon.headlib.HeadLib
@@ -16,7 +17,7 @@ class PinDropperSystem : Listener {
     @EventHandler
     fun EntityDeathEvent.dropPinOnDeath() {
         val player = entity.killer ?: return
-        val gearyPlayer = geary(player)
+        val gearyPlayer = player.toGeary()
         val layer = player.location.layer ?: return
         val descent = gearyPlayer.get<DescentContext>() ?: return
 
@@ -27,9 +28,7 @@ class PinDropperSystem : Listener {
                 persistentDataContainer.apply {
                     encode(PinDrop(layer.key))
                     encode(
-                        Events(
-                            mapOf("rightClick" to listOf(AddPinAction()))
-                        )
+                        Events(mapOf("rightClick" to listOf(AddPinAction())))
                     )
                 }
             }

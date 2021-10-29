@@ -4,7 +4,7 @@ author: Derongan
 main: com.derongan.minecraft.mineinabyss.MineInAbyss
 api-version: 1.17
 softdepend: [ Multiverse-Core ] #FIXME depend on two plugins (Geary and DeeperWorld) breaks LibraryLoaderInjector
-depend: [ Vault, Geary, DeeperWorld ]
+depend: [ Vault, Geary, DeeperWorld, Guiy ]
 
 prefix: MiB
 description: A mod that adds abyss effects

@@ -8,6 +8,7 @@ import com.derongan.minecraft.mineinabyss.systems.EnchantmentWrapper
 import com.derongan.minecraft.mineinabyss.systems.addCustomEnchant
 import com.derongan.minecraft.mineinabyss.systems.removeCustomEnchant
 import com.derongan.minecraft.mineinabyss.world.Layer
+import com.derongan.minecraft.mineinabyss.world.LayerKey
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -71,16 +72,14 @@ object UtilityCommandExecutor : IdofrontCommandExecutor(), TabCompleter {
 
                 if (layerToClear == "all") {
                     sender.info("Start clearing out $parsedItem from containers in all layers.")
-                    AbyssWorldManager.layers.forEach {
+                    AbyssWorldManager.layers.values.forEach {
                         mineInAbyss.schedule {
                             clearItemFromContainers(it, parsedItem, sender)
                         }
                     }
                 } else {
-                    val parsedLayer =
-                        AbyssWorldManager.layers.firstOrNull {
-                            it.name == layerToClear
-                        } ?: command.stopCommand("Layer not found")
+                    val parsedLayer = AbyssWorldManager.getLayerFor(LayerKey(layerToClear))
+                        ?: command.stopCommand("Layer not found")
                     sender.info("Start clearing out $parsedItem from containers in ${parsedLayer.name}.")
                     mineInAbyss.schedule {
                         clearItemFromContainers(parsedLayer, parsedItem, sender)

@@ -1,20 +1,14 @@
 package com.derongan.minecraft.mineinabyss.player
 
-import com.derongan.minecraft.mineinabyss.MineInAbyss.Companion.econ
 import com.derongan.minecraft.mineinabyss.AbyssContext
-import com.derongan.minecraft.mineinabyss.AbyssContext.getPlayerData
 import com.derongan.minecraft.mineinabyss.ascension.effect.effects.MaxHealthChangeEffect
 import com.derongan.minecraft.mineinabyss.ecs.components.playerData
 import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
-import com.derongan.minecraft.mineinabyss.configuration.PlayerDataConfig
 import com.derongan.minecraft.mineinabyss.harvestPlant
-import com.derongan.minecraft.mineinabyss.playerData
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
-import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.logWarn
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -30,11 +24,9 @@ import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.potion.PotionEffectType
-import java.io.IOException
 
 object PlayerListener : Listener {
     @EventHandler
@@ -54,8 +46,7 @@ object PlayerListener : Listener {
     fun PlayerDeathEvent.onPlayerDeath() {
         val player = entity
 
-        //FIXME update
-        if (playerData.keepInvStatus) {
+        if (player.playerData.keepInvStatus) {
             player.inventory.contents.filterNotNull().forEach {
                 itemsToKeep += it
                 drops -= it
@@ -72,7 +63,7 @@ object PlayerListener : Listener {
     fun onPlayerGainEXP(e: PlayerExpChangeEvent) {
         val (player, amount) = e
         if (amount <= 0) return
-        econ?.depositPlayer(player, amount.toDouble())
+        AbyssContext.econ?.depositPlayer(player, amount.toDouble())
         player.playerData.addExp(amount.toDouble())
     }
 

@@ -3,7 +3,6 @@ package com.derongan.minecraft.mineinabyss
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
-import com.derongan.minecraft.mineinabyss.commands.UtilityCommandExecutor
 import com.derongan.minecraft.mineinabyss.ecs.components.pins.ActivePins
 import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinActivatorSystem
@@ -21,25 +20,20 @@ import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.plugin.registerService
 import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
-import kotlinx.serialization.InternalSerializationApi
-import net.milkbowl.vault.economy.Economy
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
+@ExperimentalCommandDSL
 class MineInAbyss : JavaPlugin() {
-    @InternalSerializationApi
-    @ExperimentalCommandDSL
-    override fun onEnable() {
+    override fun onLoad() {
         IdofrontSlimjar.loadToLibraryLoader(this)
+    }
 
-        // Initialize singletons
-        AbyssContext
-        PlayerDataConfig
-
+    override fun onEnable() {
         CustomEnchants.register()
 
         //Vault setup
-        if (econ == null) {
+        if (AbyssContext.econ == null) {
             logger.severe("Disabled due to no Vault dependency found!")
             server.pluginManager.disablePlugin(this)
             return
@@ -49,14 +43,14 @@ class MineInAbyss : JavaPlugin() {
         //TODO make a serviceRegistered function idofront
         if (getServiceOrNull<Engine>(plugin = "Geary") != null) {
             gearyAddon {
-                autoscanComponents()
-                autoscanActions()
+                autoscanAll()
                 systems(
                     SoulSystem,
                     PinActivatorSystem(),
                 )
-                bukkitEntityAccess {
+                bukkitEntityAssociations {
                     onEntityRegister<Player> {
+                        //TODO kotlin bug, removing this defaults it to Unit but only sometimes
                         getOrSetPersisting<ActivePins> { ActivePins() }
                     }
                 }
@@ -67,10 +61,9 @@ class MineInAbyss : JavaPlugin() {
 
         registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
         registerEvents(
-            // GuiListener(this),
             PlayerListener,
             AscensionListener,
-            FrostAspectListener
+            FrostAspectListener,
             AscensionListener,
             PinDropperSystem(),
             OrthReturnSystem
@@ -79,10 +72,5 @@ class MineInAbyss : JavaPlugin() {
         //register command executors
         AscensionCommandExecutor
         GUICommandExecutor
-    }
-
-    companion object {
-        @JvmStatic
-        val econ by lazy { getServiceOrNull<Economy>("Vault") }
     }
 }

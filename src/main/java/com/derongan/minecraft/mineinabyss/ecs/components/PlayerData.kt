@@ -1,8 +1,7 @@
 package com.derongan.minecraft.mineinabyss.ecs.components
 
 import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
-import com.mineinabyss.geary.ecs.prefab.PrefabKey
-import com.mineinabyss.geary.minecraft.access.geary
+import com.mineinabyss.geary.minecraft.access.toGeary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -14,6 +13,7 @@ class PlayerData(
     var isAffectedByCurse: Boolean = true,
     var curseAccrued: Double = 0.0,
     var exp: Double = 0.0,
+    var keepInvStatus: Boolean = true,
 ) {
     val level: Int get() = exp.toInt() / 10 //TODO write a proper formula
 
@@ -22,4 +22,4 @@ class PlayerData(
     }
 }
 
-val Player.playerData get() = geary(this).getOrSetPersisting { PlayerData() }
+val Player.playerData get() = toGeary().getOrSetPersisting { PlayerData() }
