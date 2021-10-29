@@ -5,6 +5,7 @@ import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 
 @ExperimentalCommandDSL
@@ -24,7 +25,19 @@ object AscensionCommandExecutor : IdofrontCommandExecutor() {
         "curseoff" {
             playerAction {
                 player.playerData.isAffectedByCurse = false
-                sender.success("Curse disabled for ${player.name}")
+                sender.error("Curse disabled for ${player.name}")
+            }
+        }
+        "keepinvon" {
+            playerAction {
+                player.playerData.keepInvStatus = true
+                sender.success("Keep Inventory enabled for ${player.name}")
+            }
+        }
+        "keepinvoff" {
+            playerAction {
+                player.playerData.keepInvStatus = false
+                sender.error("Keep Inventory disabled for ${player.name}")
             }
         }
     }

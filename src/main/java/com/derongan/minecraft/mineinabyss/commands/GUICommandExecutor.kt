@@ -13,6 +13,7 @@ import com.derongan.minecraft.mineinabyss.mineInAbyss
 import com.derongan.minecraft.mineinabyss.player.openHubStorage
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 import com.mineinabyss.geary.minecraft.access.geary
+import com.derongan.minecraft.mineinabyss.playerData
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
@@ -56,7 +57,7 @@ object GUICommandExecutor : IdofrontCommandExecutor() {
 
             }
             playerAction {
-                StatsGUI(player).show(player)
+                // StatsGUI(player).show(player)
             }
         }
         "start" command@{

@@ -1,22 +1,26 @@
 package com.derongan.minecraft.mineinabyss
 
-import com.derongan.minecraft.guiy.GuiListener
 import com.derongan.minecraft.mineinabyss.ascension.AscensionListener
 import com.derongan.minecraft.mineinabyss.commands.AscensionCommandExecutor
 import com.derongan.minecraft.mineinabyss.commands.GUICommandExecutor
+import com.derongan.minecraft.mineinabyss.commands.UtilityCommandExecutor
 import com.derongan.minecraft.mineinabyss.ecs.components.pins.ActivePins
 import com.derongan.minecraft.mineinabyss.ecs.systems.OrthReturnSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinActivatorSystem
 import com.derongan.minecraft.mineinabyss.ecs.systems.PinDropperSystem
 import com.derongan.minecraft.mineinabyss.player.PlayerListener
 import com.derongan.minecraft.mineinabyss.services.AbyssWorldManager
+import com.derongan.minecraft.mineinabyss.systems.CustomEnchants
+import com.derongan.minecraft.mineinabyss.systems.FrostAspectListener
+import com.derongan.minecraft.mineinabyss.systems.SoulSystem
 import com.derongan.minecraft.mineinabyss.world.AbyssWorldManagerImpl
 import com.mineinabyss.geary.ecs.api.engine.Engine
-import com.mineinabyss.geary.minecraft.dsl.attachToGeary
+import com.mineinabyss.geary.minecraft.dsl.gearyAddon
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.plugin.registerService
+import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
 import kotlinx.serialization.InternalSerializationApi
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.entity.Player
@@ -26,8 +30,13 @@ class MineInAbyss : JavaPlugin() {
     @InternalSerializationApi
     @ExperimentalCommandDSL
     override fun onEnable() {
-        // Plugin startup logic
-        logger.info("On enable has been called")
+        IdofrontSlimjar.loadToLibraryLoader(this)
+
+        // Initialize singletons
+        AbyssContext
+        PlayerDataConfig
+
+        CustomEnchants.register()
 
         //Vault setup
         if (econ == null) {
@@ -39,16 +48,15 @@ class MineInAbyss : JavaPlugin() {
         //Geary setup
         //TODO make a serviceRegistered function idofront
         if (getServiceOrNull<Engine>(plugin = "Geary") != null) {
-            attachToGeary {
+            gearyAddon {
                 autoscanComponents()
                 autoscanActions()
-
                 systems(
-                    PinActivatorSystem()
+                    SoulSystem,
+                    PinActivatorSystem(),
                 )
                 bukkitEntityAccess {
                     onEntityRegister<Player> {
-                        //TODO Kotlin bug (?) Sees type as Unit unless specified explicitly
                         getOrSetPersisting<ActivePins> { ActivePins() }
                     }
                 }
@@ -59,13 +67,14 @@ class MineInAbyss : JavaPlugin() {
 
         registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
         registerEvents(
-            GuiListener(this),
+            // GuiListener(this),
             PlayerListener,
+            AscensionListener,
+            FrostAspectListener
             AscensionListener,
             PinDropperSystem(),
             OrthReturnSystem
         )
-
 
         //register command executors
         AscensionCommandExecutor

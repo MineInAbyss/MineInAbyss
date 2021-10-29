@@ -24,7 +24,7 @@ class AbyssWorldManagerImpl : AbyssWorldManager {
 
     override fun isAbyssWorld(world: World) = world in abyssWorlds
 
-    override fun getLayerForSection(section: Section) = _layers.first { section in it }
+    override fun getLayerForSection(section: Section) = _layers.firstOrNull { section in it }
 
     override fun getLayerFor(key: LayerKey) = layers[key]
 

@@ -5,7 +5,7 @@ import com.derongan.minecraft.guiy.gui.ClickableElement
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell
 import com.derongan.minecraft.guiy.kotlin_dsl.guiyLayout
-import com.derongan.minecraft.mineinabyss.MineInAbyss
+import com.derongan.minecraft.mineinabyss.AbyssContext
 import com.derongan.minecraft.mineinabyss.configuration.ConfigConstants
 import com.derongan.minecraft.mineinabyss.ecs.components.PlayerData
 import com.derongan.minecraft.mineinabyss.ecs.components.playerData
@@ -51,7 +51,7 @@ class StatsGUI(private val player: Player) : HistoryGuiHolder(6, "Mine In Abyss 
         //The player's balance
         setElement(
             8, 0,
-            Material.GOLD_BLOCK.toCell("${col1}Balance: ${CC.GOLD}$${MineInAbyss.econ!!.getBalance(player)}")
+            Material.GOLD_BLOCK.toCell("${col1}Balance: ${CC.GOLD}$${AbyssContext.econ!!.getBalance(player)}")
         )
 
         addBackButton(this)

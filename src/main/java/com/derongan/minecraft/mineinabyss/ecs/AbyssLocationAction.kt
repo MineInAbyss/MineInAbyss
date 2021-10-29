@@ -1,7 +1,8 @@
 package com.derongan.minecraft.mineinabyss.ecs
 
-import com.derongan.minecraft.deeperworld.world.section.Section
+import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.section.section
+import com.derongan.minecraft.mineinabyss.configuration.MIAConfig
 import com.derongan.minecraft.mineinabyss.world.Layer
 import com.derongan.minecraft.mineinabyss.world.layer
 import com.mineinabyss.geary.ecs.api.actions.GearyAction
@@ -12,6 +13,7 @@ import kotlinx.serialization.Serializable
 import org.bukkit.ChatColor.*
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import kotlin.math.roundToInt
 
 //TODO switch to new Geary ECS
 @Serializable
@@ -21,54 +23,64 @@ class AbyssLocationAction : GearyAction() {
 
     override fun GearyEntity.run(): Boolean {
         val player = parent?.get<Player>() ?: return false
-        val accuracy = depthMeter.accuracy
+        val sectionXOffset = depthMeter.sectionXOffset
+        val sectionYOffset = depthMeter.sectionYOffset
+        val abyssStartingHeightInOrth = depthMeter.abyssStartingHeightInOrth
         val section = player.location.section
         val layer: Layer? = section?.layer
 
-        if (layer == null) {
-            player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
-        } else {
-            val depth = accuracy * (getDepth(layer, section, player.location) / accuracy)
-            player.sendMessage(
-                """
-                $ITALIC${DARK_AQUA}The compass spins.
-                You are suddenly aware that you are about $AQUA${pluralizeMeters(depth)}$DARK_AQUA deep in $AQUA${layer.name}.
+        if (layer?.name != null) {
+            if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location)) {
+                player.sendMessage(
+                    """
+                $DARK_AQUA${ITALIC}The needle spins.
+                ${DARK_AQUA}You suddenly become aware that you are in ${layer.name}${DARK_AQUA}.""".trimIndent()
+                )
+                return true
+            }
+            if (MIAConfig.data.hubSection != WorldManager.getSectionFor(player.location)){
+                val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
+                player.sendMessage(
+                    """
+                $DARK_AQUA${ITALIC}The needle spins.
+                ${DARK_AQUA}You suddenly become aware that you are in the
+                ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the ${GREEN}Abyss${DARK_AQUA}.
                 """.trimIndent()
-            )
-        }
+                )
+            }
+        } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
         return true
     }
 
     // TODO memoize total depth of each layer
     // TODO move into an API elsewhere
-    private fun getDepth(layer: Layer, section: Section, location: Location): Int {
-        var totalDepth = 0
-        var currentSectionTop = 0
-        val numSections = layer.sections.size
-        layer.sections.forEachIndexed { index, s ->
-            run {
-                if (section == s) {
-                    currentSectionTop = totalDepth
-                }
-                totalDepth += if (index != numSections - 1) {
-                    s.referenceBottom.y.toInt()
-                } else {
-                    // This isn't totally accurate since there is overlap with the next layer, but 256 is a good best guess.
-                    256
-                }
-            }
-        }
+    /**
+     * Calculates the depth of the player in the abyss, in minecraft blocks.
+     *
+     * @param sectionXOffset                how far apart sections actually are, horizontally
+     * @param sectionYOffset                how far apart sections are pretending to be, vertically
+     * @param abyssStartingHeightInOrth     at what y value (in Orth) the Depth Meter should say 0. 128 is the big golden bridge
+     * @param location                      Location object obtained from Player
+     *
+     * @return  depth of player in abyss, in minecraft blocks
+     */
 
-        val minecraftDepth = currentSectionTop + (256 - location.y)
-        val layerDepth = layer.endDepth - layer.startDepth
+    private fun getDepth(
+        sectionXOffset: Int,
+        sectionYOffset: Int,
+        abyssStartingHeightInOrth: Int,
+        location: Location
+    ): Int {
 
-        return (layer.startDepth + minecraftDepth / totalDepth * layerDepth).toInt()
-            .coerceIn(layer.startDepth, layer.endDepth)
+        //number of sections under Orth. If in Orth, this should be 0
+        val numSectionsDeep = (location.x / sectionXOffset).roundToInt()
+
+        return (location.y - abyssStartingHeightInOrth - (numSectionsDeep * sectionYOffset)).toInt()
     }
 
     private fun pluralizeMeters(count: Int): String {
         val prefix = if (count == 1) "one " else ""
-        val suffix = if (count == 1) " meter" else " meters"
-        return prefix + count + suffix
+        val suffix = if (count == 1) " block" else " blocks"
+        return prefix + -count + suffix
     }
 }
