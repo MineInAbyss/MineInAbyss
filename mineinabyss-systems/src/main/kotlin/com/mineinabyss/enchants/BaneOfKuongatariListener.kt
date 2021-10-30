@@ -1,13 +1,14 @@
 package com.derongan.minecraft.mineinabyss.systems
 
 import com.derongan.minecraft.mineinabyss.components.Insect
+import com.mineinabyss.enchants.CustomEnchants
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
-object BaneOfKuongatariListener : Listener {
+class BaneOfKuongatariListener : Listener {
 
     @EventHandler
     fun EntityDamageByEntityEvent.onInsectHit() {

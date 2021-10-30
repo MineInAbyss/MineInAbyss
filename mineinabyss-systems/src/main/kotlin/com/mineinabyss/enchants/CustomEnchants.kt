@@ -1,5 +1,6 @@
 package com.mineinabyss.enchants
 
+import com.derongan.minecraft.mineinabyss.systems.EnchantmentWrapper
 import com.mineinabyss.idofront.messaging.logInfo
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.join

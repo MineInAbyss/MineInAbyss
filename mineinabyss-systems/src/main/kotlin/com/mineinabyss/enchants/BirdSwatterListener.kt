@@ -1,13 +1,14 @@
 package com.derongan.minecraft.mineinabyss.systems
 
 import com.derongan.minecraft.mineinabyss.components.Bird
+import com.mineinabyss.enchants.CustomEnchants
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
-object BirdSwatterListener : Listener {
+class BirdSwatterListener : Listener {
 
     @EventHandler
     fun EntityDamageByEntityEvent.onBirdHit() {

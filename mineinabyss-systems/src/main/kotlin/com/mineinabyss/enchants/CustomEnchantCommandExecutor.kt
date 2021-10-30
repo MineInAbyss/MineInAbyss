@@ -1,5 +1,6 @@
 package com.mineinabyss.enchants
 
+import com.derongan.minecraft.mineinabyss.systems.EnchantmentWrapper
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL

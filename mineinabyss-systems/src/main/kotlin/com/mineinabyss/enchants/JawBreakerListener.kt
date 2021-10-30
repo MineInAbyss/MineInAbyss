@@ -1,6 +1,7 @@
 package com.derongan.minecraft.mineinabyss.systems
 
 import com.derongan.minecraft.mineinabyss.components.Splitjaw
+import com.mineinabyss.enchants.CustomEnchants
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -8,7 +9,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 
-object JawBreakerListener : Listener {
+class JawBreakerListener : Listener {
 
     @EventHandler
     fun EntityDamageByEntityEvent.onSplitjawHit() {
