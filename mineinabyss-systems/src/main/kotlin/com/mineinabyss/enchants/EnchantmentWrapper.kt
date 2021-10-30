@@ -1,4 +1,4 @@
-package com.mineinabyss.enchants
+package com.derongan.minecraft.mineinabyss.systems
 
 import io.papermc.paper.enchantments.EnchantmentRarity
 import net.kyori.adventure.text.Component

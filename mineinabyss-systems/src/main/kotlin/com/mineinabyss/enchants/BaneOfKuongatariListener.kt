@@ -1,4 +1,4 @@
-package com.mineinabyss.enchants
+package com.derongan.minecraft.mineinabyss.systems
 
 import com.derongan.minecraft.mineinabyss.components.Insect
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
