@@ -1,4 +1,4 @@
-package com.derongan.minecraft.mineinabyss.systems
+package com.mineinabyss.enchants
 
 import com.derongan.minecraft.mineinabyss.components.Bird
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
