@@ -1,5 +1,6 @@
-package com.mineinabyss.components
+package com.mineinabyss.components.descent
 
+import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName

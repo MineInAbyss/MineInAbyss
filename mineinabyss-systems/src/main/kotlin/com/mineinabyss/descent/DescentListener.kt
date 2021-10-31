@@ -2,7 +2,8 @@ package com.mineinabyss.descent
 
 import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
-import com.mineinabyss.components.DescentContext
+import com.mineinabyss.components.descent.DescentContext
+import com.mineinabyss.components.descent.RemoveInOrth
 import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.geary.minecraft.access.toGeary
@@ -48,6 +49,7 @@ fun Player.removeDescentContext() {
             """.trimIndent().color()
     )
     gearyPlayer.remove<DescentContext>()
+    gearyPlayer.removeRelations<RemoveInOrth>()
     gearyPlayer.get<ActivePins>()?.let {
         it.clear()
         gearyPlayer.remove<ActivePins>()

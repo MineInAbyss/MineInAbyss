@@ -1,6 +1,6 @@
 package com.mineinabyss.pins
 
-import com.mineinabyss.components.DescentContext
+import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.components.pins.PinDrop
 import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.geary.minecraft.components.Events
@@ -27,7 +27,7 @@ class PinDropListener : Listener {
                 persistentDataContainer.apply {
                     encode(PinDrop(layer.key))
                     encode(
-                        Events(mapOf("rightClick" to listOf(AddPinAction())))
+                        Events(mapOf("rightClick" to listOf(AddPinAction)))
                     )
                 }
             }

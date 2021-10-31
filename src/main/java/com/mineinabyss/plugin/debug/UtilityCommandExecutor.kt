@@ -1,7 +1,7 @@
 package com.mineinabyss.plugin.debug
 
-import com.mineinabyss.components.LayerKey
 import com.mineinabyss.components.layer.Layer
+import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor

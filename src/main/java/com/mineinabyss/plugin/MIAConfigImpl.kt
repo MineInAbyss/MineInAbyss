@@ -2,7 +2,7 @@ package com.mineinabyss.plugin
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
-import com.mineinabyss.components.AscensionEffect
+import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.curse.effects.*
 import com.mineinabyss.geary.ecs.serialization.Formats
 import com.mineinabyss.idofront.config.IdofrontConfig
