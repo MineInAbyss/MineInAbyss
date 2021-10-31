@@ -1,4 +1,4 @@
-package com.mineinabyss.components
+package com.mineinabyss.components.curse
 
 import com.mineinabyss.idofront.time.TimeSpan
 import org.bukkit.entity.Player

@@ -27,5 +27,5 @@ fun GuiyOwner.PinMenu(player: Player) {
 @Composable
 fun Pin(key: PrefabKey, modifier: Modifier = Modifier) {
     val item = key.toEntity()?.get<LootyType>()?.createItem() ?: return
-    Item(item)
+    Item(item, modifier)
 }

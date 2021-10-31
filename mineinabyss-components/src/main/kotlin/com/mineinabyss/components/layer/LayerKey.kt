@@ -1,4 +1,4 @@
-package com.mineinabyss.components
+package com.mineinabyss.components.layer
 
 import kotlinx.serialization.Serializable
 

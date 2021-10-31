@@ -1,6 +1,6 @@
 package com.mineinabyss.curse.effects
 
-import com.mineinabyss.components.AscensionEffect
+import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.idofront.time.TimeSpan
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule

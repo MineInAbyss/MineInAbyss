@@ -10,18 +10,21 @@ import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
+import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import org.bukkit.entity.Player
 
-object AbyssalPinsQuery : Query() {
+private object AbyssalPinsQuery : Query() {
     val QueryResult.prefab by get<PrefabKey>()
     val QueryResult.pin by get<AbyssalPin>()
 }
 
 @Composable
-fun GuiyOwner.PinSelectionMenu(player: Player) {
+fun GuiyOwner.AbyssalPinSelectionMenu(player: Player) {
     Chest(listOf(player), title = "Select a Pin", onClose = { exit() }) {
+        Row {
+        }
         val gearyPlayer = player.toGeary()
         val activePins = gearyPlayer.get<ActivePins>() ?: return@Chest
 
@@ -36,7 +39,7 @@ fun GuiyOwner.PinSelectionMenu(player: Player) {
                     .forEach { key ->
                         Pin(key, Modifier.clickable {
                             activePins += key
-                            this@PinSelectionMenu.exit()
+                            this@AbyssalPinSelectionMenu.exit()
                         })
                     }
             }
