@@ -22,6 +22,10 @@ commands:
     description: Turn on Keep Inventory
   keepinvoff:
     description: Turn off Keep Inventory
+  pvpon:
+    description: Enables PVP if player is in Orth
+  pvpoff:
+    description: Disables PVP if player is in Orth
   stats:
     description: Shows statistics about you!
   start:
@@ -50,6 +54,12 @@ permissions:
     description: Allows players to enable Keep Inventory on others
   mineinabyss.keepinv.off:
     description: Allows players to disable Keep Inventory on others
+  mineinabyss.pvp.toggle:
+    description: Allows players to toggle Keep Inventory on themselves
+    mineinabyss.pvp.on:
+      description: Allows players to enable Keep Inventory on others
+    mineinabyss.pvp.off:
+      description: Allows players to disable Keep Inventory on others
   mineinabyss.stopdescent:
     description: Allows players to leave a run
   mineinabyss.start:
