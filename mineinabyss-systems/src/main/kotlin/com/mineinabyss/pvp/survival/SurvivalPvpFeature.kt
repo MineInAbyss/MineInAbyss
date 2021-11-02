@@ -21,7 +21,7 @@ class SurvivalPvpFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(
             PvpDamageListener(),
-            PromptSurvivalPvpSelect()
+            SurvivalPvpListener()
         )
 
         commands {

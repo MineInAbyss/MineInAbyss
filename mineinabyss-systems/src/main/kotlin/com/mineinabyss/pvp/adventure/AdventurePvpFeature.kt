@@ -11,7 +11,7 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.isInHub
 import com.mineinabyss.pvp.PvpDamageListener
-import com.mineinabyss.pvp.adventure.PromptAdventurePvpSelect
+import com.mineinabyss.pvp.adventure.AdventurePvpListener
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,7 +22,7 @@ class AdventurePvpFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(
             PvpDamageListener(),
-            PromptAdventurePvpSelect()
+            AdventurePvpListener()
         )
 
         commands {

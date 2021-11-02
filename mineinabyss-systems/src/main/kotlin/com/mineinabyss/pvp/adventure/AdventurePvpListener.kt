@@ -12,9 +12,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 
-class PromptAdventurePvpSelect : Listener {
+class AdventurePvpListener : Listener {
     @EventHandler
-    fun PlayerMoveEvent.onLeaveOrth() {
+    fun PlayerMoveEvent.promptPvpSelect() {
         val loc = player.location
         val data = player.playerData
 
@@ -48,9 +48,9 @@ class PromptAdventurePvpSelect : Listener {
     }
 
     @EventHandler
-    fun PlayerAscendEvent.onEnterOrth() {
+    fun PlayerAscendEvent.checkMessageToggle() {
         val data = player.playerData
         // If player hasn't toggled message off, set them as undecided
-        if (data.showPvPMessage) data.pvpUndecided = true
+        if (data.showPvPMessage && player.isInHub()) data.pvpUndecided = true
     }
 }

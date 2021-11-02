@@ -7,7 +7,7 @@ import com.mineinabyss.mineinabyss.core.layer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class PromptSurvivalPvpSelect : Listener {
+class SurvivalPvpListener : Listener {
     @EventHandler
     fun PlayerDescendEvent.onEnterPvPLayer() {
         val data = player.playerData
