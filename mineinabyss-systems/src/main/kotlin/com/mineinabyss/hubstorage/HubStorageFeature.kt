@@ -16,7 +16,7 @@ class HubStorageFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         commands {
             ("mineinabyss" / "mia") {
-                "storage" {
+                "storage"(desc = "Opens player storage") {
                     playerAction {
                         if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location))
                             player.openHubStorage()

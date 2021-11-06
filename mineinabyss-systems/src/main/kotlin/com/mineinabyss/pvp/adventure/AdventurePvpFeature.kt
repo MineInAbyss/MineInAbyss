@@ -37,7 +37,7 @@ class AdventurePvpFeature: AbyssFeature {
 
         commands {
             ("mineinabyss" / "mia") {
-                "pvp" {
+                "pvp"(desc = "Opens PvP Selection menu") {
                     action {
                         val player = sender as? Player ?: return@action
                         if (!player.isInHub()) {

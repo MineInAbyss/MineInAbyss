@@ -14,7 +14,7 @@ class GondolaFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         commands {
             ("mineinabyss" / "mia") {
-                "gondola" {
+                "gondola"(desc = "Opens the gondola menu") {
                     playerAction {
                         guiy { GondolaSelectionMenu(player) }
                     }

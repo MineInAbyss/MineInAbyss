@@ -36,7 +36,7 @@ class SurvivalPvpFeature : AbyssFeature {
 
         commands {
             ("mineinabyss" / "mia") {
-                "pvp" {
+                "pvp"(desc = "Commands to toggle pvp status") {
                     action {
                         val player = sender as? Player ?: return@action
                         if (player.location.layer?.hasPvPDefault == true) {

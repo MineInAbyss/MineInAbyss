@@ -16,36 +16,38 @@ import org.bukkit.command.TabCompleter
 @ExperimentalCommandDSL
 class CustomEnchantCommandExecutor : IdofrontCommandExecutor(), TabCompleter {
     override val commands = commands(mineInAbyss) {
-        "abyssenchant"{
-            val options = CustomEnchants.enchantmentList.map { it.key.toString() }
-            val availableEnchantment by optionArg(options) {
-                parseErrorMessage = { "No such enchantment: $passed. \nAvailable ones are: \n$options" }
-            }
-            val enchantmentLevel by intArg { default = 1 }
-
-            playerAction {
-                val parsedEnchant =
-                    CustomEnchants.enchantmentList.firstOrNull {
-                        it.key.toString() == availableEnchantment.lowercase()
-                    } ?: (command.stopCommand(""))
-
-                val levelRange =
-                    (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
-
-                if (enchantmentLevel == 0) {
-
-                    player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
-                    sender.success("Removed ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}from this item.")
+        ("mineinabyss" / "mia") {
+            "enchant"(desc = "Apply a custom enchantment to an item"){
+                val options = CustomEnchants.enchantmentList.map { it.key.toString() }
+                val availableEnchantment by optionArg(options) {
+                    parseErrorMessage = { "No such enchantment: $passed. \nAvailable ones are: \n$options" }
                 }
-                if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
-                    if (levelRange.first == levelRange.last) sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}to this item.")
-                    else sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} $enchantmentLevel ${ChatColor.GREEN}to this item.")
-                    player.inventory.itemInMainHand.addCustomEnchant(
-                        parsedEnchant as EnchantmentWrapper,
-                        enchantmentLevel
-                    )
+                val enchantmentLevel by intArg { default = 1 }
+
+                playerAction {
+                    val parsedEnchant =
+                        CustomEnchants.enchantmentList.firstOrNull {
+                            it.key.toString() == availableEnchantment.lowercase()
+                        } ?: (command.stopCommand(""))
+
+                    val levelRange =
+                        (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
+
+                    if (enchantmentLevel == 0) {
+
+                        player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
+                        sender.success("Removed ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}from this item.")
+                    }
+                    if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
+                        if (levelRange.first == levelRange.last) sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}to this item.")
+                        else sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} $enchantmentLevel ${ChatColor.GREEN}to this item.")
+                        player.inventory.itemInMainHand.addCustomEnchant(
+                            parsedEnchant as EnchantmentWrapper,
+                            enchantmentLevel
+                        )
+                    }
+                    if (enchantmentLevel > levelRange.last) command.stopCommand("Level exceeds this enchantments max level.")
                 }
-                if (enchantmentLevel > levelRange.last) command.stopCommand("Level exceeds this enchantments max level.")
             }
         }
     }

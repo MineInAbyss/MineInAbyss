@@ -1,6 +1,7 @@
-package com.mineinabyss.curse
+package com.mineinabyss.keepinventory
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -12,28 +13,25 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("curse")
-class CurseFeature: AbyssFeature {
+@SerialName("keepinv")
+@ExperimentalCommandDSL
+class KeepInvFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(
-            CurseAscensionListener(),
-            CurseEffectsListener()
-        )
+        registerEvents(KeepInvListener())
 
         commands {
             ("mineinabyss" / "mia") {
-                "curse"(desc = "Commands to toggle curse") {
+                "keepinv"(desc = "Commands to toggle keepinventory status") {
                     "on" {
                         playerAction {
-                            player.playerData.isAffectedByCurse = true
-                            sender.success("Curse enabled for ${player.name}")
+                            player.playerData.keepInvStatus = true
+                            sender.success("Keep Inventory enabled for ${player.name}")
                         }
                     }
-
                     "off" {
                         playerAction {
-                            player.playerData.isAffectedByCurse = false
-                            sender.error("Curse disabled for ${player.name}")
+                            player.playerData.keepInvStatus = false
+                            sender.error("Keep Inventory disabled for ${player.name}")
                         }
                     }
                 }

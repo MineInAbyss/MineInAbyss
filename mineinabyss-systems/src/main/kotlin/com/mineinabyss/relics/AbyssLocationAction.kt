@@ -1,14 +1,13 @@
 package com.mineinabyss.relics
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.derongan.minecraft.deeperworld.world.section.section
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.geary.ecs.api.actions.GearyAction
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.entities.parent
-import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.layer
+import com.mineinabyss.mineinabyss.isInHub
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.ChatColor.*
@@ -30,7 +29,7 @@ class AbyssLocationAction : GearyAction() {
         val layer: Layer? = section?.layer
 
         if (layer?.name != null) {
-            if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location)) {
+            if (player.isInHub()) {
                 player.sendMessage(
                     """
                 $DARK_AQUA${ITALIC}The needle spins.
@@ -38,7 +37,7 @@ class AbyssLocationAction : GearyAction() {
                 )
                 return true
             }
-            if (MIAConfig.data.hubSection != WorldManager.getSectionFor(player.location)){
+            if (!player.isInHub()){
                 val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
                 player.sendMessage(
                     """
