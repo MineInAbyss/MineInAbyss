@@ -12,7 +12,7 @@ dependencies {
     compileOnly(Deps.kotlinx.serialization.json)
     compileOnly(Deps.kotlinx.serialization.kaml)
     compileOnly(Deps.minecraft.skedule)
-    compileOnly("com.derongan.minecraft:deeperworld:0.3.58")
+    compileOnly("com.derongan.minecraft:deeperworld:0.3.70")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
     compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
 

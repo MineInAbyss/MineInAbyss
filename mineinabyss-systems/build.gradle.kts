@@ -20,7 +20,7 @@ dependencies {
 
     compileOnly(Deps.kotlinx.serialization.json)
     compileOnly(Deps.minecraft.skedule)
-    compileOnly("com.derongan.minecraft:deeperworld:0.3.58")
+    compileOnly("com.derongan.minecraft:deeperworld:0.3.70")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
     compileOnly(project(":mineinabyss-core"))
     implementation("${Deps.minecraft.headlib}:3.0.7")
