@@ -6,6 +6,7 @@ import com.mineinabyss.geary.ecs.api.systems.ComponentAddSystem
 
 object LoadedGondolas : ComponentAddSystem() {
     val loaded = mutableMapOf<String, Gondola>()
+
     private val GearyEntity.gondola by get<Gondola>()
 
     override fun GearyEntity.run() {
