@@ -7,7 +7,6 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -27,7 +26,6 @@ import org.bukkit.inventory.ItemStack
 
 @Serializable
 @SerialName("survival_pvp")
-@ExperimentalCommandDSL
 class SurvivalPvpFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(
@@ -38,6 +36,7 @@ class SurvivalPvpFeature : AbyssFeature {
         commands {
             ("mineinabyss" / "mia") {
                 "pvp"(desc = "Commands to toggle pvp status") {
+                    permission = "mineinabyss.pvp"
                     action {
                         val player = sender as? Player ?: return@action
                         if (player.location.layer?.hasPvpDefault == true) {

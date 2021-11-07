@@ -3,7 +3,6 @@ package com.mineinabyss.plugin.debug
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.idofront.commands.arguments.stringArg
-import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -16,7 +15,6 @@ import org.bukkit.Material
 import org.bukkit.block.Container
 import org.bukkit.command.CommandSender
 
-@ExperimentalCommandDSL
 class UtilityCommandExecutor : IdofrontCommandExecutor() {
     override val commands = commands(mineInAbyss) {
         "clearcontainers"{

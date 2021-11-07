@@ -23,6 +23,7 @@ class CurseFeature: AbyssFeature {
         commands {
             ("mineinabyss" / "mia") {
                 "curse"(desc = "Commands to toggle curse") {
+                    permission = "mineinabyss.curse"
                     "on" {
                         playerAction {
                             player.playerData.isAffectedByCurse = true

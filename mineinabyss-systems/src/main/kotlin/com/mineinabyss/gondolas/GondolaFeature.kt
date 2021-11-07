@@ -36,17 +36,21 @@ class GondolaFeature: AbyssFeature {
         commands {
             ("mineinabyss" / "mia") {
                 "gondola"(desc = "Commands for gondolas") {
+                    permission = "mineinabyss.gondola"
                     "list"(desc = "Opens the gondola menu") {
+                        permission = "mineinabyss.gondola.list"
                         playerAction {
                             guiy { GondolaSelectionMenu(player) }
                         }
                     }
                     "create" {
+                        permission = "mineinabyss.gondola.create"
                         playerAction {
                             val gondolas = player.toGeary().getOrSetPersisting { UnlockedGondolas() }.broadcastVal("Gondolas: ")
                         }
                     }
                     "unlock"(desc = "Unlocks a gondola for a player") {
+                        permission = "mineinabyss.gondola.unlock"
                         val gondola by stringArg()
                         playerAction {
                             val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
@@ -55,6 +59,7 @@ class GondolaFeature: AbyssFeature {
                         }
                     }
                     "clear"(desc = "Removes all associated gondolas from a player") {
+                        permission = "mineinabyss.gondola.clear"
                         playerAction {
                             val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
                             gondolas.keys.clear()

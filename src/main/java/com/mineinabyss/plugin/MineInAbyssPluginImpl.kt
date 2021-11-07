@@ -4,7 +4,6 @@ import com.mineinabyss.enchants.FrostAspectListener
 import com.mineinabyss.exp.ExpListener
 import com.mineinabyss.geary.minecraft.dsl.GearyAddon
 import com.mineinabyss.geary.minecraft.dsl.gearyAddon
-import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerEvents
@@ -13,7 +12,6 @@ import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
 import com.mineinabyss.mineinabyss.core.*
 import net.milkbowl.vault.economy.Economy
 
-@ExperimentalCommandDSL
 class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     override fun onLoad() {
         IdofrontSlimjar.loadToLibraryLoader(this)

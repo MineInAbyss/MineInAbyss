@@ -1,7 +1,6 @@
 package com.mineinabyss.keepinventory
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -14,7 +13,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("keepinv")
-@ExperimentalCommandDSL
 class KeepInvFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(KeepInvListener())
@@ -22,6 +20,7 @@ class KeepInvFeature : AbyssFeature {
         commands {
             ("mineinabyss" / "mia") {
                 "keepinv"(desc = "Commands to toggle keepinventory status") {
+                    permission = "mineinabyss.keepinv"
                     "on" {
                         playerAction {
                             player.playerData.keepInvStatus = true

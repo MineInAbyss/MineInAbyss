@@ -37,6 +37,7 @@ class PinsFeature : AbyssFeature {
         commands {
             ("mineinabyss" / "mia") {
                 "pin" {
+                    permission = "mineinabyss.pin"
                     "add" {
                         val key by arg<PrefabKey> {
                             parseBy { PrefabKey.of(passed) }
@@ -50,6 +51,7 @@ class PinsFeature : AbyssFeature {
                 }
 
                 "pins" {
+                    permission = "mineinabyss.pins.menu"
                     playerAction {
                         guiy { PinMenu(player) }
                     }
