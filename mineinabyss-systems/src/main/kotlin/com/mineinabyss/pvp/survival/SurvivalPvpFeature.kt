@@ -12,6 +12,7 @@ import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.mineinabyss.NegativeSpace
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -39,12 +40,13 @@ class SurvivalPvpFeature : AbyssFeature {
                 "pvp"(desc = "Commands to toggle pvp status") {
                     action {
                         val player = sender as? Player ?: return@action
-                        if (player.location.layer?.hasPvPDefault == true) {
+                        if (player.location.layer?.hasPvpDefault == true) {
                             player.error("Pvp cannot be toggled in this layer.")
                             return@action
                         }
                         guiy {
-                            Chest(listOf(player), title = "Insert Unicode Here", 4, onClose = { reopen() }) {
+                            Chest(listOf(player), NegativeSpace.MINUS_NINE + "${ChatColor.WHITE}:pvp_menu:",
+                                4, onClose = { reopen() }) {
                                 Grid(3, 2, Modifier.at(1, 1).clickable
                                 {
                                     player.playerData.pvpStatus = true

@@ -14,7 +14,7 @@ class PlayerData(
     var curseAccrued: Double = 0.0,
     var exp: Double = 0.0,
     var keepInvStatus: Boolean = true,
-    var showPvPMessage: Boolean = true,
+    var showPvpPrompt: Boolean = true,
     var pvpUndecided: Boolean = true,
     var pvpStatus: Boolean = false
 ) {

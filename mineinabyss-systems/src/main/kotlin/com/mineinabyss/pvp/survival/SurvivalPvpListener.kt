@@ -11,7 +11,7 @@ class SurvivalPvpListener : Listener {
     @EventHandler
     fun PlayerDescendEvent.onEnterPvPLayer() {
         val data = player.playerData
-        if (toSection.layer?.hasPvPDefault == true && !data.pvpStatus) {
+        if (toSection.layer?.hasPvpDefault == true && !data.pvpStatus) {
             player.error("PVP is always enabled below this point.")
         }
     }

@@ -12,7 +12,7 @@ class AdventurePvpListener : Listener {
     fun PlayerDescendEvent.onEnterAbyss() {
         val data = player.playerData
 
-        if (fromSection == MIAConfig.data.hubSection && data.showPvPMessage) {
+        if (fromSection == MIAConfig.data.hubSection && data.showPvpPrompt) {
             player.performCommand("mia pvp")
 
         }
@@ -22,6 +22,6 @@ class AdventurePvpListener : Listener {
     fun PlayerAscendEvent.checkMessageToggle() {
         val data = player.playerData
         // If player hasn't toggled message off, set them as undecided
-        if (toSection == MIAConfig.data.hubSection && data.showPvPMessage) data.pvpUndecided = true
+        if (toSection == MIAConfig.data.hubSection && data.showPvpPrompt) data.pvpUndecided = true
     }
 }

@@ -25,7 +25,7 @@ class Layer(
     val depth: Depth = Depth(0, 0),
     @SerialName("effects")
     val ascensionEffects: List<AscensionEffect> = emptyList(),
-    val hasPvPDefault: Boolean = false,
+    val hasPvpDefault: Boolean = false,
     val blockBlacklist: List<Material> = emptyList(),
     @SerialName("sections")
     val _sections: List<String> = emptyList(),
