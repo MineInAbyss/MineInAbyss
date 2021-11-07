@@ -27,7 +27,7 @@ fun GuiyOwner.PvpPrompt(player: Player) {
         4, onClose = { reopen() }) {
         EnablePvp(player)
         DisablePvp(player)
-        TogglePvpPrompt(player, Modifier)
+        TogglePvpPrompt(player, Modifier.at(8, 3))
     }
 }
 
@@ -39,7 +39,7 @@ fun EnablePvp(player: Player) {
         data.pvpStatus = true
         data.pvpUndecided = false
         player.success("PvP has been enabled!")
-        player.playSound(player.location, Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f)
+        player.playSound(player.location, Sound.ENTITY_PLAYER_ATTACK_WEAK, 1f, 1f)
         player.closeInventory()
     })
     {
@@ -47,7 +47,7 @@ fun EnablePvp(player: Player) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setCustomModelData(1)
                 setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.BOLD}Enable PvP")
-                lore = listOf("${ChatColor.GREEN}string")
+                lore = mutableListOf("${ChatColor.GREEN}Enables pvp interactions with other players in the Abyss.")
             })
         }
     }
@@ -67,7 +67,7 @@ fun DisablePvp(player: Player) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setCustomModelData(1)
                 setDisplayName("${ChatColor.DARK_RED}${ChatColor.BOLD}Disable PvP")
-                lore = listOf("${ChatColor.RED}string")
+                lore = listOf("${ChatColor.RED}Disables pvp interactions with other players in the Abyss.")
             })
         }
     }
@@ -78,9 +78,9 @@ fun TogglePvpPrompt(player: Player, modifier: Modifier = Modifier) {
     val data = player.playerData
     var isEnabled by remember { mutableStateOf(data.showPvpPrompt) }
     val item = if (isEnabled) enabled else disabled
-    Item(item, modifier.at(8, 3).clickable {
+    Item(item, modifier.clickable {
         player.playerData.showPvpPrompt = !player.playerData.showPvpPrompt
-        player.playSound(player.location, Sound.ENTITY_PLAYER_ATTACK_WEAK, 1f, 1f)
+        player.playSound(player.location, Sound.ENTITY_PLAYER_ATTACK_STRONG, 1f, 1f)
         isEnabled = data.showPvpPrompt
         player.success(
             "PvP-prompt has been ${
@@ -96,13 +96,17 @@ object ToggleIcon {
     ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(2)
         setDisplayName("${ChatColor.BLUE}${ChatColor.BOLD}Toggle PvP Prompt")
-        lore = listOf("${ChatColor.DARK_AQUA}string")
+        lore = listOf(
+            "${ChatColor.RED}Disable ${ChatColor.DARK_AQUA}this prompt from showing " +
+            "when entering the Abyss. It can be re-opened at any time in Orth.")
     }
 
     val disabled =
     ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(3)
         setDisplayName("${ChatColor.BLUE}${ChatColor.BOLD}Toggle PvP Prompt")
-        lore = listOf("${ChatColor.DARK_AQUA}string")
+        lore = listOf(
+            "${ChatColor.GREEN}Enable ${ChatColor.DARK_AQUA}this prompt from" +
+            " showing when entering the Abyss. It can be re-opened at any time in Orth.")
     }
 }
