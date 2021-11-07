@@ -7,11 +7,11 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.mineinabyss.NegativeSpace
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -44,7 +44,7 @@ class SurvivalPvpFeature : AbyssFeature {
                             return@action
                         }
                         guiy {
-                            Chest(listOf(player), NegativeSpace.MINUS_NINE + "${ChatColor.WHITE}:pvp_menu:",
+                            Chest(listOf(player), NegativeSpace.of(18) + "${ChatColor.WHITE}:pvp_menu:",
                                 4, onClose = { reopen() }) {
                                 Grid(3, 2, Modifier.at(1, 1).clickable
                                 {
