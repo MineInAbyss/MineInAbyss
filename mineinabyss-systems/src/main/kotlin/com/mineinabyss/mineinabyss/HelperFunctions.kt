@@ -21,18 +21,3 @@ data class ItemDrop(
 )
 
 fun Player.isInHub() = MIAConfig.data.hubSection == player?.location?.let { WorldManager.getSectionFor(it) }
-
-object NegativeSpace{
-    const val PLUS_ONE = "\uF821"
-    const val PLUS_TWO = "\uF822"
-    const val PLUS_THREE = "\uF823"
-    const val PLUS_FOUR = "\uF824"
-    const val PLUS_FIVE = "\uF825"
-    const val PLUS_SIX = "\uF826"
-    const val PLUS_SEVEN = "\uF827"
-    const val PLUS_EIGHT = "\uF828"
-    const val PLUS_NINE = "\uF829"
-    const val PLUS_TEN = "\uF82A"
-    const val PLUS_EIGHTEEN = "\uF82B"
-    const val PLUS_THIRTYFOUR = "\uF82C"
-}
