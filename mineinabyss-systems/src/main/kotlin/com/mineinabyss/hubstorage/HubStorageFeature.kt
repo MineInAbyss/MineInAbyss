@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 class HubStorageFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "storage"(desc = "Opens player storage") {
                     permission = "mineinabyss.storage"
                     playerAction {

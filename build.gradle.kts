@@ -2,6 +2,7 @@ import Com_mineinabyss_conventions_platform_gradle.Deps
 
 val idofrontVersion: String by project
 val gearyVersion: String by project
+val gearyAddonsVersion: String by project
 val lootyVersion: String by project
 
 plugins {
@@ -40,7 +41,7 @@ dependencies {
 
     // Plugin deps
     compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
-    compileOnly("com.mineinabyss:geary-commons-papermc:0.1.11")
+    compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
     compileOnly("com.mineinabyss:looty:$lootyVersion")
     compileOnly("com.derongan.minecraft:deeperworld:0.3.70")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }

@@ -34,7 +34,7 @@ class MIAConfigImpl : IdofrontConfig<MIAConfig.Data>(
     )
 ), MIAConfig {
     override fun ReloadScope.load() {
-        "Disabling features" {
+        "Enabling features" {
             data.features.forEach {
                 it.apply {
                     "Enabled ${it::class.simpleName}" {

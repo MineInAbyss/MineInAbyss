@@ -34,7 +34,7 @@ class GondolaFeature: AbyssFeature {
         }
 
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "gondola"(desc = "Commands for gondolas") {
                     permission = "mineinabyss.gondola"
                     "list"(desc = "Opens the gondola menu") {
