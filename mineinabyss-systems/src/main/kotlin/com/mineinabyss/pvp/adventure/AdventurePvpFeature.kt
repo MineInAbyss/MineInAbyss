@@ -23,7 +23,7 @@ class AdventurePvpFeature : AbyssFeature {
         )
 
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "pvp"(desc = "Opens PvP Selection menu") {
                     permission = "mineinabyss.pvp"
                     playerAction {

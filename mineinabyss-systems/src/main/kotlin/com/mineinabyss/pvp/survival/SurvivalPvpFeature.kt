@@ -27,7 +27,7 @@ class SurvivalPvpFeature : AbyssFeature {
         )
 
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "pvp"(desc = "Commands to toggle pvp status") {
                     permission = "mineinabyss.pvp"
                     playerAction {

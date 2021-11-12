@@ -22,7 +22,7 @@ class DescentFeature : AbyssFeature {
         )
 
         commands {
-            ("mineinabyss" / "mia") command@{
+            mineinabyss command@{
                 "start" {
                     playerAction {
                         player.toGeary().apply {

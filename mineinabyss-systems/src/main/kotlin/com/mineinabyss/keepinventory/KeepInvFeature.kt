@@ -18,7 +18,7 @@ class KeepInvFeature : AbyssFeature {
         registerEvents(KeepInvListener())
 
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "keepinv"(desc = "Commands to toggle keepinventory status") {
                     permission = "mineinabyss.keepinv"
                     "on" {

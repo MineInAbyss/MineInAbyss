@@ -2,6 +2,7 @@ import Com_mineinabyss_conventions_platform_gradle.Deps
 
 val idofrontVersion: String by project
 val gearyVersion: String by project
+val gearyAddonsVersion: String by project
 val lootyVersion: String by project
 
 plugins {
@@ -13,7 +14,7 @@ plugins {
 
 dependencies {
     compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
-    compileOnly("com.mineinabyss:geary-commons-papermc:0.1.11")
+    compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
     compileOnly("com.mineinabyss:looty:$lootyVersion")
     compileOnly("com.mineinabyss:guiy-compose:0.1.2")
     compileOnly(Deps.kotlinx.coroutines)

@@ -35,7 +35,7 @@ class PinsFeature : AbyssFeature {
         }
 
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "pin" {
                     permission = "mineinabyss.pin"
                     "add" {
