@@ -6,7 +6,6 @@ import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -43,17 +42,11 @@ class GondolaFeature: AbyssFeature {
                             guiy { GondolaSelectionMenu(player) }
                         }
                     }
-                    "create" {
-                        permission = "mineinabyss.gondola.create"
-                        playerAction {
-                            val gondolas = player.toGeary().getOrSetPersisting { UnlockedGondolas() }.broadcastVal("Gondolas: ")
-                        }
-                    }
                     "unlock"(desc = "Unlocks a gondola for a player") {
                         permission = "mineinabyss.gondola.unlock"
                         val gondola by stringArg()
                         playerAction {
-                            val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
+                            val gondolas = player.toGeary().get<UnlockedGondolas>() ?: return@playerAction
                             gondolas.keys.add(gondola)
                             player.success("Unlocked $gondola")
                         }

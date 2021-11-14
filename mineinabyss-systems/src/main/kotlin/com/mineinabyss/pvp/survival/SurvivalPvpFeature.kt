@@ -2,6 +2,7 @@ package com.mineinabyss.pvp.survival
 
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.messaging.error
@@ -36,10 +37,10 @@ class SurvivalPvpFeature : AbyssFeature {
                             return@playerAction
                         }
                         guiy {
-                            Chest(listOf(player), NegativeSpace.of(18) + "${ChatColor.WHITE}:pvp_menu:",
+                            Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:pvp_menu:",
                                 4, onClose = { reopen() }) {
-                                EnablePvp(player)
-                                DisablePvp(player)
+                                EnablePvp(player, Modifier.at(5, 1))
+                                DisablePvp(player, Modifier.at(5, 1))
                             }
                         }
                     }
