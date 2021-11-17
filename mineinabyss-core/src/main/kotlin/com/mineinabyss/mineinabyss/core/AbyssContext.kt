@@ -1,7 +1,6 @@
 package com.mineinabyss.mineinabyss.core
 
 import com.mineinabyss.geary.minecraft.dsl.GearyAddon
-import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.plugin.getService
 import net.milkbowl.vault.economy.Economy
@@ -16,6 +15,6 @@ interface AbyssContext {
     val econ: Economy?
 
     val addonScope: GearyAddon
-    @ExperimentalCommandDSL
+
     val commandExecutor: IdofrontCommandExecutor
 }

@@ -1,7 +1,6 @@
 package com.mineinabyss.anticheese
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.idofront.commands.execution.ExperimentalCommandDSL
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -14,7 +13,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("anticheese")
-@ExperimentalCommandDSL
 class AntiCheeseFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(AntiCheeseListener())
