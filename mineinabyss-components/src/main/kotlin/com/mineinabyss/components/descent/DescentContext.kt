@@ -1,7 +1,6 @@
 package com.mineinabyss.components.descent
 
 import com.mineinabyss.components.layer.LayerKey
-import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +14,6 @@ import java.util.*
 
 @Serializable
 @SerialName("mineinabyss:descent_context")
-@AutoscanComponent
 class DescentContext(
     @Serializable(with = DateAsLongSerializer::class)
     val startDate: Date = Date(),

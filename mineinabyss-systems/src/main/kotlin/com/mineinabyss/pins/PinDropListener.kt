@@ -3,7 +3,6 @@ package com.mineinabyss.pins
 import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.components.pins.PinDrop
 import com.mineinabyss.geary.minecraft.access.toGeary
-import com.mineinabyss.geary.minecraft.components.Events
 import com.mineinabyss.geary.minecraft.store.encode
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.core.layer
@@ -26,11 +25,9 @@ class PinDropListener : Listener {
             drops += HeadLib.PLAIN_RED.toItemStack("Abyssal Pin").editItemMeta {
                 persistentDataContainer.apply {
                     encode(PinDrop(layer.key))
-                    encode(
-                        Events(mapOf("rightClick" to listOf(AddPinAction)))
-                    )
                 }
             }
         }
     }
 }
+

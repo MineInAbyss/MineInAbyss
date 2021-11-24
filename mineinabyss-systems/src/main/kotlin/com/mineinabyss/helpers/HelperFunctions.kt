@@ -1,4 +1,4 @@
-package com.mineinabyss.mineinabyss
+package com.mineinabyss.helpers
 
 import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.mineinabyss.components.playerData

@@ -1,7 +1,6 @@
 package com.mineinabyss.gondolas
 
 import com.mineinabyss.components.gondolas.UnlockedGondolas
-import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -18,7 +17,6 @@ import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("gondolas")
-@AutoscanComponent
 class GondolaFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 

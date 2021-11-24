@@ -1,6 +1,5 @@
 package com.mineinabyss.components
 
-import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import com.mineinabyss.geary.minecraft.access.toGeary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -8,7 +7,6 @@ import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("mineinabyss:player_data")
-@AutoscanComponent
 class PlayerData(
     var isAffectedByCurse: Boolean = true,
     var curseAccrued: Double = 0.0,

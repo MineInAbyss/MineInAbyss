@@ -35,5 +35,8 @@ class CurseFeature: AbyssFeature {
                 }
             }
         }
+
+        // Curse def
+
     }
 }
