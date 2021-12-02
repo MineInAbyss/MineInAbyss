@@ -16,7 +16,10 @@ class PlayerData(
     var keepInvStatus: Boolean = true,
     var showPvpPrompt: Boolean = true,
     var pvpUndecided: Boolean = true,
-    var pvpStatus: Boolean = false
+    var pvpStatus: Boolean = false,
+    var orthCoinsHeld: Int = 0,
+    var cloutTokensHeld: Int = 0,
+    var showPlayerBalance: Boolean = true
 ) {
     val level: Int get() = exp.toInt() / 10 //TODO write a proper formula
 

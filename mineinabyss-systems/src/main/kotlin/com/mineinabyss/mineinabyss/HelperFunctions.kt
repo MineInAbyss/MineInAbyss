@@ -1,7 +1,11 @@
 package com.mineinabyss.mineinabyss
 
 import com.derongan.minecraft.deeperworld.services.WorldManager
+import com.mineinabyss.components.playerData
 import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.okkero.skedule.schedule
+import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -21,3 +25,26 @@ data class ItemDrop(
 )
 
 fun Player.isInHub() = MIAConfig.data.hubSection == player?.location?.let { WorldManager.getSectionFor(it) }
+
+fun Player.updateBalance() {
+    val data = player?.playerData
+    val orthCoinBalance = data?.orthCoinsHeld
+    val cloutBalance = data?.cloutTokensHeld
+    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
+    val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
+
+    val currentBalance: Component =
+    if (data?.cloutTokensHeld!! > 0) {
+        Component.text("\uF83C${splitBalance} :orthcoin: $splitSupporterBalance :clouttoken:")
+    }
+    else Component.text("\uF83C${splitBalance} :orthcoin:")
+
+    mineInAbyss.schedule {
+        do {
+            player?.sendActionBar(currentBalance)
+            waitFor(20)
+        } while ((data.orthCoinsHeld == orthCoinBalance && data.cloutTokensHeld == cloutBalance) && data.showPlayerBalance
+        )
+        return@schedule
+    }
+}
