@@ -12,7 +12,6 @@ import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.mineinabyss.ItemModels.InvisPaper
 import com.mineinabyss.pvp.ToggleIcon.disabled
 import com.mineinabyss.pvp.ToggleIcon.enabled
 import org.bukkit.ChatColor
@@ -41,7 +40,14 @@ fun EnablePvp(player: Player, modifier: Modifier) {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         player.closeInventory()
     })
-    { repeat(6) { Item(InvisPaper) } }
+    { repeat(6) {
+        Item(ItemStack(Material.PAPER).editItemMeta {
+            setCustomModelData(1)
+            setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.BOLD}Enable PvP")
+            lore = mutableListOf("${ChatColor.GREEN}Enables pvp interactions with other players in the Abyss.")
+        })
+    }
+    }
 }
 
 @Composable

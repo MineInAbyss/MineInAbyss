@@ -8,5 +8,4 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("mineinabyss:orthcoin")
 @AutoscanComponent
-class OrthCoin {
-}
+class OrthCoin
