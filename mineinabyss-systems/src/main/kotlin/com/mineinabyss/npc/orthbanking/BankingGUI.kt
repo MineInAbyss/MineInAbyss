@@ -8,11 +8,13 @@ import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
+import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.broadcastVal
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.looty.LootyFactory
@@ -27,30 +29,28 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.BankMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_menu:",
+    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_menus:",
         4, onClose = {
             exit()
             player.updateBalance()
         }) {
-        DepositCurrency(player, Modifier.at(1, 1))
-        WithdrawCurrency(player, Modifier.at(5, 1))
+        DepositCurrencyOption(player, Modifier.at(1, 1))
+        WithdrawCurrencyOption(player, Modifier.at(5, 1))
     }
 }
 
 @Composable
-fun DepositCurrency(player: Player, modifier: Modifier) {
+fun DepositCurrencyOption(player: Player, modifier: Modifier) {
     val data = player.playerData
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        player.onDepositCoins()
-        player.updateBalance()
-        player.closeInventory()
+        guiy { DepositCurrencyMenu(player) }
     })
     {
         repeat(6) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setCustomModelData(1)
-                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Deposit Orth Coins")
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Open Deposit Menu")
                 lore = mutableListOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
             })
         }
@@ -58,26 +58,68 @@ fun DepositCurrency(player: Player, modifier: Modifier) {
 }
 
 @Composable
-fun WithdrawCurrency(player: Player, modifier: Modifier) {
-    val data = player.playerData
-    Grid(3, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 0.1f)
-        player.onWithdrawCoins()
-        player.updateBalance()
-
-        player.closeInventory()
-    }) {
-        repeat(6) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setCustomModelData(1)
-                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Withdraw Orth Coins")
-                lore = mutableListOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
-            })
-        }
+fun GuiyOwner.DepositCurrencyMenu(player: Player) {
+    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_deposit_menu:",
+        5, onClose = {
+            exit()
+            player.updateBalance()
+        })
+    {
+        Deposit(player, modifier = Modifier)
     }
 }
 
-fun Player.onDepositCoins() {
+@Composable
+fun Deposit(player: Player, modifier: Modifier) {
+    var amount = 1
+
+    Grid(3, 2, modifier.at(3,0).clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        amount += 1
+        if (amount > 64) amount = 64
+        broadcast(amount)
+    })
+    {
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Increase Deposit")
+            })
+        }
+    }
+
+    Grid(1, 1, modifier.at(4,2).clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        broadcast(amount)
+        player.onDepositCoins(amount)
+        player.updateBalance()
+        player.closeInventory()
+    })
+    {
+        repeat(1) {
+            Item(ItemStack(Material.EMERALD).editItemMeta {
+                setCustomModelData(1)
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Confirm Deposit")
+            })
+        }
+    }
+
+    Grid(3, 1, modifier.at(3,3).clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        amount -= 1
+        if (amount < 1) amount = 1
+        broadcast(amount)
+    })
+    {
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Decrease Deposit")
+            })
+        }
+    }
+
+}
+
+fun Player.onDepositCoins(amount: Int) {
     val player = player ?: return
     val data = player.playerData
 
@@ -89,16 +131,98 @@ fun Player.onDepositCoins() {
         val current = it.toGearyOrNull(player) ?: return@forEach
         current.get<OrthCoin>() ?: return@forEach
 
-        it.amount.broadcastVal("coins: ")
-        data.orthCoinsHeld += it.amount
-        it.subtract(it.amount)
-        data.orthCoinsHeld.broadcastVal("amount: ")
+        if (it.amount < amount) {
+            player.error("You don't have that many Orth Coins!")
+            return
+        }
+
+        data.orthCoinsHeld += amount
+        it.subtract(amount)
         return@forEach
     }
 
 }
 
-fun Player.onWithdrawCoins() {
+@Composable
+fun WithdrawCurrencyOption(player: Player, modifier: Modifier) {
+    val data = player.playerData
+    Grid(3, 2, modifier.clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        guiy { WithdrawCurrencyMenu(player) }
+    })
+    {
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setCustomModelData(1)
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Open Withdrawal Menu")
+                lore = mutableListOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
+            })
+        }
+    }
+}
+
+@Composable
+fun GuiyOwner.WithdrawCurrencyMenu(player: Player) {
+    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_withdrawal_menu:",
+        5, onClose = {
+            exit()
+            player.updateBalance()
+        }) {
+        Withdraw(player, modifier = Modifier)
+    }
+}
+
+@Composable
+fun Withdraw(player: Player, modifier: Modifier) {
+    var amount = 1
+
+    Grid(3, 2, modifier.at(3,0).clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        amount += 1
+        if (amount > 64) amount = 64
+        broadcast(amount)
+    })
+    {
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Increase Withdrawal")
+            })
+        }
+    }
+
+    Grid(1, 1, modifier.at(4,2).clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        broadcast(amount)
+        player.onWithdrawCoins(amount)
+        player.updateBalance()
+        player.closeInventory()
+    })
+    {
+        repeat(1) {
+            Item(ItemStack(Material.EMERALD).editItemMeta {
+                setCustomModelData(1)
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Confirm Withdrawal")
+            })
+        }
+    }
+
+    Grid(3, 1, modifier.at(3,3).clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        amount -= 1
+        if (amount < 1) amount = 1
+        broadcast(amount)
+    })
+    {
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Decrease Withdrawal")
+            })
+        }
+    }
+
+}
+
+fun Player.onWithdrawCoins(amount: Int) {
     val player = player ?: return
     val data = player.playerData
     val slot = player.inventory.firstEmpty()
@@ -113,12 +237,15 @@ fun Player.onWithdrawCoins() {
         return
     }
 
-    loop@ for (i in 1..data.orthCoinsHeld){
-        if (i == 65) break@loop
-        LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))?.let { player.inventory.addItem(it) }
-        LootyFactory.loadFromPlayerInventory(PlayerInventoryContext(player, slot))
-        data.orthCoinsHeld -= 1
+    if (data.orthCoinsHeld < amount) {
+        player.error("You don't have that many Orth Coins!")
+        return
     }
 
-    player.error("Your Orth Coins have been withdrawn!")
+    loop@ for (i in 1..amount){
+        LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))?.let { player.inventory.addItem(it) }
+        LootyFactory.loadFromPlayerInventory(PlayerInventoryContext(player, slot))
+        data.orthCoinsHeld -= amount
+    }
+    player.success("Your Orth Coins have been withdrawn!")
 }
