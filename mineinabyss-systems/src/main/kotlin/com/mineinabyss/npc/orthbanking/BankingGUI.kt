@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.BankMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_menus:",
+    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanking_menu:",
         4, onClose = {
             exit()
             player.updateBalance()
@@ -245,7 +245,7 @@ fun Player.onWithdrawCoins(amount: Int) {
     loop@ for (i in 1..amount){
         LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))?.let { player.inventory.addItem(it) }
         LootyFactory.loadFromPlayerInventory(PlayerInventoryContext(player, slot))
-        data.orthCoinsHeld -= amount
+        data.orthCoinsHeld -= 1
     }
     player.success("Your Orth Coins have been withdrawn!")
 }
