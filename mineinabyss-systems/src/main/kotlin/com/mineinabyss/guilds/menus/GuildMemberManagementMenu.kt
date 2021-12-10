@@ -11,6 +11,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.Players
+import com.mineinabyss.mineinabyss.extensions.getGuildLevel
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -18,7 +19,6 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -26,10 +26,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun GuiyOwner.GuildMemberManagementMenu(player: Player) {
     Chest(
         listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_member_management_menu:",
-        6, onClose = { exit() }) {
+        player.getGuildLevel() + 2, onClose = { exit() }) {
         ManageGuildMembersButton(player, Modifier.at(1, 1))
-        InviteToGuildButton(player, Modifier.at(3, 1))
-        ManageGuildJoinRequestButton(player, Modifier.at(5,1))
+        InviteToGuildButton(player, Modifier.at(7, 0))
+        ManageGuildJoinRequestButton(player, Modifier.at(8,0))
     }
 }
 
@@ -46,8 +46,7 @@ fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
         /* Message to all guild-members */
         Players.select {
             (Players.guildId eq guildId) and
-            (Players.playerUUID neq player.uniqueId) and
-            ((Players.guildRank neq memberRank) or (Players.guildRank.less(memberRank)))
+            (Players.playerUUID neq player.uniqueId)
         }.forEach { row ->
             val member = Bukkit.getOfflinePlayer(row[Players.playerUUID])
 

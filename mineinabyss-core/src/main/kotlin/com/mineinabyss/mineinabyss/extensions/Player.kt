@@ -58,7 +58,6 @@ fun Player.promotePlayerInGuild(member: OfflinePlayer) {
         }
 
         if (memberRank == GuildRanks.Captain) {
-            /* Incorporate disbanding shiz */
             player?.error("You cannot be promoted to Owner, as there is already one.")
         }
 
@@ -199,6 +198,19 @@ fun Player.getGuildOwner() : UUID {
             (Players.guildId eq guildId) and (Players.guildRank eq GuildRanks.Owner)
         }.single()[Players.playerUUID]
         return@transaction guildOwner
+    }
+}
+
+fun Player.getGuildLevel() : Int{
+    return transaction {
+        val playerGuild = Players.select {
+            Players.playerUUID eq uniqueId
+        }.single()[Players.guildId]
+
+        val guildLevel = Guilds.select {
+            Guilds.id eq playerGuild
+        }.single()[Guilds.level]
+        return@transaction guildLevel
     }
 }
 
