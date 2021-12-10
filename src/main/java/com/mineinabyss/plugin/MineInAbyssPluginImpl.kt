@@ -10,9 +10,17 @@ import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerService
 import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
 import com.mineinabyss.mineinabyss.core.*
+import com.mineinabyss.mineinabyss.data.Guilds
+import com.mineinabyss.mineinabyss.data.MessageQueue
+import com.mineinabyss.mineinabyss.data.Players
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     override fun onLoad() {
@@ -20,6 +28,15 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     }
 
     override fun onEnable() {
+
+        Database.connect("jdbc:sqlite:" + this.dataFolder.path + "/data.db", "org.sqlite.JDBC")
+
+        transaction {
+            addLogger(StdOutSqlLogger)
+
+            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, MessageQueue)
+        }
+
         gearyAddon {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
 
@@ -47,6 +64,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                     }
                 }
             })
+
 
             autoscan<AbyssFeature>()
             autoscanAll()
