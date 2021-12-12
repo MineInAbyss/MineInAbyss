@@ -7,19 +7,13 @@ object Guilds : Table() {
     val name = varchar("guildName", 30)
     val balance = integer("guildBalance")
     val level = integer("guildLevel")
+    val joinType = varchar("joinType", 10)
     override val primaryKey = PrimaryKey(id, name = "pk_guilds_id")
 }
 
 object GuildRanks{
-    val Owner = 4
-    val Captain = 3
-    val Steward = 2
-    val Member = 1
-}
-
-object GuildLevels{
-    val Level4 = 4
-    val Level3 = 3
-    val Level2 = 2
-    val Level1 = 1
+    val Owner = "Owner"
+    val Captain = "Captain"
+    val Steward = "Steward"
+    val Member = "Member"
 }

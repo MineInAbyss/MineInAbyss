@@ -12,6 +12,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
+import com.mineinabyss.mineinabyss.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -32,7 +33,6 @@ fun GuiyOwner.GuildOwnerMenu(player: Player) {
     }
 }
 
-//TODO Fix: Exception in thread "DefaultDispatcher-worker-3" java.util.NoSuchElementException: Collection is empty.
 @Composable
 fun GuildMemberManagement(player: Player, modifier: Modifier) {
     Grid(2, 2, modifier.clickable {
@@ -92,7 +92,6 @@ fun GuildRelationshipButton(player: Player, modifier: Modifier) {
     }
 }
 
-//TODO Fix: java.util.NoSuchElementException: Collection is empty.
 @Composable
 fun GuildDisbandButton(player: Player, modifier: Modifier) {
     Grid(1, 1, modifier.clickable {
@@ -110,18 +109,16 @@ fun GuildDisbandButton(player: Player, modifier: Modifier) {
 
 fun Player.renameGuild() {
     val guildRenamePaper = ItemStack(Material.PAPER).editItemMeta {
-        setDisplayName("Guildname")
+        setDisplayName(player?.getGuildName())
         setCustomModelData(1)
     }
 
     AnvilGUI.Builder()
         .title(":guild_naming:")
         .itemLeft(guildRenamePaper)
-        .preventClose()
         .plugin(guiyPlugin)
         .onComplete { player, guildName: String ->
-            changeStoredGuildName(guildName)
-            //player.notifyGuildRename() //TODO Fix this
+            player.changeStoredGuildName(guildName)
             AnvilGUI.Response.close()
         }
         .open(player)

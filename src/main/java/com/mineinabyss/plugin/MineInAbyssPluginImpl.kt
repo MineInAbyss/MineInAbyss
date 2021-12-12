@@ -10,6 +10,7 @@ import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerService
 import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
 import com.mineinabyss.mineinabyss.core.*
+import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.Guilds
 import com.mineinabyss.mineinabyss.data.MessageQueue
 import com.mineinabyss.mineinabyss.data.Players
@@ -34,7 +35,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         transaction {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, MessageQueue)
+            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, MessageQueue)
         }
 
         gearyAddon {

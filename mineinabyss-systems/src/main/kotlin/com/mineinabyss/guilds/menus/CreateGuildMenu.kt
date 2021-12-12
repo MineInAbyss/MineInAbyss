@@ -44,7 +44,10 @@ fun GuildSetNameButton(player: Player, modifier: Modifier) {
 }
 
 fun Player.nameGuild() {
-    val guildRenamePaper = ItemStack(Material.PAPER).editItemMeta { setDisplayName("Guildname") }
+    val guildRenamePaper = ItemStack(Material.PAPER).editItemMeta {
+        setDisplayName("Guildname")
+        setCustomModelData(1)
+    }
 
     AnvilGUI.Builder()
         .title(":guild_naming:")

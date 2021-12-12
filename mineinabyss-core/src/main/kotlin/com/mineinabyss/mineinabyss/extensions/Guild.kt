@@ -1,12 +1,8 @@
 package com.mineinabyss.mineinabyss.extensions
 
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.mineinabyss.data.GuildRanks
-import com.mineinabyss.mineinabyss.data.Guilds
-import com.mineinabyss.mineinabyss.data.MessageQueue
-import com.mineinabyss.mineinabyss.data.Players
+import com.mineinabyss.mineinabyss.data.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
@@ -30,11 +26,14 @@ fun Player.createGuild(guildName: String) {
         val rowID = Guilds.insert {
             it[name] = guildName
             it[balance] = 0
+            it[level] = 1
+            it[joinType] = GuildJoinType.Request
         } get Guilds.id
+
         Players.insert {
             it[playerUUID] = uniqueId
             it[guildId] = rowID
-            it[guildRank] = GuildRanks.Owner
+            it[guildRank] = GuildRanks.Captain
         }
     }
 }
@@ -68,8 +67,12 @@ fun OfflinePlayer.deleteGuild() {
             }
         }
 
-        /* Remove guild entry from Guilds db thus removing all members */
+        /* Delete join-requests & invites if the guild is deleted */
+        GuildJoinQueue.deleteWhere {
+            GuildJoinQueue.guildId eq guildId
+        }
 
+        /* Remove guild entry from Guilds db thus removing all members */
         Guilds.deleteWhere {
             Guilds.id eq guildId
         }
@@ -78,35 +81,42 @@ fun OfflinePlayer.deleteGuild() {
             Players.guildId eq guildId
         }
 
+
         /* Remove guild entry from Guilds db thus removing all members */
 
         /* Message to owner */
         this@deleteGuild.player?.success("Your Guild has been deleted!")
-        broadcast("test4")
-        //return@transaction
     }
 }
 
-fun changeStoredGuildName(newGuildName: String) {
+fun Player.changeStoredGuildName(newGuildName: String) {
     transaction {
-        Guilds.update {
-            it[name] = newGuildName
-        }
-    }
-}
 
-fun OfflinePlayer.notifyGuildRename() {
-    transaction {
+        val guild = Guilds.select {
+            Guilds.name.lowerCase() eq newGuildName.lowercase()
+        }.firstOrNull()
+
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
         }.single()[Players.guildId]
+
+        val guildName = player?.getGuildName()
+
+        if (guild != null){
+            player?.error("There is already a guild registered with this name!")
+            return@transaction
+        }
+
+        Guilds.update {
+            it[name] = newGuildName
+        }
 
         /* Message to all guild-members */
         Players.select {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
             val changedNameMessage =
-                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${Guilds.name}"
+                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}"
             val player = Bukkit.getPlayer(row[Players.playerUUID])
             if (player != null) {
                 player.sendMessage(changedNameMessage)
@@ -117,7 +127,7 @@ fun OfflinePlayer.notifyGuildRename() {
                 }
             }
         }
+        player?.success("Your guild was successfully renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}!")
     }
 }
-
 
