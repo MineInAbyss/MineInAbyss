@@ -24,6 +24,7 @@ fun GuiyOwner.CreateGuildMenu(player: Player) {
         listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:create_guild_menu:",
         4, onClose = { exit() }) {
         GuildSetNameButton(player, Modifier.at(4,2))
+        PreviousMenuButton(player, Modifier.at(2, 3))
     }
 }
 
@@ -42,6 +43,8 @@ fun GuildSetNameButton(player: Player, modifier: Modifier) {
         }
     }
 }
+
+
 
 fun Player.nameGuild() {
     val guildRenamePaper = ItemStack(Material.PAPER).editItemMeta {

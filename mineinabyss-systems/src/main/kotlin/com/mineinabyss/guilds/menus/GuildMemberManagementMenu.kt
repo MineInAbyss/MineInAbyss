@@ -11,9 +11,9 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.mineinabyss.data.Guilds
 import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.getGuildLevel
+import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.invitePlayerToGuild
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit
@@ -33,67 +33,66 @@ fun GuiyOwner.GuildMemberManagementMenu(player: Player) {
         listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_member_management_menu:",
         player.getGuildLevel() + 2, onClose = { exit() }) {
         ManageGuildMembersButton(player, Modifier.at(1, 1))
-        //InviteToGuildButton(player, Modifier.at(7,0))
+        InviteToGuildButton(player, Modifier.at(7,0))
         //ManageGuildJoinRequestsButton(player, Modifier.at(8,0))
+        PreviousMenuButton(player, Modifier.at(2, player.getGuildLevel() + 1))
     }
 }
 
 @Composable
 fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
-    transaction {
+    val players = transaction {
         val playerRow = Players.select {
             Players.playerUUID eq player.uniqueId
         }.single()
 
         val guildId = playerRow[Players.guildId]
-        val memberRank = playerRow[Players.guildRank]
-
-        val id = Guilds.select {
-            Guilds.id eq guildId
-        }.single()[Guilds.id]
 
         /* Display player head in 2D */
         Players.select {
-            (Players.guildId eq id) and
+            (Players.guildId eq guildId) and
             (Players.playerUUID neq player.uniqueId)
-        }.forEach { row ->
-            val member = Bukkit.getOfflinePlayer(row[Players.playerUUID])
-
+        }.map { row ->
+            Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+        }
             //TODO Make heads display correctly
             //TODO Make it sorted by rank etc
             //GuildMembers(player, modifier.at(1,1), member as Player)
-
-            guiy {
-                val skull = ItemStack(Material.PLAYER_HEAD).editItemMeta {
-                    setDisplayName("${ChatColor.YELLOW}${ChatColor.ITALIC}$member")
-                }
-                val skullMeta: SkullMeta = skull.itemMeta as SkullMeta
-
-                Grid(1, 1,modifier.clickable {
-                    player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-                    guiy { GuildMemberAction(player, member) }
-                })
-                {
-                    Item(skull)
+    }
+    Grid(5, player.getGuildLevel(), modifier){
+        players.sortedBy { it.first }.forEach { (rank, member) ->
+            val skull = ItemStack(Material.PLAYER_HEAD).editItemMeta {
+                if (this is SkullMeta) {
+                    setDisplayName("${ChatColor.GOLD}${ChatColor.ITALIC}${member.name}")
+                    lore = listOf(
+                        "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Rank: ${ChatColor.YELLOW}${ChatColor.ITALIC}${member.getGuildRank()}",
+                    )
+                    owningPlayer = member
                 }
             }
+
+            Item(skull, Modifier.clickable {
+                player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+                guiy { GuildMemberAction(player, member) }
+            })
         }
     }
+
 }
 
 @Composable
 fun InviteToGuildButton(player: Player, modifier: Modifier){
     val guildInvitePaper = ItemStack(Material.PAPER).editItemMeta {
-        setDisplayName("Player to Invite")
+        setDisplayName("${ChatColor.BLUE}${ChatColor.ITALIC}Playername")
         setCustomModelData(1)
     }
-    Grid(1, 1,modifier.clickable {
+    Grid(1,1,modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         AnvilGUI.Builder()
             .title(":guild_invite:")
             .itemLeft(guildInvitePaper)
-            .preventClose()
             .plugin(guiyPlugin)
+            .onClose { guiy { GuildMemberManagementMenu(player) } }
             .onComplete { player, invitedPlayer: String ->
                 player.invitePlayerToGuild(invitedPlayer)
                 AnvilGUI.Response.close()
@@ -117,10 +116,29 @@ fun ManageGuildJoinRequestsButton(player: Player, modifier: Modifier) {
     }
     else {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        guiy { GuildJoinRequests(player) }
+        //guiy { GuildJoinRequests(player) }
     }
 
 }
+
+//@Composable
+//fun Player.invitePlayer() {
+//    val guildInvitePaper = ItemStack(Material.PAPER).editItemMeta {
+//        setDisplayName("${ChatColor.BLUE}${ChatColor.ITALIC}Invite Players")
+//        setCustomModelData(1)
+//    }
+//
+//    AnvilGUI.Builder()
+//        .title(":guild_invite:")
+//        .itemLeft(guildInvitePaper)
+//        .preventClose()
+//        .plugin(guiyPlugin)
+//        .onComplete { player, invitedPlayer: String ->
+//            player.invitePlayerToGuild(invitedPlayer)
+//            AnvilGUI.Response.close()
+//        }
+//        .open(player)
+//}
 
 @Composable
 fun GuildJoinRequests(player: Player){

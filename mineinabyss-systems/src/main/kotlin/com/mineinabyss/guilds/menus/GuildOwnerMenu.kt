@@ -24,12 +24,13 @@ import org.bukkit.inventory.ItemStack
 fun GuiyOwner.GuildOwnerMenu(player: Player) {
     Chest(
         listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_owner_menu:",
-        5, onClose = { exit() }) {
+        6, onClose = { exit() }) {
         GuildMemberManagement(player, Modifier.at(2,0))
         GuildRenameButton(player, Modifier.at(5,0))
         GuildHouseButton(player, Modifier.at(2,3))
         GuildRelationshipButton(player, Modifier.at(5,3))
-        GuildDisbandButton(player, Modifier.at(8,4))
+        GuildDisbandButton(player, Modifier.at(8,5))
+        PreviousMenuButton(player, Modifier.at(2, 5))
     }
 }
 
@@ -117,6 +118,7 @@ fun Player.renameGuild() {
         .title(":guild_naming:")
         .itemLeft(guildRenamePaper)
         .plugin(guiyPlugin)
+        .onClose { guiy { GuildOwnerMenu(player!!) } }
         .onComplete { player, guildName: String ->
             player.changeStoredGuildName(guildName)
             AnvilGUI.Response.close()

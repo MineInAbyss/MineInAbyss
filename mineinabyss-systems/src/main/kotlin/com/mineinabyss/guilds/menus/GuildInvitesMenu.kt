@@ -28,6 +28,7 @@ fun GuiyOwner.GuildInvitesMenu(player: Player) {
     Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_invites_menu:",
         4, onClose = { exit() }) {
         GuildInviteMenu(player, Modifier.at(1,1))
+        PreviousMenuButton(player, Modifier.at(2, 3))
     }
 }
 

@@ -10,12 +10,11 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
+import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.GuildRanks
-import com.mineinabyss.mineinabyss.extensions.guildRank
-import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.mineinabyss.extensions.lookForGuild
+import com.mineinabyss.mineinabyss.extensions.*
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -27,36 +26,39 @@ import org.bukkit.inventory.ItemStack
 fun GuiyOwner.GuildMainMenu(player: Player) {
     Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:main_guild_menu:",
         4, onClose = { exit() }) {
-        if (player.guildRank() == GuildRanks.Owner) {
-        //if (player.hasGuild()) {
+        if (player.getGuildRank() == GuildRanks.Owner) {
             CurrentGuildButton(player, Modifier.at(1, 1))
             GuildOwnerButton(player, Modifier.at(4,1))
             CreateGuildButton(player, Modifier.at(7, 1))
             LookForGuildButton(player, Modifier.at(8,1))
-
         }
         else {
             CurrentGuildButton(player, Modifier.at(3, 1))
             CreateGuildButton(player, Modifier.at(6, 1))
             LookForGuildButton(player, Modifier.at(7,1))
+            LeaveGuildButton(player, Modifier.at(8,3))
         }
     }
 }
 
 @Composable
 fun CurrentGuildButton(player: Player, modifier: Modifier) {
-    Grid(2, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
 
-        /* If player is not part of a guild, return to main menu */
-        if (player.hasGuild()) guiy { CurrentGuildMenu(player) }
-        else guiy { GuildMainMenu(player) }
-    })
-    {
+    Grid(2,2, modifier){
         repeat(4) {
-            if (player.hasGuild()){
+            if (player.hasGuild()) {
                 Item(ItemStack(Material.PAPER).editItemMeta {
-                    setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}View Guild Information")
+                    setDisplayName(
+                        "${ChatColor.GOLD}${ChatColor.BOLD}Current Guild Info:"
+                    )
+                    lore = listOf(
+                        "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Name: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildName()}",
+                        "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Owner: ${ChatColor.YELLOW}${ChatColor.ITALIC}${
+                            player.getGuildOwner().toPlayer()?.name
+                        }",
+                        "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Level: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildLevel()}",
+                        "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Members: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildMemberCount()}"
+                    )
                 })
             }
             else {
@@ -65,7 +67,6 @@ fun CurrentGuildButton(player: Player, modifier: Modifier) {
                     lore = mutableListOf("${ChatColor.RED}You are not a member of any guild.")
                 })
             }
-
         }
     }
 }
@@ -99,7 +100,7 @@ fun CreateGuildButton(player: Player, modifier: Modifier) {
                 Item(ItemStack(Material.PAPER).editItemMeta {
                         /* Grayed out icon via custom model data */
                         setDisplayName("${ChatColor.GOLD}${ChatColor.ITALIC}${ChatColor.STRIKETHROUGH}Create a Guild")
-                        lore = mutableListOf("${ChatColor.RED}You have to leave your current Guild before you can create one.")
+                        lore = mutableListOf("${ChatColor.RED}You have to leave your current", "${ChatColor.RED}Guild before you can create one.")
                 })
             }
             else {
@@ -129,6 +130,7 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
                 .itemLeft(guildName)
                 //.preventClose()
                 .plugin(guiyPlugin)
+                .onClose { guiy { GuildMainMenu(player) } }
                 .onComplete { player, guildName: String ->
                     player.lookForGuild(guildName)
                     AnvilGUI.Response.close()
@@ -143,7 +145,7 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
                 Item(ItemStack(Material.PAPER).editItemMeta {
                     /* Grayed out icon via custom model data */
                     setDisplayName("${ChatColor.GOLD}${ChatColor.ITALIC}${ChatColor.STRIKETHROUGH}Look for a Guild")
-                    lore = mutableListOf("${ChatColor.RED}You have to leave your current Guild before you can look for one.")
+                    lore = mutableListOf("${ChatColor.RED}You have to leave your current", "${ChatColor.RED}Guild before you can look for one.")
                 })
             }
             else {
@@ -171,4 +173,28 @@ fun GuildInvitesButton(player: Player, modifier: Modifier) {
     }
 }
 
+@Composable
+fun LeaveGuildButton(player: Player, modifier: Modifier) {
+    Grid(2, 2, modifier.clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        player.leaveGuild()
+        player.closeInventory()
+    })
+    {
+        repeat(4) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.RED}${ChatColor.ITALIC}Leave Guild")
+            })
+        }
+    }
+}
 
+@Composable
+fun PreviousMenuButton(player: Player, modifier: Modifier) {
+    Item(ItemStack(Material.PAPER).editItemMeta {
+        setDisplayName("${ChatColor.DARK_AQUA}${ChatColor.ITALIC}Previous Menu")
+    }, modifier.clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        guiy { GuildMainMenu(player) }
+    })
+}

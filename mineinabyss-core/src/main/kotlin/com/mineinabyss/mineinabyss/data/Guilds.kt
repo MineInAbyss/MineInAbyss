@@ -11,9 +11,6 @@ object Guilds : Table() {
     override val primaryKey = PrimaryKey(id, name = "pk_guilds_id")
 }
 
-object GuildRanks{
-    val Owner = "Owner"
-    val Captain = "Captain"
-    val Steward = "Steward"
-    val Member = "Member"
+enum class GuildRanks{
+    Owner, Captain, Steward, Member
 }

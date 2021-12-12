@@ -18,7 +18,7 @@ fun Player.createGuild(guildName: String) {
         }.firstOrNull()
 
         if (guild != null){
-            player?.error("There is already a guild registered with this name!")
+            player?.error("There is already a guild registered with the name $guildName!")
             return@transaction
         }
         else player?.success("Your Guild has been registered with the name ${ChatColor.ITALIC}$guildName")
@@ -33,7 +33,7 @@ fun Player.createGuild(guildName: String) {
         Players.insert {
             it[playerUUID] = uniqueId
             it[guildId] = rowID
-            it[guildRank] = GuildRanks.Captain
+            it[guildRank] = GuildRanks.Owner
         }
     }
 }
@@ -46,7 +46,7 @@ fun OfflinePlayer.deleteGuild() {
             Players.playerUUID eq uniqueId
         }.firstOrNull()!![Players.guildId]
 
-        if (player?.guildRank() != GuildRanks.Owner) {
+        if (player?.getGuildRank() != GuildRanks.Owner) {
             player?.error("Only the Owner can disband the guild.")
             return@transaction
         }
@@ -116,7 +116,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
             val changedNameMessage =
-                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}"
+                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${player?.getGuildName()}"
             val player = Bukkit.getPlayer(row[Players.playerUUID])
             if (player != null) {
                 player.sendMessage(changedNameMessage)
@@ -127,7 +127,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
                 }
             }
         }
-        player?.success("Your guild was successfully renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}!")
+        player?.success("Your guild was successfully renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${player?.getGuildName()}!")
     }
 }
 
