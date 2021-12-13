@@ -1,7 +1,7 @@
 package com.mineinabyss.guilds
 
+import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -20,27 +20,13 @@ class GuildFeature : AbyssFeature {
 
         commands {
             mineinabyss {
-                "add"{
+                "add"(desc = "Add member to players guild") {
+                    val member by stringArg()
                     playerAction {
-                        val online = Bukkit.getOnlinePlayers()
-                        online.forEach {
-                            player.addMemberToGuild(it)
-                            broadcast(it)
-                        }
+                        val invitedMember = Bukkit.getOfflinePlayer(member)
+                        player.addMemberToGuild(invitedMember)
                     }
                 }
-//                "hasguild" {
-//                    playerAction {
-//                        player.playerData.hasGuild = !player.playerData.hasGuild
-//                        player.playerData.hasGuild.broadcastVal("hasGuild: ")
-//                    }
-//                }
-//                "guildowner" {
-//                    playerAction {
-//                        player.playerData.isGuildOwner = !player.playerData.isGuildOwner
-//                        player.playerData.isGuildOwner.broadcastVal("isGuildOwner: ")
-//                    }
-//                }
             }
         }
     }

@@ -14,6 +14,7 @@ import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.getGuildLevel
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
+import com.mineinabyss.mineinabyss.extensions.hasGuildRequest
 import com.mineinabyss.mineinabyss.extensions.invitePlayerToGuild
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit
@@ -34,7 +35,7 @@ fun GuiyOwner.GuildMemberManagementMenu(player: Player) {
         player.getGuildLevel() + 2, onClose = { exit() }) {
         ManageGuildMembersButton(player, Modifier.at(1, 1))
         InviteToGuildButton(player, Modifier.at(7,0))
-        //ManageGuildJoinRequestsButton(player, Modifier.at(8,0))
+        ManageGuildJoinRequestsButton(player, Modifier.at(8,0))
         PreviousMenuButton(player, Modifier.at(2, player.getGuildLevel() + 1))
     }
 }
@@ -48,16 +49,12 @@ fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
 
         val guildId = playerRow[Players.guildId]
 
-        /* Display player head in 2D */
         Players.select {
             (Players.guildId eq guildId) and
             (Players.playerUUID neq player.uniqueId)
         }.map { row ->
             Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
-            //TODO Make heads display correctly
-            //TODO Make it sorted by rank etc
-            //GuildMembers(player, modifier.at(1,1), member as Player)
     }
     Grid(5, player.getGuildLevel(), modifier){
         players.sortedBy { it.first }.forEach { (rank, member) ->
@@ -106,42 +103,26 @@ fun InviteToGuildButton(player: Player, modifier: Modifier){
 
 }
 
-//TODO Figure out how to handle storing invites and join requests
 @Composable
 fun ManageGuildJoinRequestsButton(player: Player, modifier: Modifier) {
-    val joinRequests = 0
-    if (joinRequests == 0) {
+    if (player.hasGuildRequest()) {
+        Item(ItemStack(Material.PAPER).editItemMeta {
+            setDisplayName("${ChatColor.DARK_GREEN}Manage Guild Join Requests")
+            /* Icon that notifies player there are new invites */
+        }, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        guiy { GuildMemberManagementMenu(player) }
+        guiy { GuildJoinRequestsMenu(player) }
+        })
     }
     else {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        //guiy { GuildJoinRequests(player) }
+        Item(ItemStack(Material.PAPER).editItemMeta {
+            setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.STRIKETHROUGH}Manage Guild Join Requests")
+            /* Custom Icon for "darkerened" out icon indicating no invites */
+        }, modifier.clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            guiy { GuildMemberManagementMenu(player) }
+        })
     }
 
 }
 
-//@Composable
-//fun Player.invitePlayer() {
-//    val guildInvitePaper = ItemStack(Material.PAPER).editItemMeta {
-//        setDisplayName("${ChatColor.BLUE}${ChatColor.ITALIC}Invite Players")
-//        setCustomModelData(1)
-//    }
-//
-//    AnvilGUI.Builder()
-//        .title(":guild_invite:")
-//        .itemLeft(guildInvitePaper)
-//        .preventClose()
-//        .plugin(guiyPlugin)
-//        .onComplete { player, invitedPlayer: String ->
-//            player.invitePlayerToGuild(invitedPlayer)
-//            AnvilGUI.Response.close()
-//        }
-//        .open(player)
-//}
-
-@Composable
-fun GuildJoinRequests(player: Player){
-
-
-}

@@ -9,7 +9,6 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
@@ -30,12 +29,14 @@ fun GuiyOwner.GuildMainMenu(player: Player) {
             CurrentGuildButton(player, Modifier.at(1, 1))
             GuildOwnerButton(player, Modifier.at(4,1))
             CreateGuildButton(player, Modifier.at(7, 1))
+            GuildInvitesButton(player, Modifier.at(8,0))
             LookForGuildButton(player, Modifier.at(8,1))
         }
         else {
             CurrentGuildButton(player, Modifier.at(3, 1))
             CreateGuildButton(player, Modifier.at(6, 1))
             LookForGuildButton(player, Modifier.at(7,1))
+            GuildInvitesButton(player, Modifier.at(8,0))
             LeaveGuildButton(player, Modifier.at(8,3))
         }
     }
@@ -92,7 +93,7 @@ fun CreateGuildButton(player: Player, modifier: Modifier) {
     Grid(1, 1, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         if (player.hasGuild()) guiy { GuildMainMenu(player) }
-        else guiy { CreateGuildMenu(player) }
+        else player.nameGuild()
     })
     {
         repeat(1) {
@@ -161,15 +162,23 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuildInvitesButton(player: Player, modifier: Modifier) {
-    Grid(1,1, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        guiy { GuildInviteMenu(player, modifier.at(1,1)) }
-
-    }){
-        ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName("${ChatColor.GREEN}Accept Invite")
-            setCustomModelData(1)
-        }
+    if (player.hasGuildInvite(player.getGuildOwnerFromInvite().toPlayer()!!)){
+        Item(ItemStack(Material.PAPER).editItemMeta {
+            setDisplayName("${ChatColor.DARK_GREEN}Manage Guild Invites")
+            /* Icon that notifies player there are new invites */
+        }, modifier.clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            guiy { GuildInvitesMenu(player) }
+        })
+    }
+    else {
+        Item(ItemStack(Material.PAPER).editItemMeta {
+            setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.STRIKETHROUGH}Manage Guild Invites")
+            /* Custom Icon for "darkerened" out icon indicating no invites */
+        }, modifier.clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            guiy { GuildInvitesMenu(player) }
+        })
     }
 }
 
@@ -197,4 +206,22 @@ fun PreviousMenuButton(player: Player, modifier: Modifier) {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         guiy { GuildMainMenu(player) }
     })
+}
+
+fun Player.nameGuild() {
+    val guildRenamePaper = ItemStack(Material.PAPER).editItemMeta {
+        setDisplayName("Guildname")
+        setCustomModelData(1)
+    }
+
+    AnvilGUI.Builder()
+        .title(":guild_naming:")
+        .itemLeft(guildRenamePaper)
+        //.preventClose()
+        .plugin(guiyPlugin)
+        .onComplete { player, guildName: String ->
+            player.createGuild(guildName)
+            AnvilGUI.Response.close()
+        }
+        .open(player)
 }

@@ -1,7 +1,7 @@
 package com.mineinabyss.mineinabyss.extensions
 
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.data.*
@@ -15,24 +15,45 @@ import java.util.*
 
 fun Player.addMemberToGuild(member: OfflinePlayer) {
     transaction {
-        val id = Guilds.select {
+        val guild = Players.select {
             Players.playerUUID eq uniqueId
+        }.firstOrNull()?.get(Players.guildId)
+
+        if (guild == null) {
+            player?.error("You cannot add a player when you have no guild.")
+            return@transaction
+        }
+
+        val id = Guilds.select {
+            Guilds.id eq guild
         }.single()[Guilds.id]
 
+        val level = Guilds.select {
+            Guilds.id eq guild
+        }.single()[Guilds.level]
+
         val memberGuildCheck = Players.select {
-            Players.playerUUID neq member.uniqueId
+            Players.playerUUID eq member.uniqueId
         }.firstOrNull()?.get(Players.guildId)
+
+        if (memberGuildCheck == id) {
+            player?.error("This player is already in your guild.")
+            return@transaction
+        }
 
         if (memberGuildCheck != null) {
             player?.error("This player is already in another guild.")
             return@transaction
         }
 
+        val maxGuildMemberCount = level * 5 // Members per level
+
         //TODO implement max membercount check
-//        if () {
-//            player?.error("Your guild is full!")
-//            return@transaction
-//        }
+        /* > and not >= to not count Guild Owner */
+        if (player?.getGuildMemberCount()!! > maxGuildMemberCount) {
+            player?.error("Your guild is full!")
+            return@transaction
+        }
 
 
         Players.insert {
@@ -40,7 +61,7 @@ fun Player.addMemberToGuild(member: OfflinePlayer) {
             it[guildId] = id
             it[guildRank] = GuildRanks.Member
         }
-        player?.success("$member joined your Guild!")
+        player?.success("${member.name} joined your Guild!")
 
         val joinMessage = "${ChatColor.GREEN}You have been accepted into ${player?.getGuildName()}"
         if (member.isOnline) member.player?.success(joinMessage)
@@ -49,6 +70,11 @@ fun Player.addMemberToGuild(member: OfflinePlayer) {
                 it[content] = joinMessage
                 it[playerUUID] = member.uniqueId
             }
+        }
+
+        /* Delete accepted guildinvite */
+        GuildJoinQueue.deleteWhere {
+            (Players.playerUUID eq uniqueId) and (GuildJoinQueue.guildId eq guild)
         }
     }
 }
@@ -65,33 +91,33 @@ fun Player.invitePlayerToGuild(invitedPlayer: String) {
             return@transaction
         }
 
-        if (invitedMember.hasGuildInvite()) {
+        if (invitedMember.hasGuildInvite(player!!)) {
             player?.error("This player has already been invited to your guild!")
             return@transaction
         }
 
-        if (invitedMember.hasGuildRequest()) {
+        //val owner = (invitedMember as Player).getGuildOwnerFromInvite().toPlayer()
+        if (player?.hasGuildRequest() == true) {
             player?.error("This player has already requested to join your guild!")
-            player?.error("Navigate to the ${ChatColor.BOLD}Manage Join Request" + "menu.")
+            player?.error("Navigate to the ${ChatColor.BOLD}Manage Join Request" + "menu to respond.")
         }
 
         val id = Players.select {
             Players.playerUUID eq uniqueId
-        }.single()[Players.guildId]
+        }.singleOrNull()?.get(Players.guildId) ?: return@transaction
 
         val guild = Guilds.select {
             Guilds.id eq id
         }.single()[Guilds.id]
 
         GuildJoinQueue.insert {
-            it[playerUUID] = invitedMember.uniqueId
+            it[playerUUID] = invitedMember.uniqueId.broadcastVal()
             it[guildId] = guild
             it[joinType] = GuildJoinType.Invite
         }
 
         /* Adds invitedPlayer into the guild of the player. */
-        //player?.addMemberToGuild(invitedMember)
-        player?.success("Player was invited to your guild!")
+        player?.success("${invitedMember.name} was invited to your guild!")
 
         if (invitedMember.isOnline) invitedMember.player?.success(inviteMessage)
         else {
@@ -132,13 +158,10 @@ fun Player.lookForGuild(guildName: String) {
             (GuildJoinQueue.playerUUID eq uniqueId) and (GuildJoinQueue.guildId eq id)
         }.firstOrNull()
 
-
         if (oldRequest != null) {
             player.error("You have already made a request to this guild, please await their decision.")
             return@transaction
         }
-
-
 
         GuildJoinQueue.insert {
             it[playerUUID] = player.uniqueId
@@ -185,31 +208,7 @@ fun Player.lookForGuild(guildName: String) {
 fun Player.promotePlayerInGuild(member: OfflinePlayer) {
 
     transaction {
-        val playerRow = Players.select {
-            Players.playerUUID eq member.uniqueId
-        }.single()
-
-        val rank = member.getGuildRank()
-        broadcast(member)
-        broadcast(rank)
-
-        //TODO Make memberRank not be int, but show rank name
-
-//        if (rank == GuildRanks.Owner) {
-//            player?.error("You cannot be promoted to a higher rank!")
-//            return@transaction
-//        }
-//        if (rank == GuildRanks.Captain) {
-//            player?.error("You cannot be promoted to Owner, as there is already one.")
-//            return@transaction
-//        }
-//        if (rank == GuildRanks.Steward) {
-//            newRank = GuildRanks.Captain
-//        }
-//        if (rank == GuildRanks.Member) {
-//            newRank = GuildRanks.Steward
-//        }
-        val newRank = when (rank) {
+        val newRank = when (member.getGuildRank()) {
             GuildRanks.Owner -> {
                 player?.error("You cannot be promoted to a higher rank!")
                 return@transaction
@@ -273,7 +272,7 @@ fun Player.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         }
 
         /* Check role of kicker */
-        if (dbPlayer[Players.guildRank] >= memberRank) {
+        if (dbPlayer[Players.guildRank] <= memberRank) {
             player?.error("You cannot kick someone with the same or higher rank than you!")
             return@transaction false
         }
@@ -296,7 +295,7 @@ fun Player.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         player?.closeInventory()
 
         /* Message owner */
-        this@kickPlayerFromGuild.player?.success("You have kicked ${player?.name} from ${ChatColor.ITALIC}${player?.getGuildName()}")
+        player?.success("You have kicked ${ChatColor.ITALIC}${member.name} from ${ChatColor.ITALIC}${player?.getGuildName()}!")
 
         return@transaction true
     }
@@ -306,7 +305,12 @@ fun Player.leaveGuild() {
     transaction {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
-        }.single()
+        }.singleOrNull()
+
+        if (playerRow == null) {
+            player?.error("You cannot leave a guild when you're not a member of any!")
+            return@transaction
+        }
 
         val memberRank = playerRow[Players.guildRank]
         val guildName = player?.getGuildName()
@@ -359,7 +363,7 @@ fun Player.getGuildName(): String {
     }
 }
 
-fun Player.getGuildOwner(): UUID {
+fun Player.getGuildOwner() : UUID {
     return transaction {
         val playerGuild = Players.select {
             Players.playerUUID eq uniqueId
@@ -373,6 +377,18 @@ fun Player.getGuildOwner(): UUID {
             (Players.guildId eq guildId) and (Players.guildRank eq GuildRanks.Owner)
         }.single()[Players.playerUUID]
         return@transaction guildOwner
+    }
+}
+
+fun Player.getGuildOwnerFromInvite() : UUID {
+    return transaction {
+        val guilds = GuildJoinQueue.select {
+            (GuildJoinQueue.playerUUID eq player!!.uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.Invite)
+        }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction player?.uniqueId!!
+
+        return@transaction Players.select {
+            (Players.guildId eq guilds) and (Players.guildRank eq GuildRanks.Owner)
+        }.single()[Players.playerUUID]
     }
 }
 
@@ -412,33 +428,41 @@ fun Player.getGuildMemberCount(): Int {
     }
 }
 
-fun OfflinePlayer.hasGuildInvite(): Boolean {
+//TODO Make it so it checks for invites on per guild basis
+fun OfflinePlayer.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
     return transaction {
-
         val joinQueueId = GuildJoinQueue.select {
             (GuildJoinQueue.playerUUID eq uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.Invite)
-        }.single()[GuildJoinQueue.guildId]
+        }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction false
 
-        val hasInvite = Players.select {
-            Guilds.id eq joinQueueId
+        val ownerId = Players.select {
+            Players.playerUUID eq guildOwner.uniqueId
+        }.single()[Players.guildId]
+
+        val hasInvite = Guilds.select {
+            (Guilds.id eq joinQueueId) and (Guilds.id eq ownerId)
         }.firstOrNull()
 
         return@transaction hasInvite !== null
     }
 }
 
+//TODO Fix this
 fun OfflinePlayer.hasGuildRequest(): Boolean {
     return transaction {
+        val playerGuild = Players.select {
+            Players.playerUUID eq uniqueId
+        }.singleOrNull()?.get(Players.guildId) ?: return@transaction false
 
         val joinQueueId = GuildJoinQueue.select {
-            (GuildJoinQueue.playerUUID eq uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
-        }.single()[GuildJoinQueue.guildId]
+            (GuildJoinQueue.guildId eq playerGuild) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
+        }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction false
 
-        val hasInvite = Players.select {
+        val hasRequest = Guilds.select {
             Guilds.id eq joinQueueId
         }.firstOrNull()
 
-        return@transaction hasInvite !== null
+        return@transaction hasRequest !== null
     }
 }
 

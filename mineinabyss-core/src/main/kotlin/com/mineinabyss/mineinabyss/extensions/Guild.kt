@@ -100,7 +100,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             Players.playerUUID eq uniqueId
         }.single()[Players.guildId]
 
-        val guildName = player?.getGuildName()
+
 
         if (guild != null){
             player?.error("There is already a guild registered with this name!")
@@ -111,12 +111,14 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             it[name] = newGuildName
         }
 
+        val guildName = player?.getGuildName()
+
         /* Message to all guild-members */
         Players.select {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
             val changedNameMessage =
-                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${player?.getGuildName()}"
+                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}"
             val player = Bukkit.getPlayer(row[Players.playerUUID])
             if (player != null) {
                 player.sendMessage(changedNameMessage)
@@ -127,7 +129,9 @@ fun Player.changeStoredGuildName(newGuildName: String) {
                 }
             }
         }
-        player?.success("Your guild was successfully renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${player?.getGuildName()}!")
+        player?.success("Your guild was successfully renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}!")
     }
 }
+
+
 

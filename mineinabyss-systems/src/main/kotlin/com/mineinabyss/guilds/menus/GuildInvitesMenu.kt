@@ -2,23 +2,23 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
+import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
-import com.mineinabyss.mineinabyss.data.Guilds
-import com.mineinabyss.mineinabyss.data.Players
+import com.mineinabyss.mineinabyss.data.GuildJoinType
+import com.mineinabyss.mineinabyss.extensions.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -27,33 +27,37 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun GuiyOwner.GuildInvitesMenu(player: Player) {
     Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_invites_menu:",
         4, onClose = { exit() }) {
-        GuildInviteMenu(player, Modifier.at(1,1))
+        GuildInvites(player, Modifier.at(1,1))
         PreviousMenuButton(player, Modifier.at(2, 3))
     }
 }
 
 @Composable
-fun GuildInviteMenu(player: Player, modifier: Modifier) {
-    /* Implement transaction to query GuildInvites and playerUUID */
-    transaction {
+fun GuildInvites(player: Player, modifier: Modifier) {
+    /* Transaction to query GuildInvites and playerUUID */
+    val invites = transaction {
 
-        val guildId = GuildJoinQueue.select {
-            (GuildJoinQueue.playerUUID eq player.uniqueId) and (GuildJoinQueue.guildId eq Guilds.id)
-        }.single()[GuildJoinQueue.guildId]
+        val owner = player.getGuildOwnerFromInvite().toPlayer()!!
+        val memberCount = owner.getGuildMemberCount()
 
-        val memberGuildCheck = Players.select {
-            Players.playerUUID eq player.uniqueId
-        }.firstOrNull()?.get(Players.guildId)
-
+        GuildJoinQueue.select {
+            (GuildJoinQueue.joinType eq GuildJoinType.Invite) and
+            ( GuildJoinQueue.playerUUID eq player.uniqueId)
+        }.map { row -> Pair(memberCount ,row[GuildJoinQueue.guildId])}
 
     }
-    Grid(1, 1, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        guiy { HandleGuildInvites(player) }
-    }){
-        ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName("Guildname")
-            setCustomModelData(1)
+    Grid(9, 4, modifier) {
+        invites.sortedBy { it.first }.forEach { (memberCount, guild) ->
+            val guildItem = ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Guildname: ${ChatColor.YELLOW}${ChatColor.ITALIC}$guild")
+                lore = listOf("${ChatColor.BLUE}Click this to accept or deny invite.",
+                    "${ChatColor.BLUE}Info about the guild can also be found in here."
+                )
+            }
+            Item(guildItem, Modifier.clickable {
+                player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+                guiy { HandleGuildInvites(player) }
+            })
         }
     }
 }
@@ -61,35 +65,63 @@ fun GuildInviteMenu(player: Player, modifier: Modifier) {
 @Composable
 fun GuiyOwner.HandleGuildInvites(player: Player) {
     Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:handle_guild_invites:",
-        4, onClose = { exit() }) {
-        //GuildInvites(player, Modifier.at(1,1))
+        5, onClose = { exit() }) {
+        GuildLabel(player, Modifier.at(4,0))
+        AcceptGuildInvite(player, Modifier.at(1,2))
+        DeclineGuildInvite(player, Modifier.at(5,2))
+        PreviousMenuButton(player, Modifier.at(4,4))
     }
-    AcceptGuildInvite(player, Modifier.at(2,2))
-    DeclineGuildInvite(player, Modifier.at(3,2))
+}
+
+@Composable
+fun GuildLabel(player: Player, modifier: Modifier) {
+    val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
+
+    Grid(2,2, modifier.clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+    }){
+        Item(ItemStack(Material.PAPER).editItemMeta {
+            setDisplayName(
+                "${ChatColor.GOLD}${ChatColor.BOLD}Current Guild Info:"
+            )
+            lore = listOf(
+                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Name: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.getGuildName()}",
+                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Owner: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.name}",
+                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Level: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.getGuildLevel()}",
+                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Members: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.getGuildMemberCount()}"
+            )
+        })
+    }
 }
 
 @Composable
 fun AcceptGuildInvite(player: Player, modifier: Modifier) {
-    Grid(1, 1, modifier.clickable {
+    val guildOwner = player.getGuildOwnerFromInvite().toPlayer()
+
+    Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        /* Add player to guild and remove invite from table */
+        guildOwner?.addMemberToGuild(player)
     }){
-        ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName("${ChatColor.GREEN}Accept Invite")
-            setCustomModelData(1)
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.GREEN}Accept Invite")
+                //setCustomModelData(1)
+            })
         }
     }
 }
 
 @Composable
 fun DeclineGuildInvite(player: Player, modifier: Modifier) {
-    Grid(1, 1, modifier.clickable {
+    Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         /* Remove invite from table */
     }){
-        ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName("${ChatColor.RED}Decline Invite")
-            setCustomModelData(1)
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setDisplayName("${ChatColor.RED}Decline Invite")
+                //setCustomModelData(1)
+            })
         }
     }
 }
