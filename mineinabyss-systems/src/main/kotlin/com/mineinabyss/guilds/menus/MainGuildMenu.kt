@@ -32,12 +32,18 @@ fun GuiyOwner.GuildMainMenu(player: Player) {
             GuildInvitesButton(player, Modifier.at(8,0))
             LookForGuildButton(player, Modifier.at(8,1))
         }
-        else {
+        else if (player.hasGuild() && player.getGuildRank() != GuildRanks.Owner){
             CurrentGuildButton(player, Modifier.at(3, 1))
             CreateGuildButton(player, Modifier.at(6, 1))
             LookForGuildButton(player, Modifier.at(7,1))
             GuildInvitesButton(player, Modifier.at(8,0))
             LeaveGuildButton(player, Modifier.at(8,3))
+        }
+        else {
+            CurrentGuildButton(player, Modifier.at(3, 1))
+            CreateGuildButton(player, Modifier.at(6, 1))
+            LookForGuildButton(player, Modifier.at(7,1))
+            GuildInvitesButton(player, Modifier.at(8,0))
         }
     }
 }

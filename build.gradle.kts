@@ -61,6 +61,7 @@ dependencies {
     compileOnly("com.derongan.minecraft:deeperworld:0.3.70")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
     compileOnly("com.mineinabyss:guiy-compose:0.1.2")
+    compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
 
     // From Geary
     slim(Deps.kotlinx.serialization.json)

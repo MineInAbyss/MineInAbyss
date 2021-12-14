@@ -17,6 +17,7 @@ dependencies {
     compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
     compileOnly("com.mineinabyss:looty:$lootyVersion")
     compileOnly("com.mineinabyss:guiy-compose:0.1.2")
+    compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
     compileOnly(Deps.kotlinx.coroutines)
 
     compileOnly(Deps.kotlinx.serialization.json)
