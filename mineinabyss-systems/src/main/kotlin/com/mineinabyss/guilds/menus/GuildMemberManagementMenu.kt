@@ -12,10 +12,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.Players
-import com.mineinabyss.mineinabyss.extensions.getGuildLevel
-import com.mineinabyss.mineinabyss.extensions.getGuildRank
-import com.mineinabyss.mineinabyss.extensions.hasGuildRequest
-import com.mineinabyss.mineinabyss.extensions.invitePlayerToGuild
+import com.mineinabyss.mineinabyss.extensions.*
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -105,9 +102,22 @@ fun InviteToGuildButton(player: Player, modifier: Modifier){
 
 @Composable
 fun ManageGuildJoinRequestsButton(player: Player, modifier: Modifier) {
+    val requestAmount = player.getNumberOfGuildRequests()
     if (player.hasGuildRequest()) {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}Manage Guild Join Requests")
+            lore =
+            if (requestAmount == 1){
+                listOf(
+                    "${ChatColor.YELLOW}${ChatColor.ITALIC}There is currently ${ChatColor.GOLD}${ChatColor.BOLD}$requestAmount ",
+                    "${ChatColor.YELLOW}${ChatColor.ITALIC}join-request for your guild."
+                )
+            } else {
+                listOf(
+                    "${ChatColor.YELLOW}${ChatColor.ITALIC}There are currently ${ChatColor.GOLD}${ChatColor.BOLD}\$requestAmount ",
+                    "${ChatColor.YELLOW}${ChatColor.ITALIC}join-requests for your guild."
+                )
+            }
             /* Icon that notifies player there are new invites */
         }, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
@@ -117,10 +127,13 @@ fun ManageGuildJoinRequestsButton(player: Player, modifier: Modifier) {
     else {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.STRIKETHROUGH}Manage Guild Join Requests")
+            lore = listOf(
+                "${ChatColor.RED}${ChatColor.ITALIC}There are currently no ",
+                "${ChatColor.RED}${ChatColor.ITALIC}join-requests for your guild."
+            )
             /* Custom Icon for "darkerened" out icon indicating no invites */
         }, modifier.clickable {
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-            guiy { GuildMemberManagementMenu(player) }
         })
     }
 

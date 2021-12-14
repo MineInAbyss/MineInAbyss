@@ -11,6 +11,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.extensions.*
@@ -28,6 +29,7 @@ fun GuiyOwner.GuildInvitesMenu(player: Player) {
     Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_invites_menu:",
         4, onClose = { exit() }) {
         GuildInvites(player, Modifier.at(1,1))
+        DenyAllInvites(player, Modifier.at(8, 3))
         PreviousMenuButton(player, Modifier.at(2, 3))
     }
 }
@@ -35,11 +37,9 @@ fun GuiyOwner.GuildInvitesMenu(player: Player) {
 @Composable
 fun GuildInvites(player: Player, modifier: Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
+    val owner = player.getGuildOwnerFromInvite().toPlayer()!!
+    val memberCount = owner.getGuildMemberCount()
     val invites = transaction {
-
-        val owner = player.getGuildOwnerFromInvite().toPlayer()!!
-        val memberCount = owner.getGuildMemberCount()
-
         GuildJoinQueue.select {
             (GuildJoinQueue.joinType eq GuildJoinType.Invite) and
             ( GuildJoinQueue.playerUUID eq player.uniqueId)
@@ -49,7 +49,7 @@ fun GuildInvites(player: Player, modifier: Modifier) {
     Grid(9, 4, modifier) {
         invites.sortedBy { it.first }.forEach { (memberCount, guild) ->
             val guildItem = ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Guildname: ${ChatColor.YELLOW}${ChatColor.ITALIC}$guild")
+                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Guildname: ${ChatColor.YELLOW}${ChatColor.ITALIC}${owner.getGuildName()}")
                 lore = listOf("${ChatColor.BLUE}Click this to accept or deny invite.",
                     "${ChatColor.BLUE}Info about the guild can also be found in here."
                 )
@@ -60,6 +60,20 @@ fun GuildInvites(player: Player, modifier: Modifier) {
             })
         }
     }
+}
+
+@Composable
+fun DenyAllInvites(player: Player, modifier: Modifier) {
+    Item(ItemStack(Material.PAPER).editItemMeta {
+        setDisplayName("${ChatColor.RED}Decline All Invites")
+        //setCustomModelData(1)
+    }, modifier.clickable {
+        player.removeGuildQueueEntries(GuildJoinType.Invite, true)
+        guiy { GuildMemberManagementMenu(player) }
+        player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌${ChatColor.YELLOW}You denied all invites!")
+
+
+    })
 }
 
 @Composable
@@ -96,11 +110,16 @@ fun GuildLabel(player: Player, modifier: Modifier) {
 
 @Composable
 fun AcceptGuildInvite(player: Player, modifier: Modifier) {
-    val guildOwner = player.getGuildOwnerFromInvite().toPlayer()
+    val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
 
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        guildOwner?.addMemberToGuild(player)
+        guildOwner.addMemberToGuild(player)
+        if (guildOwner.getGuildMemberCount() >= guildOwner.getGuildLevel().times(5).plus(1)){
+            player.error("This guild has reached its current member cap!")
+        }
+        player.removeGuildQueueEntries(GuildJoinType.Request)
+        player.closeInventory()
     }){
         repeat(6) {
             Item(ItemStack(Material.PAPER).editItemMeta {
@@ -113,9 +132,13 @@ fun AcceptGuildInvite(player: Player, modifier: Modifier) {
 
 @Composable
 fun DeclineGuildInvite(player: Player, modifier: Modifier) {
+    val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
+
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        /* Remove invite from table */
+        player.removeGuildQueueEntries(GuildJoinType.Invite)
+        player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌ ${ChatColor.YELLOW}You denied the invite from ${ChatColor.GOLD}${ChatColor.ITALIC}${guildOwner.getGuildName()}")
+        guiy { GuildMainMenu(player) }
     }){
         repeat(6) {
             Item(ItemStack(Material.PAPER).editItemMeta {

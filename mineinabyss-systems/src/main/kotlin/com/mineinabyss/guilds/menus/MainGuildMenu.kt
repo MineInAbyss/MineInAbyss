@@ -137,7 +137,6 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
                     AnvilGUI.Response.close()
                 }
                 .open(player)
-
         }
     })
     {
@@ -162,7 +161,8 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuildInvitesButton(player: Player, modifier: Modifier) {
-    if (player.hasGuildInvite(player.getGuildOwnerFromInvite().toPlayer()!!)){
+    val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
+    if (player.hasGuildInvite(guildOwner)){
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}Manage Guild Invites")
             /* Icon that notifies player there are new invites */
@@ -177,7 +177,6 @@ fun GuildInvitesButton(player: Player, modifier: Modifier) {
             /* Custom Icon for "darkerened" out icon indicating no invites */
         }, modifier.clickable {
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-            guiy { GuildInvitesMenu(player) }
         })
     }
 }

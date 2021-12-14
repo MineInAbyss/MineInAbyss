@@ -1,7 +1,6 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.components.playerData
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -9,7 +8,6 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.extensions.kickPlayerFromGuild
@@ -38,6 +36,7 @@ fun PromoteGuildMember(player: Player, modifier: Modifier, member: OfflinePlayer
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         player.promotePlayerInGuild(member)
+        guiy { GuildMemberManagementMenu(player) }
     })
     {
         repeat(6) {
@@ -53,6 +52,7 @@ fun KickGuildMember(player: Player, modifier: Modifier, member: OfflinePlayer) {
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         player.kickPlayerFromGuild(member)
+        guiy { GuildMemberManagementMenu(player) }
     })
     {
         repeat(6) {
