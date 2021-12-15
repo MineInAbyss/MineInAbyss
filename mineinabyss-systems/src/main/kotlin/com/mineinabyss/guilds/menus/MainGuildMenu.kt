@@ -10,7 +10,7 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.extensions.*
@@ -23,27 +23,25 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.GuildMainMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:main_guild_menu:",
+    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:main_guild_menu:",
         4, onClose = { exit() }) {
         if (player.getGuildRank() == GuildRanks.Owner) {
             CurrentGuildButton(player, Modifier.at(1, 1).clickable { guiy { CurrentGuildMenu(player) } })
-            GuildOwnerButton(player, Modifier.at(4,1))
+            GuildOwnerButton(player, Modifier.at(4, 1))
             CreateGuildButton(player, Modifier.at(7, 1))
-            GuildInvitesButton(player, Modifier.at(8,0))
-            LookForGuildButton(player, Modifier.at(8,1))
-        }
-        else if (player.hasGuild() && player.getGuildRank() != GuildRanks.Owner){
+            GuildInvitesButton(player, Modifier.at(8, 0))
+            LookForGuildButton(player, Modifier.at(8, 1))
+        } else if (player.hasGuild() && player.getGuildRank() != GuildRanks.Owner) {
             CurrentGuildButton(player, Modifier.at(3, 1).clickable { guiy { CurrentGuildMenu(player) } })
             CreateGuildButton(player, Modifier.at(6, 1))
-            LookForGuildButton(player, Modifier.at(7,1))
-            GuildInvitesButton(player, Modifier.at(8,0))
+            LookForGuildButton(player, Modifier.at(7, 1))
+            GuildInvitesButton(player, Modifier.at(8, 0))
             //LeaveGuildButton(player, Modifier.at(8,3))
-        }
-        else {
+        } else {
             CurrentGuildButton(player, Modifier.at(3, 1))
             CreateGuildButton(player, Modifier.at(6, 1))
-            LookForGuildButton(player, Modifier.at(7,1))
-            GuildInvitesButton(player, Modifier.at(8,0))
+            LookForGuildButton(player, Modifier.at(7, 1))
+            GuildInvitesButton(player, Modifier.at(8, 0))
         }
     }
 }
@@ -51,7 +49,7 @@ fun GuiyOwner.GuildMainMenu(player: Player) {
 @Composable
 fun CurrentGuildButton(player: Player, modifier: Modifier) {
 
-    Grid(2,2, modifier){
+    Grid(2, 2, modifier) {
         repeat(4) {
             if (player.hasGuild()) {
                 Item(ItemStack(Material.PAPER).editItemMeta {
@@ -67,8 +65,7 @@ fun CurrentGuildButton(player: Player, modifier: Modifier) {
                         "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Members: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildMemberCount()}"
                     )
                 })
-            }
-            else {
+            } else {
                 Item(ItemStack(Material.PAPER).editItemMeta {
                     setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}${ChatColor.STRIKETHROUGH}View Guild Information")
                     lore = mutableListOf("${ChatColor.RED}You are not a member of any guild.")
@@ -105,12 +102,14 @@ fun CreateGuildButton(player: Player, modifier: Modifier) {
         repeat(1) {
             if (player.hasGuild()) {
                 Item(ItemStack(Material.PAPER).editItemMeta {
-                        /* Grayed out icon via custom model data */
-                        setDisplayName("${ChatColor.GOLD}${ChatColor.ITALIC}${ChatColor.STRIKETHROUGH}Create a Guild")
-                        lore = mutableListOf("${ChatColor.RED}You have to leave your current", "${ChatColor.RED}Guild before you can create one.")
+                    /* Grayed out icon via custom model data */
+                    setDisplayName("${ChatColor.GOLD}${ChatColor.ITALIC}${ChatColor.STRIKETHROUGH}Create a Guild")
+                    lore = mutableListOf(
+                        "${ChatColor.RED}You have to leave your current",
+                        "${ChatColor.RED}Guild before you can create one."
+                    )
                 })
-            }
-            else {
+            } else {
                 Item(ItemStack(Material.PAPER).editItemMeta {
                     //setCustomModelData(1) //Invis paper
                     setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Create a Guild")
@@ -127,7 +126,7 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
         setDisplayName("Guildname")
     }
 
-    Grid(1,1, modifier.clickable {
+    Grid(1, 1, modifier.clickable {
 
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         if (player.hasGuild()) guiy { GuildMainMenu(player) }
@@ -151,10 +150,12 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
                 Item(ItemStack(Material.PAPER).editItemMeta {
                     /* Grayed out icon via custom model data */
                     setDisplayName("${ChatColor.GOLD}${ChatColor.ITALIC}${ChatColor.STRIKETHROUGH}Look for a Guild")
-                    lore = mutableListOf("${ChatColor.RED}You have to leave your current", "${ChatColor.RED}Guild before you can look for one.")
+                    lore = mutableListOf(
+                        "${ChatColor.RED}You have to leave your current",
+                        "${ChatColor.RED}Guild before you can look for one."
+                    )
                 })
-            }
-            else {
+            } else {
                 Item(ItemStack(Material.PAPER).editItemMeta {
                     //setCustomModelData(1) //Invis paper
                     setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Look for a Guild")
@@ -168,7 +169,7 @@ fun LookForGuildButton(player: Player, modifier: Modifier) {
 @Composable
 fun GuildInvitesButton(player: Player, modifier: Modifier) {
     val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
-    if (player.hasGuildInvite(guildOwner)){
+    if (player.hasGuildInvite(guildOwner)) {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}Manage Guild Invites")
             /* Icon that notifies player there are new invites */
@@ -176,8 +177,7 @@ fun GuildInvitesButton(player: Player, modifier: Modifier) {
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
             guiy { GuildInvitesMenu(player) }
         })
-    }
-    else {
+    } else {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.STRIKETHROUGH}Manage Guild Invites")
             /* Custom Icon for "darkerened" out icon indicating no invites */
@@ -186,7 +186,6 @@ fun GuildInvitesButton(player: Player, modifier: Modifier) {
         })
     }
 }
-
 
 
 @Composable

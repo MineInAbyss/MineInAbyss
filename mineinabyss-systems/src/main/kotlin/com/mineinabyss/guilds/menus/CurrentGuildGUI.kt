@@ -7,7 +7,7 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.data.Players
@@ -28,11 +28,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Composable
 fun GuiyOwner.CurrentGuildMenu(player: Player) {
     Chest(
-        listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:current_guild_menu:",
+        listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:current_guild_menu:",
         player.getGuildLevel() + 2, onClose = { exit() }) {
         GuildMemberList(player, Modifier.at(1, 1))
-        if (player.getGuildRank() != GuildRanks.Owner){
-            LeaveGuildButton(player, Modifier.at(8,player.getGuildLevel() + 1))
+        if (player.getGuildRank() != GuildRanks.Owner) {
+            LeaveGuildButton(player, Modifier.at(8, player.getGuildLevel() + 1))
         }
         PreviousMenuButton(player, Modifier.at(2, player.getGuildLevel() + 1))
     }
@@ -54,7 +54,7 @@ fun GuildMemberList(player: Player, modifier: Modifier) {
             Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
     }
-    Grid(5, player.getGuildLevel(), modifier){
+    Grid(5, player.getGuildLevel(), modifier) {
         members.sortedBy { it.first }.forEach { (rank, member) ->
             Item(ItemStack(Material.PLAYER_HEAD).editItemMeta {
                 if (this is SkullMeta) {

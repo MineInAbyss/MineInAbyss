@@ -5,7 +5,6 @@ val gearyVersion: String by project
 val gearyAddonsVersion: String by project
 val lootyVersion: String by project
 val deeperWorldVersion: String by project
-val exposedVersion: String by project
 
 plugins {
     id("com.mineinabyss.conventions.kotlin")
@@ -34,12 +33,12 @@ allprojects {
         compileOnly(Deps.kotlinx.coroutines)
         compileOnly(Deps.minecraft.skedule)
 
-        compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") { isTransitive = false }
-        compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion") { isTransitive = false }
-        compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") { isTransitive = false }
-        compileOnly("org.jetbrains.exposed:exposed-java-time:$exposedVersion") { isTransitive = false }
-
-        compileOnly("org.xerial:sqlite-jdbc:3.30.1")
+        compileOnly(Deps.exposed.core) { isTransitive = false }
+        compileOnly(Deps.exposed.dao) { isTransitive = false }
+        compileOnly(Deps.exposed.jdbc) { isTransitive = false }
+        // TODO add to idofront platform
+        implementation("org.jetbrains.exposed:exposed-java-time:0.33.1") { isTransitive = false }
+        compileOnly(Deps.`sqlite-jdbc`)
 
         // Plugin deps
         compileOnly("com.mineinabyss:deeperworld:$deeperWorldVersion")
@@ -51,7 +50,7 @@ allprojects {
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
 
         implementation("com.mineinabyss:idofront:$idofrontVersion")
-        // TODO probably worth putting into idofront
+        // TODO add to ido
         implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     }
 }

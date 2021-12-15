@@ -11,7 +11,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 
-class SoulBoundListener: Listener {
+class SoulBoundListener : Listener {
     @EventHandler
     fun PlayerAscendEvent.soulbindItems() {
         if (toSection != MIAConfig.data.hubSection) return

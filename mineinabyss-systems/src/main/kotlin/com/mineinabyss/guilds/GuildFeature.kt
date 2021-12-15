@@ -1,6 +1,6 @@
 package com.mineinabyss.guilds
 
-import com.derongan.minecraft.deeperworld.DeeperContext
+import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
@@ -26,7 +26,7 @@ class GuildFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(GuildListener())
 
-        if (DeeperContext.isBlockLockerLoaded){
+        if (DeeperContext.isBlockLockerLoaded) {
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
         }
 

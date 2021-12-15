@@ -9,7 +9,7 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
@@ -23,13 +23,13 @@ import org.bukkit.inventory.ItemStack
 @Composable
 fun GuiyOwner.GuildOwnerMenu(player: Player) {
     Chest(
-        listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_owner_menu:",
+        listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:guild_owner_menu:",
         6, onClose = { exit() }) {
-        GuildMemberManagement(player, Modifier.at(2,0))
-        GuildRenameButton(player, Modifier.at(5,0))
-        GuildHouseButton(player, Modifier.at(2,3))
-        GuildRelationshipButton(player, Modifier.at(5,3))
-        GuildDisbandButton(player, Modifier.at(8,5))
+        GuildMemberManagement(player, Modifier.at(2, 0))
+        GuildRenameButton(player, Modifier.at(5, 0))
+        GuildHouseButton(player, Modifier.at(2, 3))
+        GuildRelationshipButton(player, Modifier.at(5, 3))
+        GuildDisbandButton(player, Modifier.at(8, 5))
         PreviousMenuButton(player, Modifier.at(2, 5))
     }
 }

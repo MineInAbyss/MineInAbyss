@@ -9,7 +9,7 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
@@ -29,9 +29,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuiyOwner.GuildJoinRequestsMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:handle_guild_join_requests:",
+    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:handle_guild_join_requests:",
         5, onClose = { exit() }) {
-        GuildJoinRequests(player, Modifier.at(1,1))
+        GuildJoinRequests(player, Modifier.at(1, 1))
         PreviousMenuButton(player, Modifier.at(2, 4))
     }
 }
@@ -69,21 +69,21 @@ fun GuildJoinRequests(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.HandleJoinRequests(player: Player, newMember: OfflinePlayer) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:handle_guild_join_requests:",
+    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:handle_guild_join_requests:",
         5, onClose = { exit() }) {
-        PlayerLabel(player, Modifier.at(4,0), newMember)
-        AcceptGuildRequest(player, Modifier.at(1,2), newMember)
-        DeclineGuildRequest(player, Modifier.at(5,2), newMember)
-        DeclineAllGuildRequests(player, Modifier.at(8,4))
-        PreviousMenuButton(player, Modifier.at(4,4))
+        PlayerLabel(player, Modifier.at(4, 0), newMember)
+        AcceptGuildRequest(player, Modifier.at(1, 2), newMember)
+        DeclineGuildRequest(player, Modifier.at(5, 2), newMember)
+        DeclineAllGuildRequests(player, Modifier.at(8, 4))
+        PreviousMenuButton(player, Modifier.at(4, 4))
     }
 }
 
 @Composable
 fun PlayerLabel(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
-    Grid(2,2, modifier.clickable {
+    Grid(2, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-    }){
+    }) {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.YELLOW}${ChatColor.ITALIC}${newMember.name}")
         })
@@ -94,17 +94,17 @@ fun PlayerLabel(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
 fun AcceptGuildRequest(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        if (player.getGuildJoinType() == GuildJoinType.Request){
+        if (player.getGuildJoinType() == GuildJoinType.Request) {
             player.error("Your guild is in 'Invite-only' mode.")
             player.error("Change it to 'Any' or 'Request-only' mode to accept requests.")
             return@clickable
         }
         player.addMemberToGuild(newMember)
-        if (player.getGuildMemberCount() < player.getGuildLevel().times(5).plus(1)){
+        if (player.getGuildMemberCount() < player.getGuildLevel().times(5).plus(1)) {
             newMember.removeGuildQueueEntries(GuildJoinType.Request)
         }
         guiy { GuildMemberManagementMenu(player) }
-    }){
+    }) {
         repeat(6) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setDisplayName("${ChatColor.GREEN}Accept Join-Request")
@@ -121,7 +121,7 @@ fun DeclineGuildRequest(player: Player, modifier: Modifier, newMember: OfflinePl
         newMember.removeGuildQueueEntries(GuildJoinType.Request)
         player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌ ${ChatColor.YELLOW}You denied the join-request from ${newMember.name}")
         guiy { GuildMemberManagementMenu(player) }
-    }){
+    }) {
         repeat(6) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setDisplayName("${ChatColor.RED}Decline Join-Request")

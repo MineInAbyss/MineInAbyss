@@ -14,8 +14,7 @@ plugins {
 
 dependencies {
     compileOnly("com.mineinabyss:guiy-compose:0.1.2")
-    compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
-
     compileOnly(project(":mineinabyss-core"))
+
     implementation("${Deps.minecraft.headlib}:3.0.7")
 }

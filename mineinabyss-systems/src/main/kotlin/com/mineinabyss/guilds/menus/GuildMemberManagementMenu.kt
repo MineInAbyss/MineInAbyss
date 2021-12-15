@@ -9,7 +9,7 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.data.GuildJoinType
@@ -30,12 +30,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Composable
 fun GuiyOwner.GuildMemberManagementMenu(player: Player) {
     Chest(
-        listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:guild_member_management_menu:",
+        listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:guild_member_management_menu:",
         player.getGuildLevel() + 2, onClose = { exit() }) {
         ManageGuildMembersButton(player, Modifier.at(1, 1))
-        InviteToGuildButton(player, Modifier.at(7,0))
-        ToggleGuildJoinTypeButton(player, Modifier.at(8,1))
-        ManageGuildJoinRequestsButton(player, Modifier.at(8,0))
+        InviteToGuildButton(player, Modifier.at(7, 0))
+        ToggleGuildJoinTypeButton(player, Modifier.at(8, 1))
+        ManageGuildJoinRequestsButton(player, Modifier.at(8, 0))
         PreviousMenuButton(player, Modifier.at(2, player.getGuildLevel() + 1))
     }
 }
@@ -51,12 +51,12 @@ fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
 
         Players.select {
             (Players.guildId eq guildId) and
-            (Players.playerUUID neq player.uniqueId)
+                    (Players.playerUUID neq player.uniqueId)
         }.map { row ->
             Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
     }
-    Grid(5, player.getGuildLevel(), modifier){
+    Grid(5, player.getGuildLevel(), modifier) {
         players.sortedBy { it.first }.forEach { (rank, member) ->
             val skull = ItemStack(Material.PLAYER_HEAD).editItemMeta {
                 if (this is SkullMeta) {
@@ -78,8 +78,8 @@ fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
 }
 
 @Composable
-fun InviteToGuildButton(player: Player, modifier: Modifier){
-    if (player.getGuildJoinType() == GuildJoinType.Request){
+fun InviteToGuildButton(player: Player, modifier: Modifier) {
+    if (player.getGuildJoinType() == GuildJoinType.Request) {
         player.error("Your guild is in 'Request-only' mode.")
         player.error("Change it to 'Any' or 'Invite-only' mode to invite others.")
     }
@@ -88,7 +88,7 @@ fun InviteToGuildButton(player: Player, modifier: Modifier){
         setDisplayName("${ChatColor.BLUE}${ChatColor.ITALIC}Playername")
         setCustomModelData(1)
     }
-    Grid(1,1,modifier.clickable {
+    Grid(1, 1, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         AnvilGUI.Builder()
             .title(":guild_invite:")
@@ -115,24 +115,23 @@ fun ManageGuildJoinRequestsButton(player: Player, modifier: Modifier) {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}Manage Guild Join Requests")
             lore =
-            if (requestAmount == 1){
-                listOf(
-                    "${ChatColor.YELLOW}${ChatColor.ITALIC}There is currently ${ChatColor.GOLD}${ChatColor.BOLD}$requestAmount ",
-                    "${ChatColor.YELLOW}${ChatColor.ITALIC}join-request for your guild."
-                )
-            } else {
-                listOf(
-                    "${ChatColor.YELLOW}${ChatColor.ITALIC}There are currently ${ChatColor.GOLD}${ChatColor.BOLD}\$requestAmount ",
-                    "${ChatColor.YELLOW}${ChatColor.ITALIC}join-requests for your guild."
-                )
-            }
+                if (requestAmount == 1) {
+                    listOf(
+                        "${ChatColor.YELLOW}${ChatColor.ITALIC}There is currently ${ChatColor.GOLD}${ChatColor.BOLD}$requestAmount ",
+                        "${ChatColor.YELLOW}${ChatColor.ITALIC}join-request for your guild."
+                    )
+                } else {
+                    listOf(
+                        "${ChatColor.YELLOW}${ChatColor.ITALIC}There are currently ${ChatColor.GOLD}${ChatColor.BOLD}\$requestAmount ",
+                        "${ChatColor.YELLOW}${ChatColor.ITALIC}join-requests for your guild."
+                    )
+                }
             /* Icon that notifies player there are new invites */
         }, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        guiy { GuildJoinRequestsMenu(player) }
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            guiy { GuildJoinRequestsMenu(player) }
         })
-    }
-    else {
+    } else {
         Item(ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.STRIKETHROUGH}Manage Guild Join Requests")
             lore = listOf(
