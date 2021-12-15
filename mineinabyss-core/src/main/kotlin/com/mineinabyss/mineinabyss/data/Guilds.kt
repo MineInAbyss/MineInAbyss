@@ -7,10 +7,14 @@ object Guilds : Table() {
     val name = varchar("guildName", 30)
     val balance = integer("guildBalance")
     val level = integer("guildLevel")
-    val joinType = varchar("joinType", 10)
+    val joinType = enumeration("joinType", GuildJoinType::class)
     override val primaryKey = PrimaryKey(id, name = "pk_guilds_id")
 }
 
-enum class GuildRanks{
+enum class GuildRanks {
     Owner, Captain, Steward, Member
+}
+
+enum class GuildJoinType {
+    Any, Request, Invite
 }

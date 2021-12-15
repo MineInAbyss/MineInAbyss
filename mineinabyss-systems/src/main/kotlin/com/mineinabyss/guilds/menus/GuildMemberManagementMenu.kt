@@ -11,6 +11,8 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.*
 import net.wesjd.anvilgui.AnvilGUI
@@ -32,6 +34,7 @@ fun GuiyOwner.GuildMemberManagementMenu(player: Player) {
         player.getGuildLevel() + 2, onClose = { exit() }) {
         ManageGuildMembersButton(player, Modifier.at(1, 1))
         InviteToGuildButton(player, Modifier.at(7,0))
+        ToggleGuildJoinTypeButton(player, Modifier.at(8,1))
         ManageGuildJoinRequestsButton(player, Modifier.at(8,0))
         PreviousMenuButton(player, Modifier.at(2, player.getGuildLevel() + 1))
     }
@@ -76,6 +79,11 @@ fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
 
 @Composable
 fun InviteToGuildButton(player: Player, modifier: Modifier){
+    if (player.getGuildJoinType() == GuildJoinType.Request){
+        player.error("Your guild is in 'Request-only' mode.")
+        player.error("Change it to 'Any' or 'Invite-only' mode to invite others.")
+    }
+
     val guildInvitePaper = ItemStack(Material.PAPER).editItemMeta {
         setDisplayName("${ChatColor.BLUE}${ChatColor.ITALIC}Playername")
         setCustomModelData(1)
@@ -139,3 +147,17 @@ fun ManageGuildJoinRequestsButton(player: Player, modifier: Modifier) {
 
 }
 
+@Composable
+fun ToggleGuildJoinTypeButton(player: Player, modifier: Modifier) {
+    Item(ItemStack(Material.PAPER).editItemMeta {
+        setDisplayName("${ChatColor.DARK_GREEN}Toggle Guild Join Type")
+        lore = listOf(
+            "${ChatColor.YELLOW}Currently players can join via: ${ChatColor.GOLD}${ChatColor.ITALIC}${player.getGuildJoinType()}",
+        )
+        /* Custom Icon for "darkerened" out icon indicating no invites */
+    }, modifier.clickable {
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        player.changeGuildJoinType()
+        guiy { GuildMemberManagementMenu(player) }
+    })
+}

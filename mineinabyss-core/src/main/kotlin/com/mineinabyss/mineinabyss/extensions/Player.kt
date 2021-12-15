@@ -29,6 +29,7 @@ fun Player.addMemberToGuild(member: OfflinePlayer) {
 
         val id = guildRow[Guilds.id]
         val level = guildRow[Guilds.level]
+        val joinType = guildRow[Guilds.joinType]
 
         val memberGuildCheck = Players.select {
             Players.playerUUID eq member.uniqueId
@@ -46,7 +47,6 @@ fun Player.addMemberToGuild(member: OfflinePlayer) {
 
         val maxGuildMemberCount = level * 5 // Members per level
 
-        //TODO implement max membercount check
         /* > and not >= to not count Guild Owner */
         if (player!!.getGuildMemberCount() > maxGuildMemberCount) {
             player?.error("Your guild is full!")
@@ -317,8 +317,6 @@ fun Player.leaveGuild() {
             return@transaction
         }
 
-        //TODO Check if player is last one left. If so prompt disbanding instead
-
         Players.deleteWhere {
             Players.playerUUID eq uniqueId
         }
@@ -422,7 +420,6 @@ fun OfflinePlayer.getGuildMemberCount(): Int {
     }
 }
 
-//TODO Make it so it checks for invites on per guild basis
 fun Player.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
     return transaction {
         val joinQueueId = GuildJoinQueue.select {
@@ -476,7 +473,7 @@ fun  Player.getNumberOfGuildRequests() : Int {
     return amount
 }
 
-fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: String, removeAll: Boolean = false) {
+fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAll: Boolean = false) {
     transaction {
         val id = GuildJoinQueue.select {
             GuildJoinQueue.playerUUID eq uniqueId
@@ -496,4 +493,19 @@ fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: String, removeAll: Bool
             }
         }
     }
+}
+
+fun Player.getGuildJoinType(): GuildJoinType {
+    val joinType =  transaction {
+        val guildId = Players.select {
+            Players.playerUUID eq uniqueId
+        }.single()[Players.guildId]
+
+        val type: GuildJoinType = Guilds.select {
+            Guilds.id eq guildId
+        }.single()[Guilds.joinType]
+
+        return@transaction type
+    }
+    return joinType
 }

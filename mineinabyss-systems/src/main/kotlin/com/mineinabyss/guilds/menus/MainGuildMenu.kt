@@ -26,18 +26,18 @@ fun GuiyOwner.GuildMainMenu(player: Player) {
     Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:main_guild_menu:",
         4, onClose = { exit() }) {
         if (player.getGuildRank() == GuildRanks.Owner) {
-            CurrentGuildButton(player, Modifier.at(1, 1))
+            CurrentGuildButton(player, Modifier.at(1, 1).clickable { guiy { CurrentGuildMenu(player) } })
             GuildOwnerButton(player, Modifier.at(4,1))
             CreateGuildButton(player, Modifier.at(7, 1))
             GuildInvitesButton(player, Modifier.at(8,0))
             LookForGuildButton(player, Modifier.at(8,1))
         }
         else if (player.hasGuild() && player.getGuildRank() != GuildRanks.Owner){
-            CurrentGuildButton(player, Modifier.at(3, 1))
+            CurrentGuildButton(player, Modifier.at(3, 1).clickable { guiy { CurrentGuildMenu(player) } })
             CreateGuildButton(player, Modifier.at(6, 1))
             LookForGuildButton(player, Modifier.at(7,1))
             GuildInvitesButton(player, Modifier.at(8,0))
-            LeaveGuildButton(player, Modifier.at(8,3))
+            //LeaveGuildButton(player, Modifier.at(8,3))
         }
         else {
             CurrentGuildButton(player, Modifier.at(3, 1))
@@ -187,21 +187,7 @@ fun GuildInvitesButton(player: Player, modifier: Modifier) {
     }
 }
 
-@Composable
-fun LeaveGuildButton(player: Player, modifier: Modifier) {
-    Grid(2, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        player.leaveGuild()
-        player.closeInventory()
-    })
-    {
-        repeat(4) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.RED}${ChatColor.ITALIC}Leave Guild")
-            })
-        }
-    }
-}
+
 
 @Composable
 fun PreviousMenuButton(player: Player, modifier: Modifier) {

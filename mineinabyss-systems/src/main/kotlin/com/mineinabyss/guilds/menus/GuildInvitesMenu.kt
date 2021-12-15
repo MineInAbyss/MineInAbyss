@@ -114,9 +114,15 @@ fun AcceptGuildInvite(player: Player, modifier: Modifier) {
 
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        if (guildOwner.getGuildJoinType() == GuildJoinType.Request) {
+            player.error("This guild is in 'Request-only' mode.")
+            player.error("Change it to 'Any' or 'Invite-only' mode to accept invites.")
+            return@clickable
+        }
         guildOwner.addMemberToGuild(player)
         if (guildOwner.getGuildMemberCount() >= guildOwner.getGuildLevel().times(5).plus(1)){
             player.error("This guild has reached its current member cap!")
+            return@clickable
         }
         player.removeGuildQueueEntries(GuildJoinType.Request)
         player.closeInventory()

@@ -27,7 +27,7 @@ fun Player.createGuild(guildName: String) {
             it[name] = guildName
             it[balance] = 0
             it[level] = 1
-            it[joinType] = GuildJoinType.Request
+            it[joinType] = GuildJoinType.Any
         } get Guilds.id
 
         Players.insert {
@@ -107,7 +107,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             return@transaction
         }
 
-        Guilds.update {
+        Guilds.update({Guilds.id eq guildId}) {
             it[name] = newGuildName
         }
 
@@ -133,5 +133,25 @@ fun Player.changeStoredGuildName(newGuildName: String) {
     }
 }
 
+fun Player.changeGuildJoinType() {
+    transaction {
+        val guildId = Players.select {
+            Players.playerUUID eq uniqueId
+        }.single()[Players.guildId]
 
+        val type = Guilds.select {
+            Guilds.id eq guildId
+        }.single()[Guilds.joinType]
+
+        val newType = when (type) {
+            GuildJoinType.Any -> GuildJoinType.Request
+            GuildJoinType.Invite -> GuildJoinType.Any
+            GuildJoinType.Request -> GuildJoinType.Invite
+        }
+
+        Guilds.update({Guilds.id eq guildId}) {
+            it[joinType] = newType
+        }
+    }
+}
 

@@ -11,13 +11,11 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.NegativeSpace
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.data.Players
-import com.mineinabyss.mineinabyss.extensions.addMemberToGuild
-import com.mineinabyss.mineinabyss.extensions.getGuildLevel
-import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount
-import com.mineinabyss.mineinabyss.extensions.removeGuildQueueEntries
+import com.mineinabyss.mineinabyss.extensions.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -96,6 +94,11 @@ fun PlayerLabel(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
 fun AcceptGuildRequest(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
     Grid(3, 2, modifier.clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        if (player.getGuildJoinType() == GuildJoinType.Request){
+            player.error("Your guild is in 'Invite-only' mode.")
+            player.error("Change it to 'Any' or 'Request-only' mode to accept requests.")
+            return@clickable
+        }
         player.addMemberToGuild(newMember)
         if (player.getGuildMemberCount() < player.getGuildLevel().times(5).plus(1)){
             newMember.removeGuildQueueEntries(GuildJoinType.Request)

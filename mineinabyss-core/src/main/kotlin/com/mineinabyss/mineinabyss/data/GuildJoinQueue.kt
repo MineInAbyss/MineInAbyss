@@ -5,10 +5,6 @@ import org.jetbrains.exposed.sql.Table
 object GuildJoinQueue : Table() {
     val playerUUID = uuid("playerUUID")
     val guildId = integer("guildId") references Guilds.id
-    val joinType = varchar("joinType", 10)
+    val joinType = enumeration("joinType", GuildJoinType::class)
 }
 
-object GuildJoinType{
-    val Request = "Request"
-    val Invite = "Invite"
-}
