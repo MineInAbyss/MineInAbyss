@@ -1,6 +1,6 @@
 package com.mineinabyss.hubstorage
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
+import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.AbyssFeature

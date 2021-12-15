@@ -1,7 +1,7 @@
 package com.mineinabyss.helpers
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.mineinabyss.components.playerData
+import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule

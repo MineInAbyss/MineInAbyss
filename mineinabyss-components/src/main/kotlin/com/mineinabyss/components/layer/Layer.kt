@@ -1,8 +1,8 @@
 package com.mineinabyss.components.layer
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
-import com.derongan.minecraft.deeperworld.world.section.Section
 import com.mineinabyss.components.curse.AscensionEffect
+import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.deeperworld.world.section.Section
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

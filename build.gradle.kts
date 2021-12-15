@@ -4,6 +4,7 @@ val idofrontVersion: String by project
 val gearyVersion: String by project
 val gearyAddonsVersion: String by project
 val lootyVersion: String by project
+val deeperWorldVersion: String by project
 
 plugins {
     id("com.mineinabyss.conventions.kotlin")
@@ -13,7 +14,7 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-subprojects {
+allprojects {
     apply(plugin = "java")
 
     repositories {
@@ -22,39 +23,30 @@ subprojects {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://jitpack.io")
     }
+
     dependencies {
+        // MineInAbyss platform
+        compileOnly(Deps.kotlin.stdlib)
+        compileOnly(Deps.kotlinx.serialization.json)
+        compileOnly(Deps.kotlinx.serialization.kaml)
+        compileOnly(Deps.kotlinx.coroutines)
+        compileOnly(Deps.minecraft.skedule)
+
+        // Plugin deps
+        compileOnly("com.mineinabyss:deeperworld:$deeperWorldVersion")
+        compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
+        compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
+        compileOnly("com.mineinabyss:looty:$lootyVersion")
+        compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
+        compileOnly("com.mineinabyss:guiy-compose:0.1.4")
+
         implementation("com.mineinabyss:idofront:$idofrontVersion")
     }
 }
 
-
-
-repositories {
-    maven("https://erethon.de/repo/")
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    maven("https://jitpack.io")
-}
-
 dependencies {
-    // MineInAbyss platform
-    compileOnly(Deps.kotlin.stdlib)
-    compileOnly(Deps.kotlinx.serialization.json)
-    compileOnly(Deps.kotlinx.serialization.kaml)
-    compileOnly(Deps.kotlinx.coroutines)
-    compileOnly(Deps.minecraft.skedule)
-
-    // Plugin deps
-    compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
-    compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
-    compileOnly("com.mineinabyss:looty:$lootyVersion")
-    compileOnly("com.derongan.minecraft:deeperworld:0.3.70")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
-    compileOnly("com.mineinabyss:guiy-compose:0.1.4")
 
     // Shaded
-//    implementation("com.github.DRE2N.HeadLib:headlib-core:7e2d443678")
-    implementation("com.mineinabyss:idofront:$idofrontVersion")
-
     implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-systems"))
 }

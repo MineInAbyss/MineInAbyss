@@ -1,7 +1,7 @@
 package com.mineinabyss.pvp.adventure
 
-import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.components.playerData
+import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.pvp.PvpPrompt

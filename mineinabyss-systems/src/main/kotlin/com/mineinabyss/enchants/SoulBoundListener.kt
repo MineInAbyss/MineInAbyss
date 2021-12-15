@@ -1,7 +1,7 @@
 package com.mineinabyss.enchants
 
-import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.components.soulbound.Orthbound
+import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.geary.minecraft.components.Soulbound
 import com.mineinabyss.geary.minecraft.store.encodeComponentsTo
 import com.mineinabyss.looty.tracking.toGearyFromUUIDOrNull

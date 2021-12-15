@@ -1,8 +1,8 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.derongan.minecraft.deeperworld.world.section.Section
-import com.derongan.minecraft.deeperworld.world.section.section
 import com.mineinabyss.components.layer.Layer
+import com.mineinabyss.deeperworld.world.section.Section
+import com.mineinabyss.deeperworld.world.section.section
 import org.bukkit.Location
 import org.bukkit.World
 

@@ -1,6 +1,6 @@
 package com.mineinabyss.mineinabyss.core.gui
 
-import com.derongan.minecraft.deeperworld.world.section.section
+import com.mineinabyss.deeperworld.world.section.section
 import com.derongan.minecraft.guiy.gui.ClickableElement
 import com.derongan.minecraft.guiy.gui.layouts.HistoryGuiHolder
 import com.derongan.minecraft.guiy.helpers.toCell

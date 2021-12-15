@@ -1,8 +1,8 @@
 package com.mineinabyss.relics
 
-import com.derongan.minecraft.deeperworld.world.section.section
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
+import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.ecs.accessors.EventResultScope
 import com.mineinabyss.geary.ecs.accessors.ResultScope
 import com.mineinabyss.geary.ecs.api.systems.GearyListener

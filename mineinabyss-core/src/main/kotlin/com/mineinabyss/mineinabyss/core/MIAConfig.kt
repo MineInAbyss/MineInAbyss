@@ -1,7 +1,7 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
 import com.mineinabyss.components.layer.Layer
+import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.plugin.getService
 import kotlinx.serialization.Serializable
 

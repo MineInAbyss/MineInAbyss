@@ -13,16 +13,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
-    compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
-    compileOnly("com.mineinabyss:looty:$lootyVersion")
     compileOnly("com.mineinabyss:guiy-compose:0.1.2")
-    compileOnly(Deps.kotlinx.coroutines)
 
-    compileOnly(Deps.kotlinx.serialization.json)
-    compileOnly(Deps.minecraft.skedule)
-    compileOnly("com.derongan.minecraft:deeperworld:0.3.70")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
     compileOnly(project(":mineinabyss-core"))
     implementation("${Deps.minecraft.headlib}:3.0.7")
 }
