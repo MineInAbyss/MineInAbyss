@@ -1,22 +1,26 @@
+@file:UseSerializers(DurationSerializer::class)
+
 package com.mineinabyss.curse.effects
 
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
-import com.mineinabyss.idofront.time.TimeSpan
+import com.mineinabyss.idofront.serialization.DurationSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.bukkit.Color
 import org.bukkit.Particle
 import org.bukkit.entity.Player
+import kotlin.time.Duration
 
 //TODO not sure if anything else needs to be updated with this
 @Serializable
 @SerialName("particles")
 data class ParticleAscensionEffect constructor(
     val count: Int,
-    override val offset: TimeSpan,
-    override val duration: TimeSpan,
+    override val offset: Duration,
+    override val duration: Duration,
     override val iterations: Int,
     private val particles: List<Particle>
 ) : AbstractAscensionEffect() {

@@ -8,7 +8,7 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.PvpPrompt(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:pvp_menu_toggle:",
+    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:pvp_menu_toggle:",
         4, onClose = { reopen() }) {
         EnablePvp(player, Modifier.at(1, 1))
         DisablePvp(player, Modifier.at(5, 1))
@@ -40,13 +40,14 @@ fun EnablePvp(player: Player, modifier: Modifier) {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         player.closeInventory()
     })
-    { repeat(6) {
-        Item(ItemStack(Material.PAPER).editItemMeta {
-            setCustomModelData(1)
-            setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.BOLD}Enable PvP")
-            lore = mutableListOf("${ChatColor.GREEN}Enables pvp interactions with other players in the Abyss.")
-        })
-    }
+    {
+        repeat(6) {
+            Item(ItemStack(Material.PAPER).editItemMeta {
+                setCustomModelData(1)
+                setDisplayName("${ChatColor.DARK_GREEN}${ChatColor.BOLD}Enable PvP")
+                lore = mutableListOf("${ChatColor.GREEN}Enables pvp interactions with other players in the Abyss.")
+            })
+        }
     }
 }
 

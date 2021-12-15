@@ -1,23 +1,27 @@
 package com.mineinabyss.pins
 
 import com.mineinabyss.components.pins.PinDrop
+import com.mineinabyss.geary.ecs.accessors.EventResultScope
 import com.mineinabyss.geary.ecs.accessors.ResultScope
-import com.mineinabyss.geary.ecs.api.systems.GearyHandlerScope
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.minecraft.access.toGeary
-import com.mineinabyss.geary.minecraft.events.onItemRightClick
+import com.mineinabyss.geary.ecs.entities.parent
+import com.mineinabyss.geary.ecs.events.handlers.ComponentAddHandler
+import com.mineinabyss.geary.minecraft.events.ItemInteraction
 import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventoryContext
 
-object AbyssalPinBehaviour : GearyListener() {
+class AbyssalPinBehaviour : GearyListener() {
     private val ResultScope.pinDrop by get<PinDrop>()
     private val ResultScope.inventoryContext by get<PlayerInventoryContext>()
 
-    override fun GearyHandlerScope.register() {
-        onItemRightClick { event ->
-            inventoryContext.removeItem()
-            entity.removeEntity()
+    private inner class RightClick : ComponentAddHandler() {
+        val EventResultScope.hit by get<ItemInteraction>()
 
-            event.player.toGeary().callEvent(ActivateAbyssalPinEvent(pinDrop))
+        override fun ResultScope.handle(event: EventResultScope) {
+            if (event.hit.leftClick) {
+                inventoryContext.removeItem()
+                entity.removeEntity()
+                entity.parent?.callEvent(ActivateAbyssalPinEvent(pinDrop))
+            }
         }
     }
 }

@@ -3,9 +3,10 @@ package com.mineinabyss.relics
 import com.derongan.minecraft.deeperworld.world.section.section
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
+import com.mineinabyss.geary.ecs.accessors.EventResultScope
 import com.mineinabyss.geary.ecs.accessors.ResultScope
-import com.mineinabyss.geary.ecs.api.systems.GearyHandlerScope
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
+import com.mineinabyss.geary.ecs.events.handlers.ComponentAddHandler
 import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
@@ -21,11 +22,13 @@ class ShowDepthEvent(
     val depthMeter: DepthMeter
 )
 
-object ShowDepthSystem : GearyListener() {
+class ShowDepthSystem : GearyListener() {
     private val ResultScope.player by get<Player>()
 
-    override fun GearyHandlerScope.register() {
-        on<ShowDepthEvent> { event ->
+    private inner class ShowDepth : ComponentAddHandler() {
+        val EventResultScope.depthMeter by get<ShowDepthEvent>().map { it.depthMeter }
+
+        override fun ResultScope.handle(event: EventResultScope) {
             val sectionXOffset = event.depthMeter.sectionXOffset
             val sectionYOffset = event.depthMeter.sectionYOffset
             val abyssStartingHeightInOrth = event.depthMeter.abyssStartingHeightInOrth
@@ -39,7 +42,7 @@ object ShowDepthSystem : GearyListener() {
                 $DARK_AQUA${ITALIC}The needle spins.
                 ${DARK_AQUA}You suddenly become aware that you are in ${layer.name}${DARK_AQUA}.""".trimIndent()
                     )
-                    return@on
+                    return
                 }
                 if (!player.isInHub()) {
                     val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
@@ -67,7 +70,6 @@ object ShowDepthSystem : GearyListener() {
      *
      * @return  depth of player in abyss, in minecraft blocks
      */
-
     private fun getDepth(
         sectionXOffset: Int,
         sectionYOffset: Int,

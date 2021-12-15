@@ -1,7 +1,7 @@
 package com.mineinabyss.npc.orthbanking
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.components.npc.OrthBanking.OrthCoin
+import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 import com.mineinabyss.guiy.components.Grid
@@ -12,7 +12,8 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
-import com.mineinabyss.idofront.font.NegativeSpace
+import com.mineinabyss.helpers.updateBalance
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
@@ -20,7 +21,6 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventoryContext
 import com.mineinabyss.looty.tracking.toGearyOrNull
-import com.mineinabyss.mineinabyss.updateBalance
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.BankMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanking_menu:",
+    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:orthbanking_menu:",
         4, onClose = {
             exit()
             player.updateBalance()
@@ -51,7 +51,8 @@ fun DepositCurrencyOption(player: Player, modifier: Modifier) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setCustomModelData(1)
                 setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Open Deposit Menu")
-                lore = mutableListOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
+                lore =
+                    listOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
             })
         }
     }
@@ -59,7 +60,7 @@ fun DepositCurrencyOption(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.DepositCurrencyMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_deposit_menu:",
+    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:orthbanker_deposit_menu:",
         5, onClose = {
             exit()
             player.updateBalance()
@@ -73,7 +74,7 @@ fun GuiyOwner.DepositCurrencyMenu(player: Player) {
 fun Deposit(player: Player, modifier: Modifier) {
     var amount = 1
 
-    Grid(3, 2, modifier.at(3,0).clickable {
+    Grid(3, 2, modifier.at(3, 0).clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         amount += 1
         if (amount > 64) amount = 64
@@ -87,7 +88,7 @@ fun Deposit(player: Player, modifier: Modifier) {
         }
     }
 
-    Grid(1, 1, modifier.at(4,2).clickable {
+    Grid(1, 1, modifier.at(4, 2).clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         broadcast(amount)
         player.onDepositCoins(amount)
@@ -103,7 +104,7 @@ fun Deposit(player: Player, modifier: Modifier) {
         }
     }
 
-    Grid(3, 1, modifier.at(3,3).clickable {
+    Grid(3, 1, modifier.at(3, 3).clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         amount -= 1
         if (amount < 1) amount = 1
@@ -155,7 +156,8 @@ fun WithdrawCurrencyOption(player: Player, modifier: Modifier) {
             Item(ItemStack(Material.PAPER).editItemMeta {
                 setCustomModelData(1)
                 setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Open Withdrawal Menu")
-                lore = mutableListOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
+                lore =
+                    mutableListOf("${ChatColor.YELLOW}You currently have ${ChatColor.ITALIC}${data.orthCoinsHeld} ${ChatColor.YELLOW}coins in your account.")
             })
         }
     }
@@ -163,7 +165,7 @@ fun WithdrawCurrencyOption(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.WithdrawCurrencyMenu(player: Player) {
-    Chest(listOf(player), "${NegativeSpace.of(18)}${ChatColor.WHITE}:orthbanker_withdrawal_menu:",
+    Chest(listOf(player), "${Space.of(18)}${ChatColor.WHITE}:orthbanker_withdrawal_menu:",
         5, onClose = {
             exit()
             player.updateBalance()
@@ -176,7 +178,7 @@ fun GuiyOwner.WithdrawCurrencyMenu(player: Player) {
 fun Withdraw(player: Player, modifier: Modifier) {
     var amount = 1
 
-    Grid(3, 2, modifier.at(3,0).clickable {
+    Grid(3, 2, modifier.at(3, 0).clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         amount += 1
         if (amount > 64) amount = 64
@@ -190,7 +192,7 @@ fun Withdraw(player: Player, modifier: Modifier) {
         }
     }
 
-    Grid(1, 1, modifier.at(4,2).clickable {
+    Grid(1, 1, modifier.at(4, 2).clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         broadcast(amount)
         player.onWithdrawCoins(amount)
@@ -206,7 +208,7 @@ fun Withdraw(player: Player, modifier: Modifier) {
         }
     }
 
-    Grid(3, 1, modifier.at(3,3).clickable {
+    Grid(3, 1, modifier.at(3, 3).clickable {
         player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
         amount -= 1
         if (amount < 1) amount = 1
@@ -242,7 +244,7 @@ fun Player.onWithdrawCoins(amount: Int) {
         return
     }
 
-    loop@ for (i in 1..amount){
+    loop@ for (i in 1..amount) {
         LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))?.let { player.inventory.addItem(it) }
         LootyFactory.loadFromPlayerInventory(PlayerInventoryContext(player, slot))
         data.orthCoinsHeld -= 1

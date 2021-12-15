@@ -1,15 +1,19 @@
+@file:UseSerializers(DurationSerializer::class)
+
 package com.mineinabyss.curse.effects
 
-import com.mineinabyss.idofront.time.TimeSpan
+import com.mineinabyss.idofront.serialization.DurationSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.bukkit.entity.Player
+import kotlin.time.Duration
 
 @Serializable
 @SerialName("hallucination")
 data class HallucinatingAscensionEffect(
-    override val offset: TimeSpan,
-    override val duration: TimeSpan,
+    override val offset: Duration,
+    override val duration: Duration,
     override val iterations: Int
 ) : AbstractAscensionEffect() {
 //    private val stands: List<SpoofedEntityLiving> = ArrayList<SpoofedEntityLiving>()

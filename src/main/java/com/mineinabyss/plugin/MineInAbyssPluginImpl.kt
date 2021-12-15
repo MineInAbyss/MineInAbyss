@@ -6,9 +6,9 @@ import com.mineinabyss.geary.minecraft.dsl.gearyAddon
 import com.mineinabyss.geary.minecraft.store.PrefabNamespaceMigrations
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
+import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerService
-import com.mineinabyss.idofront.slimjar.IdofrontSlimjar
 import com.mineinabyss.mineinabyss.core.*
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.command.CommandSender
@@ -16,7 +16,7 @@ import org.bukkit.command.TabCompleter
 
 class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     override fun onLoad() {
-        IdofrontSlimjar.loadToLibraryLoader(this)
+        IdofrontPlatforms.load(this, "mineinabyss")
     }
 
     override fun onEnable() {
@@ -48,8 +48,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                 }
             })
 
-            autoscan<AbyssFeature>()
-            autoscanAll()
+            autoScanAll()
+            autoScan<AbyssFeature>()
 
             startup {
                 GearyLoadPhase.ENABLE {

@@ -1,12 +1,12 @@
 package com.mineinabyss.components.curse
 
-import com.mineinabyss.idofront.time.TimeSpan
 import org.bukkit.entity.Player
+import kotlin.time.Duration
 
 interface AscensionEffect {
     fun applyEffect(player: Player, ticks: Int)
     val isDone: Boolean
-    val duration: TimeSpan
+    val duration: Duration
     fun cleanUp(player: Player)
 
     fun clone(): AscensionEffect

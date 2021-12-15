@@ -24,7 +24,11 @@ class PinsFeature : AbyssFeature {
         )
 
         geary {
-            systems(PinActivatorSystem())
+            systems(
+                PinActivatorSystem(),
+                AbyssalPinBehaviour(),
+                AddPinBehaviour(),
+            )
 
             bukkitEntityAssociations {
                 onEntityRegister<Player> {

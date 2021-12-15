@@ -1,10 +1,10 @@
 package com.mineinabyss.npc.orthbanking
 
-import com.mineinabyss.components.npc.OrthBanking.OrthBanker
+import com.mineinabyss.components.npc.orthbanking.OrthBanker
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.mineinabyss.updateBalance
+import com.mineinabyss.helpers.updateBalance
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
