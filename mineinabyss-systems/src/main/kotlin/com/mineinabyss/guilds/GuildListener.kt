@@ -4,6 +4,7 @@ import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.data.MessageQueue
@@ -13,6 +14,7 @@ import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.hasGuild
 import com.okkero.skedule.schedule
 import nl.rutgerkok.blocklocker.group.GroupSystem
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -21,15 +23,20 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 class GuildListener : Listener {
-
+    val clickedCooldown = mutableMapOf<UUID, Int>()
     @EventHandler
     fun PlayerInteractEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
         entity.get<GuildMaster>() ?: return
 
-        guiy { GuildMainMenu(player) }
+        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
+            clickedCooldown[player.uniqueId] = Bukkit.getCurrentTick() + 5
+            broadcast("Right clicked")
+            guiy { GuildMainMenu(player) }
+        }
     }
 
     @EventHandler

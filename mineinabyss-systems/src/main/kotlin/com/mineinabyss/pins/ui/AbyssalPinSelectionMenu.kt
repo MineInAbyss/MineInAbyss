@@ -13,6 +13,7 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.size
 import org.bukkit.entity.Player
 
 private object AbyssalPinsQuery : Query() {
@@ -29,7 +30,7 @@ fun GuiyOwner.AbyssalPinSelectionMenu(player: Player) {
         val activePins = gearyPlayer.get<ActivePins>() ?: return@Chest
 
         //TODO efficiently get all prefabs with AbyssalPin components
-        Grid(9, 6) {
+        Grid(Modifier.size(9, 6)) {
             AbyssalPinsQuery.apply {
                 asSequence()
                     .map { it.prefab }

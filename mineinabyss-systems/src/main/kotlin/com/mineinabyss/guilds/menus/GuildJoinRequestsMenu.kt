@@ -8,6 +8,8 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
@@ -16,7 +18,7 @@ import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.*
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.Sound
@@ -29,7 +31,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuiyOwner.GuildJoinRequestsMenu(player: Player) {
-    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:handle_guild_join_requests:",
+    Chest(listOf(player), "${Space.of(-18)}$WHITE:handle_guild_join_requests:",
         5, onClose = { exit() }) {
         GuildJoinRequests(player, Modifier.at(1, 1))
         PreviousMenuButton(player, Modifier.at(2, 4))
@@ -48,13 +50,13 @@ fun GuildJoinRequests(player: Player, modifier: Modifier) {
             (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
         }.map { row -> row[GuildJoinQueue.playerUUID] }
     }
-    Grid(9, 4, modifier) {
+    Grid(modifier.size(9, 4)) {
         requests.forEach { newMember ->
             val guildItem = ItemStack(Material.PLAYER_HEAD).editItemMeta {
                 if (this is SkullMeta) {
-                    setDisplayName("${ChatColor.YELLOW}${ChatColor.ITALIC}${newMember.toPlayer()?.name}")
+                    setDisplayName("$YELLOW$ITALIC${newMember.toPlayer()?.name}")
                     lore = listOf(
-                        "${ChatColor.BLUE}Click this to accept or deny the join-request.",
+                        "${BLUE}Click this to accept or deny the join-request.",
                     )
                     owningPlayer = newMember.toPlayer()
                 }
@@ -69,7 +71,7 @@ fun GuildJoinRequests(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.HandleJoinRequests(player: Player, newMember: OfflinePlayer) {
-    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:handle_guild_join_requests:",
+    Chest(listOf(player), "${Space.of(-18)}$WHITE:handle_guild_join_requests:",
         5, onClose = { exit() }) {
         PlayerLabel(player, Modifier.at(4, 0), newMember)
         AcceptGuildRequest(player, Modifier.at(1, 2), newMember)
@@ -81,64 +83,55 @@ fun GuiyOwner.HandleJoinRequests(player: Player, newMember: OfflinePlayer) {
 
 @Composable
 fun PlayerLabel(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
-    Grid(2, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-    }) {
-        Item(ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName("${ChatColor.YELLOW}${ChatColor.ITALIC}${newMember.name}")
-        })
-    }
+    Item(
+        TitleItem.of("$YELLOW$ITALIC${newMember.name}"),
+        modifier.size(2, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        }
+    )
 }
 
 @Composable
 fun AcceptGuildRequest(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
-    Grid(3, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        if (player.getGuildJoinType() == GuildJoinType.Request) {
-            player.error("Your guild is in 'Invite-only' mode.")
-            player.error("Change it to 'Any' or 'Request-only' mode to accept requests.")
-            return@clickable
+    Item(
+        TitleItem.of("${GREEN}Accept Join-Request"),
+        modifier.size(3, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            if (player.getGuildJoinType() == GuildJoinType.Request) {
+                player.error("Your guild is in 'Invite-only' mode.")
+                player.error("Change it to 'Any' or 'Request-only' mode to accept requests.")
+                return@clickable
+            }
+            player.addMemberToGuild(newMember)
+            if (player.getGuildMemberCount() < player.getGuildLevel().times(5).plus(1)) {
+                newMember.removeGuildQueueEntries(GuildJoinType.Request)
+            }
+            guiy { GuildMemberManagementMenu(player) }
         }
-        player.addMemberToGuild(newMember)
-        if (player.getGuildMemberCount() < player.getGuildLevel().times(5).plus(1)) {
-            newMember.removeGuildQueueEntries(GuildJoinType.Request)
-        }
-        guiy { GuildMemberManagementMenu(player) }
-    }) {
-        repeat(6) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.GREEN}Accept Join-Request")
-                //setCustomModelData(1)
-            })
-        }
-    }
+    )
 }
 
 @Composable
 fun DeclineGuildRequest(player: Player, modifier: Modifier, newMember: OfflinePlayer) {
-    Grid(3, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        newMember.removeGuildQueueEntries(GuildJoinType.Request)
-        player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌ ${ChatColor.YELLOW}You denied the join-request from ${newMember.name}")
-        guiy { GuildMemberManagementMenu(player) }
-    }) {
-        repeat(6) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.RED}Decline Join-Request")
-                //setCustomModelData(1)
-            })
+    Item(
+        TitleItem.of("${RED}Decline Join-Request"),
+        modifier.size(3, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            newMember.removeGuildQueueEntries(GuildJoinType.Request)
+            player.sendMessage("$YELLOW${BOLD}❌ ${YELLOW}You denied the join-request from ${newMember.name}")
+            guiy { GuildMemberManagementMenu(player) }
         }
-    }
+    )
 }
 
 @Composable
 fun DeclineAllGuildRequests(player: Player, modifier: Modifier) {
-    Item(ItemStack(Material.PAPER).editItemMeta {
-        setDisplayName("${ChatColor.RED}Decline All Join-Request")
-        //setCustomModelData(1)
-    }, modifier.clickable {
-        player.removeGuildQueueEntries(GuildJoinType.Request, true)
-        player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌ ${ChatColor.YELLOW}You denied all join-requests for your guild!")
-        guiy { GuildMemberManagementMenu(player) }
-    })
+    Item(
+        TitleItem.of("${RED}Decline All Join-Request"),
+        modifier.clickable {
+            player.removeGuildQueueEntries(GuildJoinType.Request, true)
+            player.sendMessage("$YELLOW${BOLD}❌ ${YELLOW}You denied all join-requests for your guild!")
+            guiy { GuildMemberManagementMenu(player) }
+        }
+    )
 }

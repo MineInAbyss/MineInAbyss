@@ -8,6 +8,8 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
@@ -15,7 +17,7 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.extensions.*
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -26,7 +28,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuiyOwner.GuildInvitesMenu(player: Player) {
-    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:guild_invites_menu:",
+    Chest(listOf(player), "${Space.of(-18)}$WHITE:guild_invites_menu:",
         4, onClose = { exit() }) {
         GuildInvites(player, Modifier.at(1, 1))
         DenyAllInvites(player, Modifier.at(8, 3))
@@ -46,13 +48,13 @@ fun GuildInvites(player: Player, modifier: Modifier) {
         }.map { row -> Pair(memberCount, row[GuildJoinQueue.guildId]) }
 
     }
-    Grid(9, 4, modifier) {
+    Grid(modifier.size(9, 4)) {
         invites.sortedBy { it.first }.forEach { (memberCount, guild) ->
             val guildItem = ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.GOLD}${ChatColor.BOLD}Guildname: ${ChatColor.YELLOW}${ChatColor.ITALIC}${owner.getGuildName()}")
+                setDisplayName("$GOLD${BOLD}Guildname: $YELLOW$ITALIC${owner.getGuildName()}")
                 lore = listOf(
-                    "${ChatColor.BLUE}Click this to accept or deny invite.",
-                    "${ChatColor.BLUE}Info about the guild can also be found in here."
+                    "${BLUE}Click this to accept or deny invite.",
+                    "${BLUE}Info about the guild can also be found in here."
                 )
             }
             Item(guildItem, Modifier.clickable {
@@ -66,12 +68,12 @@ fun GuildInvites(player: Player, modifier: Modifier) {
 @Composable
 fun DenyAllInvites(player: Player, modifier: Modifier) {
     Item(ItemStack(Material.PAPER).editItemMeta {
-        setDisplayName("${ChatColor.RED}Decline All Invites")
+        setDisplayName("${RED}Decline All Invites")
         //setCustomModelData(1)
     }, modifier.clickable {
         player.removeGuildQueueEntries(GuildJoinType.Invite, true)
         guiy { GuildMemberManagementMenu(player) }
-        player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌${ChatColor.YELLOW}You denied all invites!")
+        player.sendMessage("$YELLOW${BOLD}❌${YELLOW}You denied all invites!")
 
 
     })
@@ -79,7 +81,7 @@ fun DenyAllInvites(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.HandleGuildInvites(player: Player) {
-    Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:handle_guild_invites:",
+    Chest(listOf(player), "${Space.of(-18)}$WHITE:handle_guild_invites:",
         5, onClose = { exit() }) {
         GuildLabel(player, Modifier.at(4, 0))
         AcceptGuildInvite(player, Modifier.at(1, 2))
@@ -92,66 +94,55 @@ fun GuiyOwner.HandleGuildInvites(player: Player) {
 fun GuildLabel(player: Player, modifier: Modifier) {
     val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
 
-    Grid(2, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-    }) {
-        Item(ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName(
-                "${ChatColor.GOLD}${ChatColor.BOLD}Current Guild Info:"
-            )
-            lore = listOf(
-                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Name: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.getGuildName()}",
-                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Owner: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.name}",
-                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Level: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.getGuildLevel()}",
-                "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Members: ${ChatColor.YELLOW}${ChatColor.ITALIC}${guildOwner.getGuildMemberCount()}"
-            )
-        })
-    }
+    Item(
+        TitleItem.of(
+            "$GOLD${BOLD}Current Guild Info:",
+            "$YELLOW${BOLD}Guild Name: $YELLOW$ITALIC${guildOwner.getGuildName()}",
+            "$YELLOW${BOLD}Guild Owner: $YELLOW$ITALIC${guildOwner.name}",
+            "$YELLOW${BOLD}Guild Level: $YELLOW$ITALIC${guildOwner.getGuildLevel()}",
+            "$YELLOW${BOLD}Guild Members: $YELLOW$ITALIC${guildOwner.getGuildMemberCount()}"
+        ),
+        modifier.size(2, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+        }
+    )
 }
 
 @Composable
 fun AcceptGuildInvite(player: Player, modifier: Modifier) {
     val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
 
-    Grid(3, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        if (guildOwner.getGuildJoinType() == GuildJoinType.Request) {
-            player.error("This guild is in 'Request-only' mode.")
-            player.error("Change it to 'Any' or 'Invite-only' mode to accept invites.")
-            return@clickable
+    Item(
+        TitleItem.of("${GREEN}Accept Invite"),
+        modifier.size(3, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            if (guildOwner.getGuildJoinType() == GuildJoinType.Request) {
+                player.error("This guild is in 'Request-only' mode.")
+                player.error("Change it to 'Any' or 'Invite-only' mode to accept invites.")
+                return@clickable
+            }
+            guildOwner.addMemberToGuild(player)
+            if (guildOwner.getGuildMemberCount() >= guildOwner.getGuildLevel().times(5).plus(1)) {
+                player.error("This guild has reached its current member cap!")
+                return@clickable
+            }
+            player.removeGuildQueueEntries(GuildJoinType.Request)
+            player.closeInventory()
         }
-        guildOwner.addMemberToGuild(player)
-        if (guildOwner.getGuildMemberCount() >= guildOwner.getGuildLevel().times(5).plus(1)) {
-            player.error("This guild has reached its current member cap!")
-            return@clickable
-        }
-        player.removeGuildQueueEntries(GuildJoinType.Request)
-        player.closeInventory()
-    }) {
-        repeat(6) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.GREEN}Accept Invite")
-                //setCustomModelData(1)
-            })
-        }
-    }
+    )
 }
 
 @Composable
 fun DeclineGuildInvite(player: Player, modifier: Modifier) {
     val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
 
-    Grid(3, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        player.removeGuildQueueEntries(GuildJoinType.Invite)
-        player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌ ${ChatColor.YELLOW}You denied the invite from ${ChatColor.GOLD}${ChatColor.ITALIC}${guildOwner.getGuildName()}")
-        guiy { GuildMainMenu(player) }
-    }) {
-        repeat(6) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.RED}Decline Invite")
-                //setCustomModelData(1)
-            })
+    Item(
+        TitleItem.of("${RED}Decline Invite"),
+        modifier.size(3, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            player.removeGuildQueueEntries(GuildJoinType.Invite)
+            player.sendMessage("$YELLOW${BOLD}❌ ${YELLOW}You denied the invite from $GOLD$ITALIC${guildOwner.getGuildName()}")
+            guiy { GuildMainMenu(player) }
         }
-    }
+    )
 }

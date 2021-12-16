@@ -9,6 +9,7 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
@@ -56,7 +57,7 @@ fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
             Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
     }
-    Grid(5, player.getGuildLevel(), modifier) {
+    Grid(modifier.size(5, player.getGuildLevel())) {
         players.sortedBy { it.first }.forEach { (rank, member) ->
             val skull = ItemStack(Material.PLAYER_HEAD).editItemMeta {
                 if (this is SkullMeta) {
@@ -88,24 +89,24 @@ fun InviteToGuildButton(player: Player, modifier: Modifier) {
         setDisplayName("${ChatColor.BLUE}${ChatColor.ITALIC}Playername")
         setCustomModelData(1)
     }
-    Grid(1, 1, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        AnvilGUI.Builder()
-            .title(":guild_invite:")
-            .itemLeft(guildInvitePaper)
-            .plugin(guiyPlugin)
-            .onClose { guiy { GuildMemberManagementMenu(player) } }
-            .onComplete { player, invitedPlayer: String ->
-                player.invitePlayerToGuild(invitedPlayer)
-                AnvilGUI.Response.close()
-            }
-            .open(player)
-    }) {
-        Item(ItemStack(Material.PAPER).editItemMeta {
+    Item(
+        ItemStack(Material.PAPER).editItemMeta {
             setDisplayName("${ChatColor.YELLOW}Invite Player to Guild")
-        })
-    }
-
+        },
+        modifier.size(1, 1).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            AnvilGUI.Builder()
+                .title(":guild_invite:")
+                .itemLeft(guildInvitePaper)
+                .plugin(guiyPlugin)
+                .onClose { guiy { GuildMemberManagementMenu(player) } }
+                .onComplete { player, invitedPlayer: String ->
+                    player.invitePlayerToGuild(invitedPlayer)
+                    AnvilGUI.Response.close()
+                }
+                .open(player)
+        }
+    )
 }
 
 @Composable

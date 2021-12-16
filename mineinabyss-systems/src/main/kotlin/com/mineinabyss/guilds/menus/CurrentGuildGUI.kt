@@ -7,6 +7,7 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.data.GuildRanks
@@ -54,7 +55,7 @@ fun GuildMemberList(player: Player, modifier: Modifier) {
             Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
     }
-    Grid(5, player.getGuildLevel(), modifier) {
+    Grid(modifier.size(5, player.getGuildLevel())) {
         members.sortedBy { it.first }.forEach { (rank, member) ->
             Item(ItemStack(Material.PLAYER_HEAD).editItemMeta {
                 if (this is SkullMeta) {
@@ -71,18 +72,16 @@ fun GuildMemberList(player: Player, modifier: Modifier) {
 
 @Composable
 fun LeaveGuildButton(player: Player, modifier: Modifier) {
-    Grid(2, 2, modifier.clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        player.leaveGuild()
-        player.closeInventory()
-    })
-    {
-        repeat(4) {
-            Item(ItemStack(Material.PAPER).editItemMeta {
-                setDisplayName("${ChatColor.RED}${ChatColor.ITALIC}Leave Guild")
-            })
+    Item(
+        ItemStack(Material.PAPER).editItemMeta {
+            setDisplayName("${ChatColor.RED}${ChatColor.ITALIC}Leave Guild")
+        },
+        modifier.size(2, 2).clickable {
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            player.leaveGuild()
+            player.closeInventory()
         }
-    }
+    )
 }
 
 
