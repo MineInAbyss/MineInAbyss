@@ -16,5 +16,5 @@ dependencies {
     compileOnly("com.mineinabyss:guiy-compose:0.1.2")
     compileOnly(project(":mineinabyss-core"))
 
-    implementation("${Deps.minecraft.headlib}:3.0.7")
+    implementation(Deps.minecraft.headlib)
 }

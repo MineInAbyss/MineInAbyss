@@ -29,14 +29,6 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     }
 
     override fun onEnable() {
-        Database.connect("jdbc:sqlite:" + this.dataFolder.path + "/data.db", "org.sqlite.JDBC")
-
-        transaction {
-            addLogger(StdOutSqlLogger)
-
-            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, MessageQueue)
-        }
-
         gearyAddon {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
 
@@ -45,6 +37,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                 override val addonScope: GearyAddon = this@gearyAddon
                 override val miaSubcommands = mutableListOf<Command.() -> Unit>()
                 override val tabCompletions = mutableListOf<TabCompletion.() -> List<String>?>()
+                override val db = Database.connect("jdbc:sqlite:" + dataFolder.path + "/data.db", "org.sqlite.JDBC")
 
                 override val commandExecutor = object : IdofrontCommandExecutor(), TabCompleter {
                     override val commands = commands(this@MineInAbyssPluginImpl) {
@@ -76,6 +69,12 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                     registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
                 }
             }
+        }
+
+        transaction(AbyssContext.db) {
+            addLogger(StdOutSqlLogger)
+
+            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, MessageQueue)
         }
     }
 }

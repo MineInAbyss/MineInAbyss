@@ -5,6 +5,7 @@ import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -41,7 +42,7 @@ class GuildFeature : AbyssFeature {
                 }
                 "clearDB" {
                     playerAction {
-                        transaction {
+                        transaction(AbyssContext.db) {
                             GuildJoinQueue.deleteAll()
                             Players.deleteAll()
                             Guilds.deleteAll()

@@ -14,6 +14,7 @@ import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.extensions.*
@@ -41,7 +42,7 @@ fun GuildInvites(player: Player, modifier: Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val owner = player.getGuildOwnerFromInvite().toPlayer()!!
     val memberCount = owner.getGuildMemberCount()
-    val invites = transaction {
+    val invites = transaction(AbyssContext.db) {
         GuildJoinQueue.select {
             (GuildJoinQueue.joinType eq GuildJoinType.Invite) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)

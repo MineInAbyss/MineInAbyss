@@ -13,6 +13,7 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.*
@@ -43,7 +44,7 @@ fun GuiyOwner.GuildMemberManagementMenu(player: Player) {
 
 @Composable
 fun ManageGuildMembersButton(player: Player, modifier: Modifier) {
-    val players = transaction {
+    val players = transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq player.uniqueId
         }.single()

@@ -19,7 +19,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven("https://erethon.de/repo/")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://jitpack.io")
         maven("https://repo.codemc.io/repository/maven-snapshots/")
@@ -36,9 +35,9 @@ allprojects {
         compileOnly(Deps.exposed.core) { isTransitive = false }
         compileOnly(Deps.exposed.dao) { isTransitive = false }
         compileOnly(Deps.exposed.jdbc) { isTransitive = false }
-        // TODO add to idofront platform
-        implementation("org.jetbrains.exposed:exposed-java-time:0.33.1") { isTransitive = false }
+        compileOnly(Deps.exposed.`java-time`) { isTransitive = false }
         compileOnly(Deps.`sqlite-jdbc`)
+        compileOnly(Deps.minecraft.anvilgui)
 
         // Plugin deps
         compileOnly("com.mineinabyss:deeperworld:$deeperWorldVersion")
@@ -50,8 +49,6 @@ allprojects {
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
 
         implementation("com.mineinabyss:idofront:$idofrontVersion")
-        // TODO add to ido
-        implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     }
 }
 

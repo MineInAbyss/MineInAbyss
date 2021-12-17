@@ -5,6 +5,7 @@ import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.data.MessageQueue
@@ -43,7 +44,7 @@ class GuildListener : Listener {
     fun PlayerJoinEvent.onJoin() {
         mineInAbyss.schedule {
             waitFor(20)
-            transaction {
+            transaction(AbyssContext.db) {
                 MessageQueue.select { MessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.sendMessage(it[content])
                 }

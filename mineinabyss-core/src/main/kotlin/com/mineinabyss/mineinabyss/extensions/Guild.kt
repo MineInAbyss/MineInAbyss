@@ -2,6 +2,7 @@ package com.mineinabyss.mineinabyss.extensions
 
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.data.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -11,7 +12,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Player.createGuild(guildName: String) {
-    transaction {
+    transaction(AbyssContext.db) {
 
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq guildName.lowercase()
@@ -40,7 +41,7 @@ fun Player.createGuild(guildName: String) {
 
 fun OfflinePlayer.deleteGuild() {
     //TODO Handle Guild Tokens
-    transaction {
+    transaction(AbyssContext.db) {
         /* Find the owners guild */
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
@@ -90,7 +91,7 @@ fun OfflinePlayer.deleteGuild() {
 }
 
 fun Player.changeStoredGuildName(newGuildName: String) {
-    transaction {
+    transaction(AbyssContext.db) {
 
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq newGuildName.lowercase()
@@ -134,7 +135,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
 }
 
 fun Player.changeGuildJoinType() {
-    transaction {
+    transaction(AbyssContext.db) {
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
         }.single()[Players.guildId]

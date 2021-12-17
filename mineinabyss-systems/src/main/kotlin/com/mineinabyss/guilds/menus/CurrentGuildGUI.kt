@@ -10,6 +10,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.getGuildLevel
@@ -42,7 +43,7 @@ fun GuiyOwner.CurrentGuildMenu(player: Player) {
 
 @Composable
 fun GuildMemberList(player: Player, modifier: Modifier) {
-    val members = transaction {
+    val members = transaction(AbyssContext.db) {
         val players = Players.select {
             Players.playerUUID eq player.uniqueId
         }.single()
