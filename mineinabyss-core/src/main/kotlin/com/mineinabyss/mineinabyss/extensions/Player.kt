@@ -388,11 +388,11 @@ fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
     }
 }
 
-fun OfflinePlayer.getGuildLevel(): Int {
+fun OfflinePlayer.getGuildLevel(): Int? {
     return transaction(AbyssContext.db) {
-        val playerGuild = Players.select {
+        val playerGuild = (Players.select {
             Players.playerUUID eq uniqueId
-        }.single()[Players.guildId]
+        }.singleOrNull() ?: return@transaction null)[Players.guildId]
 
         val guildLevel = Guilds.select {
             Guilds.id eq playerGuild

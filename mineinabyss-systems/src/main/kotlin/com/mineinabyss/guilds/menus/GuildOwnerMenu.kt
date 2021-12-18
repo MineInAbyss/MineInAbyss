@@ -1,89 +1,87 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.guiy.components.Item
-import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.guiyPlugin
-import com.mineinabyss.guiy.inventory.GuiyOwner
-import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.guiy.layout.Column
+import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.helpers.TitleItem
-import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Composable
-fun GuiyOwner.GuildOwnerMenu(player: Player) {
-    Chest(
-        listOf(player), "${Space.of(-18)}$WHITE:guild_owner_menu:",
-        6, onClose = { exit() }) {
-        GuildMemberManagement(player, Modifier.at(2, 0))
-        GuildRenameButton(player, Modifier.at(5, 0))
-        GuildHouseButton(player, Modifier.at(2, 3))
-        GuildRelationshipButton(player, Modifier.at(5, 3))
-        GuildDisbandButton(player, Modifier.at(8, 5))
-        PreviousMenuButton(player, Modifier.at(2, 5))
+fun GuildUIScope.GuildOwnerScreen() {
+    Column(Modifier.at(2, 1)) {
+        Row {
+            GuildMemberManagement()
+            Spacer(width = 1)
+            GuildRenameButton()
+        }
+        Spacer(height = 1)
+        Row {
+            GuildHouseButton()
+            Spacer(width = 1)
+            GuildRelationshipButton()
+        }
     }
+
+    GuildDisbandButton(Modifier.at(8, 5))
+    BackButton(Modifier.at(0, 5))
 }
 
 @Composable
-fun GuildMemberManagement(player: Player, modifier: Modifier) {
-    Item(
+fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
+    Button(
         TitleItem.of("$GREEN${BOLD}Guild Member List"),
         modifier.size(2, 2).clickable {
-            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-            guiy { GuildMemberManagementMenu(player) }
+            nav.open(GuildScreen.MemberList(guildLevel))
         }
     )
 }
 
 @Composable
-fun GuildRenameButton(player: Player, modifier: Modifier) {
-    Item(
+fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
+    Button(
         TitleItem.of("$YELLOW${BOLD}Change Guild Name"),
         modifier.size(2, 2).clickable {
-            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
             player.renameGuild()
         }
     )
 }
 
 @Composable
-fun GuildHouseButton(player: Player, modifier: Modifier) {
-    Item(
+fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
+    Button(
         TitleItem.of("$GOLD${BOLD}Change Guild House"),
-        modifier.size(2, 2).clickable {
-            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        }
+        modifier.size(2, 2)
     )
 }
 
 @Composable
-fun GuildRelationshipButton(player: Player, modifier: Modifier) {
-    Item(
+fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
+    Button(
         TitleItem.of("$BLUE${BOLD}Guild Relationships"),
         modifier.size(2, 2).clickable {
-            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-            //guiy { GuildRelationshipMenu(player) }
+//            nav.open(GuildScreen.Relationships)
         })
 }
 
 @Composable
-fun GuildDisbandButton(player: Player, modifier: Modifier) {
-    Item(
+fun GuildUIScope.GuildDisbandButton(modifier: Modifier = Modifier) {
+    Button(
         TitleItem.of("$RED${BOLD}Disband Guild"),
         modifier.clickable {
-            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-            guiy { GuildDisbandMenu(player) }
+            nav.open(GuildScreen.Disband)
         }
     )
 }
@@ -98,7 +96,6 @@ fun Player.renameGuild() {
         .title(":guild_naming:")
         .itemLeft(guildRenamePaper)
         .plugin(guiyPlugin)
-        .onClose { guiy { GuildOwnerMenu(player!!) } }
         .onComplete { player, guildName: String ->
             player.changeStoredGuildName(guildName)
             AnvilGUI.Response.close()

@@ -29,8 +29,8 @@ import org.bukkit.entity.Player
 fun GuiyOwner.BankMenu(player: Player) {
     Chest(listOf(player), "${Space.of(-18)}$WHITE:orthbanking_menu:",
         4, onClose = {
-            exit()
             player.updateBalance()
+            exit()
         }) {
         DepositCurrencyOption(player, Modifier.at(1, 1))
         WithdrawCurrencyOption(player, Modifier.at(5, 1))
@@ -56,8 +56,8 @@ fun DepositCurrencyOption(player: Player, modifier: Modifier) {
 fun GuiyOwner.DepositCurrencyMenu(player: Player) {
     Chest(listOf(player), "${Space.of(-18)}$WHITE:orthbanker_deposit_menu:", height = 5,
         onClose = {
-            exit()
             player.updateBalance()
+            exit()
         }
     ) {
         Deposit(player, modifier = Modifier)
@@ -143,8 +143,8 @@ fun WithdrawCurrencyOption(player: Player, modifier: Modifier) {
 fun GuiyOwner.WithdrawCurrencyMenu(player: Player) {
     Chest(listOf(player), "${Space.of(18)}$WHITE:orthbanker_withdrawal_menu:",
         5, onClose = {
-            exit()
             player.updateBalance()
+            exit()
         }) {
         Withdraw(player, modifier = Modifier)
     }
