@@ -11,6 +11,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
+import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
@@ -82,7 +83,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
     Button(
         TitleItem.of("${YELLOW}Invite Player to Guild"),
         modifier.size(1, 1).clickable {
-            nav.open(GuildScreen.TextInput(
+            nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title(":guild_invite:")
                     .itemLeft(guildInvitePaper)

@@ -10,6 +10,7 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
@@ -51,7 +52,7 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     Button(
         TitleItem.of("$YELLOW${BOLD}Change Guild Name"),
         modifier.size(2, 2).clickable {
-            nav.open(GuildScreen.TextInput(
+            nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title(":guild_naming:")
                     .itemLeft(TitleItem.of(player.getGuildName()))

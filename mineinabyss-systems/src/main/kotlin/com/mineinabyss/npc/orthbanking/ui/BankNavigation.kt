@@ -23,24 +23,25 @@ sealed class BankScreen(val title: String, val height: Int) {
 @Composable
 fun GuiyOwner.BankMenu(player: Player) {
     val nav = rememberNavigation<BankScreen> { BankScreen.Default }
-    val screen = nav.screen ?: run { exit(); return }
-    Chest(setOf(player), screen.title, Modifier.height(screen.height),
-        onClose = {
-            player.updateBalance()
-            nav.back()
-        }) {
-        when (screen) {
-            BankScreen.Default -> {
-                val data = player.playerData
-                DepositCurrencyOption(data, Modifier.at(1, 1).clickable {
-                    nav.open(BankScreen.Deposit)
-                })
-                WithdrawCurrencyOption(data, Modifier.at(5, 1).clickable {
-                    nav.open(BankScreen.Widthdraw)
-                })
+    nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
+        Chest(setOf(player), screen.title, Modifier.height(screen.height),
+            onClose = {
+                player.updateBalance()
+                nav.back()
+            }) {
+            when (screen) {
+                BankScreen.Default -> {
+                    val data = player.playerData
+                    DepositCurrencyOption(data, Modifier.at(1, 1).clickable {
+                        nav.open(BankScreen.Deposit)
+                    })
+                    WithdrawCurrencyOption(data, Modifier.at(5, 1).clickable {
+                        nav.open(BankScreen.Widthdraw)
+                    })
+                }
+                BankScreen.Deposit -> DepositScreen(player)
+                BankScreen.Widthdraw -> WithdrawScreen(player)
             }
-            BankScreen.Deposit -> DepositScreen(player)
-            BankScreen.Widthdraw -> WithdrawScreen(player)
         }
     }
 }

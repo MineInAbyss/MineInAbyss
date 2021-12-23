@@ -1,7 +1,6 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import com.mineinabyss.guilds.menus.GuildScreen.*
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -12,12 +11,12 @@ import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.Navigator
+import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.extensions.*
-import com.okkero.skedule.schedule
 import de.erethon.headlib.HeadLib
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
@@ -39,8 +38,6 @@ sealed class GuildScreen(val title: String, val height: Int) {
     class MemberOptions(val member: OfflinePlayer) : GuildScreen("${Space.of(-18)}$WHITE:guild_member_action_menu:", 5)
     class MemberList(val guildLevel: Int) :
         GuildScreen("${Space.of(-18)}$WHITE:guild_member_management_menu:", guildLevel + 2)
-
-    class TextInput(val anvilGUI: AnvilGUI.Builder) : GuildScreen("", 0)
 }
 
 typealias GuildNav = Navigator<GuildScreen>
@@ -58,23 +55,24 @@ class GuildUIScope(
 fun GuiyOwner.GuildMainMenu(player: Player) {
     val scope = remember { GuildUIScope(player, this) }
     scope.apply {
-        val screen = nav.screen ?: run { exit(); return }
-        if (screen is TextInput) LaunchedEffect(screen) {
-            guiyPlugin.schedule {
-                screen.anvilGUI.open(player).inventory
-            }
-        } else Chest(setOf(player), screen.title, Modifier.height(screen.height), onClose = { nav.back() ?: exit() }) {
-            when (screen) {
-                Default -> HomeScreen()
-                Owner -> GuildOwnerScreen()
-                is CurrentGuild -> CurrentGuildScreen()
-                InviteList -> GuildInviteListScreen()
-                is Invite -> GuildInviteScreen(screen.owner)
-                JoinRequestList -> GuildJoinRequestListScreen()
-                is JoinRequest -> GuildJoinRequestScreen(screen.from)
-                Disband -> GuildDisbandScreen()
-                is MemberOptions -> GuildMemberOptionsScreen(screen.member)
-                is MemberList -> GuildMemberListScreen()
+        nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
+            Chest(
+                setOf(player),
+                screen.title,
+                Modifier.height(screen.height),
+                onClose = { nav.back() ?: exit() }) {
+                when (screen) {
+                    Default -> HomeScreen()
+                    Owner -> GuildOwnerScreen()
+                    is CurrentGuild -> CurrentGuildScreen()
+                    InviteList -> GuildInviteListScreen()
+                    is Invite -> GuildInviteScreen(screen.owner)
+                    JoinRequestList -> GuildJoinRequestListScreen()
+                    is JoinRequest -> GuildJoinRequestScreen(screen.from)
+                    Disband -> GuildDisbandScreen()
+                    is MemberOptions -> GuildMemberOptionsScreen(screen.member)
+                    is MemberList -> GuildMemberListScreen()
+                }
             }
         }
     }
@@ -176,7 +174,7 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier = Modifier) {
         },
         modifier.clickable {
             if (!player.hasGuild()) {
-                nav.open(TextInput(
+                nav.open(UniversalScreens.Anvil(
                     AnvilGUI.Builder()
                         .title(":guild_request:")
                         .itemLeft(TitleItem.of("Guildname"))
