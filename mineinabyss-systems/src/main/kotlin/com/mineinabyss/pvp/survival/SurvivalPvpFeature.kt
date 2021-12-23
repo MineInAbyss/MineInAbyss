@@ -3,6 +3,8 @@ package com.mineinabyss.pvp.survival
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
@@ -37,8 +39,8 @@ class SurvivalPvpFeature : AbyssFeature {
                             return@playerAction
                         }
                         guiy {
-                            Chest(listOf(player), "${Space.of(-18)}${ChatColor.WHITE}:pvp_menu:",
-                                4, onClose = { reopen() }) {
+                            Chest(setOf(player), "${Space.of(-18)}${ChatColor.WHITE}:pvp_menu:", Modifier.height(4),
+                                onClose = { reopen() }) {
                                 EnablePvp(player, Modifier.at(5, 1))
                                 DisablePvp(player, Modifier.at(5, 1))
                             }

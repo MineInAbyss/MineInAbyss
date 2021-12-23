@@ -8,10 +8,7 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
+import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.font.Space
@@ -27,8 +24,8 @@ import org.bukkit.entity.Player
 
 @Composable
 fun GuiyOwner.BankMenu(player: Player) {
-    Chest(listOf(player), "${Space.of(-18)}$WHITE:orthbanking_menu:",
-        4, onClose = {
+    Chest(setOf(player), "${Space.of(-18)}$WHITE:orthbanking_menu:", Modifier.height(4),
+        onClose = {
             player.updateBalance()
             exit()
         }) {
@@ -54,7 +51,7 @@ fun DepositCurrencyOption(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.DepositCurrencyMenu(player: Player) {
-    Chest(listOf(player), "${Space.of(-18)}$WHITE:orthbanker_deposit_menu:", height = 5,
+    Chest(setOf(player), "${Space.of(-18)}$WHITE:orthbanker_deposit_menu:", Modifier.height(5),
         onClose = {
             player.updateBalance()
             exit()
@@ -141,8 +138,8 @@ fun WithdrawCurrencyOption(player: Player, modifier: Modifier) {
 
 @Composable
 fun GuiyOwner.WithdrawCurrencyMenu(player: Player) {
-    Chest(listOf(player), "${Space.of(18)}$WHITE:orthbanker_withdrawal_menu:",
-        5, onClose = {
+    Chest(setOf(player), "${Space.of(18)}$WHITE:orthbanker_withdrawal_menu:", Modifier.height(5),
+        onClose = {
             player.updateBalance()
             exit()
         }) {
@@ -178,11 +175,11 @@ fun Withdraw(player: Player, modifier: Modifier) {
     Item(
         TitleItem.of("$GOLD${BOLD}Decrease Withdrawal"),
         modifier.size(3, 1).at(3, 3).clickable {
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-        amount -= 1
-        if (amount < 1) amount = 1
-        broadcast(amount)
-    })
+            player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
+            amount -= 1
+            if (amount < 1) amount = 1
+            broadcast(amount)
+        })
 
 }
 

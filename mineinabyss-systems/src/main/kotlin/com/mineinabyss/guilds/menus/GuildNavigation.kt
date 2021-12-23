@@ -1,26 +1,23 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import com.mineinabyss.guilds.menus.GuildScreen.*
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.GuiyOwner
-import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
+import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.Navigator
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.extensions.*
+import com.okkero.skedule.schedule
 import de.erethon.headlib.HeadLib
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
@@ -44,6 +41,8 @@ sealed class GuildScreen(val title: String, val height: Int) {
     class MemberOptions(val member: OfflinePlayer) : GuildScreen("${Space.of(-18)}$WHITE:guild_member_action_menu:", 5)
     class MemberList(val guildLevel: Int) :
         GuildScreen("${Space.of(-18)}$WHITE:guild_member_management_menu:", guildLevel + 2)
+
+    class TextInput(val anvilGUI: AnvilGUI.Builder) : GuildScreen("", 0)
 }
 
 typealias GuildNav = Navigator<GuildScreen>
@@ -62,22 +61,35 @@ fun GuiyOwner.GuildMainMenu(player: Player, previousScope: GuildUIScope? = null)
     val scope = remember { previousScope ?: GuildUIScope(player, this) }
     scope.apply {
         val screen = nav.screen ?: run { exit(); return }
-        broadcast("Nav screens ${nav.screens}")
-
-        Chest(listOf(player), screen.title, screen.height, onClose = { nav.back() ?: exit() }) {
-            when (screen) {
-                Default -> HomeScreen()
-                Owner -> GuildOwnerScreen()
-                is CurrentGuild -> CurrentGuildScreen()
-                InviteList -> GuildInviteListScreen()
-                is Invite -> GuildInviteScreen(screen.owner)
-                JoinRequestList -> GuildJoinRequestListScreen()
-                is JoinRequest -> GuildJoinRequestScreen(screen.from)
-                Disband -> GuildDisbandScreen()
-                is MemberOptions -> GuildMemberOptionsScreen(screen.member)
-                is MemberList -> GuildMemberListScreen()
+//        Anvil(setOf(player), screen.title, onClose = { nav.back() ?: exit() }) {
+//            Row {
+//                Item(HeadLib.COBBLESTONE_1.toItemStack())
+////                Item(HeadLib.COBBLESTONE_2.toItemStack())
+////                Item(HeadLib.COBBLESTONE_3.toItemStack())
+//            }
+//        }
+        if (screen is TextInput) {
+            LaunchedEffect(screen) {
+                guiyPlugin.schedule {
+                    screen.anvilGUI.open(player).inventory
+                }
             }
-        }
+//            Inventory(anvil ?: return)
+        } else
+            Chest(setOf(player), screen.title, Modifier.height(screen.height), onClose = { nav.back() ?: exit() }) {
+                when (screen) {
+                    Default -> HomeScreen()
+                    Owner -> GuildOwnerScreen()
+                    is CurrentGuild -> CurrentGuildScreen()
+                    InviteList -> GuildInviteListScreen()
+                    is Invite -> GuildInviteScreen(screen.owner)
+                    JoinRequestList -> GuildJoinRequestListScreen()
+                    is JoinRequest -> GuildJoinRequestScreen(screen.from)
+                    Disband -> GuildDisbandScreen()
+                    is MemberOptions -> GuildMemberOptionsScreen(screen.member)
+                    is MemberList -> GuildMemberListScreen()
+                }
+            }
     }
 }
 
@@ -184,18 +196,18 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier = Modifier) {
         },
         modifier.clickable {
             if (!player.hasGuild()) {
-                AnvilGUI.Builder()
-                    .title(":guild_request:")
-                    .itemLeft(TitleItem.of("Guildname"))
-                    //.preventClose()
-                    .plugin(guiyPlugin)
-                    .onClose { guiy { GuildMainMenu(player) } }
-                    .onComplete { player, guildName: String ->
-                        player.lookForGuild(guildName)
-                        nav.back()
-                        AnvilGUI.Response.close()
-                    }
-                    .open(player)
+                nav.open(TextInput(
+                    AnvilGUI.Builder()
+                        .title(":guild_request:")
+                        .itemLeft(TitleItem.of("Guildname"))
+                        //.preventClose()
+                        .plugin(guiyPlugin)
+                        .onClose { nav.back() }
+                        .onComplete { player, guildName: String ->
+                            player.lookForGuild(guildName)
+                            AnvilGUI.Response.close()
+                        }
+                ))
             }
         }
     )

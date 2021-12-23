@@ -3,17 +3,17 @@ package com.mineinabyss.guilds.menus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.mineinabyss.guiy.components.Grid
-import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.helpers.head
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.data.GuildJoinQueue
 import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.data.Players
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
@@ -41,7 +41,7 @@ fun GuildUIScope.GuildJoinRequestListScreen() {
                     "${BLUE}Click this to accept or deny the join-request."
                 ),
                 Modifier.clickable {
-                    guiy { GuildJoinRequestScreen(newMember.toPlayer()!!) }
+                    nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember)))
                 }
             )
         }

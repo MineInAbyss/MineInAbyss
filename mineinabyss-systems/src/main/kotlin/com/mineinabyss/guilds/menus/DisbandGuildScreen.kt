@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.mineinabyss.extensions.deleteGuild
 import org.bukkit.ChatColor
@@ -18,8 +18,6 @@ fun GuildUIScope.GuildDisbandScreen() {
         Spacer(width = 1)
         CancelButton()
     }
-
-    BackButton(Modifier.at(0, 3))
 }
 
 @Composable

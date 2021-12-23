@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
 import com.mineinabyss.mineinabyss.core.AbyssContext

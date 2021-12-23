@@ -8,7 +8,6 @@ import com.mineinabyss.mineinabyss.data.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -82,7 +81,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
     // TODO send message when player not found
     val invitedMember = Bukkit.getOfflinePlayerIfCached(invitedPlayer) ?: return
     val inviteMessage =
-        "${ChatColor.YELLOW}You have been invited to join the ${ChatColor.GOLD}${player?.getGuildName()} ${ChatColor.YELLOW}guild."
+        "${ChatColor.YELLOW}You have been invited to join the ${ChatColor.GOLD}${this@invitePlayerToGuild.getGuildName()} ${ChatColor.YELLOW}guild."
     transaction(AbyssContext.db) {
         /* Should invites be cancelled if player already is in one? */
         /* Or should this be checked when a player tries to accept an invite? */
@@ -91,7 +90,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
             return@transaction
         }
 
-        if ((invitedMember as Player).hasGuildInvite(player as OfflinePlayer)) {
+        if (invitedMember.hasGuildInvite(this@invitePlayerToGuild)) {
             player?.error("This player has already been invited to your guild!")
             return@transaction
         }

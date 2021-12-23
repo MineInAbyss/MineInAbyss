@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 
 @Composable
 fun GuiyOwner.PinMenu(player: Player) {
-    Chest(listOf(player), title = "Active Pins", onClose = { exit() }) {
+    Chest(setOf(player), title = "Active Pins", onClose = { exit() }) {
         val gearyPlayer = player.toGeary()
         val pins = gearyPlayer.get<ActivePins>() ?: return@Chest
         Grid(Modifier.size(9, 6)) {

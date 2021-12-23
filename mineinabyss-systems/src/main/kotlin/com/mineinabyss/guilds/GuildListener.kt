@@ -4,7 +4,6 @@ import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.data.GuildRanks
@@ -35,7 +34,6 @@ class GuildListener : Listener {
 
         if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
             clickedCooldown[player.uniqueId] = Bukkit.getCurrentTick() + 5
-            broadcast("Right clicked")
             guiy { GuildMainMenu(player) }
         }
     }

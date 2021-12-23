@@ -5,9 +5,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.clickable
-import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
@@ -23,8 +21,8 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.PvpPrompt(player: Player) {
-    Chest(listOf(player), "${Space.of(-18)}$WHITE:pvp_menu_toggle:",
-        4, onClose = { reopen() }) {
+    Chest(setOf(player), "${Space.of(-18)}$WHITE:pvp_menu_toggle:", Modifier.height(4),
+        onClose = { reopen() }) {
         EnablePvp(player, Modifier.at(1, 1))
         DisablePvp(player, Modifier.at(5, 1))
         TogglePvpPrompt(player, Modifier.at(8, 3))

@@ -5,11 +5,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.guiyPlugin
-import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
 import com.mineinabyss.idofront.items.editItemMeta
@@ -82,19 +81,17 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
     Button(
         TitleItem.of("${YELLOW}Invite Player to Guild"),
         modifier.size(1, 1).clickable {
-            AnvilGUI.Builder()
-                .title(":guild_invite:")
-                .itemLeft(guildInvitePaper)
-                .plugin(guiyPlugin)
-                .onClose {
-                    //TODO a way to get back to the existing UI state cleaner
-                    guiy { GuildMainMenu(player, this@InviteToGuildButton) }
-                }
-                .onComplete { player, invitedPlayer: String ->
-                    player.invitePlayerToGuild(invitedPlayer)
-                    AnvilGUI.Response.close()
-                }
-                .open(player)
+            nav.open(GuildScreen.TextInput(
+                AnvilGUI.Builder()
+                    .title(":guild_invite:")
+                    .itemLeft(guildInvitePaper)
+                    .plugin(guiyPlugin)
+                    .onClose { nav.back() }
+                    .onComplete { player, invitedPlayer: String ->
+                        player.invitePlayerToGuild(invitedPlayer)
+                        AnvilGUI.Response.close()
+                    }
+            ))
         }
     )
 }

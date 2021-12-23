@@ -6,18 +6,14 @@ import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.nodes.InventoryCanvasScope.at
 import com.mineinabyss.helpers.TitleItem
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuildUIScope.GuildOwnerScreen() {
@@ -54,7 +50,17 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     Button(
         TitleItem.of("$YELLOW${BOLD}Change Guild Name"),
         modifier.size(2, 2).clickable {
-            player.renameGuild()
+            nav.open(GuildScreen.TextInput(
+                AnvilGUI.Builder()
+                    .title(":guild_naming:")
+                    .itemLeft(TitleItem.of(player.getGuildName()))
+                    .plugin(guiyPlugin)
+                    .onClose { nav.back() }
+                    .onComplete { player, guildName: String ->
+                        player.changeStoredGuildName(guildName)
+                        AnvilGUI.Response.close()
+                    }
+            ))
         }
     )
 }
@@ -84,21 +90,4 @@ fun GuildUIScope.GuildDisbandButton(modifier: Modifier = Modifier) {
             nav.open(GuildScreen.Disband)
         }
     )
-}
-
-fun Player.renameGuild() {
-    val guildRenamePaper = ItemStack(Material.PAPER).editItemMeta {
-        setDisplayName(player?.getGuildName())
-        setCustomModelData(1)
-    }
-
-    AnvilGUI.Builder()
-        .title(":guild_naming:")
-        .itemLeft(guildRenamePaper)
-        .plugin(guiyPlugin)
-        .onComplete { player, guildName: String ->
-            player.changeStoredGuildName(guildName)
-            AnvilGUI.Response.close()
-        }
-        .open(player)
 }

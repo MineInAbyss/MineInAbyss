@@ -20,7 +20,7 @@ fun GuiyOwner.GondolaSelectionMenu(player: Player) {
     val gearyPlayer = player.toGeary()
     val gondolas = gearyPlayer.get<UnlockedGondolas>() ?: return
 
-    Chest(listOf(player), title = "Choose Spawn Location", onClose = { exit() }) {
+    Chest(setOf(player), title = "Choose Spawn Location", onClose = { exit() }) {
         Grid(Modifier.size(9, 6)) {
             gondolas.keys.forEach { GondolaSpawn(player, LoadedGondolas.loaded[it] ?: return@forEach) }
         }

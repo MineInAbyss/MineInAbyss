@@ -23,7 +23,7 @@ private object AbyssalPinsQuery : Query() {
 
 @Composable
 fun GuiyOwner.AbyssalPinSelectionMenu(player: Player) {
-    Chest(listOf(player), title = "Select a Pin", onClose = { exit() }) {
+    Chest(setOf(player), title = "Select a Pin", onClose = { exit() }) {
         Row {
         }
         val gearyPlayer = player.toGeary()
