@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import com.mineinabyss.guilds.menus.GuildScreen.*
-import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.GuiyOwner
@@ -13,6 +12,7 @@ import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.Navigator
+import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.data.GuildRanks
@@ -22,9 +22,7 @@ import de.erethon.headlib.HeadLib
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
-import org.bukkit.Sound
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 sealed class GuildScreen(val title: String, val height: Int) {
     object Default : GuildScreen("${Space.of(-18)}$WHITE:main_guild_menu:", 4)
@@ -57,39 +55,28 @@ class GuildUIScope(
 }
 
 @Composable
-fun GuiyOwner.GuildMainMenu(player: Player, previousScope: GuildUIScope? = null) {
-    val scope = remember { previousScope ?: GuildUIScope(player, this) }
+fun GuiyOwner.GuildMainMenu(player: Player) {
+    val scope = remember { GuildUIScope(player, this) }
     scope.apply {
         val screen = nav.screen ?: run { exit(); return }
-//        Anvil(setOf(player), screen.title, onClose = { nav.back() ?: exit() }) {
-//            Row {
-//                Item(HeadLib.COBBLESTONE_1.toItemStack())
-////                Item(HeadLib.COBBLESTONE_2.toItemStack())
-////                Item(HeadLib.COBBLESTONE_3.toItemStack())
-//            }
-//        }
-        if (screen is TextInput) {
-            LaunchedEffect(screen) {
-                guiyPlugin.schedule {
-                    screen.anvilGUI.open(player).inventory
-                }
+        if (screen is TextInput) LaunchedEffect(screen) {
+            guiyPlugin.schedule {
+                screen.anvilGUI.open(player).inventory
             }
-//            Inventory(anvil ?: return)
-        } else
-            Chest(setOf(player), screen.title, Modifier.height(screen.height), onClose = { nav.back() ?: exit() }) {
-                when (screen) {
-                    Default -> HomeScreen()
-                    Owner -> GuildOwnerScreen()
-                    is CurrentGuild -> CurrentGuildScreen()
-                    InviteList -> GuildInviteListScreen()
-                    is Invite -> GuildInviteScreen(screen.owner)
-                    JoinRequestList -> GuildJoinRequestListScreen()
-                    is JoinRequest -> GuildJoinRequestScreen(screen.from)
-                    Disband -> GuildDisbandScreen()
-                    is MemberOptions -> GuildMemberOptionsScreen(screen.member)
-                    is MemberList -> GuildMemberListScreen()
-                }
+        } else Chest(setOf(player), screen.title, Modifier.height(screen.height), onClose = { nav.back() ?: exit() }) {
+            when (screen) {
+                Default -> HomeScreen()
+                Owner -> GuildOwnerScreen()
+                is CurrentGuild -> CurrentGuildScreen()
+                InviteList -> GuildInviteListScreen()
+                is Invite -> GuildInviteScreen(screen.owner)
+                JoinRequestList -> GuildJoinRequestListScreen()
+                is JoinRequest -> GuildJoinRequestScreen(screen.from)
+                Disband -> GuildDisbandScreen()
+                is MemberOptions -> GuildMemberOptionsScreen(screen.member)
+                is MemberList -> GuildMemberListScreen()
             }
+        }
     }
 }
 
@@ -126,13 +113,6 @@ fun GuildUIScope.HomeScreen() {
 @Composable
 fun GuildUIScope.BackButton(modifier: Modifier = Modifier) {
     Button(HeadLib.STONE_ARROW_LEFT.toItemStack("Back"), modifier.clickable { nav.back() })
-}
-
-@Composable
-fun GuildUIScope.Button(item: ItemStack, modifier: Modifier = Modifier) {
-    Item(item, modifier.clickable { //TODO clickable should pass player
-        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
-    })
 }
 
 @Composable

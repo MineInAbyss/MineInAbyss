@@ -1,6 +1,8 @@
 package com.mineinabyss.helpers.ui
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 
 class Navigator<T>(val default: () -> T) {
     val screen: T? get() = screens.lastOrNull()
@@ -16,4 +18,9 @@ class Navigator<T>(val default: () -> T) {
         screens.clear()
         open(default())
     }
+}
+
+@Composable
+fun <T> rememberNavigation(default: () -> T) = remember {
+    Navigator(default)
 }

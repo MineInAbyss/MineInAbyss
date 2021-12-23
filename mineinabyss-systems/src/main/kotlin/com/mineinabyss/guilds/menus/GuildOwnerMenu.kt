@@ -10,6 +10,7 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI

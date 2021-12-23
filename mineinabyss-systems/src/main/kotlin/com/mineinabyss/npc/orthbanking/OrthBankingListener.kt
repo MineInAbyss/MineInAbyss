@@ -5,6 +5,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.updateBalance
+import com.mineinabyss.npc.orthbanking.ui.BankMenu
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
