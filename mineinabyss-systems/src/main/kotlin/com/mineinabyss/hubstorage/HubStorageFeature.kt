@@ -1,6 +1,6 @@
 package com.mineinabyss.hubstorage
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
+import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -15,8 +15,9 @@ import kotlinx.serialization.Serializable
 class HubStorageFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         commands {
-            ("mineinabyss" / "mia") {
-                "storage" {
+            mineinabyss {
+                "storage"(desc = "Opens player storage") {
+                    permission = "mineinabyss.storage"
                     playerAction {
                         if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location))
                             player.openHubStorage()

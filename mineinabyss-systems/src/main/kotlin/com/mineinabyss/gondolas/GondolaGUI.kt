@@ -10,6 +10,7 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.items.editItemMeta
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -19,8 +20,8 @@ fun GuiyOwner.GondolaSelectionMenu(player: Player) {
     val gearyPlayer = player.toGeary()
     val gondolas = gearyPlayer.get<UnlockedGondolas>() ?: return
 
-    Chest(listOf(player), title = "Choose Spawn Location", onClose = { exit() }) {
-        Grid(9, 6) {
+    Chest(setOf(player), title = "Choose Spawn Location", onClose = { exit() }) {
+        Grid(Modifier.size(9, 6)) {
             gondolas.keys.forEach { GondolaSpawn(player, LoadedGondolas.loaded[it] ?: return@forEach) }
         }
     }

@@ -26,7 +26,7 @@ class PvpDamageListener : Listener {
             }
         }
 
-        if ((player.location.layer?.hasPvPDefault == true)
+        if ((player.location.layer?.hasPvpDefault == true)
             || (player.playerData.pvpStatus && attacker.playerData.pvpStatus)
             || player == attacker
         ) return

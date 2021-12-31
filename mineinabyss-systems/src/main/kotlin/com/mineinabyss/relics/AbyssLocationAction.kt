@@ -1,13 +1,13 @@
 package com.mineinabyss.relics
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
-import com.derongan.minecraft.deeperworld.world.section.section
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
-import com.mineinabyss.geary.ecs.api.actions.GearyAction
-import com.mineinabyss.geary.ecs.api.entities.GearyEntity
-import com.mineinabyss.geary.ecs.entities.parent
-import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.geary.ecs.accessors.EventResultScope
+import com.mineinabyss.geary.ecs.accessors.ResultScope
+import com.mineinabyss.geary.ecs.api.systems.GearyListener
+import com.mineinabyss.geary.ecs.events.handlers.ComponentAddHandler
+import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,38 +18,44 @@ import kotlin.math.roundToInt
 
 @Serializable
 @SerialName("mineinabyss:show_depth")
-class AbyssLocationAction : GearyAction() {
-    private val GearyEntity.depthMeter by get<DepthMeter>()
+class ShowDepthEvent(
+    val depthMeter: DepthMeter
+)
 
-    override fun GearyEntity.run(): Boolean {
-        val player = parent?.get<Player>() ?: return false
-        val sectionXOffset = depthMeter.sectionXOffset
-        val sectionYOffset = depthMeter.sectionYOffset
-        val abyssStartingHeightInOrth = depthMeter.abyssStartingHeightInOrth
-        val section = player.location.section
-        val layer: Layer? = section?.layer
+class ShowDepthSystem : GearyListener() {
+    private val ResultScope.player by get<Player>()
 
-        if (layer?.name != null) {
-            if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location)) {
-                player.sendMessage(
-                    """
+    private inner class ShowDepth : ComponentAddHandler() {
+        val EventResultScope.depthMeter by get<ShowDepthEvent>().map { it.depthMeter }
+
+        override fun ResultScope.handle(event: EventResultScope) {
+            val sectionXOffset = event.depthMeter.sectionXOffset
+            val sectionYOffset = event.depthMeter.sectionYOffset
+            val abyssStartingHeightInOrth = event.depthMeter.abyssStartingHeightInOrth
+            val section = player.location.section
+            val layer: Layer? = section?.layer
+
+            if (layer?.name != null) {
+                if (player.isInHub()) {
+                    player.sendMessage(
+                        """
                 $DARK_AQUA${ITALIC}The needle spins.
                 ${DARK_AQUA}You suddenly become aware that you are in ${layer.name}${DARK_AQUA}.""".trimIndent()
-                )
-                return true
-            }
-            if (MIAConfig.data.hubSection != WorldManager.getSectionFor(player.location)){
-                val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
-                player.sendMessage(
-                    """
+                    )
+                    return
+                }
+                if (!player.isInHub()) {
+                    val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
+                    player.sendMessage(
+                        """
                 $DARK_AQUA${ITALIC}The needle spins.
                 ${DARK_AQUA}You suddenly become aware that you are in the
                 ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the ${GREEN}Abyss${DARK_AQUA}.
                 """.trimIndent()
-                )
-            }
-        } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
-        return true
+                    )
+                }
+            } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
+        }
     }
 
     // TODO memoize total depth of each layer
@@ -64,7 +70,6 @@ class AbyssLocationAction : GearyAction() {
      *
      * @return  depth of player in abyss, in minecraft blocks
      */
-
     private fun getDepth(
         sectionXOffset: Int,
         sectionYOffset: Int,

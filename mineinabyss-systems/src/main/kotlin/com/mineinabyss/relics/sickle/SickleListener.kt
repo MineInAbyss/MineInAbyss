@@ -1,7 +1,7 @@
 package com.mineinabyss.relics.sickle
 
-import com.mineinabyss.mineinabyss.ItemDrop
-import com.mineinabyss.mineinabyss.dropItems
+import com.mineinabyss.helpers.ItemDrop
+import com.mineinabyss.helpers.dropItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -92,7 +92,7 @@ fun harvestPlant(block: Block, player: Player): Boolean {
         }
     }
 
-    for (drop in drops) {
+    for (drop: ItemDrop in drops) {
         dropItems(
             block.location,
             ItemStack(

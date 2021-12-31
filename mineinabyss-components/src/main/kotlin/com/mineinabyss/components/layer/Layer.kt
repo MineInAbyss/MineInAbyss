@@ -1,8 +1,8 @@
 package com.mineinabyss.components.layer
 
-import com.derongan.minecraft.deeperworld.services.WorldManager
-import com.derongan.minecraft.deeperworld.world.section.Section
 import com.mineinabyss.components.curse.AscensionEffect
+import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.deeperworld.world.section.Section
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -25,7 +25,7 @@ class Layer(
     val depth: Depth = Depth(0, 0),
     @SerialName("effects")
     val ascensionEffects: List<AscensionEffect> = emptyList(),
-    val hasPvPDefault: Boolean = false,
+    val hasPvpDefault: Boolean = false,
     val blockBlacklist: List<Material> = emptyList(),
     @SerialName("sections")
     val _sections: List<String> = emptyList(),

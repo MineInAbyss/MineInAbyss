@@ -1,6 +1,5 @@
 package com.mineinabyss.components.pins
 
-import com.mineinabyss.geary.ecs.api.autoscan.AutoscanComponent
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.prefab.PrefabKey
 import kotlinx.serialization.SerialName
@@ -9,7 +8,6 @@ import kotlinx.serialization.Transient
 
 @Serializable
 @SerialName("mineinabyss:active_pins")
-@AutoscanComponent
 class ActivePins(
     private val active: MutableSet<PrefabKey> = mutableSetOf()
 ) : MutableSet<PrefabKey> by active {

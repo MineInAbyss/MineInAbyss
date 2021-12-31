@@ -1,10 +1,10 @@
 package com.mineinabyss.layers
 
-import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
-import com.derongan.minecraft.deeperworld.event.PlayerChangeSectionEvent
-import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
-import com.derongan.minecraft.deeperworld.services.PlayerManager
-import com.derongan.minecraft.deeperworld.world.section.section
+import com.mineinabyss.deeperworld.event.PlayerAscendEvent
+import com.mineinabyss.deeperworld.event.PlayerChangeSectionEvent
+import com.mineinabyss.deeperworld.event.PlayerDescendEvent
+import com.mineinabyss.deeperworld.services.PlayerManager
+import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.mineinabyss.core.layer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

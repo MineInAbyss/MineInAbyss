@@ -59,7 +59,7 @@ class UtilityCommandExecutor : IdofrontCommandExecutor() {
                         chunk.load()
                         val containers = chunk.tileEntities
                             .filterIsInstance<Container>()
-                            .filter { section.region.contains(it.location.x.toInt(), it.location.z.toInt()) }
+                            .filter { section.region.contains(it.location.x.toInt(), it.location.y.toInt(), it.location.z.toInt()) }
 
                         containers.forEach { container ->
                             if (container.inventory.contains(item)) {

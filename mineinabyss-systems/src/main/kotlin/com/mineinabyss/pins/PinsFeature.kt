@@ -24,7 +24,11 @@ class PinsFeature : AbyssFeature {
         )
 
         geary {
-            systems(PinActivatorSystem())
+            systems(
+                PinActivatorSystem(),
+                AbyssalPinBehaviour(),
+                AddPinBehaviour(),
+            )
 
             bukkitEntityAssociations {
                 onEntityRegister<Player> {
@@ -35,8 +39,9 @@ class PinsFeature : AbyssFeature {
         }
 
         commands {
-            ("mineinabyss" / "mia") {
+            mineinabyss {
                 "pin" {
+                    permission = "mineinabyss.pin"
                     "add" {
                         val key by arg<PrefabKey> {
                             parseBy { PrefabKey.of(passed) }
@@ -50,6 +55,7 @@ class PinsFeature : AbyssFeature {
                 }
 
                 "pins" {
+                    permission = "mineinabyss.pins.menu"
                     playerAction {
                         guiy { PinMenu(player) }
                     }

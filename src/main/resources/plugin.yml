@@ -12,20 +12,6 @@ description: A mod that adds abyss effects
 commands:
   mineinabyss:
     aliases: [ mia ]
-  abyssenchant:
-    description: Apply custom enchantments onto items
-  curseon:
-    description: Turn on the curse of ascension
-  curseoff:
-    description: Turn off the curse of ascension
-  keepinvon:
-    description: Turn on Keep Inventory
-  keepinvoff:
-    description: Turn off Keep Inventory
-  pvpon:
-    description: Enables PVP if player is in Orth
-  pvpoff:
-    description: Disables PVP if player is in Orth
   stats:
     description: Shows statistics about you!
   start:
@@ -34,32 +20,10 @@ commands:
     description: Stop your current run
   storage:
     description: Open your hub storage
-  creategondolaspawn:
-    description: Creates a location from which players will be able to spawn
   clearcontainers:
     description: Clears a specific item from all containers in a given layer (or all layers if not specified)
 
 permissions:
-  mineinabyss.abyssenchant:
-    description: Allows players to apply custom enchantments onto items
-  mineinabyss.curse.toggle:
-    description: Allows players to toggle the curse of ascension on themselves
-  mineinabyss.curse.on:
-    description: Allows players to enable the curse of ascension on themselves
-  mineinabyss.curse.off:
-    description: Allows players to disable the curse of ascension on themselves
-  mineinabyss.keepinv.toggle:
-    description: Allows players to toggle Keep Inventory on themselves
-  mineinabyss.keepinv.on:
-    description: Allows players to enable Keep Inventory on others
-  mineinabyss.keepinv.off:
-    description: Allows players to disable Keep Inventory on others
-  mineinabyss.pvp.toggle:
-    description: Allows players to toggle Keep Inventory on themselves
-    mineinabyss.pvp.on:
-      description: Allows players to enable Keep Inventory on others
-    mineinabyss.pvp.off:
-      description: Allows players to disable Keep Inventory on others
   mineinabyss.stopdescent:
     description: Allows players to leave a run
   mineinabyss.start:

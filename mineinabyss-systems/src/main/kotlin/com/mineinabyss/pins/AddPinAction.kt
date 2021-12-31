@@ -2,36 +2,36 @@ package com.mineinabyss.pins
 
 import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.components.pins.PinDrop
-import com.mineinabyss.geary.ecs.api.actions.GearyAction
-import com.mineinabyss.geary.ecs.api.entities.GearyEntity
-import com.mineinabyss.geary.ecs.entities.parent
+import com.mineinabyss.geary.ecs.accessors.EventResultScope
+import com.mineinabyss.geary.ecs.accessors.ResultScope
+import com.mineinabyss.geary.ecs.api.systems.GearyListener
+import com.mineinabyss.geary.ecs.events.handlers.ComponentAddHandler
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventoryContext
 import com.mineinabyss.pins.ui.AbyssalPinSelectionMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
+class ActivateAbyssalPinEvent(
+    val dropInfo: PinDrop
+)
+
 @Serializable
 @SerialName("mineinabyss:add_pin")
-object AddPinAction : GearyAction() {
-    private val GearyEntity.drop by get<PinDrop>()
-    private val GearyEntity.inventoryContext by get<PlayerInventoryContext>()
+class AddPinBehaviour : GearyListener() {
+    private val ResultScope.descentContext by get<DescentContext>()
+    private val ResultScope.player by get<Player>()
 
-    override fun GearyEntity.run(): Boolean {
-        val parent = parent ?: return false
-        val context = parent.get<DescentContext>() ?: return false
-        val player = parent.get<Player>() ?: return false
+    private inner class RightClick : ComponentAddHandler() {
+        val EventResultScope.dropInfo by get<ActivateAbyssalPinEvent>().map { it.dropInfo }
 
-        inventoryContext.removeItem()
-        removeEntity()
+        override fun ResultScope.handle(event: EventResultScope) {
+            if (event.dropInfo.layerKey in descentContext.pinUsedLayers) return
 
-        if (drop.layerKey in context.pinUsedLayers) return false
-
-        context.pinUsedLayers += drop.layerKey
-        guiy {
-            AbyssalPinSelectionMenu(player)
+            descentContext.pinUsedLayers += event.dropInfo.layerKey
+            guiy {
+                AbyssalPinSelectionMenu(player)
+            }
         }
-        return true
     }
 }

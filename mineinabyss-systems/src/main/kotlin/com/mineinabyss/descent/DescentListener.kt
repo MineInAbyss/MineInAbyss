@@ -1,11 +1,11 @@
 package com.mineinabyss.descent
 
-import com.derongan.minecraft.deeperworld.event.PlayerAscendEvent
-import com.derongan.minecraft.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.components.descent.RemoveInOrth
 import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
+import com.mineinabyss.deeperworld.event.PlayerAscendEvent
+import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info

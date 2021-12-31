@@ -1,26 +1,30 @@
+@file:UseSerializers(DurationSerializer::class)
+
 package com.mineinabyss.curse.effects
 
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
-import com.mineinabyss.idofront.time.TimeSpan
+import com.mineinabyss.idofront.serialization.DurationSerializer
 import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.entity.Player
 import kotlin.math.abs
+import kotlin.time.Duration
 
 @Serializable
 @SerialName("maxHealth")
 data class MaxHealthChangeEffect constructor(
     val addMaxHealth: Double,
-    override val offset: TimeSpan = 0.ticks,
-    override val duration: TimeSpan,
+    override val offset: Duration = 0.ticks,
+    override val duration: Duration,
     override val iterations: Int = 1,
     val minHealth: Double? = null,
 ) : AbstractAscensionEffect() {

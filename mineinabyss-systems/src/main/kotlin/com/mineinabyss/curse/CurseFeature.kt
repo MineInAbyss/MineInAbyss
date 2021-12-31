@@ -1,8 +1,8 @@
 package com.mineinabyss.curse
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -21,19 +21,22 @@ class CurseFeature: AbyssFeature {
         )
 
         commands {
-            "curseon" {
-                playerAction {
-                    player.playerData.isAffectedByCurse = true
-                    sender.success("Curse enabled for ${player.name}")
-                }
-            }
+            mineinabyss {
+                "curse"(desc = "Commands to toggle curse") {
+                    permission = "mineinabyss.curse"
 
-            "curseoff" {
-                playerAction {
-                    player.playerData.isAffectedByCurse = false
-                    sender.error("Curse disabled for ${player.name}")
+                    val toggled by booleanArg()
+
+                    playerAction {
+                        player.playerData.isAffectedByCurse = toggled
+                        val enabled = if(toggled) "enabled" else "disabled"
+                        sender.success("Curse $enabled for ${player.name}")
+                    }
                 }
             }
         }
+
+        // Curse def
+
     }
 }
