@@ -1,6 +1,7 @@
 package com.mineinabyss.guilds
 
 import com.mineinabyss.components.guilds.GuildMaster
+import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
@@ -18,6 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
@@ -70,4 +72,28 @@ class GuildContainerSystem : GroupSystem() {
         return player.getGuildRank() == GuildRanks.Owner
     }
 
+}
+
+class GuildChatSystem : Listener {
+
+    @EventHandler
+    fun AsyncPlayerChatEvent.toggleGuildChat() {
+        val allPlayers = Bukkit.getOnlinePlayers()
+
+        recipients.clear()
+        recipients.add(player)
+
+        if (player.playerData.guildChatStatus) {
+            format = ":survival::guildchat: ${player.displayName}: $message"
+            allPlayers.forEach {
+                if (it.getGuildName().lowercase() != player.getGuildName().lowercase()) recipients.remove(it)
+                else recipients.add(it)
+            }
+        }
+        else {
+            allPlayers.forEach {
+                recipients.add(it)
+            }
+        }
+    }
 }
