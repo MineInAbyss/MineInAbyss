@@ -55,5 +55,5 @@ dependencies {
 
     // Shaded
     implementation(project(":mineinabyss-core"))
-    implementation(project(":mineinabyss-systems"))
+    implementation(project(":mineinabyss-features"))
 }

@@ -25,5 +25,5 @@ pluginManagement {
 include(
     "mineinabyss-core",
     "mineinabyss-components",
-    "mineinabyss-systems"
+    "mineinabyss-features"
 )
