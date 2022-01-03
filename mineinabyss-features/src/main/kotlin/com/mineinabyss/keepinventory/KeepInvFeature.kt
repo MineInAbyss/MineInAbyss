@@ -20,7 +20,6 @@ class KeepInvFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "keepinv"(desc = "Commands to toggle keepinventory status") {
-                    permission = "mineinabyss.keepinv"
                     "on" {
                         playerAction {
                             player.playerData.keepInvStatus = true

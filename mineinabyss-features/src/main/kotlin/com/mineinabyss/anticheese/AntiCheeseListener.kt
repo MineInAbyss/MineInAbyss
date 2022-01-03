@@ -26,9 +26,13 @@ class AntiCheeseListener: Listener {
             isCancelled = true
             player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
         } else if (cause != EntityPotionEffectEvent.Cause.PLUGIN && cause != EntityPotionEffectEvent.Cause.COMMAND) {
-            if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE || newEffect?.type == PotionEffectType.SLOW_FALLING) {
+            if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
                 isCancelled = true
                 player.error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
+            }
+            if (newEffect?.type == PotionEffectType.SLOW_FALLING) {
+                isCancelled = true
+                player.error("${ChatColor.BOLD}Slow Falling ${ChatColor.RED}has been disabled")
             }
         }
     }

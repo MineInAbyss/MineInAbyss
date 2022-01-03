@@ -25,7 +25,6 @@ class SurvivalPvpFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "pvp"(desc = "Commands to toggle pvp status") {
-                    permission = "mineinabyss.pvp"
                     playerAction {
                         if (player.location.layer?.hasPvpDefault == true) {
                             player.error("Pvp cannot be toggled in this layer.")

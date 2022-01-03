@@ -2,6 +2,7 @@ package com.mineinabyss.helpers
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule
@@ -36,9 +37,9 @@ fun Player.updateBalance() {
     val currentBalance: Component =
     if (data?.cloutTokensHeld!! > 0) {
         /* Switch to NegativeSpace.PLUS when that is added to Idofront */
-        Component.text("\uF83C${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
+        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
     }
-    else Component.text("\uF83C\uF83A${splitBalance}:orthcoin:")
+    else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
 
