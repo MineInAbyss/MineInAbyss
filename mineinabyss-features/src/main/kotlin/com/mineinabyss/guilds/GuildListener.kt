@@ -81,22 +81,15 @@ class GuildChatSystem : Listener {
 
     @EventHandler
     fun AsyncPlayerChatEvent.toggleGuildChat() {
-        val allPlayers = Bukkit.getOnlinePlayers()
+
+        if (!player.playerData.guildChatStatus) return
 
         recipients.clear()
         recipients.add(player)
+        format = ":survival::guildchat: ${player.displayName}: $message"
 
-        if (player.playerData.guildChatStatus) {
-            format = ":survival::guildchat: ${player.displayName}: $message"
-            allPlayers.forEach {
-                if (it.getGuildName().lowercase() != player.getGuildName().lowercase()) recipients.remove(it)
-                else recipients.add(it)
-            }
-        }
-        else {
-            allPlayers.forEach {
-                recipients.add(it)
-            }
+        Bukkit.getOnlinePlayers().forEach {
+            if (it.getGuildName().lowercase() == player.getGuildName().lowercase()) recipients.add(it)
         }
     }
 }
