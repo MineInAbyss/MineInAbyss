@@ -39,7 +39,7 @@ fun Player.updateBalance() {
         /* Switch to NegativeSpace.PLUS when that is added to Idofront */
         Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
     }
-    else Component.text("${Space.PLUS_128}${Space.PLUS_32}${splitBalance}:orthcoin:")
+    else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
 
