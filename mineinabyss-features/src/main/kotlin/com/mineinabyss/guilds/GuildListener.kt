@@ -1,9 +1,11 @@
 package com.mineinabyss.guilds
 
 import com.mineinabyss.components.guilds.GuildMaster
+import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.data.GuildRanks
@@ -18,6 +20,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
@@ -31,12 +34,14 @@ class GuildListener : Listener {
     @EventHandler
     fun PlayerInteractEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
-        entity.get<GuildMaster>() ?: return
+        if (!entity.has<GuildMaster>()) return
+        broadcast("t")
+        guiy { GuildMainMenu(player) }
 
-        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
-            clickedCooldown[player.uniqueId] = Bukkit.getCurrentTick() + 5
-            guiy { GuildMainMenu(player) }
-        }
+//        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
+//            clickedCooldown[player.uniqueId] = Bukkit.getCurrentTick() + 5
+//            guiy { GuildMainMenu(player) }
+//        }
     }
 
     @EventHandler
@@ -70,4 +75,21 @@ class GuildContainerSystem : GroupSystem() {
         return player.getGuildRank() == GuildRanks.Owner
     }
 
+}
+
+class GuildChatSystem : Listener {
+
+    @EventHandler
+    fun AsyncPlayerChatEvent.toggleGuildChat() {
+
+        if (!player.playerData.guildChatStatus) return
+
+        recipients.clear()
+        recipients.add(player)
+        format = ":survival::guildchat: ${player.displayName}: $message"
+
+        Bukkit.getOnlinePlayers().forEach {
+            if (it.getGuildName().lowercase() == player.getGuildName().lowercase()) recipients.add(it)
+        }
+    }
 }
