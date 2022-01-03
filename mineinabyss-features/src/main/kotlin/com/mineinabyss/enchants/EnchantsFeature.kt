@@ -76,7 +76,7 @@ class EnchantsFeature : AbyssFeature {
                         val enchant = CustomEnchants.enchantmentList.find { it.key.toString() == args[0] }
                         ((enchant?.startLevel ?: 0)..(enchant?.maxLevel ?: 0)).map { it.toString() }
                     }
-                    else -> listOf()
+                    else -> null
                 }
             }
         }

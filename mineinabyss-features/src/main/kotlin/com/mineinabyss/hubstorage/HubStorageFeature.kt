@@ -30,7 +30,7 @@ class HubStorageFeature: AbyssFeature {
                     1 -> listOf(
                         "storage"
                     ).filter { it.startsWith(args[0]) }
-                    else -> listOf()
+                    else -> null
                 }
             }
         }

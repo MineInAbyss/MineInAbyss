@@ -42,10 +42,10 @@ class KeepInvFeature : AbyssFeature {
                     2 -> {
                         when (args[0]) {
                             "keepinv" -> listOf("on", "off")
-                            else -> listOf()
+                            else -> null
                         }
                     }
-                    else -> listOf()
+                    else -> null
                 }
             }
         }

@@ -74,10 +74,10 @@ class OrthBankingFeature : AbyssFeature {
                     2 -> {
                         when (args[0]) {
                             "bank" -> listOf("withdraw", "deposit", "balance")
-                            else -> listOf()
+                            else -> null
                         }
                     }
-                    else -> listOf()
+                    else -> null
                 }
             }
         }

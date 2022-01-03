@@ -59,7 +59,7 @@ class GuildFeature : AbyssFeature {
                             else -> listOf()
                         }
                     }
-                    else -> listOf()
+                    else -> null
                 }
             }
         }

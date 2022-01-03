@@ -42,10 +42,10 @@ class CurseFeature: AbyssFeature {
                     2 -> {
                         when (args[0]) {
                             "curse" -> listOf("on", "off")
-                            else -> listOf()
+                            else -> null
                         }
                     }
-                    else -> listOf()
+                    else -> null
                 }
             }
         }
