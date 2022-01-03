@@ -34,6 +34,20 @@ class KeepInvFeature : AbyssFeature {
                     }
                 }
             }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "keepinv"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> {
+                        when (args[0]) {
+                            "keepinv" -> listOf("on", "off")
+                            else -> listOf()
+                        }
+                    }
+                    else -> listOf()
+                }
+            }
         }
     }
 }

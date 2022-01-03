@@ -11,6 +11,7 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.extensions.hasGuild
+import com.mineinabyss.npc.orthbanking.ui.BankMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
@@ -42,11 +43,26 @@ class GuildFeature : AbyssFeature {
                     }
                     "menu"(desc = "Open Guild Menu") {
                         playerAction {
-                            guiy { player }
+                            guiy { BankMenu(player) }
                         }
                     }
                 }
             }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "guild"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> {
+                        when (args[0]) {
+                            "guild" -> listOf("chat", "menu")
+                            else -> listOf()
+                        }
+                    }
+                    else -> listOf()
+                }
+            }
         }
+
     }
 }

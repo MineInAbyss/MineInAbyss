@@ -67,15 +67,16 @@ class EnchantsFeature : AbyssFeature {
             }
 
             tabCompletion {
-                //TODO needs to be update to be in subcommand
-                if (command.name != "abyssenchant") return@tabCompletion emptyList()
                 when (args.size) {
-                    1 -> CustomEnchants.enchantmentList.map { it.key.toString() }
-                    2 -> {
+                    1 -> listOf(
+                        "enchant"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> CustomEnchants.enchantmentList.map { it.key.toString() }
+                    3 -> {
                         val enchant = CustomEnchants.enchantmentList.find { it.key.toString() == args[0] }
                         ((enchant?.startLevel ?: 0)..(enchant?.maxLevel ?: 0)).map { it.toString() }
                     }
-                    else -> emptyList()
+                    else -> listOf()
                 }
             }
         }

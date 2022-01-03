@@ -66,6 +66,20 @@ class OrthBankingFeature : AbyssFeature {
                     }
                 }
             }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "bank"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> {
+                        when (args[0]) {
+                            "bank" -> listOf("withdraw", "deposit", "balance")
+                            else -> listOf()
+                        }
+                    }
+                    else -> listOf()
+                }
+            }
         }
     }
 }

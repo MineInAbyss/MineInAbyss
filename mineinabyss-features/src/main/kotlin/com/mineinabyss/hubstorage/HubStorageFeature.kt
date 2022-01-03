@@ -17,13 +17,20 @@ class HubStorageFeature: AbyssFeature {
         commands {
             mineinabyss {
                 "storage"(desc = "Opens player storage") {
-                    permission = "mineinabyss.storage"
                     playerAction {
                         if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location))
                             player.openHubStorage()
                         else
                             sender.error("You are not in the hub area")
                     }
+                }
+            }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "storage"
+                    ).filter { it.startsWith(args[0]) }
+                    else -> listOf()
                 }
             }
         }
