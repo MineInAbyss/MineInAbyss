@@ -2,6 +2,7 @@ package com.mineinabyss.guilds
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
+import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
@@ -43,7 +44,7 @@ class GuildFeature : AbyssFeature {
                     }
                     "menu"(desc = "Open Guild Menu") {
                         playerAction {
-                            guiy { BankMenu(player) }
+                            guiy { GuildMainMenu(player) }
                         }
                     }
                 }

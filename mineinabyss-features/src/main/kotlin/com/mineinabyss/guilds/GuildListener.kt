@@ -5,7 +5,6 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.data.GuildRanks
@@ -36,7 +35,6 @@ class GuildListener : Listener {
     fun PlayerInteractEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
         if (!entity.has<GuildMaster>()) return
-        broadcast("t")
         guiy { GuildMainMenu(player) }
 
 //        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
