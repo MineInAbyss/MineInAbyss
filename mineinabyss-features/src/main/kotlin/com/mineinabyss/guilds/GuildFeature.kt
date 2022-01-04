@@ -12,6 +12,7 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.extensions.hasGuild
+import com.mineinabyss.npc.orthbanking.ui.BankMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
