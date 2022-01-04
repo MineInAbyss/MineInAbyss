@@ -56,7 +56,7 @@ class GuildFeature : AbyssFeature {
                     2 -> {
                         when (args[0]) {
                             "guild" -> listOf("chat", "menu")
-                            else -> listOf()
+                            else -> null
                         }
                     }
                     else -> null
