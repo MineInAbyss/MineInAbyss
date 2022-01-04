@@ -34,6 +34,20 @@ class CurseFeature: AbyssFeature {
                     }
                 }
             }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "curse"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> {
+                        when (args[0]) {
+                            "curse" -> listOf("on", "off")
+                            else -> null
+                        }
+                    }
+                    else -> null
+                }
+            }
         }
 
         // Curse def

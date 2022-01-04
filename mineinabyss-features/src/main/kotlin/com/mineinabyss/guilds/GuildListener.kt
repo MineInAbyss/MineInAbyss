@@ -19,6 +19,7 @@ import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
@@ -79,10 +80,16 @@ class GuildContainerSystem : GroupSystem() {
 
 class GuildChatSystem : Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun AsyncPlayerChatEvent.overrideVentureChat() {
+        if (player.playerData.guildChatStatus) isCancelled = true
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     fun AsyncPlayerChatEvent.toggleGuildChat() {
 
         if (!player.playerData.guildChatStatus) return
+        isCancelled = false
 
         recipients.clear()
         recipients.add(player)
