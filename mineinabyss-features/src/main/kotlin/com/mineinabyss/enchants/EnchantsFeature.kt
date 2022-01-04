@@ -66,16 +66,29 @@ class EnchantsFeature : AbyssFeature {
                 }
             }
 
+            val enchants  = CustomEnchants.enchantmentList
             tabCompletion {
-                //TODO needs to be update to be in subcommand
-                if (command.name != "abyssenchant") return@tabCompletion emptyList()
                 when (args.size) {
-                    1 -> CustomEnchants.enchantmentList.map { it.key.toString() }
+                    1 -> listOf(
+                        "enchant"
+                    ).filter { it.startsWith(args[0]) }
                     2 -> {
-                        val enchant = CustomEnchants.enchantmentList.find { it.key.toString() == args[0] }
-                        ((enchant?.startLevel ?: 0)..(enchant?.maxLevel ?: 0)).map { it.toString() }
+                        when (args[0]) {
+                            "enchant" -> enchants.map { it.key.toString() }
+                            else -> null
+                        }
                     }
-                    else -> emptyList()
+                    3 -> {
+                        when (args[0]) {
+                            "enchant" ->
+                            ((enchants.find { it.key.toString() == args[1] }?.startLevel)?.rangeTo
+                            ((enchants.find { it.key.toString() == args[1] }!!.maxLevel)))?.map { it.toString() }
+
+                            else -> null
+                        }
+
+                    }
+                    else -> null
                 }
             }
         }

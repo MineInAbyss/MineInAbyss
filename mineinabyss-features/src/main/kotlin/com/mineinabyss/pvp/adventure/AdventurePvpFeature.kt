@@ -35,6 +35,14 @@ class AdventurePvpFeature : AbyssFeature {
                     }
                 }
             }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "pvp"
+                    ).filter { it.startsWith(args[0]) }
+                    else -> null
+                }
+            }
         }
     }
 }
