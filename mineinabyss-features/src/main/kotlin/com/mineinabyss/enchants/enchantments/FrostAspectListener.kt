@@ -1,5 +1,6 @@
-package com.mineinabyss.enchants
+package com.mineinabyss.enchants.enchantments
 
+import com.mineinabyss.enchants.CustomEnchants
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule
 import org.bukkit.entity.LivingEntity
