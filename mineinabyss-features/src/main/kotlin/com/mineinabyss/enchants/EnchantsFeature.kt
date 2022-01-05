@@ -22,11 +22,12 @@ class EnchantsFeature : AbyssFeature {
         CustomEnchants.register()
 
         registerEvents(
+            EnchantmentListener(),
             SoulBoundListener(),
             FrostAspectListener(),
             BirdSwatterListener(),
             JawBreakerListener(),
-            BaneOfKuongatariListener(),
+            BaneOfKuongatariListener()
         )
 
         geary {

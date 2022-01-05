@@ -1,6 +1,8 @@
 package com.mineinabyss.enchants
 
 import com.mineinabyss.idofront.messaging.logInfo
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.join
 import net.kyori.adventure.text.JoinConfiguration
@@ -12,6 +14,8 @@ import org.bukkit.enchantments.EnchantmentTarget
 import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Field
 
+@Serializable
+@SerialName("mineinabyss:customenchant")
 object CustomEnchants {
     val enchantmentList = mutableListOf<Enchantment>()
     val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, color(150, 10, 10))

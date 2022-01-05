@@ -1,6 +1,6 @@
 package com.mineinabyss.enchants.enchantments
 
-import com.mineinabyss.components.soulbound.Orthbound
+import com.mineinabyss.components.enchantments.soulbound.Orthbound
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.geary.minecraft.components.Soulbound
 import com.mineinabyss.geary.minecraft.store.encodeComponentsTo

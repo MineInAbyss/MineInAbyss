@@ -1,4 +1,4 @@
-package com.mineinabyss.components.soulbound
+package com.mineinabyss.components.enchantments.soulbound
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
