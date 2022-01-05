@@ -1,5 +1,8 @@
-package com.mineinabyss.enchants
+package com.mineinabyss.enchants.enchantments
 
+import com.mineinabyss.enchants.CustomEnchants
+import com.mineinabyss.enchants.addCustomEnchant
+import com.mineinabyss.enchants.updateEnchantmentLore
 import com.mineinabyss.geary.ecs.accessors.ResultScope
 import com.mineinabyss.geary.ecs.api.entities.with
 import com.mineinabyss.geary.ecs.api.systems.TickingSystem

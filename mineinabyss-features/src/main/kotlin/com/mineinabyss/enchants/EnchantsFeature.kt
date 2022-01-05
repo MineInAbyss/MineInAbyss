@@ -1,5 +1,6 @@
 package com.mineinabyss.enchants
 
+import com.mineinabyss.enchants.enchantments.*
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.execution.stopCommand
@@ -22,7 +23,10 @@ class EnchantsFeature : AbyssFeature {
 
         registerEvents(
             SoulBoundListener(),
-            FrostAspectListener()
+            FrostAspectListener(),
+            BirdSwatterListener(),
+            JawBreakerListener(),
+            BaneOfKuongatariListener(),
         )
 
         geary {
