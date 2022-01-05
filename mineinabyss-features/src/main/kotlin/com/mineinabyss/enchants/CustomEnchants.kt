@@ -91,4 +91,26 @@ fun ItemStack.removeCustomEnchant(enchantment: Enchantment) {
     val lore: MutableList<Component> = lore() ?: mutableListOf()
     lore.removeIf { it.contains(enchantment.displayName(getEnchantmentLevel(enchantment))) }
     removeEnchantment(enchantment)
+
+}
+
+fun getItemTarget(itemStack: ItemStack?): EnchantmentTarget? {
+    if (itemStack == null) return null
+    when {
+        EnchantmentTarget.ARMOR.includes(itemStack) -> return EnchantmentTarget.ARMOR
+        EnchantmentTarget.ARMOR_FEET.includes(itemStack) -> return EnchantmentTarget.ARMOR_FEET
+        EnchantmentTarget.ARMOR_LEGS.includes(itemStack) -> return EnchantmentTarget.ARMOR_LEGS
+        EnchantmentTarget.ARMOR_TORSO.includes(itemStack) -> return EnchantmentTarget.ARMOR_TORSO
+        EnchantmentTarget.ARMOR_HEAD.includes(itemStack) -> return EnchantmentTarget.ARMOR_HEAD
+        EnchantmentTarget.WEAPON.includes(itemStack) -> return EnchantmentTarget.WEAPON
+        EnchantmentTarget.TOOL.includes(itemStack) -> return EnchantmentTarget.TOOL
+        EnchantmentTarget.BOW.includes(itemStack) -> return EnchantmentTarget.BOW
+        EnchantmentTarget.FISHING_ROD.includes(itemStack) -> return EnchantmentTarget.FISHING_ROD
+        EnchantmentTarget.BREAKABLE.includes(itemStack) -> return EnchantmentTarget.BREAKABLE
+        EnchantmentTarget.WEARABLE.includes(itemStack) -> return EnchantmentTarget.WEARABLE
+        EnchantmentTarget.TRIDENT.includes(itemStack) -> return EnchantmentTarget.TRIDENT
+        EnchantmentTarget.CROSSBOW.includes(itemStack) -> return EnchantmentTarget.CROSSBOW
+        EnchantmentTarget.VANISHABLE.includes(itemStack) -> return EnchantmentTarget.VANISHABLE
+        else -> return null
+    }
 }
