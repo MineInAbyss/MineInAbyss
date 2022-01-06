@@ -125,7 +125,7 @@ class EnchantsFeature : AbyssFeature {
 
                             if (enchantmentLevel == 0) {
 
-                                item.removeCustomEnchant(parsedEnchant)
+                                item.removeCustomEnchant(parsedEnchant as EnchantmentWrapper)
                                 sender.success("Removed ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}from this item.")
                             }
                             if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {

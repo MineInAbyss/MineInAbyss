@@ -3,7 +3,6 @@ package com.mineinabyss.enchants
 import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -71,7 +70,7 @@ class EnchantmentListener : Listener {
 
                 bookMeta.addStoredEnchant(enchant, newLevel, false)
                 anvil.result?.itemMeta = bookMeta
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel, "")
             }
         }
     }
@@ -79,8 +78,9 @@ class EnchantmentListener : Listener {
     @EventHandler
     fun InventoryClickEvent.removeCustomEnchantGrindstone() {
         if (inventory.type != InventoryType.GRINDSTONE) return
+        if (slot != 2) return
         val grindstone = inventory as GrindstoneInventory
-        val item =
+        val enchant =
         if (grindstone.upperItem != null) {
             if (grindstone.upperItem?.type == Material.ENCHANTED_BOOK) (grindstone.upperItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
             else grindstone.upperItem?.enchantments
@@ -91,9 +91,10 @@ class EnchantmentListener : Listener {
         }
         else return
 
-        item!!.forEach {
-            grindstone.upperItem?.removeEnchantment(it as Enchantment)
-            grindstone.lowerItem?.removeCustomEnchant(it as Enchantment)
+        enchant?.forEach {
+            if (CustomEnchants.enchantmentList.contains(it.component1()))
+                grindstone.result?.removeCustomEnchant(it.component1() as EnchantmentWrapper)
+            else return@forEach
         }
     }
 }
