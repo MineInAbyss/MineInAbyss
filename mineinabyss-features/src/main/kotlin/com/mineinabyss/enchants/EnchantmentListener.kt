@@ -1,6 +1,5 @@
 package com.mineinabyss.enchants
 
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
@@ -20,20 +19,19 @@ class EnchantmentListener : Listener {
     fun InventoryClickEvent.applyCustomEnchantmentBook() {
         if (inventory.type != InventoryType.ANVIL) return
         val anvil = inventory as AnvilInventory
-        if (anvil.firstItem == null || anvil.firstItem!!.type == Material.AIR) return
 
         val player = whoClicked as Player
-        val target = getItemTarget(anvil.firstItem)
         val enchanted =
-            if (anvil.secondItem?.type == Material.ENCHANTED_BOOK) (anvil.secondItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else if (anvil.secondItem?.type != Material.ENCHANTED_BOOK && anvil.secondItem != null) {
+            if (anvil.secondItem?.type == Material.ENCHANTED_BOOK)
+                    (anvil.secondItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else if (anvil.secondItem?.type != Material.ENCHANTED_BOOK && anvil.secondItem != null)
                 anvil.secondItem?.enchantments
-            }
             else return
 
         if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
 
         enchanted?.forEach {
+            val target = getItemTarget(anvil.firstItem)
             val enchant = it.component1()
             val enchantLevel = it.component2()
             var newLevel = enchantLevel
@@ -41,11 +39,10 @@ class EnchantmentListener : Listener {
             if (it.component1().itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
                 player.error("This book cannot be added to this item")
                 anvil.maximumRepairCost = 0
-
                 isCancelled = true
+                player.closeInventory()
                 return@forEach
             }
-
 
             if ((anvil.firstItem?.type != Material.ENCHANTED_BOOK && anvil.firstItem?.containsEnchantment(enchant) == true) ||
                 (anvil.firstItem?.type == Material.ENCHANTED_BOOK && (anvil.firstItem?.itemMeta as EnchantmentStorageMeta).hasStoredEnchant(enchant))) {
@@ -57,24 +54,24 @@ class EnchantmentListener : Listener {
                     itemLevel + 1 == enchantLevel -> itemLevel + 1
                     itemLevel > enchantLevel -> itemLevel
                     itemLevel * 2 <= enchantLevel -> enchantLevel
-                    itemLevel + enchantLevel >= enchant.maxLevel -> enchant.maxLevel
                     else -> itemLevel
                 }
+                if (newLevel > enchant.maxLevel) newLevel = enchant.maxLevel
                 anvil.firstItem?.removeCustomEnchant(enchant as EnchantmentWrapper)
             }
-            broadcast(enchant)
-            broadcast(enchantLevel)
-            broadcast(newLevel)
-            if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
-                broadcast("book")
-                anvil.result = anvil.firstItem
-                (anvil.result?.itemMeta as EnchantmentStorageMeta).addStoredEnchant(enchant, enchantLevel, true)
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
-            }
+
             if (anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
-                broadcast("not book")
-                anvil.firstItem?.addEnchantment(enchant as EnchantmentWrapper, newLevel)
                 anvil.result = anvil.firstItem
+                anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
+            }
+
+            else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
+                anvil.result = anvil.firstItem
+                val bookMeta = (anvil.result?.itemMeta as EnchantmentStorageMeta)
+
+                bookMeta.addStoredEnchant(enchant, newLevel, false)
+                anvil.result?.itemMeta = bookMeta
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
             }
         }
     }
@@ -98,6 +95,5 @@ class EnchantmentListener : Listener {
             grindstone.upperItem?.removeEnchantment(it as Enchantment)
             grindstone.lowerItem?.removeCustomEnchant(it as Enchantment)
         }
-
     }
 }

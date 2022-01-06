@@ -84,6 +84,7 @@ class EnchantsFeature : AbyssFeature {
                                 item.itemMeta = book
                                 broadcast("i did it")
                                 item.updateEnchantmentLore(parsedEnchant as EnchantmentWrapper, enchantmentLevel)
+
                             }
                         }
                         "fetch" {
@@ -96,8 +97,10 @@ class EnchantsFeature : AbyssFeature {
                                 }
 
                                 val book = item.itemMeta as EnchantmentStorageMeta
+                                if (book.storedEnchants.isEmpty()) player.error("no enchantment")
                                 book.storedEnchants.forEach {
                                     it.broadcastVal("Enchantment: ")
+
                                 }
                             }
                         }
