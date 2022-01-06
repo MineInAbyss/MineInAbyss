@@ -19,6 +19,7 @@ class EnchantmentWrapper(
     private val name: String,
     private val maxLvl: Int,
     private val allowedItems: EnchantmentTarget,
+    private val conflictingEnchants: List<Enchantment> = listOf(),
     val loreColor: TextColor = color(150, 10, 10)
 ) : CustomEnchantment(namespace) {
     override fun canEnchantItem(item: ItemStack): Boolean {
@@ -55,6 +56,10 @@ class EnchantmentWrapper(
         return allowedItems
     }
 
+    override fun conflictsWith(other: Enchantment): Boolean {
+        return conflictingEnchants.contains(other)
+    }
+
     override fun isTradeable(): Boolean {
         TODO("Not yet implemented")
     }
@@ -83,7 +88,4 @@ class EnchantmentWrapper(
         TODO("Not yet implemented")
     }
 
-    override fun conflictsWith(other: Enchantment): Boolean {
-        TODO("Not yet implemented")
-    }
 }

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDeathEvent
 
 class JawBreakerListener : Listener {
 
@@ -19,11 +18,6 @@ class JawBreakerListener : Listener {
 
         entity.toGearyOrNull()?.get<Splitjaw>() ?: return
         if (item.containsEnchantment(jawBreaker)) damage += item.getEnchantmentLevel(jawBreaker) * 2
-
-    }
-
-    @EventHandler
-    fun EntityDeathEvent.onSplitjawDeath() {
 
     }
 }

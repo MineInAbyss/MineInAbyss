@@ -16,11 +16,11 @@ import java.lang.reflect.Field
 @SerialName("mineinabyss:customenchant")
 object CustomEnchants {
     val enchantmentList = mutableListOf<Enchantment>()
-    val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, color(150, 10, 10))
-    val FROST_ASPECT = EnchantmentWrapper("frostaspect", "Frost Aspect", 2, EnchantmentTarget.WEAPON, color(0, 100, 220))
-    val BIRD_SWATTER = EnchantmentWrapper("birdswatter", "Bird Swatter", 5, EnchantmentTarget.WEAPON, color(0,220,60))
-    val JAW_BREAKER = EnchantmentWrapper("jawbreaker", "Jaw Breaker", 3, EnchantmentTarget.WEAPON, color(150,20,150))
-    val BANE_OF_KUONGATARI = EnchantmentWrapper("baneofkuongatari", "Bane of Kuongatari", 1, EnchantmentTarget.WEAPON, color(0,200,80))
+    val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, listOf(Enchantment.BINDING_CURSE, Enchantment.VANISHING_CURSE), color(150, 10, 10))
+    val FROST_ASPECT = EnchantmentWrapper("frostaspect", "Frost Aspect", 2, EnchantmentTarget.WEAPON, listOf(Enchantment.FIRE_ASPECT), color(0, 100, 220))
+    val BIRD_SWATTER = EnchantmentWrapper("birdswatter", "Bird Swatter", 5, EnchantmentTarget.WEAPON, listOf(), color(0,220,60))
+    val JAW_BREAKER = EnchantmentWrapper("jawbreaker", "Jaw Breaker", 3, EnchantmentTarget.WEAPON, listOf(BIRD_SWATTER), color(150,20,150))
+    val BANE_OF_KUONGATARI = EnchantmentWrapper("baneofkuongatari", "Bane of Kuongatari", 1, EnchantmentTarget.WEAPON, listOf(), color(0,200,80))
 
 
     fun register() {
