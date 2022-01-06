@@ -19,23 +19,24 @@ class EnchantmentListener : Listener {
         if (inventory.type != InventoryType.ANVIL) return
         val player = whoClicked as Player
         val anvil = inventory as AnvilInventory
-        val book = if (anvil.secondItem != null) {
-            (anvil.secondItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            (anvil.secondItem?.enchantments)
-        } else return
+        val secondItem = anvil.secondItem
         val target = getItemTarget(anvil.firstItem)
+        val enchanted =
+            if (secondItem?.type == Material.ENCHANTED_BOOK) (secondItem.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else if (secondItem?.type != Material.ENCHANTED_BOOK && secondItem != null) {
+                secondItem.enchantments
+            }
+            else return
 
         if (anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
 
-        book?.forEach {
+        enchanted.forEach {
             val enchant = it.component1()
             val enchantLevel = it.component2()
             var newLevel = enchantLevel
             if (it.component1().itemTarget != target && slot == 2) {
                 player.error("This book cannot be added to this item")
                 anvil.maximumRepairCost = 0
-                player.closeInventory()
-                anvil.result = null
 
                 isCancelled = true
                 return@forEach
@@ -53,12 +54,9 @@ class EnchantmentListener : Listener {
                 }
                 anvil.firstItem?.removeCustomEnchant(enchant)
             }
-
-            anvil.firstItem?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
-            val resultItem = anvil.firstItem
-            anvil.result = resultItem
+            anvil.result = anvil.firstItem
+            anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
         }
-
     }
 
     @EventHandler
@@ -74,10 +72,9 @@ class EnchantmentListener : Listener {
             if (grindstone.lowerItem?.type == Material.ENCHANTED_BOOK) (grindstone.lowerItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
             else grindstone.lowerItem?.enchantments
         }
-        else if (grindstone.isEmpty) return
         else return
 
-        item?.forEach {
+        item!!.forEach {
             grindstone.upperItem!!.removeEnchantment(it as Enchantment)
             grindstone.lowerItem!!.removeCustomEnchant(it as Enchantment)
         }
