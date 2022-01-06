@@ -1,5 +1,7 @@
 package com.mineinabyss.enchants
 
+import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -17,24 +19,26 @@ class EnchantmentListener : Listener {
     @EventHandler
     fun InventoryClickEvent.applyCustomEnchantmentBook() {
         if (inventory.type != InventoryType.ANVIL) return
-        val player = whoClicked as Player
         val anvil = inventory as AnvilInventory
-        val secondItem = anvil.secondItem
+        if (anvil.firstItem == null || anvil.firstItem!!.type == Material.AIR) return
+
+        val player = whoClicked as Player
         val target = getItemTarget(anvil.firstItem)
         val enchanted =
-            if (secondItem?.type == Material.ENCHANTED_BOOK) (secondItem.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else if (secondItem?.type != Material.ENCHANTED_BOOK && secondItem != null) {
-                secondItem.enchantments
+            if (anvil.secondItem?.type == Material.ENCHANTED_BOOK) (anvil.secondItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else if (anvil.secondItem?.type != Material.ENCHANTED_BOOK && anvil.secondItem != null) {
+                anvil.secondItem?.enchantments
             }
             else return
 
-        if (anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
+        if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
 
-        enchanted.forEach {
+        enchanted?.forEach {
             val enchant = it.component1()
             val enchantLevel = it.component2()
             var newLevel = enchantLevel
-            if (it.component1().itemTarget != target && slot == 2) {
+
+            if (it.component1().itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
                 player.error("This book cannot be added to this item")
                 anvil.maximumRepairCost = 0
 
@@ -42,7 +46,10 @@ class EnchantmentListener : Listener {
                 return@forEach
             }
 
-            if (anvil.firstItem?.containsEnchantment(enchant) == true) {
+
+            if ((anvil.firstItem?.type != Material.ENCHANTED_BOOK && anvil.firstItem?.containsEnchantment(enchant) == true) ||
+                (anvil.firstItem?.type == Material.ENCHANTED_BOOK && (anvil.firstItem?.itemMeta as EnchantmentStorageMeta).hasStoredEnchant(enchant))) {
+                (anvil.firstItem?.type == Material.ENCHANTED_BOOK).broadcastVal("is book: ")
                 val itemLevel = anvil.firstItem!!.getEnchantmentLevel(enchant)
 
                 newLevel = when {
@@ -50,12 +57,25 @@ class EnchantmentListener : Listener {
                     itemLevel + 1 == enchantLevel -> itemLevel + 1
                     itemLevel > enchantLevel -> itemLevel
                     itemLevel * 2 <= enchantLevel -> enchantLevel
+                    itemLevel + enchantLevel >= enchant.maxLevel -> enchant.maxLevel
                     else -> itemLevel
                 }
-                anvil.firstItem?.removeCustomEnchant(enchant)
+                anvil.firstItem?.removeCustomEnchant(enchant as EnchantmentWrapper)
             }
-            anvil.result = anvil.firstItem
-            anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
+            broadcast(enchant)
+            broadcast(enchantLevel)
+            broadcast(newLevel)
+            if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
+                broadcast("book")
+                anvil.result = anvil.firstItem
+                (anvil.result?.itemMeta as EnchantmentStorageMeta).addStoredEnchant(enchant, enchantLevel, true)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+            }
+            if (anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
+                broadcast("not book")
+                anvil.firstItem?.addEnchantment(enchant as EnchantmentWrapper, newLevel)
+                anvil.result = anvil.firstItem
+            }
         }
     }
 
@@ -75,8 +95,8 @@ class EnchantmentListener : Listener {
         else return
 
         item!!.forEach {
-            grindstone.upperItem!!.removeEnchantment(it as Enchantment)
-            grindstone.lowerItem!!.removeCustomEnchant(it as Enchantment)
+            grindstone.upperItem?.removeEnchantment(it as Enchantment)
+            grindstone.lowerItem?.removeCustomEnchant(it as Enchantment)
         }
 
     }
