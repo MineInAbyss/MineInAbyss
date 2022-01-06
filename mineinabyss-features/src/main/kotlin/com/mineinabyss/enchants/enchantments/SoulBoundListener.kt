@@ -1,4 +1,4 @@
-package com.mineinabyss.enchants
+package com.mineinabyss.enchants.enchantments
 
 import com.mineinabyss.components.soulbound.Orthbound
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
