@@ -82,19 +82,31 @@ class EnchantmentListener : Listener {
         val grindstone = inventory as GrindstoneInventory
         val enchant =
         if (grindstone.upperItem != null) {
-            if (grindstone.upperItem?.type == Material.ENCHANTED_BOOK) (grindstone.upperItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else grindstone.upperItem?.enchantments
+            grindstone.result?.type = grindstone.upperItem?.type!!
+            grindstone.result?.itemMeta = grindstone.upperItem?.itemMeta
+
+            if (grindstone.upperItem?.type == Material.ENCHANTED_BOOK)
+                    (grindstone.upperItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else
+                grindstone.upperItem?.enchantments
         }
         else if (grindstone.lowerItem != null) {
-            if (grindstone.lowerItem?.type == Material.ENCHANTED_BOOK) (grindstone.lowerItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else grindstone.lowerItem?.enchantments
+            if (grindstone.upperItem == null) {
+                grindstone.result?.type = grindstone.lowerItem?.type!!
+                grindstone.result?.itemMeta = grindstone.lowerItem?.itemMeta
+            }
+            if (grindstone.lowerItem?.type == Material.ENCHANTED_BOOK)
+                    (grindstone.lowerItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else
+                grindstone.lowerItem?.enchantments
         }
         else return
 
         enchant?.forEach {
             if (CustomEnchants.enchantmentList.contains(it.component1()))
                 grindstone.result?.removeCustomEnchant(it.component1() as EnchantmentWrapper)
-            else return@forEach
+            else if (!CustomEnchants.enchantmentList.contains(it.component1()))
+                grindstone.result?.removeEnchantment(it.component1())
         }
     }
 }

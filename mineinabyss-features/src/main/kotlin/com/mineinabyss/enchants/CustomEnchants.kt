@@ -4,8 +4,6 @@ import com.mineinabyss.idofront.messaging.logInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.Component.join
-import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.TextColor.color
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -57,61 +55,33 @@ fun ItemStack.addCustomEnchant(enchantment: EnchantmentWrapper, lvl: Int, extraL
     updateEnchantmentLore(enchantment, lvl, extraLore)
 }
 
-fun ItemStack.updateEnchantmentLore(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "") {
+fun ItemStack.updateEnchantmentLore(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "", removeLore: Boolean = false) {
     val lore: MutableList<Component> = lore() ?: mutableListOf()
     val enchantName = Component.text(enchantment.name)
     val enchantLevel = Component.text(convertEnchantmentLevel(lvl))
     val moreLore = Component.text(extraLore)
-    val loreComponent = Component.text("$enchantName $enchantLevel $moreLore")
+    val loreComponent = enchantName.append(Component.space()).append(enchantLevel).append(Component.space()).append(moreLore).color(enchantment.loreColor).decoration(TextDecoration.ITALIC, false)
+
+    if (removeLore) {
+        if (lore.contains(loreComponent)) lore.remove(loreComponent)
+        lore(lore)
+        return
+    }
 
     val check = lore.firstOrNull {
         PlainTextComponentSerializer.plainText().serialize(it) ==
-                PlainTextComponentSerializer.plainText().serialize(
-                    join(
-                        JoinConfiguration.separator(Component.space()),
-                        enchantName,
-                        enchantLevel,
-                        moreLore
-                    ).color(enchantment.loreColor).decoration(TextDecoration.ITALIC, false)
-                )
-    }
-
-    if (lvl == 0) {
-        lore.remove(join(
-            JoinConfiguration.separator(Component.space()),
-            enchantName,
-            enchantLevel,
-            moreLore
-        ).color(enchantment.loreColor).decoration(TextDecoration.ITALIC, false))
-        lore(lore)
+                PlainTextComponentSerializer.plainText().serialize(loreComponent)
     }
 
     if (check == null) {
-        lore.add(
-            0, join(
-                JoinConfiguration.separator(Component.space()),
-                enchantName,
-                enchantLevel,
-                moreLore
-            ).color(enchantment.loreColor).decoration(TextDecoration.ITALIC, false)
-        )
+        lore.add(0, loreComponent.color(enchantment.loreColor).decoration(TextDecoration.ITALIC, false))
         lore(lore)
     }
 }
 
 fun ItemStack.removeCustomEnchant(enchantment: EnchantmentWrapper) {
-    val enchantName = Component.text(enchantment.name)
-    val enchantLevel = Component.text(getEnchantmentLevel(enchantment))
-    val loreComponent = Component.text("$enchantName $enchantLevel")
-    val lore: MutableList<Component> = lore() ?: mutableListOf()
-    lore.removeIf {
-        it.contains(enchantName).and(it.contains(enchantLevel))
-        it.hasDecoration(TextDecoration.ITALIC)
-    }
-    lore(lore)
-    //lore(lore)
+    updateEnchantmentLore(enchantment, getEnchantmentLevel(enchantment), removeLore = true)
     removeEnchantment(enchantment)
-
 }
 
 fun getItemTarget(itemStack: ItemStack?): EnchantmentTarget? {

@@ -73,6 +73,7 @@ class EnchantsFeature : AbyssFeature {
 
                                     book.removeStoredEnchant(parsedEnchant)
                                     sender.success("Removed ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}from this item.")
+                                    return@playerAction
                                 }
                                 if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
                                     if (levelRange.first == levelRange.last) sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}to this item.")
