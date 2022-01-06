@@ -1,6 +1,5 @@
 package com.mineinabyss.enchants
 
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -33,7 +32,7 @@ class EnchantmentListener : Listener {
             val target = getItemTarget(anvil.firstItem)
             val enchant = it.component1()
             val enchantLevel = it.component2()
-            var newLevel = enchantLevel
+            var newLevel: Int
 
             if (it.component1().itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
                 player.error("This book cannot be added to this item")
@@ -43,34 +42,44 @@ class EnchantmentListener : Listener {
                 return@forEach
             }
 
-            if ((anvil.firstItem?.type != Material.ENCHANTED_BOOK && anvil.firstItem?.containsEnchantment(enchant) == true) ||
-                (anvil.firstItem?.type == Material.ENCHANTED_BOOK && (anvil.firstItem?.itemMeta as EnchantmentStorageMeta).hasStoredEnchant(enchant))) {
-                (anvil.firstItem?.type == Material.ENCHANTED_BOOK).broadcastVal("is book: ")
-                val itemLevel = anvil.firstItem!!.getEnchantmentLevel(enchant)
+            val first = anvil.firstItem
 
-                newLevel = when {
-                    itemLevel == enchantLevel -> itemLevel + 1
-                    itemLevel + 1 == enchantLevel -> itemLevel + 1
-                    itemLevel > enchantLevel -> itemLevel
-                    itemLevel * 2 <= enchantLevel -> enchantLevel
-                    else -> itemLevel
-                }
-                if (newLevel > enchant.maxLevel) newLevel = enchant.maxLevel
-                anvil.firstItem?.removeCustomEnchant(enchant as EnchantmentWrapper)
+            val itemLevel =
+            if (first?.type != Material.ENCHANTED_BOOK && first?.containsEnchantment(enchant) == true) {
+                first.getEnchantmentLevel(enchant)
+            }
+            else if (first?.type == Material.ENCHANTED_BOOK && (first.itemMeta as EnchantmentStorageMeta).hasStoredEnchant(enchant)) {
+                (first.itemMeta as EnchantmentStorageMeta).storedEnchants[enchant]!!
+            }
+            else 0
+
+            newLevel = when {
+                itemLevel == enchantLevel -> itemLevel + 1
+                itemLevel > enchantLevel -> itemLevel
+                itemLevel <= enchantLevel -> enchantLevel
+                else -> itemLevel
             }
 
+            if (newLevel > enchant.maxLevel) newLevel = enchant.maxLevel
+
+
             if (anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
+                //anvil.firstItem?.removeCustomEnchant(enchant as EnchantmentWrapper)
                 anvil.result = anvil.firstItem
                 anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
+
             }
 
             else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
+                (first?.itemMeta as EnchantmentStorageMeta).removeStoredEnchant(enchant)
                 anvil.result = anvil.firstItem
                 val bookMeta = (anvil.result?.itemMeta as EnchantmentStorageMeta)
 
                 bookMeta.addStoredEnchant(enchant, newLevel, false)
                 anvil.result?.itemMeta = bookMeta
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel, "")
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
             }
         }
     }

@@ -78,6 +78,7 @@ class EnchantsFeature : AbyssFeature {
                                 if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
                                     if (levelRange.first == levelRange.last) sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}to this item.")
                                     else sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} $enchantmentLevel ${ChatColor.GREEN}to this item.")
+                                    book.removeStoredEnchant(parsedEnchant)
                                     book.addStoredEnchant(parsedEnchant, enchantmentLevel, false)
 
                                 }
