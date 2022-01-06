@@ -3,10 +3,10 @@ package com.mineinabyss.relics
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.ecs.accessors.EventResultScope
-import com.mineinabyss.geary.ecs.accessors.ResultScope
+import com.mineinabyss.geary.ecs.accessors.EventScope
+import com.mineinabyss.geary.ecs.accessors.TargetScope
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.ecs.events.handlers.ComponentAddHandler
+import com.mineinabyss.geary.ecs.api.systems.Handler
 import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
@@ -23,39 +23,37 @@ class ShowDepthEvent(
 )
 
 class ShowDepthSystem : GearyListener() {
-    private val ResultScope.player by get<Player>()
+    private val TargetScope.player by get<Player>()
+    private val EventScope.depthMeter by get<ShowDepthEvent>().map { it.depthMeter }
 
-    private inner class ShowDepth : ComponentAddHandler() {
-        val EventResultScope.depthMeter by get<ShowDepthEvent>().map { it.depthMeter }
+    @Handler
+    fun TargetScope.showDepth(event: EventScope) {
+        val sectionXOffset = event.depthMeter.sectionXOffset
+        val sectionYOffset = event.depthMeter.sectionYOffset
+        val abyssStartingHeightInOrth = event.depthMeter.abyssStartingHeightInOrth
+        val section = player.location.section
+        val layer: Layer? = section?.layer
 
-        override fun ResultScope.handle(event: EventResultScope) {
-            val sectionXOffset = event.depthMeter.sectionXOffset
-            val sectionYOffset = event.depthMeter.sectionYOffset
-            val abyssStartingHeightInOrth = event.depthMeter.abyssStartingHeightInOrth
-            val section = player.location.section
-            val layer: Layer? = section?.layer
-
-            if (layer?.name != null) {
-                if (player.isInHub()) {
-                    player.sendMessage(
-                        """
+        if (layer?.name != null) {
+            if (player.isInHub()) {
+                player.sendMessage(
+                    """
                 $DARK_AQUA${ITALIC}The needle spins.
                 ${DARK_AQUA}You suddenly become aware that you are in ${layer.name}${DARK_AQUA}.""".trimIndent()
-                    )
-                    return
-                }
-                if (!player.isInHub()) {
-                    val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
-                    player.sendMessage(
-                        """
+                )
+                return
+            }
+            if (!player.isInHub()) {
+                val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
+                player.sendMessage(
+                    """
                 $DARK_AQUA${ITALIC}The needle spins.
                 ${DARK_AQUA}You suddenly become aware that you are in the
                 ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the ${GREEN}Abyss${DARK_AQUA}.
                 """.trimIndent()
-                    )
-                }
-            } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
-        }
+                )
+            }
+        } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
     }
 
     // TODO memoize total depth of each layer
@@ -86,6 +84,6 @@ class ShowDepthSystem : GearyListener() {
     private fun pluralizeMeters(count: Int): String {
         val prefix = if (count == 1) "one " else ""
         val suffix = if (count == 1) " block" else " blocks"
-        return prefix + -count + suffix
+        return "$prefix${-count}$suffix"
     }
 }

@@ -1,19 +1,18 @@
 package com.mineinabyss.gondolas
 
 import com.mineinabyss.components.gondolas.Gondola
-import com.mineinabyss.geary.ecs.accessors.EventResultScope
-import com.mineinabyss.geary.ecs.accessors.ResultScope
+import com.mineinabyss.geary.ecs.accessors.TargetScope
+import com.mineinabyss.geary.ecs.accessors.added
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.ecs.events.handlers.ComponentAddHandler
+import com.mineinabyss.geary.ecs.api.systems.Handler
 
 object LoadedGondolas : GearyListener() {
-    private val ResultScope.gondola by get<Gondola>()
+    val TargetScope.gondola by added<Gondola>()
 
     val loaded = mutableMapOf<String, Gondola>()
 
-    private object TrackGondolas : ComponentAddHandler() {
-        override fun ResultScope.handle(event: EventResultScope) {
-            loaded[gondola.name] = gondola
-        }
+    @Handler
+    fun addToMap(affected: TargetScope) {
+        loaded[affected.gondola.name] = affected.gondola
     }
 }

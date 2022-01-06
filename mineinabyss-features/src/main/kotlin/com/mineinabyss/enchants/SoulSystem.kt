@@ -1,6 +1,6 @@
 package com.mineinabyss.enchants
 
-import com.mineinabyss.geary.ecs.accessors.ResultScope
+import com.mineinabyss.geary.ecs.accessors.TargetScope
 import com.mineinabyss.geary.ecs.api.entities.with
 import com.mineinabyss.geary.ecs.api.systems.TickingSystem
 import com.mineinabyss.geary.ecs.entities.parent
@@ -9,10 +9,10 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class SoulSystem : TickingSystem() {
-    private val ResultScope.soul by get<Soulbound>()
-    private val ResultScope.item by get<ItemStack>()
+    private val TargetScope.soul by get<Soulbound>()
+    private val TargetScope.item by get<ItemStack>()
 
-    override fun ResultScope.tick() {
+    override fun TargetScope.tick() {
         //TODO generalize for all enchants
         entity.parent?.with { player: Player ->
             if (soul.owner != player.uniqueId && item.containsEnchantment(CustomEnchants.SOULBOUND)) {
