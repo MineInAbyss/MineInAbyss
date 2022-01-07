@@ -88,7 +88,6 @@ fun ItemStack.removeCustomEnchant(enchantment: EnchantmentWrapper) {
 fun getItemTarget(itemStack: ItemStack?): EnchantmentTarget? {
     if (itemStack == null) return null
     when {
-        EnchantmentTarget.ALL.includes(itemStack) -> return EnchantmentTarget.ALL
         EnchantmentTarget.ARMOR.includes(itemStack) -> return EnchantmentTarget.ARMOR
         EnchantmentTarget.ARMOR_FEET.includes(itemStack) -> return EnchantmentTarget.ARMOR_FEET
         EnchantmentTarget.ARMOR_LEGS.includes(itemStack) -> return EnchantmentTarget.ARMOR_LEGS
@@ -103,7 +102,8 @@ fun getItemTarget(itemStack: ItemStack?): EnchantmentTarget? {
         EnchantmentTarget.TRIDENT.includes(itemStack) -> return EnchantmentTarget.TRIDENT
         EnchantmentTarget.CROSSBOW.includes(itemStack) -> return EnchantmentTarget.CROSSBOW
         EnchantmentTarget.VANISHABLE.includes(itemStack) -> return EnchantmentTarget.VANISHABLE
-        else -> return null
+        //EnchantmentTarget.ALL.includes(itemStack) -> return EnchantmentTarget.ALL
+        else -> return EnchantmentTarget.ALL
     }
 }
 

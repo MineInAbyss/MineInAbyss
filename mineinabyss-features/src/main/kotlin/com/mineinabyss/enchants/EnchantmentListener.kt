@@ -1,5 +1,6 @@
 package com.mineinabyss.enchants
 
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
 import org.bukkit.enchantments.EnchantmentTarget
@@ -29,15 +30,15 @@ class EnchantmentListener : Listener {
             else return
 
         val firstItemEnchants =
-            if (anvil.secondItem?.type == Material.ENCHANTED_BOOK)
-                (anvil.secondItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else if (anvil.secondItem?.type != Material.ENCHANTED_BOOK && anvil.secondItem != null)
-                anvil.secondItem?.enchantments
+            if (anvil.firstItem?.type == Material.ENCHANTED_BOOK)
+                (anvil.firstItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else if (anvil.firstItem?.type != Material.ENCHANTED_BOOK && anvil.secondItem != null)
+                anvil.firstItem?.enchantments
             else return
 
         // Up dumb limit of vanilla
         anvil.maximumRepairCost = 100
-        anvil.repairCost = enchanted?.let { calculateItemEnchantCost(it) }!! + firstItemEnchants?.let { calculateItemEnchantCost(it) }!!
+        anvil.repairCost = calculateItemEnchantCost(enchanted!!) + calculateItemEnchantCost(firstItemEnchants!!)
 
         if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
 
@@ -48,7 +49,12 @@ class EnchantmentListener : Listener {
             val enchantLevel = it.value
             var newLevel: Int
 
-            if (it.key.itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK && target != EnchantmentTarget.ALL) {
+            if (it.key.itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK && it.key.itemTarget != EnchantmentTarget.ALL) {
+                getItemTarget(anvil.firstItem).broadcastVal("t: ")
+                it.key.itemTarget.broadcastVal("key target: ")
+                target.broadcastVal("target: ")
+                slot.broadcastVal("slot: ")
+                anvil.firstItem?.type.broadcastVal("type: ")
                 player.error("This book cannot be added to this item")
                 anvil.maximumRepairCost = 0
                 isCancelled = true
@@ -77,8 +83,11 @@ class EnchantmentListener : Listener {
 
             if (anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
                 anvil.result = anvil.firstItem
+                anvil.result?.displayName()
                 anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
                 anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
 
             } else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
                 anvil.result = anvil.firstItem

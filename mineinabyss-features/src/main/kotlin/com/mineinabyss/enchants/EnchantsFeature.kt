@@ -44,8 +44,8 @@ class EnchantsFeature : AbyssFeature {
 
         commands {
             mineinabyss {
+                permission = "mineinabyss.enchant"
                 "enchant"(desc = "Apply a custom enchantment to an item") {
-                    permission = "mineinabyss.enchant"
                     "book"{
                         "add"{
                             val options = CustomEnchants.enchantmentList.map { it.key.toString() }
