@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.AnvilInventory
 import org.bukkit.inventory.GrindstoneInventory
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
 class EnchantmentListener : Listener {
@@ -27,11 +28,19 @@ class EnchantmentListener : Listener {
                 anvil.secondItem?.enchantments
             else return
 
-        if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
+        val firstItemEnchants =
+            if (anvil.secondItem?.type == Material.ENCHANTED_BOOK)
+                (anvil.secondItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
+            else if (anvil.secondItem?.type != Material.ENCHANTED_BOOK && anvil.secondItem != null)
+                anvil.secondItem?.enchantments
+            else return
 
         // Up dumb limit of vanilla
         anvil.maximumRepairCost = 100
-        anvil.repairCost = enchanted?.let { calculateItemEnchantCost(it) }!!
+        anvil.repairCost = enchanted?.let { calculateItemEnchantCost(it) }!! + firstItemEnchants?.let { calculateItemEnchantCost(it) }!!
+
+        if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
+
 
         enchanted.forEach {
             val target = getItemTarget(anvil.firstItem)
@@ -88,31 +97,30 @@ class EnchantmentListener : Listener {
         if (inventory.type != InventoryType.GRINDSTONE) return
         if (slot != 2) return
         val grindstone = inventory as GrindstoneInventory
-        val enchant =
-        if (grindstone.upperItem != null) {
-            grindstone.result?.type = grindstone.upperItem?.type!!
-            grindstone.result?.itemMeta = grindstone.upperItem?.itemMeta
 
-            if (grindstone.upperItem?.type == Material.ENCHANTED_BOOK)
-                    (grindstone.upperItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else
-                grindstone.upperItem?.enchantments
+        if (grindstone.isEmpty) return
+
+        if (grindstone.contains(Material.ENCHANTED_BOOK)) {
+            grindstone.result = ItemStack(Material.BOOK)
+            return
         }
-        else if (grindstone.lowerItem != null) {
-            if (grindstone.upperItem == null) {
-                grindstone.result?.type = grindstone.lowerItem?.type!!
+
+        when (grindstone.upperItem != null) {
+             true -> {
+                 grindstone.result = grindstone.upperItem
+                 grindstone.result?.itemMeta = grindstone.upperItem?.itemMeta
+             }
+            false -> {
+                grindstone.result = grindstone.lowerItem
                 grindstone.result?.itemMeta = grindstone.lowerItem?.itemMeta
             }
-            if (grindstone.lowerItem?.type == Material.ENCHANTED_BOOK)
-                    (grindstone.lowerItem?.itemMeta as EnchantmentStorageMeta).storedEnchants
-            else
-                grindstone.lowerItem?.enchantments
         }
-        else return
 
-        enchant?.forEach {
+        grindstone.result?.enchantments?.forEach {
+
             if (CustomEnchants.enchantmentList.contains(it.key))
                 grindstone.result?.removeCustomEnchant(it.key as EnchantmentWrapper)
+
             else if (!CustomEnchants.enchantmentList.contains(it.key))
                 grindstone.result?.removeEnchantment(it.key)
         }
