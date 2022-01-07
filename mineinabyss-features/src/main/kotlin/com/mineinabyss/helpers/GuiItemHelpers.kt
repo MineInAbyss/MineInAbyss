@@ -1,5 +1,8 @@
 package com.mineinabyss.helpers
 
+import androidx.compose.runtime.Composable
+import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
 import de.erethon.headlib.HeadLib
 import org.bukkit.Material
@@ -13,6 +16,11 @@ object TitleItem {
         setLore(lore.toList())
         setCustomModelData(1)
     }
+}
+
+@Composable
+fun Text(name: String, vararg lore: String, modifier: Modifier = Modifier) {
+    Item(TitleItem.of(name, *lore), modifier)
 }
 
 fun OfflinePlayer?.head(title: String, vararg lore: String): ItemStack {

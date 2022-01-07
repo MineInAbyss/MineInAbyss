@@ -401,7 +401,6 @@ fun OfflinePlayer.getGuildLevel(): Int? {
 }
 
 fun OfflinePlayer.getGuildMemberCount(): Int {
-    var memberCount = 0
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
@@ -413,11 +412,7 @@ fun OfflinePlayer.getGuildMemberCount(): Int {
             Bukkit.getOfflinePlayer(row[Players.playerUUID])
         }
 
-        members.forEach { member ->
-            memberCount++
-        }
-
-        return@transaction memberCount
+        return@transaction members.count()
     }
 }
 

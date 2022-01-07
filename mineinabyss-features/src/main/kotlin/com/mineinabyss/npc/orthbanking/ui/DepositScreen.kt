@@ -3,9 +3,8 @@ package com.mineinabyss.npc.orthbanking.ui
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
-import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.messaging.broadcast
@@ -19,30 +18,36 @@ fun DepositScreen(player: Player) {
     var amount = 1
 
     Button(
-        TitleItem.of("$GOLD${BOLD}Increase Deposit"),
-        Modifier.size(3, 2).at(3, 0).clickable {
+        Modifier.at(3, 0),
+        onClick = {
             amount += 1
             if (amount > 64) amount = 64
             broadcast(amount)
         }
-    )
+    ) {
+        Text("$GOLD${BOLD}Increase Deposit", modifier = Modifier.size(3, 2))
+    }
 
     Button(
-        TitleItem.of("$GOLD${BOLD}Confirm Deposit"),
-        Modifier.at(4, 2).clickable {
+        Modifier.at(4, 2),
+        onClick = {
             broadcast(amount)
             player.depositCoins(amount)
             player.updateBalance()
             player.closeInventory()
         }
-    )
+    ) {
+        Text("$GOLD${BOLD}Confirm Deposit")
+    }
 
     Button(
-        TitleItem.of("$GOLD${BOLD}Decrease Deposit"),
-        Modifier.size(3, 1).at(3, 3).clickable {
+        Modifier.at(3, 3),
+        onClick = {
             amount -= 1
             if (amount < 1) amount = 1
             broadcast(amount)
         }
-    )
+    ) {
+        Text("$GOLD${BOLD}Decrease Deposit", modifier = Modifier.size(3, 1))
+    }
 }

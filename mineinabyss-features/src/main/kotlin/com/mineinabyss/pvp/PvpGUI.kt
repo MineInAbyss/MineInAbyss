@@ -88,8 +88,8 @@ object ToggleIcon {
         setCustomModelData(2)
         setDisplayName("$BLUE${BOLD}Toggle PvP Prompt")
         lore = listOf(
-            "${RED}Disable ${DARK_AQUA}this prompt from showing " +
-                    "when entering the Abyss. It can be re-opened at any time in Orth."
+            "${RED}Disable ${DARK_AQUA}this prompt from showing",
+            "when entering the Abyss. It can be re-opened at any time in Orth."
         )
     }
 
@@ -97,8 +97,8 @@ object ToggleIcon {
         setCustomModelData(3)
         setDisplayName("$BLUE${BOLD}Toggle PvP Prompt")
         lore = listOf(
-            "${GREEN}Enable ${DARK_AQUA}this prompt from" +
-                    " showing when entering the Abyss. It can be re-opened at any time in Orth."
+            "${GREEN}Enable ${DARK_AQUA}this prompt from",
+            "showing when entering the Abyss. It can be re-opened at any time in Orth."
         )
     }
 }

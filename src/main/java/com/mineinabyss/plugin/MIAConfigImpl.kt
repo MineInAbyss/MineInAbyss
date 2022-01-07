@@ -37,9 +37,10 @@ class MIAConfigImpl : IdofrontConfig<MIAConfig.Data>(
         "Enabling features" {
             data.features.forEach {
                 it.apply {
-                    "Enabled ${it::class.simpleName}" {
+                    val featureName = it::class.simpleName
+                    attempt(success = "Enabled $featureName", fail = "Failed to enable $featureName") {
                         mineInAbyss.enableFeature()
-                    }
+                    }.onFailure { it.printStackTrace() }
                 }
             }
         }

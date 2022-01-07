@@ -5,7 +5,6 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.data.GuildRanks
@@ -19,6 +18,7 @@ import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
@@ -35,7 +35,6 @@ class GuildListener : Listener {
     fun PlayerInteractEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
         if (!entity.has<GuildMaster>()) return
-        broadcast("t")
         guiy { GuildMainMenu(player) }
 
 //        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
@@ -79,10 +78,16 @@ class GuildContainerSystem : GroupSystem() {
 
 class GuildChatSystem : Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun AsyncPlayerChatEvent.overrideVentureChat() {
+        if (player.playerData.guildChatStatus) isCancelled = true
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     fun AsyncPlayerChatEvent.toggleGuildChat() {
 
         if (!player.playerData.guildChatStatus) return
+        isCancelled = false
 
         recipients.clear()
         recipients.add(player)

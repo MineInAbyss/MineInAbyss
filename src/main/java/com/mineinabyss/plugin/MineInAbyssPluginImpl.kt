@@ -29,6 +29,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     }
 
     override fun onEnable() {
+        saveDefaultConfig()
+
         gearyAddon {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
 
@@ -51,9 +53,9 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                         command: org.bukkit.command.Command,
                         alias: String,
                         args: Array<String>
-                    ): MutableList<String>? {
+                    ): List<String> {
                         val tab = TabCompletion(sender, command, alias, args)
-                        return tabCompletions.firstNotNullOfOrNull { it(tab) }?.toMutableList()
+                        return tabCompletions.mapNotNull { it(tab) }.flatten()
                     }
                 }
             })
