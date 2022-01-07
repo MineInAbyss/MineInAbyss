@@ -5,9 +5,8 @@ import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
-import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.core.AbyssContext
@@ -61,11 +60,10 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
 
 @Composable
 fun GuildUIScope.LeaveGuildButton(player: Player, modifier: Modifier = Modifier) {
-    Button(
-        TitleItem.of("$RED${ITALIC}Leave Guild"),
-        modifier.clickable {
-            player.leaveGuild()
-            nav.reset()
-        }
-    )
+    Button(onClick = {
+        player.leaveGuild()
+        nav.reset()
+    }) {
+        Text("$RED${ITALIC}Leave Guild", modifier = modifier)
+    }
 }
