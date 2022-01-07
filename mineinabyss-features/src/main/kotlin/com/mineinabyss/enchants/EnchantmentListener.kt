@@ -1,6 +1,5 @@
 package com.mineinabyss.enchants
 
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
 import org.bukkit.enchantments.EnchantmentTarget
@@ -37,7 +36,7 @@ class EnchantmentListener : Listener {
             else return
 
         // Up dumb limit of vanilla
-        anvil.maximumRepairCost = 100
+        anvil.maximumRepairCost = 50
         anvil.repairCost = calculateItemEnchantCost(enchanted!!) + calculateItemEnchantCost(firstItemEnchants!!)
 
         if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
@@ -50,11 +49,6 @@ class EnchantmentListener : Listener {
             var newLevel: Int
 
             if (it.key.itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK && it.key.itemTarget != EnchantmentTarget.ALL) {
-                getItemTarget(anvil.firstItem).broadcastVal("t: ")
-                it.key.itemTarget.broadcastVal("key target: ")
-                target.broadcastVal("target: ")
-                slot.broadcastVal("slot: ")
-                anvil.firstItem?.type.broadcastVal("type: ")
                 player.error("This book cannot be added to this item")
                 anvil.maximumRepairCost = 0
                 isCancelled = true
