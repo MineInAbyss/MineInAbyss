@@ -31,7 +31,7 @@ class EnchantmentListener : Listener {
 
         // Up dumb limit of vanilla
         anvil.maximumRepairCost = 100
-        anvil.repairCost = calculateItemEnchantCost(enchanted!!)
+        anvil.repairCost = enchanted?.let { calculateItemEnchantCost(it) }!!
 
         enchanted.forEach {
             val target = getItemTarget(anvil.firstItem)

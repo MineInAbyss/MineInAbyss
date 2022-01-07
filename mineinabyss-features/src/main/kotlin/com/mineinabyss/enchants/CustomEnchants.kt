@@ -126,15 +126,21 @@ fun calculateItemEnchantCost(enchants: MutableMap<Enchantment, Int>): Int {
     enchants.forEach {
         val range: IntRange = it.key.startLevel..it.key.maxLevel
         val rarity = it.key.rarity
-        val defaultCost =
-            if (range.last.mod(2) == 0) 2
+        var defaultCost: Double =
+            (if (range.last.mod(2) == 0) 2
             else if (range.last == 1) 2
             else if (range.last.mod(3) == 0) 2
             else if (range.last.mod(5) == 0) 1
-            else 2
-        cost = defaultCost * it.value
-        return@forEach
-    }
+            else 2).toDouble()
 
+        when {
+            rarity == EnchantmentRarity.COMMON -> defaultCost *= 1
+            rarity == EnchantmentRarity.UNCOMMON -> defaultCost *= 1.25
+            rarity == EnchantmentRarity.RARE -> defaultCost *= 1.5
+            rarity == EnchantmentRarity.VERY_RARE -> defaultCost *= 2
+            else -> defaultCost *= 1
+        }
+        cost = (defaultCost * it.value).toInt()
+    }
     return cost
 }
