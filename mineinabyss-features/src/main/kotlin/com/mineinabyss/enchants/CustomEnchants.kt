@@ -59,7 +59,7 @@ fun ItemStack.addCustomEnchant(enchantment: EnchantmentWrapper, lvl: Int, extraL
 fun ItemStack.updateEnchantmentLore(enchantment: EnchantmentWrapper, lvl: Int, extraLore: String = "", removeLore: Boolean = false) {
     val lore: MutableList<Component> = lore() ?: mutableListOf()
     val enchantName = Component.text(enchantment.name)
-    val enchantLevel = Component.text(convertEnchantmentLevel(lvl))
+    val enchantLevel = if (enchantment.maxLevel > enchantment.startLevel)Component.text(convertEnchantmentLevel(lvl)) else Component.empty()
     val moreLore = Component.text(extraLore)
     val loreComponent = enchantName.append(Component.space()).append(enchantLevel).append(Component.space()).append(moreLore).color(enchantment.loreColor).decoration(TextDecoration.ITALIC, false)
 
@@ -115,6 +115,15 @@ fun convertEnchantmentLevel(level: Int) : String {
         3 -> "III"
         4 -> "IV"
         5 -> "V"
+        6 -> "VI"
+        7 -> "VII"
+        8 -> "VIII"
+        9 -> "IX"
+        10 -> "X"
+        20 -> "XX"
+        50 -> "L"
+        100 -> "C"
+
         else -> ""
     }
 

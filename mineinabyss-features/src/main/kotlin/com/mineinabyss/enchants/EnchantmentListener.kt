@@ -48,7 +48,6 @@ class EnchantmentListener : Listener {
             }
 
             val first = anvil.firstItem
-
             val itemLevel =
                 if (first?.type != Material.ENCHANTED_BOOK && first?.containsEnchantment(enchant) == true) {
                     first.getEnchantmentLevel(enchant)
@@ -67,24 +66,19 @@ class EnchantmentListener : Listener {
 
             if (newLevel > enchant.maxLevel) newLevel = enchant.maxLevel
 
-
             if (anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
-                //anvil.firstItem?.removeCustomEnchant(enchant as EnchantmentWrapper)
                 anvil.result = anvil.firstItem
                 anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
                 anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
 
             } else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
-                //(first?.itemMeta as EnchantmentStorageMeta).removeStoredEnchant(enchant)
                 anvil.result = anvil.firstItem
                 val bookMeta = (anvil.result?.itemMeta as EnchantmentStorageMeta)
 
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
-                anvil.result?.itemMeta = bookMeta
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
-                anvil.result?.itemMeta = bookMeta
                 bookMeta.addStoredEnchant(enchant, newLevel, false)
                 anvil.result?.itemMeta = bookMeta
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
             }
         }
     }
