@@ -20,6 +20,7 @@ class EnchantmentWrapper(
     private val maxLvl: Int,
     private val allowedItems: EnchantmentTarget,
     private val conflictingEnchants: List<Enchantment> = listOf(),
+    private val rarity: EnchantmentRarity = EnchantmentRarity.COMMON,
     val loreColor: TextColor = color(150, 10, 10)
 ) : CustomEnchantment(namespace) {
     override fun canEnchantItem(item: ItemStack): Boolean {
@@ -60,15 +61,15 @@ class EnchantmentWrapper(
         return conflictingEnchants.contains(other)
     }
 
+    override fun getRarity(): EnchantmentRarity {
+        return rarity
+    }
+
     override fun isTradeable(): Boolean {
         TODO("Not yet implemented")
     }
 
     override fun isDiscoverable(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun getRarity(): EnchantmentRarity {
         TODO("Not yet implemented")
     }
 

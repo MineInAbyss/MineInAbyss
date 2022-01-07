@@ -2,6 +2,7 @@ package com.mineinabyss.enchants
 
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
+import org.bukkit.enchantments.EnchantmentTarget
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -28,13 +29,17 @@ class EnchantmentListener : Listener {
 
         if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
 
-        enchanted?.forEach {
+        // Up dumb limit of vanilla
+        anvil.maximumRepairCost = 100
+        anvil.repairCost = calculateItemEnchantCost(enchanted!!)
+
+        enchanted.forEach {
             val target = getItemTarget(anvil.firstItem)
-            val enchant = it.component1()
-            val enchantLevel = it.component2()
+            val enchant = it.key
+            val enchantLevel = it.value
             var newLevel: Int
 
-            if (it.component1().itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
+            if (it.key.itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK && target != EnchantmentTarget.ALL) {
                 player.error("This book cannot be added to this item")
                 anvil.maximumRepairCost = 0
                 isCancelled = true
@@ -45,13 +50,13 @@ class EnchantmentListener : Listener {
             val first = anvil.firstItem
 
             val itemLevel =
-            if (first?.type != Material.ENCHANTED_BOOK && first?.containsEnchantment(enchant) == true) {
-                first.getEnchantmentLevel(enchant)
-            }
-            else if (first?.type == Material.ENCHANTED_BOOK && (first.itemMeta as EnchantmentStorageMeta).hasStoredEnchant(enchant)) {
-                (first.itemMeta as EnchantmentStorageMeta).storedEnchants[enchant]!!
-            }
-            else 0
+                if (first?.type != Material.ENCHANTED_BOOK && first?.containsEnchantment(enchant) == true) {
+                    first.getEnchantmentLevel(enchant)
+                }
+                else if (first?.type == Material.ENCHANTED_BOOK && (first.itemMeta as EnchantmentStorageMeta).hasStoredEnchant(enchant)) {
+                    (first.itemMeta as EnchantmentStorageMeta).storedEnchants[enchant]!!
+                }
+                else 0
 
             newLevel = when {
                 itemLevel == enchantLevel -> itemLevel + 1
@@ -69,17 +74,17 @@ class EnchantmentListener : Listener {
                 anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
                 anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
 
-            }
-
-            else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
-                (first?.itemMeta as EnchantmentStorageMeta).removeStoredEnchant(enchant)
+            } else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
+                //(first?.itemMeta as EnchantmentStorageMeta).removeStoredEnchant(enchant)
                 anvil.result = anvil.firstItem
                 val bookMeta = (anvil.result?.itemMeta as EnchantmentStorageMeta)
 
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
+                anvil.result?.itemMeta = bookMeta
+                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+                anvil.result?.itemMeta = bookMeta
                 bookMeta.addStoredEnchant(enchant, newLevel, false)
                 anvil.result?.itemMeta = bookMeta
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
             }
         }
     }
@@ -112,10 +117,10 @@ class EnchantmentListener : Listener {
         else return
 
         enchant?.forEach {
-            if (CustomEnchants.enchantmentList.contains(it.component1()))
-                grindstone.result?.removeCustomEnchant(it.component1() as EnchantmentWrapper)
-            else if (!CustomEnchants.enchantmentList.contains(it.component1()))
-                grindstone.result?.removeEnchantment(it.component1())
+            if (CustomEnchants.enchantmentList.contains(it.key))
+                grindstone.result?.removeCustomEnchant(it.key as EnchantmentWrapper)
+            else if (!CustomEnchants.enchantmentList.contains(it.key))
+                grindstone.result?.removeEnchantment(it.key)
         }
     }
 }

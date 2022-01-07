@@ -1,6 +1,7 @@
 package com.mineinabyss.enchants
 
 import com.mineinabyss.idofront.messaging.logInfo
+import io.papermc.paper.enchantments.EnchantmentRarity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
@@ -16,11 +17,11 @@ import java.lang.reflect.Field
 @SerialName("mineinabyss:customenchant")
 object CustomEnchants {
     val enchantmentList = mutableListOf<Enchantment>()
-    val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, listOf(Enchantment.BINDING_CURSE, Enchantment.VANISHING_CURSE), color(150, 10, 10))
-    val FROST_ASPECT = EnchantmentWrapper("frostaspect", "Frost Aspect", 2, EnchantmentTarget.WEAPON, listOf(Enchantment.FIRE_ASPECT), color(0, 100, 220))
-    val BIRD_SWATTER = EnchantmentWrapper("birdswatter", "Bird Swatter", 5, EnchantmentTarget.WEAPON, listOf(), color(0,220,60))
-    val JAW_BREAKER = EnchantmentWrapper("jawbreaker", "Jaw Breaker", 3, EnchantmentTarget.WEAPON, listOf(BIRD_SWATTER), color(150,20,150))
-    val BANE_OF_KUONGATARI = EnchantmentWrapper("baneofkuongatari", "Bane of Kuongatari", 1, EnchantmentTarget.WEAPON, listOf(), color(0,200,80))
+    val SOULBOUND = EnchantmentWrapper("soulbound", "Soulbound", 1, EnchantmentTarget.ALL, listOf(Enchantment.BINDING_CURSE, Enchantment.VANISHING_CURSE), EnchantmentRarity.RARE, color(150, 10, 10))
+    val FROST_ASPECT = EnchantmentWrapper("frostaspect", "Frost Aspect", 2, EnchantmentTarget.WEAPON, listOf(Enchantment.FIRE_ASPECT), EnchantmentRarity.COMMON, color(0, 100, 220))
+    val BIRD_SWATTER = EnchantmentWrapper("birdswatter", "Bird Swatter", 5, EnchantmentTarget.WEAPON, listOf(), EnchantmentRarity.COMMON, color(0,220,60))
+    val JAW_BREAKER = EnchantmentWrapper("jawbreaker", "Jaw Breaker", 3, EnchantmentTarget.WEAPON, listOf(BIRD_SWATTER), EnchantmentRarity.COMMON, color(150,20,150))
+    val BANE_OF_KUONGATARI = EnchantmentWrapper("baneofkuongatari", "Bane of Kuongatari", 1, EnchantmentTarget.WEAPON, listOf(), EnchantmentRarity.COMMON, color(0,200,80))
 
 
     fun register() {
@@ -87,6 +88,7 @@ fun ItemStack.removeCustomEnchant(enchantment: EnchantmentWrapper) {
 fun getItemTarget(itemStack: ItemStack?): EnchantmentTarget? {
     if (itemStack == null) return null
     when {
+        EnchantmentTarget.ALL.includes(itemStack) -> return EnchantmentTarget.ALL
         EnchantmentTarget.ARMOR.includes(itemStack) -> return EnchantmentTarget.ARMOR
         EnchantmentTarget.ARMOR_FEET.includes(itemStack) -> return EnchantmentTarget.ARMOR_FEET
         EnchantmentTarget.ARMOR_LEGS.includes(itemStack) -> return EnchantmentTarget.ARMOR_LEGS
@@ -117,4 +119,22 @@ fun convertEnchantmentLevel(level: Int) : String {
     }
 
     return newLevel
+}
+
+fun calculateItemEnchantCost(enchants: MutableMap<Enchantment, Int>): Int {
+    var cost = 0
+    enchants.forEach {
+        val range: IntRange = it.key.startLevel..it.key.maxLevel
+        val rarity = it.key.rarity
+        val defaultCost =
+            if (range.last.mod(2) == 0) 2
+            else if (range.last == 1) 2
+            else if (range.last.mod(3) == 0) 2
+            else if (range.last.mod(5) == 0) 1
+            else 2
+        cost = defaultCost * it.value
+        return@forEach
+    }
+
+    return cost
 }

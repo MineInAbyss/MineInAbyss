@@ -44,6 +44,20 @@ class EnchantsFeature : AbyssFeature {
             mineinabyss {
                 "enchant"(desc = "Apply a custom enchantment to an item") {
                     "book"{
+                        "rarity"{
+                            playerAction {
+                                val item = player.inventory.itemInMainHand
+                                if (item.type == Material.BOOK) player.inventory.setItemInMainHand(ItemStack(Material.ENCHANTED_BOOK))
+                                if (item.type != Material.ENCHANTED_BOOK) return@playerAction
+                                val book = item.itemMeta as EnchantmentStorageMeta
+                                if (item.type != Material.ENCHANTED_BOOK) {
+                                    player.error("Get a book!")
+                                    return@playerAction
+                                }
+
+                                item.rarity.broadcastVal()
+                            }
+                        }
                         "add"{
                             val options = CustomEnchants.enchantmentList.map { it.key.toString() }
                             val availableEnchantment by optionArg(options) {
