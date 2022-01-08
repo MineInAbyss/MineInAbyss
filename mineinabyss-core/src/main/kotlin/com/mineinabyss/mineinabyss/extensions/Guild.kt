@@ -1,8 +1,10 @@
 package com.mineinabyss.mineinabyss.extensions
 
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.data.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -12,6 +14,30 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Player.createGuild(guildName: String) {
+    val config = MIAConfig.data.guilds
+    val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
+
+    newGuildName.broadcastVal()
+    if (newGuildName.length > config.maxLength) {
+        player?.error("Your guild name was longer than the maximum allowed length.")
+        player?.error("Please make it shorter than ${config.maxLength} characters.")
+        return
+    }
+
+    if (!newGuildName.contains("^[a-zA-Z]*$".toRegex())) {
+        player?.error("Your guild name must be alpha-numerical.")
+        player?.error("Numbers are also blocked.")
+        return
+    }
+
+    config.bannedWords.forEach {
+        if (newGuildName.lowercase().contains(it.lowercase(), true)) {
+            player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}$it.")
+            player?.error("Please choose another name :)")
+            return
+        }
+    }
+
     transaction(AbyssContext.db) {
 
         val guild = Guilds.select {

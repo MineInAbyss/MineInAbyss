@@ -48,3 +48,8 @@ layers:
     blockBlacklist:
       - LADDER
 hubSectionName: city
+guilds:
+  maxLength: 20
+  bannedWords:
+    - example
+    - example2
