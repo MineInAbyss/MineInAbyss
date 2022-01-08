@@ -13,6 +13,10 @@ import org.bukkit.inventory.GrindstoneInventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
+//TODO Make vanilla handle pure vanilla books
+//TODO Consider making custom enchantment target, or better the current system. Example swords are weapons but rn arent accepting BREAKABLE as they would normally
+//TODO Figure out Conflicting Enchantments
+
 class EnchantmentListener : Listener {
 
     @EventHandler
