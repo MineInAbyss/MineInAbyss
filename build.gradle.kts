@@ -18,6 +18,7 @@ allprojects {
     apply(plugin = "java")
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://jitpack.io")
@@ -46,6 +47,7 @@ allprojects {
         compileOnly("com.mineinabyss:looty:$lootyVersion")
         compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
+        compileOnly("dev.geco:core:1.0.5")
 
         implementation("com.mineinabyss:idofront:$idofrontVersion")
     }

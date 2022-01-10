@@ -4,13 +4,18 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
+import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
+import dev.geco.gsit.api.GSitAPI
+import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
@@ -52,6 +57,21 @@ class CurseAscensionListener : Listener {
         val (player, from, to) = this
         if (this.cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || this.cause == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
             handleCurse(player, from, to)
+    }
+
+    @EventHandler
+    fun PlayerGetUpSitEvent.handleCurseOnSitting() {
+        if (!AbyssContext.isGSitLoaded) return
+        handleCurse(player, seat.location.toBlockLocation(), player.location)
+        broadcast(player.playerData.curseAccrued)
+    }
+
+    // Cancels pistons if a player is riding it via a GSit Seat
+    @EventHandler
+    fun BlockPistonExtendEvent.seatMovedByPiston() {
+        if (!AbyssContext.isGSitLoaded) return
+        if (GSitAPI.getSeats(blocks).isEmpty()) return
+        else isCancelled = true
     }
 
     private fun handleCurse(player: Player, from: Location, to: Location) {
