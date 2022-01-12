@@ -130,7 +130,9 @@ class EnchantsFeature : AbyssFeature {
                                 val levelRange =
                                     (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
 
-                                if ((getItemTarget(item) != parsedEnchant.itemTarget) && !player.hasPermission("mineinabyss.enchant.allowunsafe")) {
+                                val target = getItemTarget(item)
+
+                                if ((!getEnchantmentTarget(parsedEnchant).contains(target) || (parsedEnchant as EnchantmentWrapper).allowedItems.contains(target)) && !player.hasPermission("mineinabyss.enchant.allowunsafe")) {
                                     player.error("This enchantment cannot be applied to this weapon.")
                                     player.error("To do so, you need the permission: ${ChatColor.ITALIC}mineinabyss.enchant.allowunsafe")
                                     return@playerAction

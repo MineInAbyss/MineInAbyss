@@ -1,8 +1,9 @@
 package com.mineinabyss.enchants
 
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
-import org.bukkit.enchantments.EnchantmentTarget
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -14,8 +15,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
 //TODO Make vanilla handle pure vanilla books
-//TODO Consider making custom enchantment target, or better the current system. Example swords are weapons but rn arent accepting BREAKABLE as they would normally
-//TODO Figure out Conflicting Enchantments
 
 class EnchantmentListener : Listener {
 
@@ -41,10 +40,9 @@ class EnchantmentListener : Listener {
 
         // Up dumb limit of vanilla
         anvil.maximumRepairCost = 50
-        anvil.repairCost = calculateItemEnchantCost(enchanted!!) + calculateItemEnchantCost(firstItemEnchants!!)
+        anvil.repairCost = calculateItemEnchantCost(enchanted as MutableMap<Enchantment, Int>) + calculateItemEnchantCost(firstItemEnchants as MutableMap<Enchantment, Int>)
 
         if (anvil.firstItem?.type != anvil.secondItem?.type && anvil.secondItem?.type != Material.ENCHANTED_BOOK) return
-
 
         enchanted.forEach {
             val target = getItemTarget(anvil.firstItem)
@@ -52,13 +50,25 @@ class EnchantmentListener : Listener {
             val enchantLevel = it.value
             var newLevel: Int
 
-            if (it.key.itemTarget != target && slot == 2 && anvil.firstItem?.type != Material.ENCHANTED_BOOK && it.key.itemTarget != EnchantmentTarget.ALL) {
+            firstItemEnchants.forEach firstItem@{ first ->
+                if ( first.key.conflictsWith(enchant) || enchant.conflictsWith(first.key)) {
+                    if (anvil.result?.type != Material.ENCHANTED_BOOK) anvil.result?.enchantments?.remove(enchant)
+                    else (anvil.result?.itemMeta as EnchantmentStorageMeta).removeStoredEnchant(enchant)
+                    return@forEach
+                }
+            }
+
+            if ((!getEnchantmentTarget(enchant).contains(target) && !(enchant as EnchantmentWrapper).allowedItems.contains(target))
+                && (slot == 2) && (anvil.firstItem?.type != Material.ENCHANTED_BOOK))
+            {
                 player.error("This book cannot be added to this item")
+                broadcast(enchant)
                 anvil.maximumRepairCost = 0
                 isCancelled = true
                 player.closeInventory()
                 return@forEach
             }
+
 
             val first = anvil.firstItem
             val itemLevel =
@@ -82,10 +92,12 @@ class EnchantmentListener : Listener {
             if (anvil.firstItem?.type != Material.ENCHANTED_BOOK) {
                 anvil.result = anvil.firstItem
                 anvil.result?.displayName()
-                anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+                if (CustomEnchants.enchantmentList.contains(enchant)) {
+                    anvil.result?.addCustomEnchant(enchant as EnchantmentWrapper, newLevel)
+                    anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
+                    anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
+                    anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+                } else anvil.result?.addEnchantment(enchant, newLevel)
 
             } else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
                 anvil.result = anvil.firstItem
@@ -93,8 +105,10 @@ class EnchantmentListener : Listener {
 
                 bookMeta.addStoredEnchant(enchant, newLevel, false)
                 anvil.result?.itemMeta = bookMeta
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
-                anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+                if (CustomEnchants.enchantmentList.contains(enchant)) {
+                    anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
+                    anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
+                }
             }
         }
     }
