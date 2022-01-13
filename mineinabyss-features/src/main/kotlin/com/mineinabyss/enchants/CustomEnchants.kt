@@ -113,7 +113,7 @@ fun getEnchantmentTarget(enchantment: Enchantment) : List<CustomEnchantTargets> 
     // TODO Make it so enchantment can identify custom target
     val targetList = mutableListOf<CustomEnchantTargets>()
 
-    if (CustomEnchants.enchantmentList.contains(enchantment)) return emptyList()
+    if (CustomEnchants.enchantmentList.contains(enchantment)) return targetList
     when (enchantment.itemTarget) {
         EnchantmentTarget.WEAPON -> targetList += CustomEnchantTargets.SWORD
         EnchantmentTarget.ARMOR -> targetList += CustomEnchantTargets.ARMOR
@@ -128,6 +128,7 @@ fun getEnchantmentTarget(enchantment: Enchantment) : List<CustomEnchantTargets> 
         EnchantmentTarget.FISHING_ROD -> targetList += CustomEnchantTargets.FISHING_ROD
         EnchantmentTarget.TOOL -> targetList += CustomEnchantTargets.TOOL
         EnchantmentTarget.VANISHABLE -> targetList += CustomEnchantTargets.VANISHABLE
+        EnchantmentTarget.WEARABLE -> targetList += CustomEnchantTargets.WEARABLE
         EnchantmentTarget.ALL -> targetList += CustomEnchantTargets.ALL
         else -> return targetList
     }

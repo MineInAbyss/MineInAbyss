@@ -97,7 +97,13 @@ class EnchantmentListener : Listener {
                     anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, "", true)
                     anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, itemLevel, removeLore = true)
                     anvil.result?.updateEnchantmentLore(enchant as EnchantmentWrapper, newLevel)
-                } else anvil.result?.addEnchantment(enchant, newLevel)
+                }
+                //else if (getEnchantmentTarget(enchant).contains(target)) anvil.result?.addUnsafeEnchantment(enchant, newLevel)
+                else try {
+                    anvil.result?.addEnchantment(enchant, newLevel)
+                }catch (exception: IllegalArgumentException) {
+                    return
+                }
 
             } else if (anvil.firstItem?.type == Material.ENCHANTED_BOOK) {
                 anvil.result = anvil.firstItem

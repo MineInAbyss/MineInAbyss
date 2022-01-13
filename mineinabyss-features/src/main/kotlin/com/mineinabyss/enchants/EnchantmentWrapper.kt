@@ -226,53 +226,83 @@ enum class CustomEnchantTargets {
                     || item == Material.IRON_HELMET
                     || item == Material.GOLDEN_HELMET
                     || item == Material.TURTLE_HELMET
-                    || item == Material.NETHERITE_HELMET
+                    || item == Material.NETHERITE_HELMET ||
+                    item == Material.STONE_HOE
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on tools
+     */
     TOOL {
         override fun includes(item: Material): Boolean {
-            return SWORD.includes(item)
-                    || AXE.includes(item)
+            return  AXE.includes(item)
                     || SHOVEL.includes(item)
                     || HOE.includes(item)
                     || PICKAXE.includes(item)
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on weapons
+     */
+    WEAPON {
+        override fun includes(item: Material): Boolean {
+            return  AXE.includes(item) || SWORD.includes(item)
+        }
+    },
+
+    /**
+     * Allows the Enchantment to be placed on bows
+     */
     BOW {
         override fun includes(item: Material): Boolean {
             return item == Material.BOW
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on crossbows
+     */
     CROSSBOW {
         override fun includes(item: Material): Boolean {
             return item == Material.CROSSBOW
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on fishing rods
+     */
     FISHING_ROD {
         override fun includes(item: Material): Boolean {
             return item == Material.FISHING_ROD
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on items with durability
+     */
     BREAKABLE {
         override fun includes(item: Material): Boolean {
             return item.maxDurability > 0 && item.maxStackSize == 1
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on tridents
+     */
     TRIDENT {
         override fun includes(item: Material): Boolean {
             return item == Material.TRIDENT
         }
     },
 
+    /**
+     * Allows the Enchantment to be placed on wearables
+     */
     WEARABLE {
         override fun includes(item: Material): Boolean {
-            return (EnchantmentTarget.ARMOR.includes(item) ||
+            return EnchantmentTarget.ARMOR.includes(item) ||
                     item == Material.ELYTRA ||
                     item == Material.CARVED_PUMPKIN ||
                     item == Material.JACK_O_LANTERN ||
@@ -281,7 +311,8 @@ enum class CustomEnchantTargets {
                     item == Material.ZOMBIE_HEAD ||
                     item == Material.PLAYER_HEAD ||
                     item == Material.CREEPER_HEAD ||
-                    item == Material.DRAGON_HEAD)
+                    item == Material.DRAGON_HEAD ||
+                    item == Material.STONE_HOE
         }
     },
 
@@ -308,7 +339,7 @@ enum class CustomEnchantTargets {
      * @param item The item to check
      * @return True if the target includes the item
      */
-    fun includes(item: ItemStack): Boolean {
+    open fun includes(item: ItemStack): Boolean {
         return includes(item.type)
     }
 
