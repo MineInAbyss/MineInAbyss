@@ -1,7 +1,6 @@
 package com.mineinabyss.anticheese
 
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import org.bukkit.ChatColor
@@ -39,11 +38,13 @@ class AntiCheeseListener: Listener {
             }
         }
     }
+}
+
+class GSitListener : Listener {
 
     // Cancels pistons if a player is riding it via a GSit Seat
     @EventHandler
     fun BlockPistonExtendEvent.seatMovedByPiston() {
-        if (!AbyssContext.isGSitLoaded) return
         if (GSitAPI.getSeats(blocks).isEmpty()) return
         else isCancelled = true
     }
