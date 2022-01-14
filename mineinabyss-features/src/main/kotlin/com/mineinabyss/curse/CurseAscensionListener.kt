@@ -4,18 +4,15 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Location
-import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
@@ -57,21 +54,6 @@ class CurseAscensionListener : Listener {
         val (player, from, to) = this
         if (this.cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL || this.cause == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)
             handleCurse(player, from, to)
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    fun BlockPistonExtendEvent.handleCurseOnFlyingMachine() {
-        if (direction != BlockFace.UP) return
-        blocks.forEach {
-            val players = it.location.getNearbyPlayers(1.0, 1.0, 1.0)
-
-            players.forEach { player ->
-                val from = player.location
-                val to = player.location.apply { y += 1 }
-                handleCurse(player, from, to)
-                broadcast(player.playerData.curseAccrued)
-            }
-        }
     }
 
     @EventHandler
