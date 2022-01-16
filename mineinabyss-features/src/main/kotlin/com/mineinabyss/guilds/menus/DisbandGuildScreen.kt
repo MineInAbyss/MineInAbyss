@@ -1,6 +1,7 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.deleteGuild
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -9,7 +10,6 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.mineinabyss.extensions.deleteGuild
 import org.bukkit.ChatColor
 
 @Composable

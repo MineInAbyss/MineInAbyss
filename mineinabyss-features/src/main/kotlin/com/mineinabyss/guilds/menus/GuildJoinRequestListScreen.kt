@@ -2,6 +2,9 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mineinabyss.guilds.database.GuildJoinQueue
+import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
@@ -11,9 +14,6 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildJoinQueue
-import com.mineinabyss.mineinabyss.data.GuildJoinType
-import com.mineinabyss.mineinabyss.data.Players
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and

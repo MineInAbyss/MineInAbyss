@@ -2,6 +2,8 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mineinabyss.guilds.createGuild
+import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guilds.menus.GuildScreen.*
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.guiyPlugin
@@ -15,7 +17,6 @@ import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.extensions.*
 import de.erethon.headlib.HeadLib
 import net.wesjd.anvilgui.AnvilGUI

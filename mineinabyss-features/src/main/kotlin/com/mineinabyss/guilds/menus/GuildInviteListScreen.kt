@@ -1,6 +1,8 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.database.GuildJoinQueue
+import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
@@ -10,8 +12,6 @@ import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildJoinQueue
-import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildOwnerFromInvite

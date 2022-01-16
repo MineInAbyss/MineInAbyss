@@ -3,13 +3,13 @@ package com.mineinabyss.guilds
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.minecraft.access.toGearyOrNull
+import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.helpers.MessageQueue
+import com.mineinabyss.helpers.MessageQueue.content
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.mineinabyss.mineinabyss.data.GuildRanks
-import com.mineinabyss.mineinabyss.data.MessageQueue
-import com.mineinabyss.mineinabyss.data.MessageQueue.content
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.hasGuild

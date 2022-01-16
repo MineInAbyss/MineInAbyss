@@ -1,6 +1,8 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -11,8 +13,6 @@ import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildRanks
-import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.leaveGuild
 import org.bukkit.Bukkit
