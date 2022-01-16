@@ -18,7 +18,7 @@ class SoulBoundListener : Listener {
         player.inventory.contents.filterNotNull().forEach {
             val item = it.toGearyFromUUIDOrNull() ?: return
             item.get<Orthbound>() ?: return@forEach
-            item.setPersisting(Soulbound(player.uniqueId, player.name))
+            item.setPersisting(Soulbound(player.uniqueId))
             item.encodeComponentsTo(it)
         }
     }

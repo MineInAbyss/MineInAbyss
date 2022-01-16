@@ -30,7 +30,6 @@ import java.util.*
 
 class GuildListener : Listener {
     //TODO move this cooldown into geary commons
-    val clickedCooldown = mutableMapOf<UUID, Int>()
     @EventHandler
     fun PlayerInteractEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return

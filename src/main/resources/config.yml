@@ -11,19 +11,7 @@ x-particles-vomit: &vomit
 # Layer config uses DeeperWorld sections
 # effect names are each effect class' @SerialName
 features:
-  - !<anticheese> {}
-  - !<curse> {}
-  - !<descent> {}
-  - !<enchants> {}
-  - !<exp> {}
-  - !<gondolas> {}
-  - !<hub_storage> {}
-  - !<layers> {}
-  - !<pins> {}
-  - !<relics> {}
-  - !<guilds> {}
-  - !<orth_banking> {}
-  - !<adventure_pvp> {}
+  - !<all> {}
 layers:
   - name: Orth
     sub: City of the Great Pit

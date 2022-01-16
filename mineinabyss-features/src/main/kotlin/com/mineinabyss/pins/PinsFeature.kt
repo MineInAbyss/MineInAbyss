@@ -1,7 +1,7 @@
 package com.mineinabyss.pins
 
 import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.geary.ecs.prefab.PrefabKey
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
