@@ -1,8 +1,10 @@
 package com.mineinabyss.anticheese
 
+import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
+import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -47,5 +49,10 @@ class GSitListener : Listener {
     fun BlockPistonExtendEvent.seatMovedByPiston() {
         if (GSitAPI.getSeats(blocks).isEmpty()) return
         else isCancelled = true
+    }
+
+    @EventHandler
+    fun PlayerGetUpSitEvent.handleCurseOnSitting() {
+        handleCurse(player, seat.location.toBlockLocation(), player.location)
     }
 }
