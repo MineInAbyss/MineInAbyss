@@ -3,10 +3,11 @@ package com.mineinabyss.relics
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.ecs.accessors.EventScope
+import com.mineinabyss.geary.ecs.accessors.SourceScope
 import com.mineinabyss.geary.ecs.accessors.TargetScope
+import com.mineinabyss.geary.ecs.accessors.building.get
+import com.mineinabyss.geary.ecs.api.autoscan.Handler
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.ecs.api.systems.Handler
 import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
@@ -18,19 +19,21 @@ import kotlin.math.roundToInt
 
 @Serializable
 @SerialName("mineinabyss:show_depth")
-class ShowDepthEvent(
-    val depthMeter: DepthMeter
-)
+class ShowDepth()
 
-class ShowDepthSystem : GearyListener() {
+class ShowDepthListener : GearyListener() {
     private val TargetScope.player by get<Player>()
-    private val EventScope.depthMeter by get<ShowDepthEvent>().map { it.depthMeter }
+    private val SourceScope.depthMeter by get<DepthMeter>()
+
+    init {
+        event.has<ShowDepth>()
+    }
 
     @Handler
-    fun TargetScope.showDepth(event: EventScope) {
-        val sectionXOffset = event.depthMeter.sectionXOffset
-        val sectionYOffset = event.depthMeter.sectionYOffset
-        val abyssStartingHeightInOrth = event.depthMeter.abyssStartingHeightInOrth
+    fun TargetScope.showDepth(source: SourceScope) {
+        val sectionXOffset = source.depthMeter.sectionXOffset
+        val sectionYOffset = source.depthMeter.sectionYOffset
+        val abyssStartingHeightInOrth = source.depthMeter.abyssStartingHeightInOrth
         val section = player.location.section
         val layer: Layer? = section?.layer
 

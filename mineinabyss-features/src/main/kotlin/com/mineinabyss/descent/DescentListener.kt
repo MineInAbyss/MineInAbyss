@@ -1,11 +1,14 @@
 package com.mineinabyss.descent
 
 import com.mineinabyss.components.descent.DescentContext
-import com.mineinabyss.components.descent.RemoveInOrth
 import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
+import com.mineinabyss.geary.ecs.api.engine.Engine
+import com.mineinabyss.geary.ecs.api.engine.componentId
+import com.mineinabyss.geary.ecs.api.relations.RelationValueId
+import com.mineinabyss.geary.ecs.components.RelationComponent
 import com.mineinabyss.geary.minecraft.access.toGeary
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info
@@ -15,7 +18,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.time.Duration
 import java.time.Instant
-import kotlin.time.ExperimentalTime
 import kotlin.time.toKotlinDuration
 
 class DescentListener : Listener {
@@ -37,7 +39,6 @@ class DescentListener : Listener {
     }
 }
 
-@OptIn(ExperimentalTime::class)
 fun Player.removeDescentContext() {
     val gearyPlayer = toGeary()
     val delve = gearyPlayer.get<DescentContext>() ?: return
@@ -49,7 +50,12 @@ fun Player.removeDescentContext() {
             """.trimIndent().color()
     )
     gearyPlayer.remove<DescentContext>()
-    gearyPlayer.removeRelations<RemoveInOrth>()
+
+    //TODO replace this with new syntax in geary once it comes around
+    val comps = Engine.getRelationsFor(gearyPlayer, RelationValueId(componentId<RelationComponent>()))
+    comps.forEach { (_, relation) ->
+        gearyPlayer.removeRelation(relation)
+    }
     gearyPlayer.get<ActivePins>()?.let {
         it.clear()
         gearyPlayer.remove<ActivePins>()

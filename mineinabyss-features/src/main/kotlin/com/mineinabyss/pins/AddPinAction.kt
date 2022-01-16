@@ -2,9 +2,12 @@ package com.mineinabyss.pins
 
 import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.components.pins.PinDrop
-import com.mineinabyss.geary.ecs.accessors.*
+import com.mineinabyss.geary.ecs.accessors.EventScope
+import com.mineinabyss.geary.ecs.accessors.TargetScope
+import com.mineinabyss.geary.ecs.accessors.building.get
+import com.mineinabyss.geary.ecs.accessors.building.map
+import com.mineinabyss.geary.ecs.api.autoscan.Handler
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.ecs.api.systems.Handler
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.pins.ui.AbyssalPinSelectionMenu
 import kotlinx.serialization.SerialName
@@ -20,7 +23,10 @@ class ActivateAbyssalPinEvent(
 class AddPinBehaviour : GearyListener() {
     private val TargetScope.descentContext by get<DescentContext>()
     private val TargetScope.player by get<Player>()
-    private val TargetScope.added by allAdded()
+
+    init {
+        allAdded()
+    }
 
     private val EventScope.dropInfo by get<ActivateAbyssalPinEvent>().map { it.dropInfo }
 
