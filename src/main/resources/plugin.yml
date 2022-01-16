@@ -12,16 +12,6 @@ description: A mod that adds abyss effects
 commands:
   mineinabyss:
     aliases: [ mia ]
-  stats:
-    description: Shows statistics about you!
-  start:
-    description: Shows a list of locations to start the game from!
-  stopdescent:
-    description: Stop your current run
-  storage:
-    description: Open your hub storage
-  clearcontainers:
-    description: Clears a specific item from all containers in a given layer (or all layers if not specified)
 
 permissions:
   mineinabyss.stopdescent:
