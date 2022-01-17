@@ -26,6 +26,16 @@ class ArmorStandLockingFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "lock"(desc = "Protection related commands") {
+                    "toggle"(desc = "Toggles if an armor stand should be protected or not") {
+                        playerAction {
+                            val entity = player.playerData.recentRightclickedEntity
+                            val locked = entity?.toGeary()?.get<LockArmorStand>() ?: return@playerAction
+
+                            locked.lockState = !locked.lockState
+                            if (locked.lockState) player.success("This armor stand is now protected!")
+                            else player.error("This armor stand is no longer protected!")
+                        }
+                    }
                     "add"(desc = "Add a player to this armor stand.") {
                         val playerName by stringArg()
                         playerAction {
@@ -95,7 +105,7 @@ class ArmorStandLockingFeature : AbyssFeature {
                     ).filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "lock" -> listOf("add", "remove", "clear", "check")
+                            "lock" -> listOf("add", "remove", "clear", "check", "toggle")
                             else -> null
 
                         }

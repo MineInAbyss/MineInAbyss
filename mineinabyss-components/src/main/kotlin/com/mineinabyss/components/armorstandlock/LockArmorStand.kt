@@ -9,5 +9,6 @@ import java.util.*
 @SerialName("mineinabyss:lockable")
 class LockArmorStand(
     val owner: @Serializable(with = UUIDSerializer::class) UUID,
+    var lockState: Boolean = false,
     var allowedAccess: List<@Serializable(with = UUIDSerializer::class) UUID?> = listOf(owner)
 )
