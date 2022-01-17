@@ -47,6 +47,7 @@ class ArmorStandLockingListener : Listener {
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractLockedArmorStand() {
         val gearyEntity = rightClicked.toGeary().get<LockArmorStand>() ?: return
+        if (!gearyEntity.lockState) return
 
         if (!gearyEntity.allowedAccess.contains(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
             player.error("You do not have access to interacting with this armor stand!")
