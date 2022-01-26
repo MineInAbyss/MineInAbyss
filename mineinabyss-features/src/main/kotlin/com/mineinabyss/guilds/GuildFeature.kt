@@ -9,17 +9,20 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
+import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.npc.orthbanking.ui.BankMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 
 @Serializable
 @SerialName("guilds")
-class GuildFeature : AbyssFeature {
+class GuildFeature(
+    val maxLength: Int = MIAConfig.data.guildNameLength,
+    val bannedWords: List<RegexOption> = MIAConfig.data.guildBannedNames
+) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(GuildListener(), GuildChatSystem())

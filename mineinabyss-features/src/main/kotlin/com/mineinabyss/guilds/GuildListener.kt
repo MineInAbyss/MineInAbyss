@@ -94,6 +94,7 @@ class GuildChatSystem : Listener {
         format = ":survival::guildchat: ${player.displayName}: $message"
 
         Bukkit.getOnlinePlayers().forEach {
+            if (it.hasPermission("mineinabyss.guildchat.bypass")) recipients.add(it)
             if (it.getGuildName().lowercase() == player.getGuildName().lowercase()) recipients.add(it)
         }
     }

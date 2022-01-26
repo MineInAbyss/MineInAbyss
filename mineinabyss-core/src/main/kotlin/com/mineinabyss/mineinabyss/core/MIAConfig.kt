@@ -1,6 +1,5 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.mineinabyss.components.guilds.GuildConfig
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.plugin.getService
@@ -21,7 +20,8 @@ interface MIAConfig {
         val layers: List<Layer>, //TODO way of changing the serializer from service
         val features: List<AbyssFeature>,
         private val hubSectionName: String = "orth",
-        val guilds: GuildConfig,
+        val guildNameLength: Int = 20,
+        val guildBannedNames: List<RegexOption>
     ) {
         val hubSection by lazy {
             WorldManager.getSectionFor(hubSectionName) ?: error("Section $hubSectionName was not found for the hub.")

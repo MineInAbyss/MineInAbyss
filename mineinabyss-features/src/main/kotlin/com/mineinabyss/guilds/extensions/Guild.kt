@@ -17,27 +17,21 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Player.createGuild(guildName: String) {
-    val config = MIAConfig.data.guilds
+    val config = MIAConfig.data
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
 
     newGuildName.broadcastVal()
-    if (newGuildName.length > config.maxLength) {
+    if (newGuildName.length > config.guildNameLength) {
         player?.error("Your guild name was longer than the maximum allowed length.")
-        player?.error("Please make it shorter than ${config.maxLength} characters.")
+        player?.error("Please make it shorter than ${config.guildNameLength} characters.")
         return
     }
 
-    if (!newGuildName.contains("^[a-zA-Z]*$".toRegex())) {
-        player?.error("Your guild name must be alpha-numerical.")
-        player?.error("Numbers are also blocked.")
-        return
-    }
-
-    config.bannedWords.forEach {
-        if (newGuildName.lowercase().contains(it.lowercase(), true)) {
+    config.guildBannedNames.forEach {
+        if (newGuildName.lowercase().toRegex().containsMatchIn(it.toString().lowercase())) {
             player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}$it.")
             player?.error("Please choose another name :)")
-            return
+            return@forEach
         }
     }
 
