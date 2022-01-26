@@ -7,8 +7,12 @@ import java.util.*
 
 @Serializable
 @SerialName("mineinabyss:lockable")
-class LockArmorStand(
+data class LockArmorStand(
     val owner: @Serializable(with = UUIDSerializer::class) UUID,
-    var lockState: Boolean = false,
-    var allowedAccess: List<@Serializable(with = UUIDSerializer::class) UUID?> = listOf(owner)
-)
+    var lockState: Boolean,
+    val allowedAccess: MutableSet<@Serializable(with = UUIDSerializer::class) UUID?>
+) {
+    fun isAllowed(uuid: UUID) : Boolean {
+        return uuid in allowedAccess
+    }
+}
