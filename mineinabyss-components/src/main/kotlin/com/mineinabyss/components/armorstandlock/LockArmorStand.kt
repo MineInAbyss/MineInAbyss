@@ -10,7 +10,7 @@ import java.util.*
 data class LockArmorStand(
     val owner: @Serializable(with = UUIDSerializer::class) UUID,
     var lockState: Boolean,
-    val allowedAccess: MutableSet<@Serializable(with = UUIDSerializer::class) UUID?>
+    val allowedAccess: MutableSet<@Serializable(with = UUIDSerializer::class) UUID>
 ) {
     fun isAllowed(uuid: UUID) : Boolean {
         return uuid in allowedAccess
