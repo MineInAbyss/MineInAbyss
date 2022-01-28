@@ -1,7 +1,7 @@
 package com.mineinabyss.descent
 
 import com.mineinabyss.components.descent.DescentContext
-import com.mineinabyss.geary.minecraft.access.toGeary
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.color

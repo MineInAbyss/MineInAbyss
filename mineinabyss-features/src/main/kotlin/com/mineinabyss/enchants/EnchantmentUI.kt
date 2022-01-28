@@ -1,7 +1,7 @@
 package com.mineinabyss.enchants
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.geary.minecraft.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier

@@ -2,7 +2,7 @@ package com.mineinabyss.guilds
 
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.minecraft.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.mineinabyss.core.AbyssContext
@@ -26,7 +26,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 
 class GuildListener : Listener {
     //TODO move this cooldown into geary commons

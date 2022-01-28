@@ -11,7 +11,7 @@ import com.mineinabyss.mineinabyss.core.ecs.components.PlayerData
 import com.mineinabyss.mineinabyss.core.ecs.components.playerData
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.core.world.layer
-import com.mineinabyss.geary.minecraft.access.geary
+import com.mineinabyss.geary.papermc.access.geary
 import com.mineinabyss.idofront.items.editItemMeta
 import de.erethon.headlib.HeadLib
 import org.bukkit.Material

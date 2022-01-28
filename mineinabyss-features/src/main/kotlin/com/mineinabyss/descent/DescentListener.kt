@@ -5,11 +5,11 @@ import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
-import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.ecs.api.engine.componentId
 import com.mineinabyss.geary.ecs.api.relations.RelationValueId
 import com.mineinabyss.geary.ecs.components.RelationComponent
-import com.mineinabyss.geary.minecraft.access.toGeary
+import com.mineinabyss.geary.ecs.helpers.GearyKoinComponent
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.mineinabyss.core.MIAConfig
@@ -39,7 +39,7 @@ class DescentListener : Listener {
     }
 }
 
-fun Player.removeDescentContext() {
+fun Player.removeDescentContext(): Unit = GearyKoinComponent().run {
     val gearyPlayer = toGeary()
     val delve = gearyPlayer.get<DescentContext>() ?: return
 
@@ -52,7 +52,8 @@ fun Player.removeDescentContext() {
     gearyPlayer.remove<DescentContext>()
 
     //TODO replace this with new syntax in geary once it comes around
-    val comps = Engine.getRelationsFor(gearyPlayer, RelationValueId(componentId<RelationComponent>()))
+
+    val comps = engine.getRelationsFor(gearyPlayer, RelationValueId(componentId<RelationComponent>()))
     comps.forEach { (_, relation) ->
         gearyPlayer.removeRelation(relation)
     }

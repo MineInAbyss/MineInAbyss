@@ -1,6 +1,6 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.mineinabyss.geary.minecraft.dsl.GearyAddon
+import com.mineinabyss.geary.papermc.dsl.GearyAddon
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.CommandHolder
 import org.bukkit.command.CommandSender

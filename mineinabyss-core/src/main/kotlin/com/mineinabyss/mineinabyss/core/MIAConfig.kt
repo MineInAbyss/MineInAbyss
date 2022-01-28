@@ -2,14 +2,11 @@ package com.mineinabyss.mineinabyss.core
 
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.deeperworld.services.WorldManager
-import com.mineinabyss.geary.ecs.serialization.Formats
-import com.mineinabyss.geary.minecraft.dsl.AutoScanner
+import com.mineinabyss.geary.papermc.dsl.AutoScanner
 import com.mineinabyss.idofront.plugin.getService
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.descriptors.getPolymorphicDescriptors
 import kotlin.reflect.full.createInstance
 
 interface MIAConfig {
