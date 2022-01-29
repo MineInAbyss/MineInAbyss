@@ -2,9 +2,9 @@ package com.mineinabyss.armorstandlock
 
 import com.mineinabyss.components.armorstandlock.LockArmorStand
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.minecraft.access.toGeary
-import com.mineinabyss.geary.minecraft.access.toGearyOrNull
-import com.mineinabyss.geary.minecraft.store.encodeComponentsTo
+import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.spawning.spawn
 import org.bukkit.GameMode

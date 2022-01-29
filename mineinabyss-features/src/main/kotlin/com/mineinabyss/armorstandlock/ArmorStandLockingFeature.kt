@@ -2,8 +2,8 @@ package com.mineinabyss.armorstandlock
 
 import com.mineinabyss.components.armorstandlock.LockArmorStand
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.minecraft.access.toGeary
-import com.mineinabyss.geary.minecraft.store.encodeComponentsTo
+import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
