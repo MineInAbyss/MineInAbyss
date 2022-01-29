@@ -1,6 +1,6 @@
 package com.mineinabyss.components
 
-import com.mineinabyss.geary.minecraft.access.toGeary
+import com.mineinabyss.geary.papermc.access.toGeary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

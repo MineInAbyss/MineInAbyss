@@ -1,9 +1,9 @@
 package com.mineinabyss.plugin
 
-import com.mineinabyss.geary.minecraft.dsl.GearyAddon
-import com.mineinabyss.geary.minecraft.dsl.GearyLoadPhase
-import com.mineinabyss.geary.minecraft.dsl.gearyAddon
-import com.mineinabyss.geary.minecraft.store.PrefabNamespaceMigrations
+import com.mineinabyss.geary.api.addon.GearyLoadPhase.ENABLE
+import com.mineinabyss.geary.papermc.dsl.GearyAddon
+import com.mineinabyss.geary.papermc.dsl.gearyAddon
+import com.mineinabyss.geary.papermc.store.PrefabNamespaceMigrations
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.platforms.IdofrontPlatforms
@@ -64,7 +64,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             autoScan<AbyssFeature>()
 
             startup {
-                GearyLoadPhase.ENABLE {
+                ENABLE {
                     val config = MIAConfigImpl()
                     config.load()
                     registerService<MIAConfig>(config)

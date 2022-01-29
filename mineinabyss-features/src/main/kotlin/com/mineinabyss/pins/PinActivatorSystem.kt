@@ -3,7 +3,6 @@ package com.mineinabyss.pins
 import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.geary.ecs.accessors.TargetScope
 import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.api.engine.Engine
 import com.mineinabyss.geary.ecs.api.engine.entity
 import com.mineinabyss.geary.ecs.api.entities.GearyEntity
 import com.mineinabyss.geary.ecs.api.systems.TickingSystem
@@ -21,7 +20,7 @@ class PinActivatorSystem : TickingSystem() {
 
         activate.forEach { key ->
             val prefab = key.toEntity() ?: return@forEach
-            val entity = Engine.entity {
+            val entity = entity {
                 addParent(entity)
                 addPrefab(prefab)
             }

@@ -25,7 +25,7 @@ allprojects {
     dependencies {
         // Geary platform
         compileOnly(platform("com.mineinabyss:geary-platform:$gearyPlatformVersion"))
-        compileOnly("com.mineinabyss:geary-platform-papermc")
+        compileOnly("com.mineinabyss:geary-papermc-core")
         compileOnly("com.mineinabyss:geary-commons-papermc")
         compileOnly("com.mineinabyss:looty")
 

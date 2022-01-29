@@ -1,14 +1,14 @@
 package com.mineinabyss.relics.sickle
 
 import com.mineinabyss.components.relics.Sickle
+import com.mineinabyss.geary.autoscan.AutoScan
 import com.mineinabyss.geary.ecs.accessors.EventScope
 import com.mineinabyss.geary.ecs.accessors.SourceScope
 import com.mineinabyss.geary.ecs.accessors.TargetScope
 import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.api.autoscan.AutoScan
-import com.mineinabyss.geary.ecs.api.autoscan.Handler
+import com.mineinabyss.geary.ecs.api.annotations.Handler
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.minecraft.events.bridge.components.RightClicked
+import com.mineinabyss.geary.papermc.events.bridge.components.RightClicked
 import com.mineinabyss.helpers.BlockUtil
 import com.mineinabyss.idofront.items.damage
 import com.mineinabyss.idofront.items.editItemMeta

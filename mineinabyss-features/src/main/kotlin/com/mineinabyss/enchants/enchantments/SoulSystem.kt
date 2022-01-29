@@ -4,23 +4,18 @@ import com.mineinabyss.enchants.CustomEnchants
 import com.mineinabyss.enchants.addCustomEnchant
 import com.mineinabyss.enchants.updateEnchantmentLore
 import com.mineinabyss.geary.ecs.accessors.TargetScope
-import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.api.autoscan.Handler
+import com.mineinabyss.geary.ecs.api.annotations.Handler
 import com.mineinabyss.geary.ecs.api.entities.with
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
 import com.mineinabyss.geary.ecs.entities.parent
-import com.mineinabyss.geary.minecraft.components.Soulbound
+import com.mineinabyss.geary.papermc.components.Soulbound
 import com.mineinabyss.idofront.entities.toPlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class SoulSystem : GearyListener() {
-    private val TargetScope.soul by get<Soulbound>()
-    private val TargetScope.item by get<ItemStack>()
-
-    init {
-        allAdded()
-    }
+    private val TargetScope.soul by added<Soulbound>()
+    private val TargetScope.item by added<ItemStack>()
 
     @Handler
     fun TargetScope.updateItemLore() {
