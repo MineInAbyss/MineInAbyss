@@ -3,6 +3,8 @@ package com.mineinabyss.components
 import com.mineinabyss.geary.papermc.access.toGeary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 
 @Serializable
@@ -18,7 +20,8 @@ class PlayerData(
     var orthCoinsHeld: Int = 0,
     var cloutTokensHeld: Int = 0,
     var showPlayerBalance: Boolean = true,
-    var guildChatStatus: Boolean = false
+    var guildChatStatus: Boolean = false,
+    @Transient var recentRightclickedEntity: Entity? = null
 ) {
     val level: Int get() = exp.toInt() / 10 //TODO write a proper formula
 
