@@ -31,12 +31,14 @@ class ArmorStandLockingListener : Listener {
         if (blockFace == BlockFace.DOWN) return
         isCancelled = true
 
-        val loc = player.getTargetBlockExact(6)?.location?.toCenterLocation() ?: return
+        val loc = player.getLastTwoTargetBlocks(null, 6)
 
         // Wacky code to mimic vanilla placing
         val newLoc =
-            if (blockFace == BlockFace.UP) loc.apply { y += 0.5 }
-            else loc.apply { y -= 0.5 }
+            if (blockFace == BlockFace.UP)
+                loc.last()?.location?.toCenterLocation()?.apply { y += 0.5 } ?: return
+            else
+                loc.first()?.location?.toCenterLocation()?.apply { y -= 0.5 } ?: return
 
         newLoc.spawn<ArmorStand>()?.apply {
             setRotation(player.location.yaw - 180, 0.0F)
