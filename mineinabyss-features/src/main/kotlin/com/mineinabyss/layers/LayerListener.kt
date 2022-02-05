@@ -18,7 +18,6 @@ class LayerListener : Listener {
     private fun PlayerDescendEvent.onPlayerDescend() = sendTitleOnLayerChange()
 
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
-        val player = player
         if (PlayerManager.playerCanTeleport(player)) {
             val fromSection = fromSection
             val toSection = toSection
@@ -33,7 +32,6 @@ class LayerListener : Listener {
 
     @EventHandler
     fun PlayerDeathEvent.appendLayerToDeathMessage() {
-        val player = entity
         val section = player.location.section ?: return
         val layerOfDeath = section.layer ?: return
         apply {

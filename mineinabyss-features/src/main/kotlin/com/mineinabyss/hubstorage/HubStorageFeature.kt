@@ -1,10 +1,9 @@
 package com.mineinabyss.hubstorage
 
-import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
@@ -18,10 +17,10 @@ class HubStorageFeature: AbyssFeature {
             mineinabyss {
                 "storage"(desc = "Opens player storage") {
                     playerAction {
-                        if (MIAConfig.data.hubSection == WorldManager.getSectionFor(player.location))
+                        if (player.isInHub())
                             player.openHubStorage()
                         else
-                            sender.error("You are not in the hub area")
+                            sender.error("You are not in the hub area.")
                     }
                 }
             }

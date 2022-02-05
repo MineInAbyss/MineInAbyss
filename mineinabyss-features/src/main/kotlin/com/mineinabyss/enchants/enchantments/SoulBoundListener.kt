@@ -2,8 +2,8 @@ package com.mineinabyss.enchants.enchantments
 
 import com.mineinabyss.components.soulbound.Orthbound
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
-import com.mineinabyss.geary.minecraft.components.Soulbound
-import com.mineinabyss.geary.minecraft.store.encodeComponentsTo
+import com.mineinabyss.geary.papermc.components.Soulbound
+import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.looty.tracking.toGearyFromUUIDOrNull
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import org.bukkit.event.EventHandler
@@ -18,7 +18,7 @@ class SoulBoundListener : Listener {
         player.inventory.contents.filterNotNull().forEach {
             val item = it.toGearyFromUUIDOrNull() ?: return
             item.get<Orthbound>() ?: return@forEach
-            item.setPersisting(Soulbound(player.uniqueId, player.name))
+            item.setPersisting(Soulbound(player.uniqueId))
             item.encodeComponentsTo(it)
         }
     }

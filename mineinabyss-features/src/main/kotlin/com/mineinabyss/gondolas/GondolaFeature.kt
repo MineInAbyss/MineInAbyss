@@ -1,7 +1,7 @@
 package com.mineinabyss.gondolas
 
 import com.mineinabyss.components.gondolas.UnlockedGondolas
-import com.mineinabyss.geary.minecraft.access.toGeary
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -13,21 +13,13 @@ import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.geary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("gondolas")
-class GondolaFeature: AbyssFeature {
+class GondolaFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-
         geary {
-            systems(LoadedGondolas)
-            bukkitEntityAssociations {
-                onEntityRegister<Player> {
-                    //TODO kotlin bug, removing this defaults it to Unit but only sometimes
-                    getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
-                }
-            }
+            systems(LoadedGondolas, GondolaTracker())
         }
 
         commands {

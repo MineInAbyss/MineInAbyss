@@ -1,6 +1,6 @@
 package com.mineinabyss.components.pins
 
-import com.mineinabyss.geary.ecs.prefab.PrefabKey
+import com.mineinabyss.geary.prefabs.PrefabKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

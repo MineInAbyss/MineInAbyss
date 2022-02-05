@@ -5,12 +5,17 @@ import androidx.compose.runtime.remember
 import com.mineinabyss.guilds.createGuild
 import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guilds.menus.GuildScreen.*
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
-import com.mineinabyss.guiy.modifiers.*
+import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.height
+import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.Navigator
 import com.mineinabyss.helpers.ui.UniversalScreens
@@ -85,8 +90,8 @@ fun GuildUIScope.HomeScreen() {
     // Big center buttons
     Row(Modifier.at(1, 1)) {
         //TODO decide whether we prefer calling nav.open here or in the button composable
-        if (isOwner) GuildOwnerButton(Modifier.clickable { nav.open(Owner) })
-        CurrentGuildButton(Modifier.clickable { nav.open(CurrentGuild(guildLevel)) })
+        if (isOwner) GuildOwnerButton(onClick = { nav.open(Owner) })
+        CurrentGuildButton(onClick = { nav.open(CurrentGuild(guildLevel)) })
 
         if (!player.hasGuild())
             CreateGuildButton()
@@ -96,8 +101,6 @@ fun GuildUIScope.HomeScreen() {
     Column(Modifier.at(8, 0)) {
         GuildInvitesButton()
         LookForGuildButton()
-        if (!isOwner)
-            CreateGuildButton()
     }
 
     // Bottom right
@@ -111,111 +114,109 @@ fun GuildUIScope.HomeScreen() {
 
 @Composable
 fun GuildUIScope.BackButton(modifier: Modifier = Modifier) {
-    Button(HeadLib.STONE_ARROW_LEFT.toItemStack("Back"), modifier.clickable { nav.back() })
+    Button(onClick = { nav.back() }, modifier = modifier) {
+        Item(HeadLib.STONE_ARROW_LEFT.toItemStack("Back"))
+    }
 }
 
 @Composable
-fun GuildUIScope.CurrentGuildButton(modifier: Modifier = Modifier) {
+fun GuildUIScope.CurrentGuildButton(onClick: () -> Unit) {
     Button(
-        if (player.hasGuild()) {
-            TitleItem.of(
-                "$GOLD${BOLD}Current Guild Info:",
-                "$YELLOW${BOLD}Guild Name: $YELLOW$ITALIC${player.getGuildName()}",
-                "$YELLOW${BOLD}Guild Owner: $YELLOW$ITALIC${player.getGuildOwner().toPlayer()?.name}",
-                "$YELLOW${BOLD}Guild Level: $YELLOW$ITALIC${player.getGuildLevel()}",
-                "$YELLOW${BOLD}Guild Members: $YELLOW$ITALIC${player.getGuildMemberCount()}"
-            )
-        } else {
-            TitleItem.of(
-                "$GOLD$BOLD${STRIKETHROUGH}View Guild Information",
-                "${RED}You are not a member of any guild."
-            )
-        },
-        modifier.size(2, 2)
-    )
+        enabled = player.hasGuild(),
+        onClick = onClick,
+    ) { enabled ->
+        if (enabled) Text(
+            "$GOLD${BOLD}Current Guild Info:",
+            "$YELLOW${BOLD}Guild Name: $YELLOW$ITALIC${player.getGuildName()}",
+            "$YELLOW${BOLD}Guild Owner: $YELLOW$ITALIC${player.getGuildOwner().toPlayer()?.name}",
+            "$YELLOW${BOLD}Guild Level: $YELLOW$ITALIC${player.getGuildLevel()}",
+            "$YELLOW${BOLD}Guild Members: $YELLOW$ITALIC${player.getGuildMemberCount()}",
+            modifier = Modifier.size(2, 2)
+        ) else Text(
+            "$GOLD$BOLD${STRIKETHROUGH}View Guild Information",
+            "${RED}You are not a member of any guild.",
+            modifier = Modifier.size(2, 2)
+        )
+    }
 }
 
 @Composable
-fun GuildUIScope.GuildOwnerButton(modifier: Modifier = Modifier) {
-    Button(
-        TitleItem.of("$RED${BOLD}View Owner Information"),
-        modifier.size(2, 2)
-    )
+fun GuildUIScope.GuildOwnerButton(onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Text(
+            "$RED${BOLD}View Owner Information",
+            modifier = Modifier.size(2, 2)
+        )
+    }
 }
 
 @Composable
-fun GuildUIScope.CreateGuildButton(modifier: Modifier = Modifier) {
+fun GuildUIScope.CreateGuildButton() {
     Button(
-        if (player.hasGuild()) {
-            TitleItem.of(
-                "$GOLD$ITALIC${STRIKETHROUGH}Create a Guild",
-                "${RED}You have to leave your current",
-                "${RED}Guild before you can create one."
-            )
-        } else {
-            TitleItem.of("$GOLD${BOLD}Create a Guild")
-        },
-        modifier.clickable {
-            if (!player.hasGuild()) player.nameGuild()
+        enabled = !player.hasGuild(),
+        onClick = {
+            val guildRenamePaper = TitleItem.of("Guildname")
+            nav.open(UniversalScreens.Anvil(
+                AnvilGUI.Builder()
+                    .title(":guild_naming:")
+                    .itemLeft(guildRenamePaper)
+                    .plugin(guiyPlugin)
+                    .onClose { nav.back() }
+                    .onComplete { player, guildName: String ->
+                        player.createGuild(guildName)
+                        AnvilGUI.Response.close()
+                    }
+            ))
         }
-    )
+    ) { enabled ->
+        if (enabled) Text("$GOLD${BOLD}Create a Guild", modifier = Modifier.size(2, 2))
+        else Text(
+            "$GOLD$ITALIC${STRIKETHROUGH}Create a Guild",
+            "${RED}You have to leave your current",
+            "${RED}Guild before you can create one.",
+            modifier = Modifier.size(2, 2)
+        )
+    }
 }
 
 @Composable
-fun GuildUIScope.LookForGuildButton(modifier: Modifier = Modifier) {
+fun GuildUIScope.LookForGuildButton() {
     Button(
-        if (player.hasGuild()) {
-            TitleItem.of(
-                "$GOLD$ITALIC${STRIKETHROUGH}Look for a Guild",
-                "${RED}You have to leave your current",
-                "${RED}Guild before you can look for one."
-            )
-        } else {
-            TitleItem.of("$GOLD${BOLD}Look for a Guild")
-        },
-        modifier.clickable {
-            if (!player.hasGuild()) {
-                nav.open(UniversalScreens.Anvil(
-                    AnvilGUI.Builder()
-                        .title(":guild_request:")
-                        .itemLeft(TitleItem.of("Guildname"))
-                        //.preventClose()
-                        .plugin(guiyPlugin)
-                        .onClose { nav.back() }
-                        .onComplete { player, guildName: String ->
-                            player.lookForGuild(guildName)
-                            AnvilGUI.Response.close()
-                        }
-                ))
-            }
+        enabled = !player.hasGuild(),
+        onClick = {
+            nav.open(UniversalScreens.Anvil(
+                AnvilGUI.Builder()
+                    .title(":guild_request:")
+                    .itemLeft(TitleItem.of("Guildname"))
+                    //.preventClose()
+                    .plugin(guiyPlugin)
+                    .onClose { nav.back() }
+                    .onComplete { player, guildName: String ->
+                        player.lookForGuild(guildName)
+                        AnvilGUI.Response.close()
+                    }
+            ))
         }
-    )
+    ) { enabled ->
+        if (enabled) Text("$GOLD${BOLD}Look for a Guild")
+        else Text(
+            "$GOLD$ITALIC${STRIKETHROUGH}Look for a Guild",
+            "${RED}You have to leave your current",
+            "${RED}Guild before you can look for one."
+        )
+    }
 }
 
 @Composable
 fun GuildUIScope.GuildInvitesButton(modifier: Modifier = Modifier) {
     val guildOwner = player.getGuildOwnerFromInvite().toPlayer()!!
-
-    /* Icon that notifies player there are new invites */
-    if (player.hasGuildInvite(guildOwner))
-        Button(TitleItem.of("${DARK_GREEN}Manage Guild Invites"), modifier.clickable {
-            nav.open(InviteList)
-        })
-    /* Custom Icon for "darkerened" out icon indicating no invites */
-    else Button(TitleItem.of("$DARK_GREEN${STRIKETHROUGH}Manage Guild Invites"), modifier)
-}
-
-fun Player.nameGuild() {
-    val guildRenamePaper = TitleItem.of("Guildname")
-
-    AnvilGUI.Builder()
-        .title(":guild_naming:")
-        .itemLeft(guildRenamePaper)
-        //.preventClose()
-        .plugin(guiyPlugin)
-        .onComplete { player, guildName: String ->
-            player.createGuild(guildName)
-            AnvilGUI.Response.close()
-        }
-        .open(player)
+    Button(
+        enabled = player.hasGuildInvite(guildOwner),
+        onClick = { nav.open(InviteList) },
+    ) { enabled ->
+        /* Icon that notifies player there are new invites */
+        if (enabled) Text("${DARK_GREEN}Manage Guild Invites")
+        /* Custom Icon for "darkerened" out icon indicating no invites */
+        else Text("$DARK_GREEN${STRIKETHROUGH}Manage Guild Invites")
+    }
 }

@@ -6,7 +6,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.*
-import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.ui.rememberNavigation
 import com.mineinabyss.helpers.updateBalance
@@ -47,20 +47,20 @@ fun GuiyOwner.BankMenu(player: Player) {
 }
 
 @Composable
-fun DepositCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button(
-    TitleItem.of(
+fun DepositCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button {
+    Text(
         "$GOLD${BOLD}Open Deposit Menu",
-        "${YELLOW}You currently have $ITALIC${data.orthCoinsHeld} ${YELLOW}coins in your account."
-    ),
-    modifier.size(3, 2)
-)
+        "${YELLOW}You currently have $ITALIC${data.orthCoinsHeld} ${YELLOW}coins in your account.",
+        modifier = modifier.size(3, 2)
+    )
+}
 
 @Composable
-fun WithdrawCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button(
-    TitleItem.of(
+fun WithdrawCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button {
+    Text(
         "$GOLD${BOLD}Open Withdrawal Menu",
-        "${YELLOW}You currently have $ITALIC${data.orthCoinsHeld} ${YELLOW}coins in your account."
-    ),
-    modifier.size(3, 2)
-)
+        "${YELLOW}You currently have $ITALIC${data.orthCoinsHeld} ${YELLOW}coins in your account.",
+        modifier = modifier.size(3, 2)
+    )
+}
 

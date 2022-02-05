@@ -15,7 +15,7 @@ class RelicsFeature : AbyssFeature {
 
         geary {
             systems(
-                ShowDepthSystem(),
+                ShowDepthListener(),
             )
         }
         registerEvents(SickleListener())

@@ -2,8 +2,12 @@ package com.mineinabyss.mineinabyss.core
 
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.geary.papermc.dsl.AutoScanner
 import com.mineinabyss.idofront.plugin.getService
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlin.reflect.full.createInstance
 
 interface MIAConfig {
     val data: Data
@@ -18,11 +22,17 @@ interface MIAConfig {
     @Serializable
     class Data(
         val layers: List<Layer>, //TODO way of changing the serializer from service
-        val features: List<AbyssFeature>,
+        @SerialName("features")
+        private val _features: List<AbyssFeature>,
         private val hubSectionName: String = "orth",
         val guildNameLength: Int = 20,
         val guildBannedNames: List<RegexOption>
     ) {
+        @Transient
+        val features = (if(_features.any { it::class == AllFeatures::class }) {
+            AutoScanner(this::class.java.classLoader).getSubclassesOf<AbyssFeature>()
+                .mapNotNull { it.objectInstance ?: runCatching { it.createInstance() }.getOrNull() }
+        } else listOf()) + _features
         val hubSection by lazy {
             WorldManager.getSectionFor(hubSectionName) ?: error("Section $hubSectionName was not found for the hub.")
         }

@@ -2,14 +2,14 @@ package com.mineinabyss.guilds
 
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.minecraft.access.toGearyOrNull
-import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.helpers.MessageQueue
-import com.mineinabyss.helpers.MessageQueue.content
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.data.GuildRanks
+import com.mineinabyss.mineinabyss.data.MessageQueue
+import com.mineinabyss.mineinabyss.data.MessageQueue.content
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.hasGuild
@@ -26,11 +26,9 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 
 class GuildListener : Listener {
     //TODO move this cooldown into geary commons
-    val clickedCooldown = mutableMapOf<UUID, Int>()
     @EventHandler
     fun PlayerInteractEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
@@ -94,7 +92,6 @@ class GuildChatSystem : Listener {
         format = ":survival::guildchat: ${player.displayName}: $message"
 
         Bukkit.getOnlinePlayers().forEach {
-            if (it.hasPermission("mineinabyss.guildchat.bypass")) recipients.add(it)
             if (it.getGuildName().lowercase() == player.getGuildName().lowercase()) recipients.add(it)
         }
     }
