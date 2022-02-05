@@ -9,7 +9,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.extensions.hasGuild
@@ -20,8 +19,8 @@ import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    val maxLength: Int = MIAConfig.data.guildNameLength,
-    val bannedWords: List<RegexOption> = MIAConfig.data.guildBannedNames
+    val maxLength: Int = 20,
+    val bannedWords: List<String> = emptyList()
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {

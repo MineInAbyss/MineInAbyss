@@ -1,7 +1,7 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.guilds.deleteGuild
+import com.mineinabyss.guilds.extensions.deleteGuild
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier

@@ -25,8 +25,6 @@ interface MIAConfig {
         @SerialName("features")
         private val _features: List<AbyssFeature>,
         private val hubSectionName: String = "orth",
-        val guildNameLength: Int = 20,
-        val guildBannedNames: List<RegexOption>
     ) {
         @Transient
         val features = (if(_features.any { it::class == AllFeatures::class }) {

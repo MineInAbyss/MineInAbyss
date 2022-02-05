@@ -2,8 +2,9 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.mineinabyss.guilds.createGuild
+import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.guilds.extensions.createGuild
 import com.mineinabyss.guilds.menus.GuildScreen.*
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -163,7 +164,7 @@ fun GuildUIScope.CreateGuildButton() {
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
                     .onComplete { player, guildName: String ->
-                        player.createGuild(guildName)
+                        player.createGuild(guildName, GuildFeature())
                         AnvilGUI.Response.close()
                     }
             ))

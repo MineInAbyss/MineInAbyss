@@ -1,7 +1,7 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.guilds.changeStoredGuildName
+import com.mineinabyss.guilds.extensions.changeStoredGuildName
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.layout.Column
