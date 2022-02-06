@@ -52,6 +52,7 @@ typealias GuildNav = Navigator<GuildScreen>
 class GuildUIScope(
     val player: Player,
     val owner: GuiyOwner,
+    val feature: GuildFeature
 ) {
     //TODO cache more than just guild level here
     val guildLevel = player.getGuildLevel() ?: 0
@@ -60,7 +61,7 @@ class GuildUIScope(
 
 @Composable
 fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
-    val scope = remember { GuildUIScope(player, this) }
+    val scope = remember { GuildUIScope(player, this, feature) }
     scope.apply {
         nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
             Chest(
@@ -69,7 +70,7 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
                 Modifier.height(screen.height),
                 onClose = { nav.back() ?: exit() }) {
                 when (screen) {
-                    Default -> HomeScreen(feature)
+                    Default -> HomeScreen()
                     Owner -> GuildOwnerScreen()
                     is CurrentGuild -> CurrentGuildScreen()
                     InviteList -> GuildInviteListScreen()
@@ -86,7 +87,7 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
 }
 
 @Composable
-fun GuildUIScope.HomeScreen(feature: GuildFeature) {
+fun GuildUIScope.HomeScreen() {
     val isOwner = player.getGuildRank() == GuildRanks.Owner
     // Big center buttons
     Row(Modifier.at(1, 1)) {
@@ -95,7 +96,7 @@ fun GuildUIScope.HomeScreen(feature: GuildFeature) {
         CurrentGuildButton(onClick = { nav.open(CurrentGuild(guildLevel)) })
 
         if (!player.hasGuild())
-            CreateGuildButton(feature)
+            CreateGuildButton()
     }
 
     // Small top right
@@ -152,7 +153,7 @@ fun GuildUIScope.GuildOwnerButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun GuildUIScope.CreateGuildButton(feature: GuildFeature) {
+fun GuildUIScope.CreateGuildButton() {
     Button(
         enabled = !player.hasGuild(),
         onClick = {
