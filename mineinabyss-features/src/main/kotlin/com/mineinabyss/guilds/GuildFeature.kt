@@ -46,7 +46,7 @@ class GuildFeature(
                     }
                     "menu"(desc = "Open Guild Menu") {
                         playerAction {
-                            guiy { GuildMainMenu(player) }
+                            guiy { GuildMainMenu(player, this@GuildFeature) }
                         }
                     }
                 }

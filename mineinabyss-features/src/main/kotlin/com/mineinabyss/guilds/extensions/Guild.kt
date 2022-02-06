@@ -3,7 +3,6 @@ package com.mineinabyss.guilds.extensions
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
@@ -18,7 +17,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Player.createGuild(guildName: String, feature: GuildFeature) {
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
-    broadcast(feature.maxLength)
+
     if (newGuildName.length > feature.maxLength) {
         player?.error("Your guild name was longer than the maximum allowed length.")
         player?.error("Please make it shorter than ${feature.maxLength} characters.")
@@ -26,10 +25,10 @@ fun Player.createGuild(guildName: String, feature: GuildFeature) {
     }
 
     feature.bannedWords.forEach {
-        if (newGuildName.lowercase().toRegex().containsMatchIn(it.lowercase())) {
+        if (it.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
             player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}$it.")
             player?.error("Please choose another name :)")
-            return@forEach
+            return
         }
     }
 

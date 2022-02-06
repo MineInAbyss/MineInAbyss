@@ -30,10 +30,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class GuildListener : Listener {
     //TODO move this cooldown into geary commons
     @EventHandler
-    fun PlayerInteractEntityEvent.onInteractGuildMaster() {
+    fun PlayerInteractEntityEvent.onInteractGuildMaster( feature: GuildFeature) {
         val entity = rightClicked.toGearyOrNull() ?: return
         if (!entity.has<GuildMaster>()) return
-        guiy { GuildMainMenu(player) }
+        guiy { GuildMainMenu(player, feature) }
 
 //        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
 //            clickedCooldown[player.uniqueId] = Bukkit.getCurrentTick() + 5

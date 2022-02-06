@@ -59,7 +59,7 @@ class GuildUIScope(
 }
 
 @Composable
-fun GuiyOwner.GuildMainMenu(player: Player) {
+fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
     val scope = remember { GuildUIScope(player, this) }
     scope.apply {
         nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
@@ -69,7 +69,7 @@ fun GuiyOwner.GuildMainMenu(player: Player) {
                 Modifier.height(screen.height),
                 onClose = { nav.back() ?: exit() }) {
                 when (screen) {
-                    Default -> HomeScreen()
+                    Default -> HomeScreen(feature)
                     Owner -> GuildOwnerScreen()
                     is CurrentGuild -> CurrentGuildScreen()
                     InviteList -> GuildInviteListScreen()
@@ -86,7 +86,7 @@ fun GuiyOwner.GuildMainMenu(player: Player) {
 }
 
 @Composable
-fun GuildUIScope.HomeScreen() {
+fun GuildUIScope.HomeScreen(feature: GuildFeature) {
     val isOwner = player.getGuildRank() == GuildRanks.Owner
     // Big center buttons
     Row(Modifier.at(1, 1)) {
@@ -95,7 +95,7 @@ fun GuildUIScope.HomeScreen() {
         CurrentGuildButton(onClick = { nav.open(CurrentGuild(guildLevel)) })
 
         if (!player.hasGuild())
-            CreateGuildButton()
+            CreateGuildButton(feature)
     }
 
     // Small top right
@@ -152,7 +152,7 @@ fun GuildUIScope.GuildOwnerButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun GuildUIScope.CreateGuildButton() {
+fun GuildUIScope.CreateGuildButton(feature: GuildFeature) {
     Button(
         enabled = !player.hasGuild(),
         onClick = {
@@ -164,7 +164,7 @@ fun GuildUIScope.CreateGuildButton() {
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
                     .onComplete { player, guildName: String ->
-                        player.createGuild(guildName, GuildFeature())
+                        player.createGuild(guildName, feature)
                         AnvilGUI.Response.close()
                     }
             ))
