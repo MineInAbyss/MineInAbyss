@@ -1,4 +1,4 @@
-package com.mineinabyss.mineinabyss.data
+package com.mineinabyss.guilds.database
 
 import org.jetbrains.exposed.sql.Table
 

@@ -3,6 +3,9 @@ package com.mineinabyss.guilds.menus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guilds.database.Players
+import com.mineinabyss.guilds.extensions.changeGuildJoinType
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.guiyPlugin
@@ -16,8 +19,6 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildJoinType
-import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.*
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit

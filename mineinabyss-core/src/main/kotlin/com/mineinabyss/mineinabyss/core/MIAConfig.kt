@@ -17,6 +17,7 @@ interface MIAConfig {
     /**
      * @param layers A list of all the layers and sections composing them to be registered.
      * @property hubSection The hub section of the abyss, a safe place for living and trading.
+     * @property guilds Guild related options.
      */
     @Serializable
     class Data(

@@ -1,6 +1,7 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.extensions.changeStoredGuildName
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.layout.Column
@@ -12,7 +13,6 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*

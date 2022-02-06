@@ -1,13 +1,13 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.mineinabyss.data.GuildJoinType
 import com.mineinabyss.mineinabyss.extensions.addMemberToGuild
 import com.mineinabyss.mineinabyss.extensions.getGuildJoinType
 import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount

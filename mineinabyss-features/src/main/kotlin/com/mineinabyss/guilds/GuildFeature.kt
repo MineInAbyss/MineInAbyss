@@ -12,14 +12,16 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.npc.orthbanking.ui.BankMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 
 @Serializable
 @SerialName("guilds")
-class GuildFeature : AbyssFeature {
+class GuildFeature(
+    val maxLength: Int = 20,
+    val bannedWords: List<String> = emptyList()
+) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(GuildListener(), GuildChatSystem())
@@ -44,7 +46,7 @@ class GuildFeature : AbyssFeature {
                     }
                     "menu"(desc = "Open Guild Menu") {
                         playerAction {
-                            guiy { GuildMainMenu(player) }
+                            guiy { GuildMainMenu(player, this@GuildFeature) }
                         }
                     }
                 }

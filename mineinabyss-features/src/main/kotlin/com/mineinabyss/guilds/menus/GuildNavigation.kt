@@ -2,6 +2,9 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mineinabyss.guilds.GuildFeature
+import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.guilds.extensions.createGuild
 import com.mineinabyss.guilds.menus.GuildScreen.*
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -20,7 +23,6 @@ import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.mineinabyss.data.GuildRanks
 import com.mineinabyss.mineinabyss.extensions.*
 import de.erethon.headlib.HeadLib
 import net.wesjd.anvilgui.AnvilGUI
@@ -50,6 +52,7 @@ typealias GuildNav = Navigator<GuildScreen>
 class GuildUIScope(
     val player: Player,
     val owner: GuiyOwner,
+    val feature: GuildFeature
 ) {
     //TODO cache more than just guild level here
     val guildLevel = player.getGuildLevel() ?: 0
@@ -57,8 +60,8 @@ class GuildUIScope(
 }
 
 @Composable
-fun GuiyOwner.GuildMainMenu(player: Player) {
-    val scope = remember { GuildUIScope(player, this) }
+fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
+    val scope = remember { GuildUIScope(player, this, feature) }
     scope.apply {
         nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
             Chest(
@@ -162,7 +165,7 @@ fun GuildUIScope.CreateGuildButton() {
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
                     .onComplete { player, guildName: String ->
-                        player.createGuild(guildName)
+                        player.createGuild(guildName, feature)
                         AnvilGUI.Response.close()
                     }
             ))

@@ -1,9 +1,13 @@
-package com.mineinabyss.mineinabyss.extensions
+package com.mineinabyss.guilds.extensions
 
+import com.mineinabyss.guilds.GuildFeature
+import com.mineinabyss.guilds.database.*
+import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.*
+import com.mineinabyss.mineinabyss.extensions.getGuildName
+import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
@@ -11,7 +15,23 @@ import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Player.createGuild(guildName: String) {
+fun Player.createGuild(guildName: String, feature: GuildFeature) {
+    val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
+
+    if (newGuildName.length > feature.maxLength) {
+        player?.error("Your guild name was longer than the maximum allowed length.")
+        player?.error("Please make it shorter than ${feature.maxLength} characters.")
+        return
+    }
+
+    feature.bannedWords.forEach {
+        if (it.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
+            player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}$it.")
+            player?.error("Please choose another name :)")
+            return
+        }
+    }
+
     transaction(AbyssContext.db) {
 
         val guild = Guilds.select {
