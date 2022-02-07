@@ -24,9 +24,13 @@ fun Player.createGuild(guildName: String, feature: GuildFeature) {
         return
     }
 
-    feature.bannedWords.forEach {
-        if (it.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
-            player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}$it.")
+    feature.bannedWords.forEach { banned ->
+        val bannedWord = banned.toRegex().find(newGuildName)?.value
+        if (banned.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
+            if (bannedWord?.contains("([^a-zA-Z])".toRegex()) == true)
+                player?.error("Your Guild name can only contain the letters ${ChatColor.BOLD}a-z.")
+            else
+                player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}${bannedWord}.")
             player?.error("Please choose another name :)")
             return
         }
