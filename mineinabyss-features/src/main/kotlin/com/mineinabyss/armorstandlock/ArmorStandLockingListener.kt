@@ -91,6 +91,5 @@ class ArmorStandLockingListener : Listener {
             attacker.error("You do not have access to interacting with this armor stand!")
             isCancelled = true
         }
-
     }
 }
