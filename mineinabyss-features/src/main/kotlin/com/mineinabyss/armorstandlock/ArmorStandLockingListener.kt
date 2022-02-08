@@ -13,6 +13,7 @@ import org.bukkit.Sound
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
+import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -70,13 +71,26 @@ class ArmorStandLockingListener : Listener {
     @EventHandler
     fun EntityDamageByEntityEvent.onBreakingArmorStand() {
         val armorStand = entity.toGeary().get<LockArmorStand>() ?: return
-        val player = damager as Player
 
         if (!armorStand.lockState) return
 
-        if (!armorStand.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
-            player.error("You do not have access to interacting with this armor stand!")
+        val attacker: Player =
+            when (damager) {
+                is Projectile -> {
+                    (damager as Projectile).shooter as? Player ?: return
+                }
+                is Player -> {
+                    (damager as Player)
+                }
+                else -> {
+                    return
+                }
+            }
+
+        if (!armorStand.isAllowed(attacker.uniqueId) && !attacker.hasPermission("mineinabyss.lockarmorstand.bypass")) {
+            attacker.error("You do not have access to interacting with this armor stand!")
             isCancelled = true
         }
+
     }
 }
