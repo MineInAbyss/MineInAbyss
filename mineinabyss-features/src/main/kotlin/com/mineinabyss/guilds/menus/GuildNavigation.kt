@@ -23,6 +23,7 @@ import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.extensions.*
 import de.erethon.headlib.HeadLib
 import net.wesjd.anvilgui.AnvilGUI
@@ -158,6 +159,11 @@ fun GuildUIScope.CreateGuildButton() {
         enabled = !player.hasGuild(),
         onClick = {
             val guildRenamePaper = TitleItem.of("Guildname")
+            if (player.hasGuild()) {
+                player.error("You already have a guild.")
+                nav.back()
+                return@Button
+            }
             nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title(":guild_naming:")

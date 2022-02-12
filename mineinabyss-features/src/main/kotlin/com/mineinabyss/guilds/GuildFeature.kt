@@ -20,7 +20,7 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    val guildChatPrefix: String = ":survival::guildchat: ",
+    val guildChatPrefix: String = "",
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {

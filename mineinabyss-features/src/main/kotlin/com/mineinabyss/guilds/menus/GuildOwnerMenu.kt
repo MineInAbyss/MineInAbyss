@@ -74,7 +74,9 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
 @Composable
 fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
-        Text("$GOLD${BOLD}Change Guild House", modifier = Modifier.size(2, 2))
+        Text("$GOLD${BOLD}${STRIKETHROUGH}Change Guild House", modifier = Modifier.size(2, 2),
+            lore = arrayOf("${RED}This feature is not yet implemented.")
+        )
     }
 }
 
@@ -83,7 +85,8 @@ fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         onClick = { /*nav.open(GuildScreen.Relationships)*/ }) {
-        Text("$BLUE${BOLD}Guild Relationships", modifier = Modifier.size(2, 2))
+        Text("$BLUE${BOLD}${STRIKETHROUGH}Guild Relationships", modifier = Modifier.size(2, 2),
+            lore = arrayOf("${RED}This feature is not yet implemented."))
     }
 }
 
