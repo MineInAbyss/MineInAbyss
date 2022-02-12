@@ -5,15 +5,14 @@ import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.mineinabyss.extensions.addMemberToGuild
-import com.mineinabyss.mineinabyss.extensions.getGuildJoinType
-import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount
-import com.mineinabyss.mineinabyss.extensions.removeGuildQueueEntries
+import com.mineinabyss.mineinabyss.extensions.*
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
+import org.jetbrains.exposed.sql.insert
 
 @Composable
 fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
@@ -31,7 +30,7 @@ fun GuildUIScope.PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = But
 @Composable
 fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer) = Button(
     onClick = {
-        if (player.getGuildJoinType() == GuildJoinType.Request) {
+        if (player.getGuildJoinType() == GuildJoinType.Invite) {
             player.error("Your guild is in 'Invite-only' mode.")
             player.error("Change it to 'Any' or 'Request-only' mode to accept requests.")
             return@Button
@@ -53,6 +52,15 @@ fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlaye
     onClick = {
         newMember.removeGuildQueueEntries(GuildJoinType.Request)
         player.sendMessage("${ChatColor.YELLOW}${ChatColor.BOLD}❌ ${ChatColor.YELLOW}You denied the join-request from ${newMember.name}")
+        val requestDeniedMessage =
+            "${ChatColor.RED}Your request to join ${ChatColor.ITALIC}${player.getGuildName()} has been denied!"
+        if (newMember.isOnline) newMember.player?.error(requestDeniedMessage)
+        else {
+            MessageQueue.insert {
+                it[content] = requestDeniedMessage
+                it[playerUUID] = newMember.uniqueId
+            }
+        }
         nav.back()
     }
 ) {

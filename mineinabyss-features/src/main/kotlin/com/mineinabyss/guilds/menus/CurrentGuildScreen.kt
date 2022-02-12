@@ -13,6 +13,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
+import com.mineinabyss.mineinabyss.extensions.hasGuild
 import com.mineinabyss.mineinabyss.extensions.leaveGuild
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
@@ -60,10 +61,13 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
 
 @Composable
 fun GuildUIScope.LeaveGuildButton(player: Player, modifier: Modifier = Modifier) {
-    Button(onClick = {
-        player.leaveGuild()
-        nav.reset()
-    }) {
-        Text("$RED${ITALIC}Leave Guild", modifier = modifier)
+    Button(
+        enabled = player.hasGuild(),
+        onClick = {
+            player.leaveGuild()
+            nav.back()
+        }) { enabled ->
+        if (enabled) Text("$RED${ITALIC}Leave Guild", modifier = modifier)
+        else Text("$RED${ITALIC}${STRIKETHROUGH}Leave Guild", modifier = modifier)
     }
 }
