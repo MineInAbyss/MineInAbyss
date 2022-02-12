@@ -17,6 +17,7 @@ import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("lock_armorstand")
@@ -29,6 +30,7 @@ class ArmorStandLockingFeature : AbyssFeature {
                 "lock"(desc = "Protection related commands") {
                     "toggle"(desc = "Toggles if an armor stand should be protected or not") {
                         playerAction {
+                            val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
                             val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
 
@@ -41,6 +43,7 @@ class ArmorStandLockingFeature : AbyssFeature {
                     "add"(desc = "Add a player to this armor stand.") {
                         val playerName by stringArg()
                         playerAction {
+                            val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
                             val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
@@ -62,6 +65,7 @@ class ArmorStandLockingFeature : AbyssFeature {
                             parseErrorMessage = { "No player with name: $passed." }
                         }
                         playerAction {
+                            val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
                             val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
@@ -78,6 +82,7 @@ class ArmorStandLockingFeature : AbyssFeature {
 
                     "clear"(desc = "Clear all other players from this armor stand.") {
                         playerAction {
+                            val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
                             val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
 
@@ -90,13 +95,14 @@ class ArmorStandLockingFeature : AbyssFeature {
 
                     "check" (desc = "Get a list of all players allowed to interact with this armor stand.") {
                         playerAction {
+                            val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
                             val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
 
                             if (locked.lockState) {
                                 player.success("These people can interact with your armor stand:")
                                 locked.allowedAccess.forEach {
-                                    player.info(it?.toPlayer()?.name)
+                                    player.info(it.toPlayer()?.name)
                                 }
                             }
                             else {

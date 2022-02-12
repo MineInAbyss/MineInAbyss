@@ -15,6 +15,7 @@ import com.mineinabyss.mineinabyss.extensions.hasGuild
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("guilds")
@@ -36,6 +37,7 @@ class GuildFeature(
                 "guild"(desc = "Guild related commands") {
                     "chat"(desc = "Toggle guild chat") {
                         playerAction {
+                            val player = sender as Player
                             if (!player.hasGuild()) {
                                 player.error("You cannot use guild chat without a guild")
                                 return@playerAction

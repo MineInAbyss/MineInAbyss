@@ -12,6 +12,7 @@ import com.mineinabyss.pvp.PvpDamageListener
 import com.mineinabyss.pvp.PvpPrompt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("survival_pvp")
@@ -26,6 +27,7 @@ class SurvivalPvpFeature : AbyssFeature {
             mineinabyss {
                 "pvp"(desc = "Commands to toggle pvp status") {
                     playerAction {
+                        val player = sender as Player
                         if (player.location.layer?.hasPvpDefault == true) {
                             player.error("Pvp cannot be toggled in this layer.")
                             return@playerAction

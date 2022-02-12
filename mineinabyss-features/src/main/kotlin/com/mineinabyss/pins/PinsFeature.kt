@@ -13,6 +13,7 @@ import com.mineinabyss.mineinabyss.core.geary
 import com.mineinabyss.pins.ui.PinMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("pins")
@@ -41,6 +42,7 @@ class PinsFeature : AbyssFeature {
                         }
 
                         playerAction {
+                            val player = sender as Player
                             val pins = player.toGeary().getOrSetPersisting { ActivePins() }
                             pins.add(key)
                         }
@@ -50,6 +52,7 @@ class PinsFeature : AbyssFeature {
                 "pins" {
                     permission = "mineinabyss.pins.menu"
                     playerAction {
+                        val player = sender as Player
                         guiy { PinMenu(player) }
                     }
                 }

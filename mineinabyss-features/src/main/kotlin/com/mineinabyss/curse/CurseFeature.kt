@@ -10,6 +10,7 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("curse")
@@ -28,6 +29,7 @@ class CurseFeature: AbyssFeature {
                     val toggled by booleanArg()
 
                     playerAction {
+                        val player = sender as Player
                         player.playerData.isAffectedByCurse = toggled
                         val enabled = if(toggled) "enabled" else "disabled"
                         sender.success("Curse $enabled for ${player.name}")

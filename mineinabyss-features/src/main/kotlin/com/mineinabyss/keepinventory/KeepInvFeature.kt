@@ -1,6 +1,7 @@
 package com.mineinabyss.keepinventory
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -10,24 +11,29 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("keepinv")
-class KeepInvFeature : AbyssFeature {
+class KeepInvFeature(
+    val KeepInvInVoid: Boolean = true
+) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(KeepInvListener())
 
         commands {
             mineinabyss {
                 "keepinv"(desc = "Commands to toggle keepinventory status") {
-                    "on" {
-                        playerAction {
+                    val toggled by booleanArg()
+
+                    playerAction {
+                        val player = sender as Player
+                        player.playerData.keepInvStatus = toggled
+                        if (toggled) {
                             player.playerData.keepInvStatus = true
-                            sender.success("Keep Inventory enabled for ${player.name}")
+                            player.success("Keep Inventory enabled for ${player.name}")
                         }
-                    }
-                    "off" {
-                        playerAction {
+                        else {
                             player.playerData.keepInvStatus = false
                             sender.error("Keep Inventory disabled for ${player.name}")
                         }

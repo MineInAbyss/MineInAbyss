@@ -8,6 +8,7 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("hub_storage")
@@ -17,6 +18,7 @@ class HubStorageFeature: AbyssFeature {
             mineinabyss {
                 "storage"(desc = "Opens player storage") {
                     playerAction {
+                        val player = sender as Player
                         if (player.isInHub())
                             player.openHubStorage()
                         else
