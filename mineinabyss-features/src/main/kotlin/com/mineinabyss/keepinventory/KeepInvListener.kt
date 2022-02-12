@@ -12,6 +12,8 @@ class KeepInvListener : Listener {
         if (player.playerData.keepInvStatus) {
             keepInventory = true
             drops.clear()
+            keepLevel = true
+            droppedExp = 0
         }
         else keepInventory = false
 
