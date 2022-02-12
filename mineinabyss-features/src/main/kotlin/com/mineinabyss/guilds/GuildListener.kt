@@ -8,6 +8,8 @@ import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.MessageQueue.content
+import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mineinabyss.extensions.getGuildName
@@ -78,20 +80,27 @@ class GuildChatSystem : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun AsyncPlayerChatEvent.overrideVentureChat() {
-        if (player.playerData.guildChatStatus) isCancelled = true
+        if (player.playerData.guildChatStatus && !player.hasGuild()) {
+            player.error("You cannot use guild chat without a guild.")
+            player.success("Guild chat has been toggled OFF")
+            return
+        }
+
+        if (player.playerData.guildChatStatus && player.hasGuild()) isCancelled = true
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
-    fun AsyncPlayerChatEvent.toggleGuildChat() {
+    fun AsyncPlayerChatEvent.toggleGuildChat(feature: GuildFeature) {
 
-        if (!player.playerData.guildChatStatus) return
         isCancelled = false
+        if (!player.playerData.guildChatStatus || !player.hasGuild()) return
 
         recipients.clear()
         recipients.add(player)
-        format = ":survival::guildchat: ${player.displayName}: $message"
+        format = "${feature.guildChatPrefix}${player.displayName}: $message"
 
         Bukkit.getOnlinePlayers().forEach {
+            if (it.getGuildName().isEmpty()) return@forEach
             if (it.getGuildName().lowercase() == player.getGuildName().lowercase()) recipients.add(it)
         }
     }

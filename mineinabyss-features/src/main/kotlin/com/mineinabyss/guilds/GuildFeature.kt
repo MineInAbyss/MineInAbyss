@@ -20,8 +20,9 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    val maxLength: Int = 20,
-    val bannedWords: List<String> = emptyList()
+    val guildChatPrefix: String = ":survival::guildchat: ",
+    val guildNameMaxLength: Int = 20,
+    val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
@@ -38,12 +39,14 @@ class GuildFeature(
                     "chat"(desc = "Toggle guild chat") {
                         playerAction {
                             val player = sender as Player
+                            val data = player.playerData
                             if (!player.hasGuild()) {
+                                if (data.guildChatStatus) data.guildChatStatus = false
                                 player.error("You cannot use guild chat without a guild")
                                 return@playerAction
                             }
-                            player.playerData.guildChatStatus = !player.playerData.guildChatStatus
-                            player.success("Guild chat has been toggled ${if (player.playerData.guildChatStatus) "ON" else "OFF"}!")
+                            data.guildChatStatus = !data.guildChatStatus
+                            player.success("Guild chat has been toggled ${if (data.guildChatStatus) "ON" else "OFF"}!")
                         }
                     }
                     "menu"(desc = "Open Guild Menu") {

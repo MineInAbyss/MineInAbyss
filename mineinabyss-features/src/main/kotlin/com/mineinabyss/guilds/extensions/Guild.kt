@@ -18,13 +18,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun Player.createGuild(guildName: String, feature: GuildFeature) {
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
 
-    if (newGuildName.length > feature.maxLength) {
+    if (newGuildName.length > feature.guildNameMaxLength) {
         player?.error("Your guild name was longer than the maximum allowed length.")
-        player?.error("Please make it shorter than ${feature.maxLength} characters.")
+        player?.error("Please make it shorter than ${feature.guildNameMaxLength} characters.")
         return
     }
 
-    feature.bannedWords.forEach { banned ->
+    feature.guildNameBannedWords.forEach { banned ->
         val bannedWord = banned.toRegex().find(newGuildName)?.value
         if (banned.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
             if (bannedWord?.contains("([^a-zA-Z])".toRegex()) == true)
