@@ -19,7 +19,7 @@ class StarCompassListener : Listener {
     fun PlayerMoveEvent.initiateStarCompass() {
         val compass = player.inventory.contents.firstOrNull {
             it.type = Material.COMPASS
-            it.toGearyOrNull(player)!!.has<StarCompass>()
+            it.toGearyOrNull(player)?.has<StarCompass>() ?: return@firstOrNull false
         } ?: return
         val section = player.location.section ?: return
         val center = section.region.center
@@ -35,7 +35,7 @@ class StarCompassListener : Listener {
     fun PlayerAscendEvent.updateStarCompass() {
         val compass = player.inventory.contents.firstOrNull {
             it.type = Material.COMPASS
-            it.toGearyOrNull(player)!!.has<StarCompass>()
+            it.toGearyOrNull(player)?.has<StarCompass>() ?: return@firstOrNull false
         } ?: return
         val section = player.location.section ?: return
         val center = section.region.center
@@ -50,7 +50,7 @@ class StarCompassListener : Listener {
     fun PlayerDescendEvent.updateStarCompass() {
         val compass = player.inventory.contents.firstOrNull {
             it.type = Material.COMPASS
-            it.toGearyOrNull(player)!!.has<StarCompass>()
+            it.toGearyOrNull(player)?.has<StarCompass>() ?: return@firstOrNull false
         } ?: return
         val section = player.location.section ?: return
         val center = section.region.center
