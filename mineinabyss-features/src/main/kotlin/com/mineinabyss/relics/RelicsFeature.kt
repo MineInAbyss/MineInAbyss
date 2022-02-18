@@ -21,10 +21,9 @@ class RelicsFeature : AbyssFeature {
         geary {
             systems(
                 ShowDepthListener(),
-                StarCompassListener()
             )
         }
-        registerEvents(SickleListener())
+        registerEvents(SickleListener(), StarCompassListener())
 
         commands {
             mineinabyss {
