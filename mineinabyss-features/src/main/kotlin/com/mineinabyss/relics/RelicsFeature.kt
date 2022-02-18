@@ -18,6 +18,6 @@ class RelicsFeature : AbyssFeature {
                 ShowDepthListener(),
             )
         }
-        registerEvents(SickleListener(), StarCompassListener())
+        registerEvents(SickleListener())
     }
 }
