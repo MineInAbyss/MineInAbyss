@@ -14,4 +14,5 @@ dependencies {
     compileOnly(project(":mineinabyss-core"))
 
     compileOnly(Deps.minecraft.headlib)
+    compileOnly("com.github.InventivetalentDev:GlowAPI:1.5.1-SNAPSHOT")
 }
