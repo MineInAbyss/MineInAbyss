@@ -21,21 +21,18 @@ import kotlin.time.Duration.Companion.seconds
 @AutoScan
 class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
     private val TargetScope.player by get<Player>()
-    val compassBar = BossBar.bossBar(Component.text(":arrow_null:"), 1.0f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+    private val compassBar = BossBar.bossBar(Component.text(":arrow_null:"), 1.0f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
 
     override fun TargetScope.tick() {
         val compass = player.inventory.contents.firstOrNull {
             if (it == null) return@firstOrNull false
             it.toGearyOrNull(player)?.has<StarCompass>() ?: return@firstOrNull false
-            player.inventory.itemInMainHand == it
         } ?: return
         val starCompass = compass.toGearyOrNull(player)?.get<StarCompass>() ?: return
 
-        val section = player.location.section ?: return
-        val center = section.region.center
+        val sectionCenter = player.location.section?.region?.center ?: return
 
-        starCompass.compassLocation =
-            Location(section.world, center.x.toDouble(), 0.0, center.z.toDouble())
+        starCompass.compassLocation = Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
 
         // Let player toggle between having a bossbar-compass or item compass
         if (player.playerData.starCompassToggle) {
