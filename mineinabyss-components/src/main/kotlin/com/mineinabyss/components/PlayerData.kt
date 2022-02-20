@@ -21,6 +21,7 @@ class PlayerData(
     var cloutTokensHeld: Int = 0,
     var showPlayerBalance: Boolean = true,
     var guildChatStatus: Boolean = false,
+    var starCompassToggle: Boolean = false,
     @Transient var recentRightclickedEntity: Entity? = null
 ) {
     val level: Int get() = exp.toInt() / 10 //TODO write a proper formula
