@@ -15,6 +15,5 @@ data class GhostSeek(
     val hostileMobColor: GlowAPI.Color = GlowAPI.Color.RED,
     val flyingMobColor: GlowAPI.Color = GlowAPI.Color.YELLOW,
     val waterMobColor: GlowAPI.Color = GlowAPI.Color.DARK_BLUE,
-    val aggroedMob: GlowAPI.Color = GlowAPI.Color.DARK_RED,
     val bossMob: GlowAPI.Color = GlowAPI.Color.DARK_PURPLE
 )
