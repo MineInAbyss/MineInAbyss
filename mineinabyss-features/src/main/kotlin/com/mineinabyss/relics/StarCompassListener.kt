@@ -31,9 +31,9 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
         val gearyCompass = compass.toGearyOrNull(player) ?: return
         val starCompass = gearyCompass.get<StarCompass>() ?: return
 
-        val sectionCenter = player.location.section?.region?.center ?: return
+        val sectionCenter = player.location.section?.region?.center
 
-        starCompass.compassLocation = Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
+        if (sectionCenter != null) starCompass.compassLocation = Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
 
         // Let player toggle between having a bossbar-compass or item compass
         if (!gearyCompass.has<HideBossBarCompass>()) {
