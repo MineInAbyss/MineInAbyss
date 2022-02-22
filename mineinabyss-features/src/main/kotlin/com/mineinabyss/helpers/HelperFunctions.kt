@@ -59,8 +59,8 @@ fun Player.bossbarCompass(loc: Location, bar: BossBar) {
     val player = player ?: return
 
     val dir = loc.clone().subtract(player.location).toVector()
-    val angleDir = (atan2(dir.z,dir.x) / 2 / Math.PI * 360 + 360) % 360
-    val angleLook = (atan2(player.location.direction.z,player.location.direction.x) / 2 / Math.PI * 360 + 360) % 360
+    val angleDir = (atan2(dir.z,dir.x) / 2 / Math.PI * 360 + 180) % 360
+    val angleLook = (atan2(player.location.direction.z,player.location.direction.x) / 2 / Math.PI * 360 + 180) % 360
 
     when ((angleDir - angleLook + 180) % 360) {
         in 0.0..22.5 -> bar.name(Component.text(":arrow_s:"))

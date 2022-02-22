@@ -1,6 +1,6 @@
 package com.mineinabyss.relics
 
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.helpers.HideBossBarCompass
 import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.autoscan.AutoScan
@@ -28,14 +28,15 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
             if (it == null) return@firstOrNull false
             it.toGearyOrNull(player)?.has<StarCompass>() ?: return@firstOrNull false
         } ?: return
-        val starCompass = compass.toGearyOrNull(player)?.get<StarCompass>() ?: return
+        val gearyCompass = compass.toGearyOrNull(player) ?: return
+        val starCompass = gearyCompass.get<StarCompass>() ?: return
 
         val sectionCenter = player.location.section?.region?.center ?: return
 
         starCompass.compassLocation = Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
 
         // Let player toggle between having a bossbar-compass or item compass
-        if (player.playerData.starCompassToggle) {
+        if (!gearyCompass.has<HideBossBarCompass>()) {
             compass.type = Material.PAPER
             player.bossbarCompass(starCompass.compassLocation!!, compassBar)
         }
