@@ -9,9 +9,13 @@ import com.okkero.skedule.schedule
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import java.util.function.Predicate
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 fun dropItems(loc: Location, drop: ItemStack) {
@@ -35,11 +39,10 @@ fun Player.updateBalance() {
     val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
 
     val currentBalance: Component =
-    if (data?.cloutTokensHeld!! > 0) {
-        /* Switch to NegativeSpace.PLUS when that is added to Idofront */
-        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
-    }
-    else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
+        if (data?.cloutTokensHeld!! > 0) {
+            /* Switch to NegativeSpace.PLUS when that is added to Idofront */
+            Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
+        } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
 
@@ -51,6 +54,63 @@ fun Player.updateBalance() {
         )
         return@schedule
     }
+}
+
+fun spawnParticleAlongLine(
+    start: Location,
+    end: Location,
+    particle: Particle?,
+    pointsPerLine: Int,
+    particleCount: Int,
+    offsetX: Double,
+    offsetY: Double,
+    offsetZ: Double,
+    extra: Double,
+    data: Double?,
+    forceDisplay: Boolean,
+    operationPerPoint: Predicate<Location?>?
+) {
+    val d = start.distance(end) / pointsPerLine
+    for (i in 0..pointsPerLine) {
+        val loc = start.clone()
+        val direction = end.toVector().subtract(start.toVector()).normalize()
+        val v = direction.multiply(i * d)
+        loc.add(v.x, v.y, v.z)
+        if (operationPerPoint == null) {
+            start.world.spawnParticle(
+                particle!!,
+                loc,
+                particleCount,
+                offsetX,
+                offsetY,
+                offsetZ,
+                extra,
+                data,
+                forceDisplay
+            )
+            continue
+        }
+        if (operationPerPoint.test(loc)) {
+            start.world.spawnParticle(
+                particle!!,
+                loc,
+                particleCount,
+                offsetX,
+                offsetY,
+                offsetZ,
+                extra,
+                data,
+                forceDisplay
+            )
+        }
+    }
+}
+
+fun getRightSide(location: Location, distance: Double): Location {
+    val angle = location.yaw / 60
+    return location.clone()
+        .subtract(Vector(cos(angle.toDouble()), 0.0, sin(angle.toDouble())).normalize().multiply(distance))
+        .subtract(0.0, 0.4, 0.0)
 }
 
 
