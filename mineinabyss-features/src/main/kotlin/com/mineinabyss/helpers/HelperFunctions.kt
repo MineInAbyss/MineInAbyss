@@ -65,25 +65,25 @@ fun Player.bossbarCompass(loc: Location, bar: BossBar) {
     val angleLook = (atan2(player.location.direction.z, player.location.direction.x) / 2 / Math.PI * 360 + 180) % 360
 
     val barNameList = listOf(
-        ":arrow_s:",
-        ":arrow_sse:",
-        ":arrow_sse:",
-        ":arrow_ese:",
-        ":arrow_e:",
-        ":arrow_ene:",
-        ":arrow_ne:",
-        ":arrow_nne:",
         ":arrow_n:",
-        ":arrow_nnw:",
-        ":arrow_nw:",
-        ":arrow_wnw:",
-        ":arrow_w:",
-        ":arrow_wsw:",
-        ":arrow_sw:",
+        ":arrow_nne:",
+        ":arrow_ne:",
+        ":arrow_ene:",
+        ":arrow_e:",
+        ":arrow_ese:",
+        ":arrow_se:",
+        ":arrow_sse:",
+        ":arrow_s:",
         ":arrow_ssw:",
+        ":arrow_sw:",
+        ":arrow_wsw:",
+        ":arrow_w:",
+        ":arrow_wnw:",
+        ":arrow_nw:",
+        ":arrow_nnw:",
     )
 
-    val compassAngle = (((angleDir - angleLook + 180) % 360) / 22.5).toInt()
+    val compassAngle = (((angleDir - angleLook + 360) % 360) / 22.5).toInt()
     bar.name(Component.text(barNameList[compassAngle]))
 
 //    when ((angleDir - angleLook + 180) % 360) {
