@@ -9,7 +9,8 @@ import org.bukkit.Sound
 @SerialName("mineinabyss:bounding_lance")
 class BoundingLance(
     val placeSound: Sound = Sound.BLOCK_CHAIN_PLACE,
-    val effectRadius: Double = 1.5,
-    val effectDuration: Long = 10,
-    val effectParticles: List<Particle> = listOf(Particle.DRIP_LAVA)
+    val effectRadius: Double = 3.0,
+    val effectDuration: Long = 100L,
+    val effectParticles: List<Particle> = listOf(Particle.DRIP_LAVA),
+    var effectStatus: Boolean = false,
 )
