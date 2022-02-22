@@ -12,6 +12,7 @@ import com.mineinabyss.idofront.util.toMCKey
 import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.okkero.skedule.schedule
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
@@ -66,9 +67,10 @@ class BoundingLanceListener : Listener {
                     if (!lance.effectStatus) lance.effectStatus = true
                     else return@schedule
                     entity.getNearbyEntities(lance.effectRadius, lance.effectRadius, lance.effectRadius)
-                        .forEach { player ->
-                            if (player !is Player) return@forEach
-                            player.addPotionEffect(
+                        .forEach { p ->
+                            if (p !is Player) return@forEach
+                            if (p.getGuildName() != player.getGuildName()) return@forEach
+                            p.addPotionEffect(
                                 PotionEffect(
                                     PotionEffectType.INCREASE_DAMAGE,
                                     lance.effectDuration.toInt(),
@@ -77,7 +79,7 @@ class BoundingLanceListener : Listener {
                                     true
                                 )
                             )
-                            player.addPotionEffect(
+                            p.addPotionEffect(
                                 PotionEffect(
                                     PotionEffectType.DAMAGE_RESISTANCE,
                                     lance.effectDuration.toInt(),
@@ -86,7 +88,7 @@ class BoundingLanceListener : Listener {
                                     true
                                 )
                             )
-                            player.addPotionEffect(
+                            p.addPotionEffect(
                                 PotionEffect(
                                     PotionEffectType.SPEED,
                                     lance.effectDuration.toInt(), 3, false, true
