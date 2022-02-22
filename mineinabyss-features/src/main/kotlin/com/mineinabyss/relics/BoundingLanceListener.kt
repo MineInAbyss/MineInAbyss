@@ -64,8 +64,10 @@ class BoundingLanceListener : Listener {
                     val lance = entity.toGeary().get<BoundingLance>() ?: return@schedule
                     var timePassed = 0L
                     val lastTime = System.currentTimeMillis()
+
                     if (!lance.effectStatus) lance.effectStatus = true
                     else return@schedule
+
                     entity.getNearbyEntities(lance.effectRadius, lance.effectRadius, lance.effectRadius)
                         .forEach { p ->
                             if (p !is Player) return@forEach
@@ -100,7 +102,7 @@ class BoundingLanceListener : Listener {
                         entity.world.spawnParticle(
                             lance.effectParticles.random(),
                             entity.location.toCenterLocation(),
-                            500,
+                            100,
                             lance.effectRadius,
                             0.0,
                             lance.effectRadius,
@@ -108,10 +110,11 @@ class BoundingLanceListener : Listener {
                         )
                         timePassed += System.currentTimeMillis() - lastTime
                         waitFor(1)
-                    } while (timePassed < lance.effectDuration)
+                    } while (timePassed < lance.effectDuration * 5000)
                     waitFor(60)
                     entity.remove()
                     dropItems(entity.location.toCenterLocation(), LootyFactory.createFromPrefab(itemPrefab)!!)
+                    lance.effectStatus = false
                 }
             }
         }

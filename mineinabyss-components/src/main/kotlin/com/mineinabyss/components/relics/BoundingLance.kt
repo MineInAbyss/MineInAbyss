@@ -10,7 +10,7 @@ import org.bukkit.Sound
 class BoundingLance(
     val placeSound: Sound = Sound.BLOCK_CHAIN_PLACE,
     val effectRadius: Double = 3.0,
-    val effectDuration: Long = 100L,
+    val effectDuration: Int = 400,
     val effectParticles: List<Particle> = listOf(Particle.DRIP_LAVA),
     var effectStatus: Boolean = false,
 )
