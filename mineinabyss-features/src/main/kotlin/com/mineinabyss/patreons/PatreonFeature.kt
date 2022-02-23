@@ -21,7 +21,7 @@ class PatreonFeature : AbyssFeature {
         geary {
             systems()
         }
-        registerEvents(PatreonListener())
+        registerEvents()
 
         commands {
             mineinabyss {
