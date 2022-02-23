@@ -10,5 +10,7 @@ class UnheardBell (
     val whistleRequirement: Whistle = Whistle.WHITE,
     val effectRange: Double = 500.0,
     val effectDuration: Int = 500,
+    val soundRung: String = "mineinabyss:relic.unheard_bell_rung",
+    val soundDenied: String = "mineinabyss:relic.unheard_bell_denied"
 )
 
