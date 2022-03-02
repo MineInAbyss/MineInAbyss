@@ -11,6 +11,7 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("orth_banking")
@@ -23,6 +24,7 @@ class OrthBankingFeature : AbyssFeature {
                 "bank"(desc = "Orthbanking related commands"){
                     "balance"(desc = "Toggles whether or not the balance should be shown.") {
                         playerAction {
+                            val player = sender as Player
                             val data = player.playerData
                             data.showPlayerBalance = !data.showPlayerBalance
                             if (data.showPlayerBalance) player.updateBalance()
@@ -31,6 +33,7 @@ class OrthBankingFeature : AbyssFeature {
                     "deposit"(desc = "Dev command until Guiy can take items") {
                         val amount by intArg { default = 1 }
                         playerAction {
+                            val player = sender as Player
                             val data = player.playerData
                             val currItem = player.inventory.itemInMainHand
                             //val gearyEntity = currItem.toGearyOrNull(player)
@@ -49,6 +52,7 @@ class OrthBankingFeature : AbyssFeature {
                     "withdraw"(desc = "Dev command until Guiy can take items") {
                         val amount by intArg { default = 1 }
                         playerAction {
+                            val player = sender as Player
                             val data = player.playerData
                             val slot = player.inventory.firstEmpty()
 

@@ -1,8 +1,8 @@
 package com.mineinabyss.pins
 
 import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.geary.ecs.prefab.PrefabKey
-import com.mineinabyss.geary.minecraft.access.toGeary
+import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.registerEvents
@@ -28,14 +28,8 @@ class PinsFeature : AbyssFeature {
                 PinActivatorSystem(),
                 AbyssalPinBehaviour(),
                 AddPinBehaviour(),
+                PinRegistrySystem()
             )
-
-            bukkitEntityAssociations {
-                onEntityRegister<Player> {
-                    //TODO kotlin bug, removing this defaults it to Unit but only sometimes
-                    getOrSetPersisting<ActivePins> { ActivePins() }
-                }
-            }
         }
 
         commands {
@@ -48,6 +42,7 @@ class PinsFeature : AbyssFeature {
                         }
 
                         playerAction {
+                            val player = sender as Player
                             val pins = player.toGeary().getOrSetPersisting { ActivePins() }
                             pins.add(key)
                         }
@@ -57,6 +52,7 @@ class PinsFeature : AbyssFeature {
                 "pins" {
                     permission = "mineinabyss.pins.menu"
                     playerAction {
+                        val player = sender as Player
                         guiy { PinMenu(player) }
                     }
                 }

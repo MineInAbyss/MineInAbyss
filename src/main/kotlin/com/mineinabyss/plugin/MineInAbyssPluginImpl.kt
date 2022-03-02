@@ -1,19 +1,19 @@
 package com.mineinabyss.plugin
 
-import com.mineinabyss.geary.minecraft.dsl.GearyAddon
-import com.mineinabyss.geary.minecraft.dsl.GearyLoadPhase
-import com.mineinabyss.geary.minecraft.dsl.gearyAddon
-import com.mineinabyss.geary.minecraft.store.PrefabNamespaceMigrations
+import com.mineinabyss.geary.api.addon.GearyLoadPhase.ENABLE
+import com.mineinabyss.geary.papermc.dsl.GearyAddon
+import com.mineinabyss.geary.papermc.dsl.gearyAddon
+import com.mineinabyss.geary.papermc.store.PrefabNamespaceMigrations
+import com.mineinabyss.guilds.database.GuildJoinQueue
+import com.mineinabyss.guilds.database.Guilds
+import com.mineinabyss.guilds.database.Players
+import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.registerService
 import com.mineinabyss.mineinabyss.core.*
-import com.mineinabyss.mineinabyss.data.GuildJoinQueue
-import com.mineinabyss.mineinabyss.data.Guilds
-import com.mineinabyss.mineinabyss.data.MessageQueue
-import com.mineinabyss.mineinabyss.data.Players
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
@@ -29,6 +29,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     }
 
     override fun onEnable() {
+        saveDefaultConfig()
+
         gearyAddon {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
 
@@ -62,7 +64,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             autoScan<AbyssFeature>()
 
             startup {
-                GearyLoadPhase.ENABLE {
+                ENABLE {
                     val config = MIAConfigImpl()
                     config.load()
                     registerService<MIAConfig>(config)

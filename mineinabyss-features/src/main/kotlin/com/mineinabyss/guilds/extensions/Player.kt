@@ -1,13 +1,15 @@
 package com.mineinabyss.mineinabyss.extensions
 
+import com.mineinabyss.guilds.database.*
+import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -298,11 +300,11 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
     }
 }
 
-fun OfflinePlayer.leaveGuild() {
+fun Player.leaveGuild() {
     transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
-        }.singleOrNull()
+        }.firstOrNull()
 
         if (playerRow == null) {
             player?.error("You cannot leave a guild when you're not a member of any!")
@@ -310,7 +312,7 @@ fun OfflinePlayer.leaveGuild() {
         }
 
         val memberRank = playerRow[Players.guildRank]
-        val guildName = player?.getGuildName()
+        val guildName = player?.getGuildName() ?: return@transaction
 
         /* Deletes player-entry if player has a guild */
         if (memberRank == GuildRanks.Owner) {
@@ -401,7 +403,6 @@ fun OfflinePlayer.getGuildLevel(): Int? {
 }
 
 fun OfflinePlayer.getGuildMemberCount(): Int {
-    var memberCount = 0
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
@@ -413,11 +414,7 @@ fun OfflinePlayer.getGuildMemberCount(): Int {
             Bukkit.getOfflinePlayer(row[Players.playerUUID])
         }
 
-        members.forEach { member ->
-            memberCount++
-        }
-
-        return@transaction memberCount
+        return@transaction members.count()
     }
 }
 

@@ -1,18 +1,18 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.extensions.changeStoredGuildName
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
-import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.mineinabyss.extensions.changeStoredGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
@@ -40,18 +40,20 @@ fun GuildUIScope.GuildOwnerScreen() {
 @Composable
 fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
     Button(
-        TitleItem.of("$GREEN${BOLD}Guild Member List"),
-        modifier.size(2, 2).clickable {
+        modifier = modifier,
+        onClick = {
             nav.open(GuildScreen.MemberList(guildLevel))
         }
-    )
+    ) {
+        Text("$GREEN${BOLD}Guild Member List", modifier = Modifier.size(2, 2))
+    }
 }
 
 @Composable
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     Button(
-        TitleItem.of("$YELLOW${BOLD}Change Guild Name"),
-        modifier.size(2, 2).clickable {
+        modifier = modifier,
+        onClick = {
             nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title(":guild_naming:")
@@ -64,32 +66,36 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
                     }
             ))
         }
-    )
+    ) {
+        Text("$YELLOW${BOLD}Change Guild Name", modifier = Modifier.size(2, 2))
+    }
 }
 
 @Composable
 fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
-    Button(
-        TitleItem.of("$GOLD${BOLD}Change Guild House"),
-        modifier.size(2, 2)
-    )
+    Button(modifier = modifier) {
+        Text("$GOLD${BOLD}${STRIKETHROUGH}Change Guild House", modifier = Modifier.size(2, 2),
+            lore = arrayOf("${RED}This feature is not yet implemented.")
+        )
+    }
 }
 
 @Composable
 fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(
-        TitleItem.of("$BLUE${BOLD}Guild Relationships"),
-        modifier.size(2, 2).clickable {
-//            nav.open(GuildScreen.Relationships)
-        })
+        modifier = modifier,
+        onClick = { /*nav.open(GuildScreen.Relationships)*/ }) {
+        Text("$BLUE${BOLD}${STRIKETHROUGH}Guild Relationships", modifier = Modifier.size(2, 2),
+            lore = arrayOf("${RED}This feature is not yet implemented."))
+    }
 }
 
 @Composable
 fun GuildUIScope.GuildDisbandButton(modifier: Modifier = Modifier) {
     Button(
-        TitleItem.of("$RED${BOLD}Disband Guild"),
-        modifier.clickable {
-            nav.open(GuildScreen.Disband)
-        }
-    )
+        modifier = modifier,
+        onClick = { nav.open(GuildScreen.Disband) }
+    ) {
+        Text("$RED${BOLD}Disband Guild")
+    }
 }

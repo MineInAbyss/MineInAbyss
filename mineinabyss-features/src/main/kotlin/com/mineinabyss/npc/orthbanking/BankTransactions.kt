@@ -2,7 +2,7 @@ package com.mineinabyss.npc.orthbanking
 
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.ecs.prefab.PrefabKey
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.looty.LootyFactory

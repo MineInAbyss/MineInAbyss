@@ -3,21 +3,22 @@ package com.mineinabyss.guilds.menus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guilds.database.Players
+import com.mineinabyss.guilds.extensions.changeGuildJoinType
 import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
-import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildJoinType
-import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.*
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit
@@ -56,15 +57,14 @@ fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
     }
     Grid(modifier.size(5, guildLevel)) {
         players.sortedBy { it.first }.forEach { (rank, member) ->
-            Button(
-                member.head(
-                    "$GOLD$ITALIC${member.name}",
-                    "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${member.getGuildRank()}",
-                ),
-                Modifier.clickable {
-                    nav.open(GuildScreen.MemberOptions(member))
-                }
-            )
+            Button(onClick = { nav.open(GuildScreen.MemberOptions(member)) }) {
+                Item(
+                    member.head(
+                        "$GOLD$ITALIC${member.name}",
+                        "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${member.getGuildRank()}",
+                    )
+                )
+            }
         }
     }
 }
@@ -81,8 +81,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
         setCustomModelData(1)
     }
     Button(
-        TitleItem.of("${YELLOW}Invite Player to Guild"),
-        modifier.size(1, 1).clickable {
+        onClick = {
             nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title(":guild_invite:")
@@ -95,32 +94,30 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
                     }
             ))
         }
-    )
+    ) {
+        Text("${YELLOW}Invite Player to Guild")
+    }
 }
 
 @Composable
 fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
     val requestAmount = player.getNumberOfGuildRequests()
     val plural = requestAmount != 1
-    if (player.hasGuildRequest()) {
-        Button(
-            TitleItem.of(
-                "${DARK_GREEN}Manage Guild Join Requests",
-                "$YELLOW${ITALIC}There ${if (plural) "are" else "is"} currently $GOLD$BOLD$requestAmount ",
-                "$YELLOW${ITALIC}join-request${if (plural) "s" else ""} for your guild."
-            ),
-            /* Icon that notifies player there are new invites */
-            modifier.clickable {
-                nav.open(GuildScreen.JoinRequestList)
-            }
+    Button(
+        enabled = player.hasGuildRequest(),
+        /* Icon that notifies player there are new invites */
+        modifier = modifier,
+        onClick = { nav.open(GuildScreen.JoinRequestList) }
+    ) { enabled ->
+        if (enabled) Text(
+            "${DARK_GREEN}Manage Guild Join Requests",
+            "$YELLOW${ITALIC}There ${if (plural) "are" else "is"} currently $GOLD$BOLD$requestAmount ",
+            "$YELLOW${ITALIC}join-request${if (plural) "s" else ""} for your guild."
         )
-    } else {
-        Button(
-            TitleItem.of(
-                "$DARK_GREEN${STRIKETHROUGH}Manage Guild Join Requests",
-                "$RED${ITALIC}There are currently no ",
-                "$RED${ITALIC}join-requests for your guild."
-            )
+        else Text(
+            "$DARK_GREEN${STRIKETHROUGH}Manage Guild Join Requests",
+            "$RED${ITALIC}There are currently no ",
+            "$RED${ITALIC}join-requests for your guild."
         )
     }
 
@@ -130,13 +127,13 @@ fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     val joinType by derivedStateOf { player.getGuildJoinType() }
     Button(
-        TitleItem.of(
+        /* Custom Icon for "darkerened" out icon indicating no invites */
+        modifier = modifier,
+        onClick = { player.changeGuildJoinType() }
+    ) {
+        Text(
             "${DARK_GREEN}Toggle Guild Join Type",
             "${YELLOW}Currently players can join via: $GOLD$ITALIC$joinType",
-        ),
-        /* Custom Icon for "darkerened" out icon indicating no invites */
-        modifier.clickable {
-            player.changeGuildJoinType()
-        }
-    )
+        )
+    }
 }

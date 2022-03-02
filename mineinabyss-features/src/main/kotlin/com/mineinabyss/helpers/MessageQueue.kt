@@ -1,4 +1,4 @@
-package com.mineinabyss.mineinabyss.data
+package com.mineinabyss.helpers
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 

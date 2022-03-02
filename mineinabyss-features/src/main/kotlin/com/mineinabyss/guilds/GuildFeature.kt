@@ -12,14 +12,18 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.npc.orthbanking.ui.BankMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("guilds")
-class GuildFeature : AbyssFeature {
+class GuildFeature(
+    val guildChatPrefix: String = "",
+    val guildNameMaxLength: Int = 20,
+    val guildNameBannedWords: List<String> = emptyList()
+) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(GuildListener(), GuildChatSystem())
@@ -34,17 +38,20 @@ class GuildFeature : AbyssFeature {
                 "guild"(desc = "Guild related commands") {
                     "chat"(desc = "Toggle guild chat") {
                         playerAction {
+                            val player = sender as Player
+                            val data = player.playerData
                             if (!player.hasGuild()) {
+                                if (data.guildChatStatus) data.guildChatStatus = false
                                 player.error("You cannot use guild chat without a guild")
                                 return@playerAction
                             }
-                            player.playerData.guildChatStatus = !player.playerData.guildChatStatus
-                            player.success("Guild chat has been toggled ${if (player.playerData.guildChatStatus) "ON" else "OFF"}!")
+                            data.guildChatStatus = !data.guildChatStatus
+                            player.success("Guild chat has been toggled ${if (data.guildChatStatus) "ON" else "OFF"}!")
                         }
                     }
                     "menu"(desc = "Open Guild Menu") {
                         playerAction {
-                            guiy { GuildMainMenu(player) }
+                            guiy { GuildMainMenu(player, this@GuildFeature) }
                         }
                     }
                 }

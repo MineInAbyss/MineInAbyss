@@ -2,18 +2,18 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.mineinabyss.guilds.database.GuildJoinQueue
+import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
-import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildJoinQueue
-import com.mineinabyss.mineinabyss.data.GuildJoinType
-import com.mineinabyss.mineinabyss.data.Players
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
@@ -36,15 +36,14 @@ fun GuildUIScope.GuildJoinRequestListScreen() {
     }
     Grid(Modifier.size(9, 4)) {
         requests.forEach { newMember ->
-            Button(
-                newMember.toPlayer().head(
-                    "$YELLOW$ITALIC${newMember.toPlayer()?.name}",
-                    "${BLUE}Click this to accept or deny the join-request."
-                ),
-                Modifier.clickable {
-                    nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember)))
-                }
-            )
+            Button(onClick = { nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember))) }) {
+                Item(
+                    newMember.toPlayer().head(
+                        "$YELLOW$ITALIC${newMember.toPlayer()?.name}",
+                        "${BLUE}Click this to accept or deny the join-request."
+                    )
+                )
+            }
         }
     }
     DeclineAllGuildRequests(Modifier.at(8, 4))

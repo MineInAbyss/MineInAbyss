@@ -1,9 +1,7 @@
 import Com_mineinabyss_conventions_platform_gradle.Deps
 
 val idofrontVersion: String by project
-val gearyVersion: String by project
-val gearyAddonsVersion: String by project
-val lootyVersion: String by project
+val gearyPlatformVersion: String by project
 val deeperWorldVersion: String by project
 
 plugins {
@@ -26,6 +24,12 @@ allprojects {
     }
 
     dependencies {
+        // Geary platform
+        compileOnly(platform("com.mineinabyss:geary-platform:$gearyPlatformVersion"))
+        compileOnly("com.mineinabyss:geary-papermc-core")
+        compileOnly("com.mineinabyss:geary-commons-papermc")
+        compileOnly("com.mineinabyss:looty")
+
         // MineInAbyss platform
         compileOnly(Deps.kotlin.stdlib)
         compileOnly(Deps.kotlinx.serialization.json)
@@ -42,9 +46,6 @@ allprojects {
 
         // Plugin deps
         compileOnly("com.mineinabyss:deeperworld:$deeperWorldVersion")
-        compileOnly("com.mineinabyss:geary-platform-papermc:$gearyVersion")
-        compileOnly("com.mineinabyss:geary-commons-papermc:$gearyAddonsVersion")
-        compileOnly("com.mineinabyss:looty:$lootyVersion")
         compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
         compileOnly("com.gecolay:gsit:1.0.6")
@@ -58,4 +59,8 @@ dependencies {
     // Shaded
     implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
+}
+
+tasks.compileKotlin {
+    kotlinOptions.jvmTarget = "16"
 }

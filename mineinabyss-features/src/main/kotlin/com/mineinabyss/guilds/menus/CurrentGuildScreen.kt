@@ -1,19 +1,19 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
-import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.data.GuildRanks
-import com.mineinabyss.mineinabyss.data.Players
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
+import com.mineinabyss.mineinabyss.extensions.hasGuild
 import com.mineinabyss.mineinabyss.extensions.leaveGuild
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
@@ -62,10 +62,12 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
 @Composable
 fun GuildUIScope.LeaveGuildButton(player: Player, modifier: Modifier = Modifier) {
     Button(
-        TitleItem.of("$RED${ITALIC}Leave Guild"),
-        modifier.clickable {
+        enabled = player.hasGuild(),
+        onClick = {
             player.leaveGuild()
-            nav.reset()
-        }
-    )
+            nav.back()
+        }) { enabled ->
+        if (enabled) Text("$RED${ITALIC}Leave Guild", modifier = modifier)
+        else Text("$RED${ITALIC}${STRIKETHROUGH}Leave Guild", modifier = modifier)
+    }
 }

@@ -3,7 +3,7 @@
 # Extensions
 x-particles-vomit: &vomit
   count: 30
-  duration: 10
+  duration: 10s
   iterations: 6
   offset: 3s
   particles: [ SLIME ]
@@ -11,16 +11,7 @@ x-particles-vomit: &vomit
 # Layer config uses DeeperWorld sections
 # effect names are each effect class' @SerialName
 features:
-  - !<anticheese> {}
-  - !<curse> {}
-  - !<descent> {}
-  - !<enchants> {}
-  - !<exp> {}
-  - !<gondolas> {}
-  - !<hub_storage> {}
-  - !<layers> {}
-  - !<pins> {}
-  - !<relics> {}
+  - !<all> {}
 layers:
   - name: Orth
     sub: City of the Great Pit
@@ -28,7 +19,7 @@ layers:
     depth:
       start: -1
       end: 0
-    sections: [ city ]
+    sections: [ section1 ]
     blockBlacklist:
       - LADDER
   - name: Edge of the Abyss
@@ -44,7 +35,7 @@ layers:
         effects: [ HUNGER ]
       - !<particles>
         <<: *vomit
-    sections: [ l1s1,l1s2,l1s3,l1s4,l1s5,l1s6 ]
+    sections: [ section2 ]
     blockBlacklist:
       - LADDER
-hubSectionName: city
+hubSectionName: section1

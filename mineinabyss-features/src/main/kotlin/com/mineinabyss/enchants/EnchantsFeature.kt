@@ -14,6 +14,7 @@ import com.mineinabyss.mineinabyss.core.geary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.ChatColor
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("enchants")
@@ -44,6 +45,7 @@ class EnchantsFeature : AbyssFeature {
                     val enchantmentLevel by intArg { default = 1 }
 
                     playerAction {
+                        val player = sender as Player
                         val parsedEnchant =
                             CustomEnchants.enchantmentList.firstOrNull {
                                 it.key.toString() == availableEnchantment.lowercase()

@@ -9,14 +9,13 @@ import org.bukkit.event.entity.PlayerDeathEvent
 class KeepInvListener : Listener {
     @EventHandler
     fun PlayerDeathEvent.optionalKeepInventory() {
-        val player = entity
-
         if (player.playerData.keepInvStatus) {
-            player.inventory.contents.filterNotNull().forEach {
-                itemsToKeep += it
-                drops -= it
-            }
+            keepInventory = true
+            drops.clear()
+            keepLevel = true
+            droppedExp = 0
         }
+        else keepInventory = false
 
         //TODO maybe limit this to only the survival server with a config option
         if (player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) keepInventory = true
