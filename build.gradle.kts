@@ -22,6 +22,7 @@ allprojects {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://jitpack.io")
         maven("https://repo.codemc.io/repository/maven-snapshots/")
+        maven("https://repo.mineinabyss.com/releases")
     }
 
     dependencies {
@@ -46,6 +47,7 @@ allprojects {
         compileOnly("com.mineinabyss:looty:$lootyVersion")
         compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
+        compileOnly("com.gecolay:gsit:1.0.6")
 
         implementation("com.mineinabyss:idofront:$idofrontVersion")
     }
