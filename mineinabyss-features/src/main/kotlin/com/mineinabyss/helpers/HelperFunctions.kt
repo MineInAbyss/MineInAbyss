@@ -4,6 +4,8 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.isAbyssWorld
+import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule
 import net.kyori.adventure.text.Component
@@ -12,6 +14,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import java.util.*
 
 
 fun dropItems(loc: Location, drop: ItemStack) {
@@ -50,6 +53,39 @@ fun Player.updateBalance() {
         } while ((data.orthCoinsHeld == orthCoinBalance && data.cloutTokensHeld == cloutBalance) && data.showPlayerBalance
         )
         return@schedule
+    }
+}
+
+private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
+fun handleCurse(player: Player, from: Location, to: Location) {
+    //Arbitrary range with the purpose of preventing curse on section change
+    if (from.distanceSquared(to) > 32 * 32) return
+
+    if (recentlyMovedPlayers.contains(player.uniqueId)) {
+        recentlyMovedPlayers.remove(player.uniqueId)
+        return
+    }
+
+    if (!player.world.isAbyssWorld) return
+
+    val changeY = to.y - from.y
+    val playerData = player.playerData
+
+    playerData.apply {
+        if (player.isInvulnerable) {
+            curseAccrued = 0.0
+        } else if (playerData.isAffectedByCurse) {
+            val layer = to.layer ?: return
+
+            val dist = curseAccrued
+            curseAccrued = (dist + changeY).coerceAtLeast(0.0)
+            if (dist >= 10) {
+                layer.ascensionEffects.forEach {
+                    it.clone().applyEffect(player, 10)
+                }
+                curseAccrued -= 10
+            }
+        }
     }
 }
 
