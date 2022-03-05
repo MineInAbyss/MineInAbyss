@@ -15,7 +15,7 @@ class SoulBoundListener : Listener {
     @EventHandler
     fun PlayerAscendEvent.soulbindItems() {
         if (toSection != MIAConfig.data.hubSection) return
-        player.inventory.contents.filterNotNull().forEach {
+        player.inventory.contents?.filterNotNull()?.forEach {
             val item = it.toGearyFromUUIDOrNull() ?: return
             item.get<Orthbound>() ?: return@forEach
             item.setPersisting(Soulbound(player.uniqueId))
@@ -26,7 +26,7 @@ class SoulBoundListener : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun PlayerDeathEvent.death() {
         val player = entity
-        player.inventory.contents.filterNotNull().forEach {
+        player.inventory.contents?.filterNotNull()?.forEach {
             val item = it.toGearyFromUUIDOrNull() ?: return
 
             if (item.get<Soulbound>()?.owner == player.uniqueId) {

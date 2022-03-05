@@ -64,8 +64,7 @@ class UtilityCommandExecutor : IdofrontCommandExecutor() {
                         containers.forEach { container ->
                             if (container.inventory.contains(item)) {
                                 val numberOfItems = container.inventory.contents
-                                    .filter { it != null && it.type == item }
-                                    .sumOf { it.amount }
+                                    ?.filter { it != null && it.type == item }
                                 container.inventory.remove(item)
                                 sender.info("Removed $numberOfItems ${item.name} from a container at x:${container.x} y:${container.y} z:${container.z} in layer ${layer.name} (world ${world.name})")
                             }

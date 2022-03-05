@@ -14,7 +14,7 @@ fun Player.depositCoins(amount: Int) {
     val player = player ?: return
     val data = player.playerData
 
-    player.inventory.contents.forEach {
+    player.inventory.contents?.forEach {
         if (it == null) {
             player.success("Your Orth Coins have been deposited!")
             return
