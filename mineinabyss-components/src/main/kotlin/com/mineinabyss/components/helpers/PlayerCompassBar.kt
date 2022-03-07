@@ -8,5 +8,5 @@ import net.kyori.adventure.text.Component
 @Serializable
 @SerialName("mineinabyss:player_compass_bar")
 class PlayerCompassBar {
-    val compassBar: BossBar = BossBar.bossBar(Component.text(":arrow_null:"), 1.0f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+    var compassBar: BossBar = BossBar.bossBar(Component.text(":arrow_null:"), 1.0f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
 }
