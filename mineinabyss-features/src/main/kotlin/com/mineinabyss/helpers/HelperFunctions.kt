@@ -4,6 +4,8 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.isAbyssWorld
+import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule
 import net.kyori.adventure.bossbar.BossBar
@@ -14,6 +16,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import kotlin.math.atan2
+import java.util.*
 
 
 fun dropItems(loc: Location, drop: ItemStack) {
@@ -86,26 +89,40 @@ fun Player.bossbarCompass(loc: Location, bar: BossBar) {
     val compassAngle = (((angleDir - angleLook + 360) % 360) / 22.5).toInt()
     bar.name(Component.text(barNameList[compassAngle]))
 
-//    when ((angleDir - angleLook + 180) % 360) {
-//        in 0.0..22.5 -> bar.name(Component.text(":arrow_s:"))
-//        in 22.5..45.0 -> bar.name(Component.text(":arrow_sse:"))
-//        in 45.0..67.5 -> bar.name(Component.text(":arrow_sse:"))
-//        in 67.5..90.0 -> bar.name(Component.text(":arrow_ese:"))
-//        in 90.0..112.5 -> bar.name(Component.text(":arrow_e:"))
-//        in 112.5..135.0 -> bar.name(Component.text(":arrow_ene:"))
-//        in 135.0..147.5 -> bar.name(Component.text(":arrow_ne:"))
-//        in 157.5..180.0 -> bar.name(Component.text(":arrow_nne:"))
-//        in 180.0..202.5 -> bar.name(Component.text(":arrow_n:"))
-//        in 202.5..225.0 -> bar.name(Component.text(":arrow_nnw:"))
-//        in 225.0..247.5 -> bar.name(Component.text(":arrow_nw:"))
-//        in 247.5..270.0 -> bar.name(Component.text(":arrow_wnw:"))
-//        in 270.0..292.5 -> bar.name(Component.text(":arrow_w:"))
-//        in 292.5..315.0 -> bar.name(Component.text(":arrow_wsw:"))
-//        in 315.0..337.5 -> bar.name(Component.text(":arrow_sw:"))
-//        in 337.5..360.0 -> bar.name(Component.text(":arrow_ssw:"))
-//        else -> bar.name(Component.text(":arrow_null:")) // Meant for quests etc not in the same section
-//    }
-
     player.hideBossBar(bar)
     player.showBossBar(bar)
 }
+
+private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
+fun handleCurse(player: Player, from: Location, to: Location) {
+    //Arbitrary range with the purpose of preventing curse on section change
+    if (from.distanceSquared(to) > 32 * 32) return
+
+    if (recentlyMovedPlayers.contains(player.uniqueId)) {
+        recentlyMovedPlayers.remove(player.uniqueId)
+        return
+    }
+
+    if (!player.world.isAbyssWorld) return
+
+    val changeY = to.y - from.y
+    val playerData = player.playerData
+
+    playerData.apply {
+        if (player.isInvulnerable) {
+            curseAccrued = 0.0
+        } else if (playerData.isAffectedByCurse) {
+            val layer = to.layer ?: return
+
+            val dist = curseAccrued
+            curseAccrued = (dist + changeY).coerceAtLeast(0.0)
+            if (dist >= 10) {
+                layer.ascensionEffects.forEach {
+                    it.clone().applyEffect(player, 10)
+                }
+                curseAccrued -= 10
+            }
+        }
+    }
+}
+

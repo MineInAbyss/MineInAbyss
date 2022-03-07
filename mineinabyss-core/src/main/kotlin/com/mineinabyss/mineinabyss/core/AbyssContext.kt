@@ -14,6 +14,8 @@ val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin
 interface AbyssContext {
     companion object : AbyssContext by getService()
 
+    val isGSitLoaded: Boolean
+        get() = mineInAbyss.server.pluginManager.isPluginEnabled("GSit")
     val econ: Economy?
 
     val addonScope: GearyAddon
