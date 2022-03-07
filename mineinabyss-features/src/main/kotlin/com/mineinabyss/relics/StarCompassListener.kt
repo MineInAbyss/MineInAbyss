@@ -23,19 +23,20 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
     private val TargetScope.player by get<Player>()
 
     override fun TargetScope.tick() {
-        val compass = player.inventory.contents.firstOrNull {
+        val compass =
+        entity.get<Player>()?.inventory?.contents?.firstOrNull() {
             if (it == null) return@firstOrNull false
             it.toGearyOrNull(player)?.has<StarCompass>() ?: return@firstOrNull false
         } ?: return
-        val gearyCompass = compass.toGearyOrNull(player) ?: return
-        val starCompass = gearyCompass.get<StarCompass>() ?: return
+        val starCompass = compass.toGearyOrNull(player)?.get<StarCompass>() ?: return
         val playerBar = player.toGeary().getOrSetPersisting { PlayerCompassBar() }
+        val hideCompass = player.toGeary().has<HideBossBarCompass>()
         val sectionCenter = player.location.section?.region?.center
 
         if (sectionCenter != null) starCompass.compassLocation = Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
 
         // Let player toggle between having a bossbar-compass or item compass
-        if (!gearyCompass.has<HideBossBarCompass>()) {
+        if (!hideCompass) {
             compass.type = Material.PAPER
             player.bossbarCompass(starCompass.compassLocation!!, playerBar.compassBar)
         }

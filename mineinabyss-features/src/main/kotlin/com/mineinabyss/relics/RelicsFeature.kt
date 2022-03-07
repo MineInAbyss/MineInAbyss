@@ -1,10 +1,9 @@
 package com.mineinabyss.relics
 
 import com.mineinabyss.components.helpers.HideBossBarCompass
-import com.mineinabyss.components.relics.StarCompass
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -12,6 +11,7 @@ import com.mineinabyss.mineinabyss.core.geary
 import com.mineinabyss.relics.sickle.SickleListener
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("relics")
@@ -31,13 +31,11 @@ class RelicsFeature : AbyssFeature {
                     "star_compass"(desc = "Commands related to the Star Compass") {
                         "toggle" {
                             playerAction {
-                                val compass =
-                                    player.inventory.contents.firstOrNull {
-                                        it.toGearyOrNull(player)?.has<StarCompass>() == true
-                                    }?.toGearyOrNull(player) ?: return@playerAction
+                                val player = sender as Player
+                                val geary = player.toGeary()
 
-                                if (!compass.has<HideBossBarCompass>()) compass.setPersisting(HideBossBarCompass)
-                                else compass.remove<HideBossBarCompass>()
+                                if (geary.has<HideBossBarCompass>()) geary.remove<HideBossBarCompass>()
+                                else geary.setPersisting(HideBossBarCompass())
                             }
                         }
                     }

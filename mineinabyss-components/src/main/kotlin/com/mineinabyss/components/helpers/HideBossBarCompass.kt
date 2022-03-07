@@ -5,5 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("mineinabyss:hide_bossbar_compass")
-class HideBossBarCompass {
-}
+class HideBossBarCompass
