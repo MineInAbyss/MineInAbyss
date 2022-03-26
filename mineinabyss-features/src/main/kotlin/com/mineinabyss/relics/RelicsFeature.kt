@@ -41,6 +41,24 @@ class RelicsFeature : AbyssFeature {
                     }
                 }
             }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "relics"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> {
+                        when (args[0]) {
+                            "relics" -> listOf("star_compass")
+                            else -> listOf()
+                        }
+                    }
+                    3 -> when (args[1]) {
+                        "star_compass" -> listOf("toggle")
+                        else -> listOf()
+                    }
+                    else -> listOf()
+                }
+            }
         }
     }
 }

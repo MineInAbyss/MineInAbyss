@@ -41,18 +41,13 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
             if (player.toGeary().has<HideBossBarCompass>()) {
                 compass.type = Material.COMPASS
                 compass.editItemMeta {
-                    setCustomModelData(0)
                     this as CompassMeta
                     lodestone = starCompass.compassLocation
                     isLodestoneTracked = false
                 }
                 player.hideBossBar(playerBar.compassBar)
             } else {
-                compass.editItemMeta {
-                    setCustomModelData(1)
-                    this as CompassMeta
-                    lodestone = null
-                }
+                compass.type = Material.PAPER
                 player.bossbarCompass(starCompass.compassLocation!!, playerBar.compassBar)
             }
         }
