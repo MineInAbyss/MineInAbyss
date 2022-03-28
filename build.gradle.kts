@@ -18,9 +18,9 @@ allprojects {
     repositories {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://repo.codemc.org/repository/maven-public/")
+        maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
         maven("https://jitpack.io")
-        maven("https://repo.codemc.io/repository/maven-snapshots/")
-        maven("https://repo.mineinabyss.com/releases")
     }
 
     dependencies {
@@ -49,7 +49,11 @@ allprojects {
         compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
         compileOnly("com.gecolay:gsit:1.0.6")
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.0")
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.0") { isTransitive = false }
 
+        compileOnly("com.mineinabyss:protocolburrito:0.2.25")
+        compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
         implementation("com.mineinabyss:idofront:$idofrontVersion")
     }
 }
@@ -59,10 +63,6 @@ dependencies {
     // Shaded
     implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
-}
-
-tasks.compileKotlin {
-    kotlinOptions.jvmTarget = "17"
 }
 
 java {

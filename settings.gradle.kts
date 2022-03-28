@@ -5,6 +5,7 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://papermc.io/repo/repository/maven-public/") //Paper
     }
 
     plugins {
