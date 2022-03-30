@@ -1,8 +1,8 @@
 package com.mineinabyss.armorstandlock
 
 import com.mineinabyss.components.armorstandlock.LockArmorStand
+import com.mineinabyss.components.armorstandlock.lockedStand
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.messaging.error
@@ -55,7 +55,7 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractLockedArmorStand() {
-        val armorStand = rightClicked.toGeary().get<LockArmorStand>() ?: return
+        val armorStand = rightClicked.lockedStand ?: return
 
         if (armorStand.owner == player.uniqueId && player.inventory.itemInMainHand.type == Material.AIR)
             player.playerData.recentRightclickedEntity = rightClicked
@@ -70,7 +70,7 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun EntityDamageByEntityEvent.onBreakingArmorStand() {
-        val armorStand = entity.toGeary().get<LockArmorStand>() ?: return
+        val armorStand = entity.lockedStand ?: return
 
         if (!armorStand.lockState) return
 

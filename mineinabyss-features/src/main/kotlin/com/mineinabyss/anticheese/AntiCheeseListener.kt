@@ -7,10 +7,12 @@ import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
+import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.potion.PotionEffectType
 
@@ -39,6 +41,11 @@ class AntiCheeseListener: Listener {
                 player.error("${ChatColor.BOLD}Slow Falling ${ChatColor.RED}has been disabled")
             }
         }
+    }
+
+    @EventHandler
+    fun EntityDamageByEntityEvent.cancelMinecartTNT() {
+        if (damager is ExplosiveMinecart) isCancelled = true
     }
 }
 

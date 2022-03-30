@@ -23,8 +23,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Composable
 fun GuildUIScope.GuildInviteListScreen() {
     GuildInvites(Modifier.at(1, 1))
-    DenyAllInvites(Modifier.at(8, 3))
-    BackButton(Modifier.at(2, 3))
+    DenyAllInvites(Modifier.at(8, 4))
+    BackButton(Modifier.at(2, 4))
 }
 
 @Composable
@@ -60,7 +60,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
 fun GuildUIScope.DenyAllInvites(modifier: Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite, true)
-        nav.open(GuildScreen.MemberList(guildLevel))
+        nav.open(GuildScreen.MemberList(guildLevel, player))
         player.sendMessage("$YELLOW${BOLD}❌${YELLOW}You denied all invites!")
     },
     modifier = modifier

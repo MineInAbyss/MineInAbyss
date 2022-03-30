@@ -25,9 +25,9 @@ fun GuildUIScope.ConfirmButton(modifier: Modifier = Modifier) = Button(
     modifier,
     onClick = {
         player.deleteGuild()
-        nav.reset()
+        player.closeInventory()
     }) {
-    Text("${ChatColor.GREEN}${ChatColor.BOLD}Confirm Guild Disbanding", modifier = Modifier.size(3, 2))
+    Text("${ChatColor.GREEN}${ChatColor.BOLD}Confirm Guild Disbanding", modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -35,5 +35,5 @@ fun GuildUIScope.CancelButton(modifier: Modifier = Modifier) = Button(
     modifier,
     onClick = { nav.back() }
 ) {
-    Text("${ChatColor.RED}${ChatColor.BOLD}Cancel Guild Disbanding", modifier = Modifier.size(3, 2))
+    Text("${ChatColor.RED}${ChatColor.BOLD}Cancel Guild Disbanding", modifier = Modifier.size(3, 3))
 }
