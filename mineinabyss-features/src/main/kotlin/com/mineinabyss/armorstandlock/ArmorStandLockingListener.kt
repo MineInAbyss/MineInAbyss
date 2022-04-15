@@ -7,11 +7,13 @@ import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.spawning.spawn
+import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -21,6 +23,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.util.Vector
 
 class ArmorStandLockingListener : Listener {
 
@@ -91,5 +94,21 @@ class ArmorStandLockingListener : Listener {
             attacker.error("You do not have access to interacting with this armor stand!")
             isCancelled = true
         }
+    }
+
+    @EventHandler
+    fun EntityMoveEvent.onEntityMove() {
+        /*
+         * This listener is used to prevent gravity and water from affecting armor stands.
+         * This is done by setting the entity's velocity to 0 and cancelling the event.
+         */
+        if (entityType != EntityType.ARMOR_STAND) return
+
+        val armorStand = entity.toGeary().get<LockArmorStand>() ?: return
+
+        if (!armorStand.lockState) return
+
+        entity.velocity = Vector(0.0, 0.0, 0.0)
+        isCancelled = true
     }
 }
