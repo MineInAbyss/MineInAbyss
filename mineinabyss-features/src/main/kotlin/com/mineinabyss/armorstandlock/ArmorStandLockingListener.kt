@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -98,7 +99,7 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun EntityMoveEvent.onEntityMove() {
-        /*
+        /**
          * This listener is used to prevent gravity and water from affecting armor stands.
          * This is done by setting the entity's velocity to 0 and cancelling the event.
          */
@@ -108,7 +109,35 @@ class ArmorStandLockingListener : Listener {
 
         if (!armorStand.lockState) return
 
+        // We only care about ArmorStands that have fishing hooks as passengers
+        if (entity.passengers.none { it.type == EntityType.FISHING_HOOK }) return
+
         entity.velocity = Vector(0.0, 0.0, 0.0)
         isCancelled = true
+    }
+
+    @EventHandler
+    fun PlayerFishEvent.onFishArmorstand() {
+        /**
+         * This listener is used to prevent players from fishing armor stands if they are not allowed to.
+         * This is done by simply cancelling the event. A player can fish an armor stand if they are allowed to via /mia lock
+         * or if they have the permission to bypass the lock.
+         */
+        if (state != PlayerFishEvent.State.CAUGHT_ENTITY) return // We only care about catching entities
+
+        if (caught == null) return // We only care about non-null caught entities
+        if (caught!!.type != EntityType.ARMOR_STAND) return // We only care about armor stands
+
+        val armorStandEntity = caught as ArmorStand
+        val armorStand = armorStandEntity.toGeary().get<LockArmorStand>() ?: return
+
+        if (!armorStand.lockState) return
+
+        if (!armorStand.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
+            player.error("You do not have access to fishing this armor stand!")
+            hook.remove()
+            isCancelled = true
+        }
+
     }
 }
