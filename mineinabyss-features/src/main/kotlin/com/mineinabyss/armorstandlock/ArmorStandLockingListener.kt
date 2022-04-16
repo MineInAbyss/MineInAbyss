@@ -136,6 +136,8 @@ class ArmorStandLockingListener : Listener {
 
         if (!armorStand.lockState) return
 
+        // The player is allowed to fish if they are the owner of the armor stand or if they have the permission to bypass the lock
+
         if (!armorStand.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
             player.error("You do not have access to fishing this armor stand!")
             hook.remove()
@@ -155,9 +157,11 @@ class ArmorStandLockingListener : Listener {
         blocksThePistonChanges.add(block.location.add(direction.direction).block)
 
         for (blockinblocks in blocks) {
+            // Gather all blocks that the piston will probably change in a list
             blocksThePistonChanges.add(blockinblocks.location.add(direction.direction).block)
 
             if (blockinblocks.type == Material.HONEY_BLOCK) {
+                // If the piston is pushing honey blocks, we need to check if the honey block is below the armor stand
                 blocksThePistonChanges.add(blockinblocks.location.add(BlockFace.UP.direction).block)
             }
         }
@@ -166,6 +170,7 @@ class ArmorStandLockingListener : Listener {
             // Get all armor stands in the blocks the piston changes
             val armorStands = blockinblocks.location.getNearbyEntitiesByType(ArmorStand::class.java, 1.0)
             for (armorStand in armorStands) {
+                // If any armorstand is locked, cancel the event
                 val gearyArmorStand = armorStand.toGeary().get<LockArmorStand>() ?: continue
                 if (!gearyArmorStand.lockState) continue
 
@@ -173,11 +178,17 @@ class ArmorStandLockingListener : Listener {
             }
         }
 
+        // Everything is fine, the piston can move :)
+
         return false
     }
 
     @EventHandler
     fun BlockPistonExtendEvent.onPistonExtend() {
+        /**
+         * This listener is used to prevent pistons from pushing blocks into armor stands.
+         * It calls the onPistonExtendRetract function to check if the piston is pushing blocks into armor stands.
+         */
         if (onPistonExtendRetract(block, direction, blocks)) {
             isCancelled = true
         }
@@ -185,7 +196,16 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun BlockPistonRetractEvent.onPistonRetract() {
-        if (onPistonExtendRetract(block, direction.oppositeFace, blocks)) {
+        /**
+         * This listener is used to prevent pistons from pushing blocks into armor stands.
+         * It calls the onPistonExtendRetract function to check if the piston is pushing blocks into armor stands.
+         */
+        if (onPistonExtendRetract(
+                block,
+                direction.oppositeFace,
+                blocks
+            )
+        ) { // We use the opposite direction because the piston is retracting
             isCancelled = true
         }
     }
