@@ -35,6 +35,7 @@ class ArmorStandLockingFeature : AbyssFeature {
                             val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
 
                             locked.lockState = !locked.lockState
+                            entity.setGravity(!locked.lockState)
                             entity.toGeary().encodeComponentsTo(entity)
                             if (locked.lockState) player.success("This armor stand is now protected!")
                             else player.error("This armor stand is no longer protected!")
