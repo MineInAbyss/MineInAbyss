@@ -8,12 +8,14 @@ import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.okkero.skedule.schedule
+import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import kotlin.math.atan2
 import java.util.*
 
 
@@ -38,11 +40,10 @@ fun Player.updateBalance() {
     val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
 
     val currentBalance: Component =
-    if (data?.cloutTokensHeld!! > 0) {
-        /* Switch to NegativeSpace.PLUS when that is added to Idofront */
-        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
-    }
-    else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
+        if (data?.cloutTokensHeld!! > 0) {
+            /* Switch to NegativeSpace.PLUS when that is added to Idofront */
+            Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
+        } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
 
@@ -54,6 +55,42 @@ fun Player.updateBalance() {
         )
         return@schedule
     }
+}
+
+fun Player.bossbarCompass(loc: Location, bar: BossBar) {
+    if (loc.world != player?.world) {
+        bar.name(Component.text(":arrow_null:"))
+        return
+    }
+    val player = player ?: return
+    val dir = loc.subtract(player.location).toVector()
+    val angleDir = (atan2(dir.z, dir.x) / 2 / Math.PI * 360 + 180) % 360
+    val angleLook = (atan2(player.location.direction.z, player.location.direction.x) / 2 / Math.PI * 360 + 180) % 360
+
+    val barNameList = listOf(
+        ":arrow_n:",
+        ":arrow_nne:",
+        ":arrow_ne:",
+        ":arrow_ene:",
+        ":arrow_e:",
+        ":arrow_ese:",
+        ":arrow_se:",
+        ":arrow_sse:",
+        ":arrow_s:",
+        ":arrow_ssw:",
+        ":arrow_sw:",
+        ":arrow_wsw:",
+        ":arrow_w:",
+        ":arrow_wnw:",
+        ":arrow_nw:",
+        ":arrow_nnw:",
+    )
+
+    val compassAngle = (((angleDir - angleLook + 360) % 360) / 22.5).toInt()
+    bar.name(Component.text(barNameList[compassAngle]))
+
+    player.hideBossBar(bar)
+    player.showBossBar(bar)
 }
 
 private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
@@ -88,5 +125,4 @@ fun handleCurse(player: Player, from: Location, to: Location) {
         }
     }
 }
-
 
