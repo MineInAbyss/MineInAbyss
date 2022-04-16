@@ -11,6 +11,7 @@ import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
@@ -19,6 +20,8 @@ import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockPistonExtendEvent
+import org.bukkit.event.block.BlockPistonRetractEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -138,6 +141,52 @@ class ArmorStandLockingListener : Listener {
             hook.remove()
             isCancelled = true
         }
+    }
 
+    private fun onPistonExtendRetract(block: Block, direction: BlockFace, blocks: List<Block>): Boolean {
+        /**
+         * This function is used to prevent pistons from extending armor stands,
+         * to prevent pistons from pushing blocks into armor stands,
+         * and to prevent pistons from pushing armor stands using honey blocks below them.
+         */
+
+        val blocksThePistonChanges = mutableListOf<Block>()
+
+        blocksThePistonChanges.add(block.location.add(direction.direction).block)
+
+        for (blockinblocks in blocks) {
+            blocksThePistonChanges.add(blockinblocks.location.add(direction.direction).block)
+
+            if (blockinblocks.type == Material.HONEY_BLOCK) {
+                blocksThePistonChanges.add(blockinblocks.location.add(BlockFace.UP.direction).block)
+            }
+        }
+
+        for (blockinblocks in blocksThePistonChanges) {
+            // Get all armor stands in the blocks the piston changes
+            val armorStands = blockinblocks.location.getNearbyEntitiesByType(ArmorStand::class.java, 1.0)
+            for (armorStand in armorStands) {
+                val gearyArmorStand = armorStand.toGeary().get<LockArmorStand>() ?: continue
+                if (!gearyArmorStand.lockState) continue
+
+                return true
+            }
+        }
+
+        return false
+    }
+
+    @EventHandler
+    fun BlockPistonExtendEvent.onPistonExtend() {
+        if (onPistonExtendRetract(block, direction, blocks)) {
+            isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun BlockPistonRetractEvent.onPistonRetract() {
+        if (onPistonExtendRetract(block, direction.oppositeFace, blocks)) {
+            isCancelled = true
+        }
     }
 }
