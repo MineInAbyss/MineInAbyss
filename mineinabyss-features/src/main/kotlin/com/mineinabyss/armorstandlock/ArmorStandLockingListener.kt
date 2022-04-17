@@ -59,8 +59,8 @@ class ArmorStandLockingListener : Listener {
     fun PlayerInteractAtEntityEvent.onInteractLockedArmorStand() {
         val armorStand = rightClicked.toGeary().get<LockArmorStand>() ?: return
 
-        if (armorStand.owner == player.uniqueId && player.inventory.itemInMainHand.type == Material.AIR) player.playerData.recentRightclickedEntity =
-            rightClicked
+        if (armorStand.owner == player.uniqueId && player.inventory.itemInMainHand.type == Material.AIR)
+            player.playerData.recentRightclickedEntity = rightClicked
 
         if (!armorStand.lockState) return
         if (!armorStand.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
@@ -77,15 +77,9 @@ class ArmorStandLockingListener : Listener {
         if (!armorStand.lockState) return
 
         val attacker: Player = when (damager) {
-            is Projectile -> {
-                (damager as Projectile).shooter as? Player ?: return
-            }
-            is Player -> {
-                (damager as Player)
-            }
-            else -> {
-                return
-            }
+            is Projectile -> (damager as Projectile).shooter as? Player ?: return
+            is Player -> (damager as Player)
+            else -> return
         }
 
         if (!armorStand.isAllowed(attacker.uniqueId) && !attacker.hasPermission("mineinabyss.lockarmorstand.bypass")) {
@@ -94,21 +88,14 @@ class ArmorStandLockingListener : Listener {
         }
     }
 
-    /**
-     * This listener is used to prevent players from fishing armor stands if they are not allowed to.
-     * This is done by simply cancelling the event. A player can fish an armor stand if they are allowed to via /mia lock
-     * or if they have the permission to bypass the lock.
-     */
     @EventHandler
     fun PlayerFishEvent.onFishArmorstand() {
-        if (state != PlayerFishEvent.State.CAUGHT_ENTITY) return // We only care about catching entities
+        if (state != PlayerFishEvent.State.CAUGHT_ENTITY) return
 
         val armorStandBukkit = caught as? ArmorStand ?: return
         val armorStandGeary = armorStandBukkit.toGeary().get<LockArmorStand>() ?: return
 
         if (!armorStandGeary.lockState) return
-
-        // The player is allowed to fish if they are the owner of the armor stand or if they have the permission to bypass the lock
 
         if (!armorStandGeary.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
             player.error("You do not have access to fishing this armor stand!")
@@ -138,9 +125,6 @@ class ArmorStandLockingListener : Listener {
                 return true
             }
         }
-
-        // Everything is fine, the piston can move :)
-
         return false
     }
 
@@ -153,10 +137,7 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun BlockPistonRetractEvent.onPistonRetract() {
-        if (onPistonExtendRetract(
-                block, direction.oppositeFace, blocks
-            )
-        ) { // We use the opposite direction because the piston is retracting
+        if (onPistonExtendRetract(block, direction.oppositeFace, blocks)) {
             isCancelled = true
         }
     }
