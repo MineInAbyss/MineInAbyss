@@ -93,7 +93,7 @@ class ArmorStandLockingListener : Listener {
         if (state != PlayerFishEvent.State.CAUGHT_ENTITY) return
 
         val armorStandBukkit = caught as? ArmorStand ?: return
-        val armorStandGeary = armorStandBukkit.toGeary().get<LockArmorStand>() ?: return
+        val armorStandGeary = armorStandBukkit.lockedStand ?: return
 
         if (!armorStandGeary.lockState) return
 
@@ -119,7 +119,7 @@ class ArmorStandLockingListener : Listener {
             val armorStands = blockinblocks.location.getNearbyEntitiesByType(ArmorStand::class.java, 1.0)
             for (armorStand in armorStands) {
                 // If any armorstand is locked, cancel the event
-                val gearyArmorStand = armorStand.toGeary().get<LockArmorStand>() ?: continue
+                val gearyArmorStand = armorStand.lockedStand ?: return false
                 if (!gearyArmorStand.lockState) continue
 
                 return true

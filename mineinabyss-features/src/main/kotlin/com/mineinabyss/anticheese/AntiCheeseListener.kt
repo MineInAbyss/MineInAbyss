@@ -19,7 +19,7 @@ import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.potion.PotionEffectType
 
-class AntiCheeseListener: Listener {
+class AntiCheeseListener : Listener {
     @EventHandler
     fun BlockPlaceEvent.preventPlacement() {
         if (player.location.layer?.blockBlacklist?.contains(blockPlaced.type) == true) {
@@ -45,10 +45,11 @@ class AntiCheeseListener: Listener {
             }
         }
     }
+}
 
-    @EventHandler
-    fun EntityDamageByEntityEvent.cancelMinecartTNT() {
-        if (damager is ExplosiveMinecart) isCancelled = true
+@EventHandler
+fun EntityDamageByEntityEvent.cancelMinecartTNT() {
+    if (damager is ExplosiveMinecart) isCancelled = true
 
     // Cancels moving entities with fishing rods in Orth
     @EventHandler
@@ -71,3 +72,4 @@ class GSitListener : Listener {
         handleCurse(player, seat.location.toBlockLocation(), player.location)
     }
 }
+
