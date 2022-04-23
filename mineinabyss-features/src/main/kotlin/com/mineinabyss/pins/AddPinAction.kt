@@ -8,6 +8,7 @@ import com.mineinabyss.geary.ecs.accessors.building.get
 import com.mineinabyss.geary.ecs.accessors.building.map
 import com.mineinabyss.geary.ecs.api.annotations.Handler
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
+import com.mineinabyss.geary.ecs.api.systems.provideDelegate
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.pins.ui.AbyssalPinSelectionMenu
 import kotlinx.serialization.SerialName

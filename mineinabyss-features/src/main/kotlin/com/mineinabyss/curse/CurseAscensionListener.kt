@@ -14,8 +14,6 @@ import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 
 class CurseAscensionListener : Listener {
-
-
     @EventHandler(ignoreCancelled = true)
     fun PlayerMoveEvent.handleCurseOnMove() {
         handleCurse(player, from, to)

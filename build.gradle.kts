@@ -7,8 +7,8 @@ plugins {
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.copyjar")
     id("com.mineinabyss.conventions.publication")
-    kotlin("plugin.serialization")
-    kotlin("jvm")
+//    kotlin("plugin.serialization") apply false
+    kotlin("jvm") apply false
 }
 
 allprojects {
@@ -50,8 +50,8 @@ allprojects {
         compileOnly("com.github.MilkBowl:VaultAPI:1.7") { exclude(group = "org.bukkit") }
         compileOnly("nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT")
         compileOnly("com.gecolay:gsit:1.0.6")
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.0")
-        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.0") { isTransitive = false }
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.1.1")
+        compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.1.1") { isTransitive = false }
 
         compileOnly("com.mineinabyss:protocolburrito:0.2.25")
         compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")

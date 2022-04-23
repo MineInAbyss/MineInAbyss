@@ -6,7 +6,9 @@ import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.looty.LootyFactory
-import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventoryContext
+import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventorySlotContext
+import com.mineinabyss.looty.ecs.components.itemcontexts.useWithLooty
+import com.mineinabyss.looty.loadItem
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import org.bukkit.entity.Player
 
@@ -55,8 +57,11 @@ fun Player.withdrawCoins(amount: Int) {
     }
 
     loop@ for (i in 1..amount) {
-        LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))?.let { player.inventory.addItem(it) }
-        LootyFactory.loadFromPlayerInventory(PlayerInventoryContext(player, slot))
+        val item = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))
+        player.inventory.addItem(item)
+        item.useWithLooty {
+            PlayerInventorySlotContext(player, slot).loadItem(this)
+        }
         data.orthCoinsHeld -= 1
     }
     player.success("Your Orth Coins have been withdrawn!")

@@ -1,5 +1,3 @@
-import Com_mineinabyss_conventions_platform_gradle.Deps
-
 val guiyVersion: String by project
 
 plugins {
@@ -7,12 +5,12 @@ plugins {
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.nms")
     kotlin("plugin.serialization")
-    id("org.jetbrains.compose") version "1.1.1"
+    id("org.jetbrains.compose")
 }
 
 dependencies {
     compileOnly("com.mineinabyss:guiy-compose:$guiyVersion")
     compileOnly(project(":mineinabyss-core"))
 
-    compileOnly(Deps.minecraft.headlib)
+    compileOnly(libs.minecraft.headlib)
 }

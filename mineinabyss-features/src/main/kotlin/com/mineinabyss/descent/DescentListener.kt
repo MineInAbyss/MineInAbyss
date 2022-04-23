@@ -8,7 +8,7 @@ import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.geary.ecs.api.engine.componentId
 import com.mineinabyss.geary.ecs.api.relations.RelationValueId
 import com.mineinabyss.geary.ecs.components.RelationComponent
-import com.mineinabyss.geary.ecs.helpers.GearyKoinComponent
+import com.mineinabyss.geary.ecs.context.globalContext
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info
@@ -39,7 +39,7 @@ class DescentListener : Listener {
     }
 }
 
-fun Player.removeDescentContext(): Unit = GearyKoinComponent().run {
+fun Player.removeDescentContext() {
     val gearyPlayer = toGeary()
     val delve = gearyPlayer.get<DescentContext>() ?: return
 
@@ -53,7 +53,7 @@ fun Player.removeDescentContext(): Unit = GearyKoinComponent().run {
 
     //TODO replace this with new syntax in geary once it comes around
 
-    val comps = engine.getRelationsFor(gearyPlayer, RelationValueId(componentId<RelationComponent>()))
+    val comps = globalContext.engine.getRelationsFor(gearyPlayer, RelationValueId(componentId<RelationComponent>()))
     comps.forEach { (_, relation) ->
         gearyPlayer.removeRelation(relation)
     }

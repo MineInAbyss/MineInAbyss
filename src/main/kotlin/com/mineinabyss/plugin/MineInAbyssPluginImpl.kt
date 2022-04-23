@@ -38,7 +38,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         var addon: GearyAddon? = null
         if(isPluginEnabled("Geary")) {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
-            gearyAddon {
+            gearyAddon("com.mineinabyss") {
                 addon = this
                 autoScanAll()
             }

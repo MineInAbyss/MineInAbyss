@@ -7,6 +7,7 @@ import com.mineinabyss.geary.ecs.accessors.TargetScope
 import com.mineinabyss.geary.ecs.api.annotations.Handler
 import com.mineinabyss.geary.ecs.api.entities.with
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
+import com.mineinabyss.geary.ecs.api.systems.provideDelegate
 import com.mineinabyss.geary.ecs.entities.parent
 import com.mineinabyss.geary.papermc.components.Soulbound
 import com.mineinabyss.idofront.entities.toPlayer

@@ -4,7 +4,7 @@ import com.mineinabyss.components.gondolas.Gondola
 import com.mineinabyss.geary.ecs.accessors.TargetScope
 import com.mineinabyss.geary.ecs.api.annotations.Handler
 import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import kotlin.collections.mutableMapOf
+import com.mineinabyss.geary.ecs.api.systems.provideDelegate
 import kotlin.collections.set
 
 object LoadedGondolas : GearyListener() {
