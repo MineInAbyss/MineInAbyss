@@ -31,7 +31,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class GuildListener(val feature: GuildFeature) : Listener {
-    //TODO move this cooldown into geary commons
+
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
@@ -75,7 +75,7 @@ class GuildContainerSystem : GroupSystem() {
 class GuildChatSystem(val feature: GuildFeature) : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    fun AsyncChatEvent.overrideVentureChat(feature: GuildFeature) {
+    fun AsyncChatEvent.overrideVentureChat() {
         if (player.playerData.guildChatStatus && !player.hasGuild()) {
             player.error("You cannot use guild chat without a guild.")
             player.success("Guild chat has been toggled OFF")
