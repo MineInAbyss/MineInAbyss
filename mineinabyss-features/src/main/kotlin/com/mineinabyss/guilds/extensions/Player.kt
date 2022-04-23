@@ -73,9 +73,9 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
         }
 
         /* Delete accepted guildinvite */
-//        GuildJoinQueue.deleteWhere {
-//            (GuildJoinQueue.playerUUID eq member.uniqueId) and (GuildJoinQueue.guildId eq guild)
-//        }
+        GuildJoinQueue.deleteWhere {
+            (GuildJoinQueue.playerUUID eq member.uniqueId) and (GuildJoinQueue.guildId eq guild)
+        }
     }
 }
 
@@ -377,6 +377,10 @@ fun OfflinePlayer.getGuildOwner() : UUID {
     }
 }
 
+fun OfflinePlayer.isGuildOwner() : Boolean {
+    return player?.getGuildOwner() == player?.uniqueId
+}
+
 fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
     return transaction(AbyssContext.db) {
         val guilds = GuildJoinQueue.select {
@@ -436,6 +440,26 @@ fun OfflinePlayer.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
     }
 }
 
+fun OfflinePlayer.hasGuildInvites(): Boolean {
+    return transaction(AbyssContext.db) {
+        return@transaction GuildJoinQueue.select {
+            (GuildJoinQueue.joinType eq GuildJoinType.Invite) and (GuildJoinQueue.playerUUID eq uniqueId)
+        }.toList().isNotEmpty()
+    }
+}
+
+fun OfflinePlayer.hasGuildRequests(): Boolean {
+    return transaction(AbyssContext.db) {
+        val player = Players.select {
+            Players.playerUUID eq uniqueId
+        }.single()[Players.guildId]
+
+        return@transaction GuildJoinQueue.select {
+            (GuildJoinQueue.joinType eq GuildJoinType.Request) and (GuildJoinQueue.guildId eq player)
+        }.toList().isNotEmpty()
+    }
+}
+
 fun OfflinePlayer.hasGuildRequest(): Boolean {
     return transaction(AbyssContext.db) {
         val player = Players.select {
@@ -472,7 +496,7 @@ fun  OfflinePlayer.getNumberOfGuildRequests() : Int {
 }
 
 fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAll: Boolean = false) {
-    transaction(AbyssContext.db) {
+    return transaction(AbyssContext.db) {
         val id = GuildJoinQueue.select {
             GuildJoinQueue.playerUUID eq uniqueId
         }.single()[GuildJoinQueue.guildId]

@@ -1,8 +1,8 @@
 package com.mineinabyss.armorstandlock
 
 import com.mineinabyss.components.armorstandlock.LockArmorStand
+import com.mineinabyss.components.armorstandlock.lockedStand
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.messaging.error
@@ -57,7 +57,7 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractLockedArmorStand() {
-        val armorStand = rightClicked.toGeary().get<LockArmorStand>() ?: return
+        val armorStand = rightClicked.lockedStand ?: return
 
         if (armorStand.owner == player.uniqueId && player.inventory.itemInMainHand.type == Material.AIR)
             player.playerData.recentRightclickedEntity = rightClicked
@@ -72,7 +72,7 @@ class ArmorStandLockingListener : Listener {
 
     @EventHandler
     fun EntityDamageByEntityEvent.onBreakingArmorStand() {
-        val armorStand = entity.toGeary().get<LockArmorStand>() ?: return
+        val armorStand = entity.lockedStand ?: return
 
         if (!armorStand.lockState) return
 
@@ -93,7 +93,7 @@ class ArmorStandLockingListener : Listener {
         if (state != PlayerFishEvent.State.CAUGHT_ENTITY) return
 
         val armorStandBukkit = caught as? ArmorStand ?: return
-        val armorStandGeary = armorStandBukkit.toGeary().get<LockArmorStand>() ?: return
+        val armorStandGeary = armorStandBukkit.lockedStand ?: return
 
         if (!armorStandGeary.lockState) return
 
@@ -119,7 +119,7 @@ class ArmorStandLockingListener : Listener {
             val armorStands = blockinblocks.location.getNearbyEntitiesByType(ArmorStand::class.java, 1.0)
             for (armorStand in armorStands) {
                 // If any armorstand is locked, cancel the event
-                val gearyArmorStand = armorStand.toGeary().get<LockArmorStand>() ?: continue
+                val gearyArmorStand = armorStand.lockedStand ?: return false
                 if (!gearyArmorStand.lockState) continue
 
                 return true

@@ -1,8 +1,10 @@
 package com.mineinabyss.components.armorstandlock
 
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.serialization.UUIDSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Entity
 import java.util.*
 
 @Serializable
@@ -16,3 +18,5 @@ data class LockArmorStand(
         return uuid in allowedAccess
     }
 }
+
+val Entity.lockedStand get() = toGeary().get<LockArmorStand>()

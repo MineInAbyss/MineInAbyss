@@ -8,26 +8,21 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
-import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
-import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.mineinabyss.extensions.leaveGuild
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
-import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
 @Composable
 fun GuildUIScope.CurrentGuildScreen() {
-    val yLevel = guildLevel + 1
+    val yLevel = guildLevel + 2
     GuildMemberList(Modifier.at(1, 1))
     if (player.getGuildRank() != GuildRanks.Owner) {
-        LeaveGuildButton(player, Modifier.at(8, yLevel))
+        //LeaveGuildButton(player, Modifier.at(8, yLevel))
     }
     BackButton(Modifier.at(2, yLevel))
 }
@@ -52,22 +47,10 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
             Item(
                 member.head(
                     "$GOLD$ITALIC${member.name}",
-                    "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${member.getGuildRank()}"
+                    "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${member.getGuildRank()}",
+                    isFlat = true
                 )
             )
         }
-    }
-}
-
-@Composable
-fun GuildUIScope.LeaveGuildButton(player: Player, modifier: Modifier = Modifier) {
-    Button(
-        enabled = player.hasGuild(),
-        onClick = {
-            player.leaveGuild()
-            nav.back()
-        }) { enabled ->
-        if (enabled) Text("$RED${ITALIC}Leave Guild", modifier = modifier)
-        else Text("$RED${ITALIC}${STRIKETHROUGH}Leave Guild", modifier = modifier)
     }
 }

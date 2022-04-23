@@ -2,11 +2,13 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Text
+import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.extensions.*
@@ -17,14 +19,14 @@ import org.jetbrains.exposed.sql.insert
 @Composable
 fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
     PlayerLabel(Modifier.at(4, 0), from)
-    AcceptGuildRequest(Modifier.at(1, 2), from)
-    DeclineGuildRequest(Modifier.at(5, 2), from)
+    AcceptGuildRequest(Modifier.at(1, 1), from)
+    DeclineGuildRequest(Modifier.at(5, 1), from)
     BackButton(Modifier.at(4, 4))
 }
 
 @Composable
 fun GuildUIScope.PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Text("${ChatColor.YELLOW}${ChatColor.ITALIC}${newMember.name}", modifier = Modifier.size(2, 2))
+    Item(newMember.head("${ChatColor.YELLOW}${ChatColor.ITALIC}${newMember.name}", isCenterOfInv = true, isLarge = true))
 }
 
 @Composable
@@ -36,6 +38,7 @@ fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer
             return@Button
         }
         player.addMemberToGuild(newMember)
+        newMember.removeGuildQueueEntries(GuildJoinType.Request)
         if (player.getGuildMemberCount() < guildLevel * 5 + 1) {
             newMember.removeGuildQueueEntries(GuildJoinType.Request)
         }
@@ -43,7 +46,7 @@ fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer
     },
     modifier = modifier
 ) {
-    Text("${ChatColor.GREEN}Accept Join-Request", modifier = Modifier.size(3, 2))
+    Text("${ChatColor.GREEN}Accept Join-Request", modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -64,7 +67,7 @@ fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlaye
         nav.back()
     }
 ) {
-    Text("${ChatColor.RED}Decline Join-Request", modifier = Modifier.size(3, 2))
+    Text("${ChatColor.RED}Decline Join-Request", modifier = Modifier.size(3, 3))
 }
 
 @Composable

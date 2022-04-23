@@ -23,7 +23,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
@@ -32,7 +32,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class GuildListener : Listener {
     //TODO move this cooldown into geary commons
     @EventHandler
-    fun PlayerInteractEntityEvent.onInteractGuildMaster( feature: GuildFeature) {
+    fun PlayerInteractAtEntityEvent.onInteractGuildMaster(feature: GuildFeature) {
         val entity = rightClicked.toGearyOrNull() ?: return
         if (!entity.has<GuildMaster>()) return
         guiy { GuildMainMenu(player, feature) }
