@@ -132,7 +132,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
 }
 
 fun OfflinePlayer.lookForGuild(guildName: String) {
-    val player = player!!
+    val player = player ?: return
     val requestMessage = "${ChatColor.GREEN}The Guild will receive your request!"
     val ownerMessage =
         "${ChatColor.GOLD}${ChatColor.ITALIC}${player.name} ${ChatColor.YELLOW}requested to join your guild."
@@ -152,6 +152,12 @@ fun OfflinePlayer.lookForGuild(guildName: String) {
             return@transaction
         }
 
+        /* Check if guild is in invite-only mode */
+        if (guild[Guilds.joinType] == GuildJoinType.Invite) {
+            player.error("${ChatColor.GOLD}$guildName ${ChatColor.YELLOW}is invite-only.")
+            return@transaction
+        }
+
         val id = Guilds.select {
             Guilds.name.lowerCase() eq guildName.lowercase()
         }.single()[Guilds.id]
@@ -165,21 +171,15 @@ fun OfflinePlayer.lookForGuild(guildName: String) {
             return@transaction
         }
 
+
         GuildJoinQueue.insert {
             it[playerUUID] = player.uniqueId
             it[guildId] = id
             it[joinType] = GuildJoinType.Request
         }
 
-        /* Check if guild is in invite-only mode */
-        if (guild[Guilds.joinType] == GuildJoinType.Invite) {
-            player.error("${ChatColor.GOLD}$guildName ${ChatColor.YELLOW}is invite-only.")
-            return@transaction
-        }
-
         val owner = Players.select {
-            (Players.guildId eq id) and
-                    ((Players.guildRank eq GuildRanks.Owner) or (Players.guildRank eq GuildRanks.Captain))
+            (Players.guildId eq id) and (Players.guildRank eq GuildRanks.Owner)
         }.single()[Players.playerUUID]
 
 
@@ -499,7 +499,7 @@ fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAl
     return transaction(AbyssContext.db) {
         val id = GuildJoinQueue.select {
             GuildJoinQueue.playerUUID eq uniqueId
-        }.single()[GuildJoinQueue.guildId]
+        }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction
 
         if (removeAll) {
             GuildJoinQueue.deleteWhere {
@@ -530,4 +530,8 @@ fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
         return@transaction type
     }
     return joinType
+}
+
+fun OfflinePlayer.isAboveCaptain(): Boolean {
+    return (player?.getGuildRank() == GuildRanks.Owner || player?.getGuildRank() == GuildRanks.Captain)
 }

@@ -59,8 +59,10 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     val renameItem = TitleItem.of(player.getGuildName()).NoToolTip()
     Button(
+        enabled = player.isAboveCaptain(),
         modifier = modifier,
         onClick = {
+            if (!player.isAboveCaptain()) return@Button
             nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title("${Space.of(-65)}:guild_name_menu:")
@@ -134,12 +136,11 @@ fun GuildUIScope.GuildDisbandButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildLeaveButton(player: Player, modifier: Modifier) {
     Button(
         modifier = modifier,
-        enabled = player.hasGuild(),
+        enabled = player.hasGuild() && !player.isGuildOwner(),
         onClick = {
-            if (player.isGuildOwner()) nav.reset()
-            else nav.open(GuildScreen.Leave)
+            nav.open(GuildScreen.Leave)
         }) { enabled ->
-        if (enabled && player.isGuildOwner())
+        if (enabled)
             Text("$RED${ITALIC}Leave Guild")
         else
             Text("$RED${ITALIC}${STRIKETHROUGH}Leave Guild")

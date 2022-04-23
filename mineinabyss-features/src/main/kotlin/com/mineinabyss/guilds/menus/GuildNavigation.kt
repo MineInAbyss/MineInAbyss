@@ -52,7 +52,8 @@ sealed class GuildScreen(var title: String, val height: Int) {
     object GuildList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_list_menu:", 6)
     class GuildOptions(val guild: String) : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_list_menu:", 6)
 
-    object InviteList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_invites_menu:", 5)
+    // Forgot to add to pack so this is fine for now
+    object InviteList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_join_requests_menu:", 5)
     class Invite(val owner: OfflinePlayer) : GuildScreen(title = "${Space.of(-12)}$WHITE:handle_guild_invites:", 5)
 
     object JoinRequestList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_join_requests_menu:", 5)
@@ -92,6 +93,7 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
                     is Default -> HomeScreen()
                     GuildInfo -> GuildInfoScreen()
                     Owner -> GuildOwnerScreen()
+                    Leave -> GuildLeaveScreen()
                     is CurrentGuild -> CurrentGuildScreen()
                     GuildList -> GuildLookupListScreen()
                     is GuildOptions -> GuildOptionsScreen(screen.guild)
@@ -102,7 +104,6 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
                     Disband -> GuildDisbandScreen()
                     is MemberOptions -> GuildMemberOptionsScreen(screen.member)
                     is MemberList -> GuildMemberListScreen()
-                    else -> HomeScreen()
                 }
             }
         }

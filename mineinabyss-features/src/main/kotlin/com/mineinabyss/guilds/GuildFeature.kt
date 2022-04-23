@@ -29,7 +29,7 @@ class GuildFeature(
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(GuildListener(), GuildChatSystem())
+        registerEvents(GuildListener(this@GuildFeature), GuildChatSystem(this@GuildFeature))
 
 
         if (DeeperContext.isBlockLockerLoaded) {

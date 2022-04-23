@@ -1,11 +1,13 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
+import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.kickPlayerFromGuild
 import com.mineinabyss.mineinabyss.extensions.promotePlayerInGuild
 import org.bukkit.ChatColor.*
@@ -24,6 +26,7 @@ fun GuildUIScope.GuildMemberOptionsScreen(member: OfflinePlayer) {
 @Composable
 fun GuildUIScope.PromoteGuildMember(member: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
+    enabled = (player.getGuildRank() == GuildRanks.Owner || player.getGuildRank() == GuildRanks.Captain),
     onClick = {
         player.promotePlayerInGuild(member)
         nav.back()

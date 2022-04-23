@@ -16,6 +16,7 @@ import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.hasGuild
 import com.okkero.skedule.schedule
+import io.papermc.paper.event.player.AsyncChatEvent
 import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -29,18 +30,13 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class GuildListener : Listener {
+class GuildListener(val feature: GuildFeature) : Listener {
     //TODO move this cooldown into geary commons
     @EventHandler
-    fun PlayerInteractAtEntityEvent.onInteractGuildMaster(feature: GuildFeature) {
+    fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
         val entity = rightClicked.toGearyOrNull() ?: return
         if (!entity.has<GuildMaster>()) return
         guiy { GuildMainMenu(player, feature) }
-
-//        if((clickedCooldown[player.uniqueId] ?: 0) < Bukkit.getCurrentTick()) {
-//            clickedCooldown[player.uniqueId] = Bukkit.getCurrentTick() + 5
-//            guiy { GuildMainMenu(player) }
-//        }
     }
 
     @EventHandler
@@ -76,10 +72,10 @@ class GuildContainerSystem : GroupSystem() {
 
 }
 
-class GuildChatSystem : Listener {
+class GuildChatSystem(val feature: GuildFeature) : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    fun AsyncPlayerChatEvent.overrideVentureChat() {
+    fun AsyncChatEvent.overrideVentureChat(feature: GuildFeature) {
         if (player.playerData.guildChatStatus && !player.hasGuild()) {
             player.error("You cannot use guild chat without a guild.")
             player.success("Guild chat has been toggled OFF")
@@ -90,7 +86,7 @@ class GuildChatSystem : Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
-    fun AsyncPlayerChatEvent.toggleGuildChat(feature: GuildFeature) {
+    fun AsyncPlayerChatEvent.toggleGuildChat() {
 
         isCancelled = false
         if (!player.playerData.guildChatStatus || !player.hasGuild()) return

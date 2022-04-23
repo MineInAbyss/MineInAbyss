@@ -4,10 +4,12 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guilds.database.GuildJoinQueue
 import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
+import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
@@ -46,11 +48,12 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
                 //TODO get guild from guild param above
                 nav.open(GuildScreen.Invite(player.getGuildOwnerFromInvite().toPlayer()!!))
             }) {
-                Text(
+                Item(player.head(
                     "$GOLD${BOLD}Guildname: $YELLOW$ITALIC${owner.getGuildName()}",
                     "${BLUE}Click this to accept or deny invite.",
-                    "${BLUE}Info about the guild can also be found in here."
-                )
+                    "${BLUE}Info about the guild can also be found in here.",
+                    isFlat = true
+                ))
             }
         }
     }

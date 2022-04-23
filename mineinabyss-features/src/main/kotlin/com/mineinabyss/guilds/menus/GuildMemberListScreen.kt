@@ -2,7 +2,6 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.*
 import com.mineinabyss.guilds.database.GuildJoinType
-import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guilds.extensions.changeGuildJoinType
 import com.mineinabyss.guilds.extensions.getGuildMembers
 import com.mineinabyss.guilds.menus.JoinTypeIcon.any
@@ -34,18 +33,20 @@ fun GuildUIScope.GuildMemberListScreen() {
     ManageGuildMembersButton(Modifier.at(1, 1))
     BackButton(Modifier.at(0, guildLevel + 1))
 
-    if (player.getGuildRank() == GuildRanks.Owner || player.getGuildRank() == GuildRanks.Captain) {
-        InviteToGuildButton(Modifier.at(7, 0))
-        ManageGuildJoinRequestsButton(Modifier.at(8, 0))
-        ToggleGuildJoinTypeButton(Modifier.at(0, 0))
-    }
+    InviteToGuildButton(Modifier.at(7, 0))
+    ManageGuildJoinRequestsButton(Modifier.at(8, 0))
+    ToggleGuildJoinTypeButton(Modifier.at(0, 0))
 }
 
 @Composable
 fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
     Grid(modifier.size(5, guildLevel)) {
         player.getGuildMembers().sortedBy { it.first; it.second.name }.forEach { (rank, member) ->
-            Button(onClick = { if (member != player) nav.open(GuildScreen.MemberOptions(member)) }) {
+            Button(onClick = {
+                if (member != player && player.isAboveCaptain()) {
+                    nav.open(GuildScreen.MemberOptions(member))
+                }
+            }) {
                 Item(
                     member.head(
                         "$GOLD$ITALIC${member.name}",
@@ -62,8 +63,10 @@ fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
 fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
     val guildInvitePaper = TitleItem.of("Player Name").NoToolTip()
     Button(
+        enabled = player.isAboveCaptain(),
         modifier = modifier,
         onClick = {
+            //if (player.isAboveCaptain()) return@Button
             if (player.getGuildJoinType() == GuildJoinType.Request) {
                 player.error("Your guild is in 'Request-only' mode.")
                 player.error("Change it to 'Any' or 'Invite-only' mode to invite others.")
@@ -94,7 +97,11 @@ fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
         enabled = player.hasGuildRequest(),
         /* Icon that notifies player there are new invites */
         modifier = modifier,
-        onClick = { nav.open(GuildScreen.JoinRequestList) }
+        onClick = {
+            if (player.isAboveCaptain()) {
+                nav.open(GuildScreen.JoinRequestList)
+            }
+        }
     ) { enabled ->
         if (enabled) Text(
             "${DARK_GREEN}Manage Guild Join Requests",
@@ -114,12 +121,17 @@ fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
     val item = if (joinType == GuildJoinType.Any) any else if (joinType == GuildJoinType.Invite) invite else request
-        Button(
-            modifier = modifier,
-            onClick = { player.changeGuildJoinType() ; joinType = player.getGuildJoinType() }
-        ) {
-            Item(item)
+    Button(
+        modifier = modifier,
+        onClick = {
+            if (player.isAboveCaptain()) {
+                player.changeGuildJoinType()
+                joinType = player.getGuildJoinType()
+            }
         }
+    ) {
+        Item(item)
+    }
 }
 
 object JoinTypeIcon {
