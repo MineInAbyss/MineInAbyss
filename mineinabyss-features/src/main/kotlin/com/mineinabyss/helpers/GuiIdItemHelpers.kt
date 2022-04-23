@@ -14,7 +14,7 @@ object TitleItem {
     fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
         setDisplayName(name)
         setLore(lore.toList())
-        setCustomModelData(0)
+        setCustomModelData(1)
     }
 }
 
