@@ -2,19 +2,13 @@ package com.mineinabyss.anticheese
 
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.helpers.isInHub
-import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
-import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.okkero.skedule.schedule
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
-import io.papermc.paper.event.block.BlockPreDispenseEvent
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.block.BlockFace
-import org.bukkit.block.ShulkerBox
+import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -27,8 +21,6 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.player.PlayerFishEvent
-import org.bukkit.inventory.ItemStack
-import org.bukkit.material.MaterialData
 import org.bukkit.potion.PotionEffectType
 
 class AntiCheeseListener : Listener {
@@ -60,8 +52,32 @@ class AntiCheeseListener : Listener {
 
     @EventHandler
     fun BlockDispenseEvent.preventBackpackPlace() {
-        if (item.type.toString().contains("SHULKER"))
+        if ("SHULKER" in item.type.toString()) {
+            val inv = (block.state as Dispenser).inventory
+            val loc = block.location
+
+            when ((block.blockData as Directional).facing) {
+                BlockFace.SOUTH -> loc.add(0.0, 0.0, 1.0)
+                BlockFace.NORTH -> loc.subtract(0.0, 0.0, 1.0)
+                BlockFace.EAST -> loc.add(1.0, 0.0, 0.0)
+                BlockFace.WEST -> loc.subtract(1.0, 0.0, 0.0)
+                BlockFace.UP -> loc.add(0.0, 1.0, 0.0)
+                BlockFace.DOWN -> loc.subtract(0.0, 1.0, 0.0)
+                else -> loc
+            }
+
+            if (block.world.getBlockAt(loc).isSolid) return
+
+            for (i in inv.contents) {
+                if (i != null && i == item) {
+                    i.subtract(1)
+                    break
+                }
+            }
             isCancelled = true
+
+            block.world.dropItemNaturally(loc, item)
+        }
     }
 }
 
