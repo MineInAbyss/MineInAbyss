@@ -131,7 +131,23 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
     }
 }
 
-fun OfflinePlayer.lookForGuild(guildName: String) {
+fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
+    return transaction(AbyssContext.db) {
+
+        val guild = Guilds.select {
+            Guilds.name.lowerCase() eq guildName.lowercase()
+        }.firstOrNull()
+
+        if (guild == null) {
+            player?.error("There is no guild with the name ${ChatColor.DARK_RED}${ChatColor.ITALIC}$guildName.")
+            return@transaction null
+        }
+
+        return@transaction guildName
+    }
+}
+
+fun OfflinePlayer.requestToJoin(guildName: String) {
     val player = player ?: return
     val requestMessage = "${ChatColor.GREEN}The Guild will receive your request!"
     val ownerMessage =
@@ -403,6 +419,14 @@ fun OfflinePlayer.getGuildLevel(): Int? {
             Guilds.id eq playerGuild
         }.single()[Guilds.level]
         return@transaction guildLevel
+    }
+}
+
+fun String.getGuildLevel(): Int {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildLevel.lowercase()
+        }.singleOrNull()?.get(Guilds.level) ?: return@transaction 0
     }
 }
 

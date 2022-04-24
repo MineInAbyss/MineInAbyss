@@ -16,10 +16,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.mineinabyss.extensions.getGuildLevel
-import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount
-import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.mineinabyss.extensions.lookForGuild
+import com.mineinabyss.mineinabyss.extensions.*
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
 
@@ -39,15 +36,22 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
         displayGuildList().forEach { (guildName, joinType, guildLevel) ->
             val owner = guildName.getOwnerFromGuildName()
             Button(
-                enabled = !player.hasGuild(),
-                onClick = { player.lookForGuild(guildName) }) {
+                onClick = {
+                    if (player.hasGuild() && player.getGuildName().lowercase() == guildName.lowercase())
+                        nav.open(GuildScreen.MemberList(guildLevel, player))
+                    else
+                        nav.open(GuildScreen.GuildLookupMembers(guildName))
+
+                }) {
                 Item(
                     owner.head(
                         "${GOLD}${ITALIC}${guildName}",
                         "${YELLOW}${BOLD}Guild Owner: ${YELLOW}${ITALIC}${owner.name}",
                         "${YELLOW}${BOLD}Guild Level: ${YELLOW}${ITALIC}${guildLevel}",
                         "${YELLOW}${BOLD}Guild Jointype: ${YELLOW}${ITALIC}${joinType}",
-                        "${YELLOW}${BOLD}Guild Membercount: ${YELLOW}${ITALIC}${owner.getGuildMemberCount()} / ${owner.getGuildLevel()?.times(5)}",
+                        "${YELLOW}${BOLD}Guild Membercount: ${YELLOW}${ITALIC}${owner.getGuildMemberCount()} / ${
+                            owner.getGuildLevel()?.times(5)
+                        }",
                         isFlat = true
                     )
                 )
@@ -61,7 +65,7 @@ fun GuildUIScope.PreviousButton(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         onClick = {
-         }
+        }
     ) {
         Text(
             "${YELLOW}${BOLD}Previous",
@@ -89,36 +93,25 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
     val button = TitleItem.of("Guild Name").NoToolTip()
     Button(
         modifier = modifier,
-        enabled = !player.hasGuild(),
         onClick = {
             nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
                         .title("${Space.of(-64)}${Space.of(1)}:guild_search_menu:")
                         .itemLeft(button)
-                        //.preventClose()
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
                         .onComplete { player, guildName: String ->
-                            player.lookForGuild(guildName)
+                            if (player.hasGuild() && player.getGuildName().lowercase() == guildName.lowercase())
+                                nav.open(GuildScreen.MemberList(guildLevel, player))
+                            else if (player.verifyGuildName(guildName) != null)
+                                nav.open(GuildScreen.GuildLookupMembers(guildName))
                             AnvilGUI.Response.close()
                         }
                 ))
         }
-    ) { enabled ->
-        if (enabled) {
-            Text(
-                "${GOLD}${BOLD}Look for a Guild",
-                "${YELLOW}Search for a Guild by name."
-            )
-        }
-        else {
-            Text(
-                "${GOLD}${ITALIC}${STRIKETHROUGH}Look for a Guild",
-                "${RED}You have to leave your current",
-                "${RED}Guild before you can search for one."
-            )
-        }
+    ) {
+        Text("${GOLD}${BOLD}Search for a Guild by name")
     }
 }
 

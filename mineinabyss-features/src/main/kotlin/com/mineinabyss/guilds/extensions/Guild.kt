@@ -197,6 +197,20 @@ fun Player.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>>  {
     }
 }
 
+fun String.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>> {
+    return transaction(AbyssContext.db) {
+        val guild = Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildMembers.lowercase()
+        }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList<Pair<GuildRanks, OfflinePlayer>>()
+
+        Players.select {
+            (Players.guildId eq guild)
+        }.map { row ->
+            Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+        }
+    }
+}
+
 fun getAllGuilds() : List<Triple<String, GuildJoinType, Int>> {
     return transaction(AbyssContext.db) {
         return@transaction Guilds.selectAll().map {row -> Triple(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }

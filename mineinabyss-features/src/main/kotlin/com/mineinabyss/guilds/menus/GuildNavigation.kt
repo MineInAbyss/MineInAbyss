@@ -50,7 +50,8 @@ sealed class GuildScreen(var title: String, val height: Int) {
     object Owner : GuildScreen("${Space.of(-12)}$WHITE:guild_owner_menu:", 6)
 
     object GuildList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_list_menu:", 6)
-    class GuildOptions(val guild: String) : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_list_menu:", 6)
+    class GuildLookupMembers(val guildName: String) :
+        GuildScreen("${Space.of(-12)}$WHITE${":guild_lookup_members${guildName.getGuildLevel()}"}:", guildName.getGuildLevel() + 3)
 
     // Forgot to add to pack so this is fine for now
     object InviteList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_join_requests_menu:", 5)
@@ -96,7 +97,7 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
                     Leave -> GuildLeaveScreen()
                     is CurrentGuild -> CurrentGuildScreen()
                     GuildList -> GuildLookupListScreen()
-                    is GuildOptions -> GuildOptionsScreen(screen.guild)
+                    is GuildLookupMembers -> GuildLookupMembersScreen(screen.guildName)
                     InviteList -> GuildInviteListScreen()
                     is Invite -> GuildInviteScreen(screen.owner)
                     JoinRequestList -> GuildJoinRequestListScreen()
@@ -234,8 +235,8 @@ object DecideMenus {
     val noGuildAndInvites = ":guild_main_menu_no_guild_and_has_invites:"
     val noGuildAndNoInvites = ":guild_main_menu_no_guild_and_no_invites:"
 
-    fun decideMainMenu(player: Player) : String {
-        return  when {
+    fun decideMainMenu(player: Player): String {
+        return when {
             (player.hasGuild() && player.hasGuildInvites()) -> hasGuildAndInvites
             (player.hasGuild() && !player.hasGuildInvites()) -> hasGuildAndNoInvites
             (!player.hasGuild() && player.hasGuildInvites()) -> noGuildAndInvites
