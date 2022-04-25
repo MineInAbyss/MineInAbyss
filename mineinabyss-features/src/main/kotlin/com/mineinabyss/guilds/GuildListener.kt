@@ -34,7 +34,7 @@ class GuildListener(val feature: GuildFeature) : Listener {
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
         rightClicked.toGearyOrNull()?.get<GuildMaster>() ?: return
-        guiy { GuildMainMenu(player, feature) }
+        guiy { GuildMainMenu(player, feature, true) }
     }
 
     @EventHandler
