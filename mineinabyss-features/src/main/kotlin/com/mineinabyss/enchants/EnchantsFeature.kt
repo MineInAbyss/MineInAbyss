@@ -28,6 +28,7 @@ class EnchantsFeature : AbyssFeature {
             BirdSwatterListener(),
             JawBreakerListener(),
             BaneOfKuongatariListener(),
+            MagnetismListener(),
         )
 
         geary {
