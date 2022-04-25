@@ -16,7 +16,6 @@ import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildRank
 import com.mineinabyss.mineinabyss.extensions.hasGuild
 import com.okkero.skedule.schedule
-import io.papermc.paper.event.player.AsyncChatEvent
 import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -34,8 +33,7 @@ class GuildListener(val feature: GuildFeature) : Listener {
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
-        val entity = rightClicked.toGearyOrNull() ?: return
-        if (!entity.has<GuildMaster>()) return
+        rightClicked.toGearyOrNull()?.get<GuildMaster>() ?: return
         guiy { GuildMainMenu(player, feature) }
     }
 
@@ -75,7 +73,7 @@ class GuildContainerSystem : GroupSystem() {
 class GuildChatSystem(val feature: GuildFeature) : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    fun AsyncChatEvent.overrideVentureChat() {
+    fun AsyncPlayerChatEvent.overrideVentureChat() {
         if (player.playerData.guildChatStatus && !player.hasGuild()) {
             player.error("You cannot use guild chat without a guild.")
             player.success("Guild chat has been toggled OFF")
@@ -88,16 +86,15 @@ class GuildChatSystem(val feature: GuildFeature) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     fun AsyncPlayerChatEvent.toggleGuildChat() {
 
-        isCancelled = false
         if (!player.playerData.guildChatStatus || !player.hasGuild()) return
+        isCancelled = false
 
         recipients.clear()
         recipients.add(player)
         format = "${feature.guildChatPrefix}${player.displayName}: $message"
-
         Bukkit.getOnlinePlayers().forEach {
-            if (it.getGuildName().isEmpty()) return@forEach
-            if (it.getGuildName().lowercase() == player.getGuildName().lowercase()) recipients.add(it)
+            if (!it.hasGuild()) return@forEach
+            if (it.getGuildName() == player.getGuildName()) recipients.add(it)
         }
     }
 }

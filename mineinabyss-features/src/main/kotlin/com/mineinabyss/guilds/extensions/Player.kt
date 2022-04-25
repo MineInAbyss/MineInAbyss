@@ -367,7 +367,7 @@ fun OfflinePlayer.getGuildName(): String {
     return transaction(AbyssContext.db) {
         val playerGuild = Players.select {
             Players.playerUUID eq uniqueId
-        }.single()[Players.guildId]
+        }.firstOrNull()?.get(Players.guildId) ?: return@transaction ""
 
         val guildName = Guilds.select {
             Guilds.id eq playerGuild

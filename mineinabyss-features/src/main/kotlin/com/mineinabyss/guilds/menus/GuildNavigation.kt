@@ -81,7 +81,7 @@ class GuildUIScope(
 }
 
 @Composable
-fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
+fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature, openedFromHQ: Boolean = false) {
     val scope = remember { GuildUIScope(player, this, feature) }
     scope.apply {
         nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
@@ -91,7 +91,7 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
                 Modifier.height(screen.height),
                 onClose = { player.closeInventory() }) {
                 when (screen) {
-                    is Default -> HomeScreen()
+                    is Default -> HomeScreen(openedFromHQ)
                     GuildInfo -> GuildInfoScreen()
                     Owner -> GuildOwnerScreen()
                     Leave -> GuildLeaveScreen()
@@ -112,11 +112,11 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature) {
 }
 
 @Composable
-fun GuildUIScope.HomeScreen() {
+fun GuildUIScope.HomeScreen(openedFromHQ: Boolean) {
     Row(Modifier.at(2, 1)) {
         if (player.hasGuild() && player.isGuildOwner()) CurrentGuildButton(onClick = { nav.open(Owner) })
         else if (player.hasGuild() && !player.isGuildOwner()) CurrentGuildButton(onClick = { nav.open(GuildInfo) })
-        else CreateGuildButton()
+        else CreateGuildButton(openedFromHQ = openedFromHQ)
 
         Spacer(1)
         GuildLookupListButton()
@@ -161,7 +161,7 @@ fun GuildUIScope.CurrentGuildButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun GuildUIScope.CreateGuildButton() {
+fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
     Button(
         enabled = !player.hasGuild(),
         onClick = {
@@ -169,6 +169,12 @@ fun GuildUIScope.CreateGuildButton() {
             if (player.hasGuild()) {
                 player.error("You already have a guild.")
                 nav.back()
+                return@Button
+            }
+            if (!openedFromHQ) {
+                player.error("You need to register your guild")
+                player.error("with the Guild Master at Orth GuildHQ.")
+                player.closeInventory()
                 return@Button
             }
             nav.open(UniversalScreens.Anvil(
