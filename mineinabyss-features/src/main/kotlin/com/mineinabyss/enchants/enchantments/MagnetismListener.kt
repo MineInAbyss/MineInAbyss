@@ -46,5 +46,3 @@ class MagnetismListener : Listener {
         }
     }
 }
-//full inventory
-//anvil
