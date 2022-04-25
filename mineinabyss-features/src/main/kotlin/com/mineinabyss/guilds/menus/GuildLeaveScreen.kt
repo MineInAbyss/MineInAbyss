@@ -10,7 +10,7 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.leaveGuild
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
 
 @Composable
 fun GuildUIScope.GuildLeaveScreen() {
@@ -29,7 +29,7 @@ fun GuildUIScope.LeaveButton(modifier: Modifier = Modifier) = Button(
         player.closeInventory()
     }) {
     Text(
-        "${ChatColor.GREEN}${ChatColor.BOLD}Leave ${ChatColor.DARK_GREEN}${ChatColor.ITALIC}${player.getGuildName()}",
+        "${GREEN}${BOLD}Leave ${DARK_GREEN}${ITALIC}${player.getGuildName()}",
         modifier = Modifier.size(3, 3)
     )
 }
@@ -40,7 +40,7 @@ fun GuildUIScope.DontLeaveButton(modifier: Modifier = Modifier) = Button(
     onClick = { nav.back() }
 ) {
     Text(
-        "${ChatColor.RED}${ChatColor.BOLD}Don't Leave ${ChatColor.DARK_RED}${ChatColor.ITALIC}${player.getGuildName()}",
+        "${RED}${BOLD}Don't Leave ${DARK_RED}${ITALIC}${player.getGuildName()}",
         modifier = Modifier.size(3, 3)
     )
 }

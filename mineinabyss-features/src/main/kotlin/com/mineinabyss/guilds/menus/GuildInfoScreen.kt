@@ -14,7 +14,7 @@ import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount
 import com.mineinabyss.mineinabyss.extensions.getGuildName
 import com.mineinabyss.mineinabyss.extensions.getGuildOwner
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
 
 @Composable
 fun GuildUIScope.GuildInfoScreen() {
@@ -41,12 +41,12 @@ fun GuildUIScope.GuildInfoScreen() {
 fun GuildUIScope.CurrentGuildInfoButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "${ChatColor.GOLD}${ChatColor.BOLD}Current Guild Info:",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Name: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildName()}",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Owner: ${ChatColor.YELLOW}${ChatColor.ITALIC}${
+            "${GOLD}${BOLD}Current Guild Info:",
+            "${YELLOW}${BOLD}Guild Name: ${YELLOW}${ITALIC}${player.getGuildName()}",
+            "${YELLOW}${BOLD}Guild Owner: ${YELLOW}${ITALIC}${
                 Bukkit.getOfflinePlayer(player.getGuildOwner()).name}",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Level: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildLevel()}",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Members: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildMemberCount()}",
+            "${YELLOW}${BOLD}Guild Level: ${YELLOW}${ITALIC}${player.getGuildLevel()}",
+            "${YELLOW}${BOLD}Guild Members: ${YELLOW}${ITALIC}${player.getGuildMemberCount()}",
             modifier = Modifier.size(2, 2)
         )
     }
