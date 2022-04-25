@@ -7,11 +7,15 @@ import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import org.bukkit.ChatColor
+import org.bukkit.block.BlockFace
+import org.bukkit.block.Dispenser
+import org.bukkit.block.data.Directional
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockDispenseEvent
 import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -43,6 +47,35 @@ class AntiCheeseListener : Listener {
                 isCancelled = true
                 player.error("${ChatColor.BOLD}Slow Falling ${ChatColor.RED}has been disabled")
             }
+        }
+    }
+    @EventHandler
+    fun BlockDispenseEvent.preventBackpackPlace() {
+        if ("SHULKER" in item.type.toString()) {
+            val inv = (block.state as Dispenser).inventory
+            val loc = block.location
+
+            when ((block.blockData as Directional).facing) {
+                BlockFace.SOUTH -> loc.add(0.0, 0.0, 1.0)
+                BlockFace.NORTH -> loc.subtract(0.0, 0.0, 1.0)
+                BlockFace.EAST -> loc.add(1.0, 0.0, 0.0)
+                BlockFace.WEST -> loc.subtract(1.0, 0.0, 0.0)
+                BlockFace.UP -> loc.add(0.0, 1.0, 0.0)
+                BlockFace.DOWN -> loc.subtract(0.0, 1.0, 0.0)
+                else -> loc
+            }
+
+            if (block.world.getBlockAt(loc).isSolid) return
+
+            for (i in inv.contents) {
+                if (i != null && i == item) {
+                    i.subtract(1)
+                    break
+                }
+            }
+            isCancelled = true
+
+            block.world.dropItemNaturally(loc, item)
         }
     }
 }
