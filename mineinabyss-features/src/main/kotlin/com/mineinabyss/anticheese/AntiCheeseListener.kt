@@ -49,6 +49,7 @@ class AntiCheeseListener : Listener {
             }
         }
     }
+
     @EventHandler
     fun BlockDispenseEvent.preventBackpackPlace() {
         if ("SHULKER" in item.type.toString()) {
