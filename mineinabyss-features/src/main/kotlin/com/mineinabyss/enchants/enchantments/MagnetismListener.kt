@@ -26,11 +26,7 @@ class MagnetismListener : Listener {
 
                 for (entity in entities) {
                     if (entity is Item) {
-                        val item: Item = entity
-                        val stack = player.inventory.addItem(item.itemStack)
-                        if (stack[0] == null){
-                            entity.remove()
-                        }
+                        player.inventory.addItem(entity.itemStack)
                     }
                 }
             }
