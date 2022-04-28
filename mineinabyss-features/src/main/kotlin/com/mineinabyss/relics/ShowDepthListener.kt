@@ -3,12 +3,14 @@ package com.mineinabyss.relics
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.ecs.accessors.SourceScope
-import com.mineinabyss.geary.ecs.accessors.TargetScope
-import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.api.annotations.Handler
-import com.mineinabyss.geary.ecs.api.systems.GearyListener
-import com.mineinabyss.geary.ecs.api.systems.provideDelegate
+import com.mineinabyss.geary.annotations.Handler
+import com.mineinabyss.geary.datatypes.family.MutableFamilyOperations.Companion.has
+import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.systems.GearyListener
+import com.mineinabyss.geary.systems.accessors.EventScope
+import com.mineinabyss.geary.systems.accessors.SourceScope
+import com.mineinabyss.geary.systems.accessors.TargetScope
+import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
@@ -25,10 +27,7 @@ class ShowDepth()
 class ShowDepthListener : GearyListener() {
     private val TargetScope.player by get<Player>()
     private val SourceScope.depthMeter by get<DepthMeter>()
-
-    init {
-        event.has<ShowDepth>()
-    }
+    private val EventScope.hasDepth by family { has<ShowDepth>() }
 
     @Handler
     fun TargetScope.showDepth(source: SourceScope) {

@@ -12,9 +12,9 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.mineinabyss.mineinabyss.extensions.getGuildName
-import com.mineinabyss.mineinabyss.extensions.getGuildRank
-import com.mineinabyss.mineinabyss.extensions.hasGuild
+import com.mineinabyss.guilds.extensions.getGuildName
+import com.mineinabyss.guilds.extensions.getGuildRank
+import com.mineinabyss.guilds.extensions.hasGuild
 import com.okkero.skedule.schedule
 import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit

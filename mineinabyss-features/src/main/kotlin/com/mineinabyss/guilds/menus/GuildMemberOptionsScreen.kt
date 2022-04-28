@@ -6,8 +6,8 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.mineinabyss.extensions.kickPlayerFromGuild
-import com.mineinabyss.mineinabyss.extensions.promotePlayerInGuild
+import com.mineinabyss.guilds.extensions.kickPlayerFromGuild
+import com.mineinabyss.guilds.extensions.promotePlayerInGuild
 import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 

@@ -13,7 +13,7 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.mineinabyss.extensions.getGuildName
+import com.mineinabyss.guilds.extensions.getGuildName
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor.*
 

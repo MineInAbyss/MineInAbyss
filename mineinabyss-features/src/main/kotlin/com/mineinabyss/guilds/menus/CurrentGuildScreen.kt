@@ -12,9 +12,9 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.extensions.getGuildRank
-import com.mineinabyss.mineinabyss.extensions.hasGuild
-import com.mineinabyss.mineinabyss.extensions.leaveGuild
+import com.mineinabyss.guilds.extensions.getGuildRank
+import com.mineinabyss.guilds.extensions.hasGuild
+import com.mineinabyss.guilds.extensions.leaveGuild
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.bukkit.entity.Player

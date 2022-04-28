@@ -1,14 +1,14 @@
 package com.mineinabyss.pins
 
 import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.geary.ecs.accessors.TargetScope
-import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.api.engine.entity
-import com.mineinabyss.geary.ecs.api.entities.GearyEntity
-import com.mineinabyss.geary.ecs.api.systems.TickingSystem
-import com.mineinabyss.geary.ecs.entities.addParent
+import com.mineinabyss.geary.datatypes.GearyEntity
+import com.mineinabyss.geary.helpers.addParent
+import com.mineinabyss.geary.helpers.entity
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.helpers.addPrefab
+import com.mineinabyss.geary.systems.TickingSystem
+import com.mineinabyss.geary.systems.accessors.TargetScope
+import com.mineinabyss.geary.systems.accessors.get
 
 class PinActivatorSystem : TickingSystem() {
     private val TargetScope.pins by get<ActivePins>()

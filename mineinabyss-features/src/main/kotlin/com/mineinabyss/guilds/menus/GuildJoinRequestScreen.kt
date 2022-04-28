@@ -2,6 +2,7 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
@@ -9,7 +10,6 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.mineinabyss.extensions.*
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.insert

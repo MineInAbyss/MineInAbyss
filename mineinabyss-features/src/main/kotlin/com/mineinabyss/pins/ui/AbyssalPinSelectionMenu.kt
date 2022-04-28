@@ -3,11 +3,11 @@ package com.mineinabyss.pins.ui
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.pins.AbyssalPin
 import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.geary.ecs.accessors.TargetScope
-import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.query.Query
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.systems.accessors.TargetScope
+import com.mineinabyss.geary.systems.accessors.get
+import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
@@ -17,7 +17,7 @@ import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import org.bukkit.entity.Player
 
-private object AbyssalPinsQuery : Query() {
+private object AbyssalPinsQuery : GearyQuery() {
     val TargetScope.prefab by get<PrefabKey>()
     val TargetScope.pin by get<AbyssalPin>()
 }

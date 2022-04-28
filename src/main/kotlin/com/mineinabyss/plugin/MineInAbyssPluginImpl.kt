@@ -1,6 +1,7 @@
 package com.mineinabyss.plugin
 
-import com.mineinabyss.geary.papermc.dsl.GearyAddon
+import com.mineinabyss.geary.api.addon.GearyAddon
+import com.mineinabyss.geary.api.addon.autoscan
 import com.mineinabyss.geary.papermc.dsl.gearyAddon
 import com.mineinabyss.geary.papermc.store.PrefabNamespaceMigrations
 import com.mineinabyss.guilds.database.GuildJoinQueue
@@ -38,12 +39,15 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         var addon: GearyAddon? = null
         if(isPluginEnabled("Geary")) {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
-            gearyAddon("com.mineinabyss") {
+            gearyAddon {
                 addon = this
-                autoScanAll()
+                autoscan("com.mineinabyss") {
+                    all()
+                }
             }
         }
 
+        //TODO use Koin
         registerService<AbyssContext>(object : AbyssContext {
             override val econ = getServiceOrNull<Economy>("Vault")
             override val addonScope: GearyAddon

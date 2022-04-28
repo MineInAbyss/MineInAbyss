@@ -11,10 +11,10 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.extensions.getGuildMemberCount
-import com.mineinabyss.mineinabyss.extensions.getGuildName
-import com.mineinabyss.mineinabyss.extensions.getGuildOwnerFromInvite
-import com.mineinabyss.mineinabyss.extensions.removeGuildQueueEntries
+import com.mineinabyss.guilds.extensions.getGuildMemberCount
+import com.mineinabyss.guilds.extensions.getGuildName
+import com.mineinabyss.guilds.extensions.getGuildOwnerFromInvite
+import com.mineinabyss.guilds.extensions.removeGuildQueueEntries
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select

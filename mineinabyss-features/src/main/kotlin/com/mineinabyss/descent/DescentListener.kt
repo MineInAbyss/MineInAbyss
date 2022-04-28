@@ -5,10 +5,10 @@ import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
-import com.mineinabyss.geary.ecs.api.engine.componentId
-import com.mineinabyss.geary.ecs.api.relations.RelationValueId
-import com.mineinabyss.geary.ecs.components.RelationComponent
-import com.mineinabyss.geary.ecs.context.globalContext
+import com.mineinabyss.geary.components.RelationComponent
+import com.mineinabyss.geary.context.globalContext
+import com.mineinabyss.geary.datatypes.RelationValueId
+import com.mineinabyss.geary.helpers.componentId
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info

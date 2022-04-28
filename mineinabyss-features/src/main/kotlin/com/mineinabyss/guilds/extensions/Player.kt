@@ -1,4 +1,4 @@
-package com.mineinabyss.mineinabyss.extensions
+package com.mineinabyss.guilds.extensions
 
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue

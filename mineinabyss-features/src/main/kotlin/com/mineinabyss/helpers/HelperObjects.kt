@@ -1,4 +1,4 @@
-package com.mineinabyss.mineinabyss
+package com.mineinabyss.helpers
 
 import com.mineinabyss.idofront.items.editItemMeta
 import org.bukkit.Material
