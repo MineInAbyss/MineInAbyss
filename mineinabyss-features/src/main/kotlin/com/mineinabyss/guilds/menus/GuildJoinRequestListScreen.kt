@@ -14,6 +14,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.mineinabyss.extensions.hasGuildRequests
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
@@ -22,6 +23,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuildUIScope.GuildJoinRequestListScreen() {
+    GuildJoinRequest(Modifier.at(1, 1))
+    DenyAllInvites(Modifier.at(8, 4))
+    BackButton(Modifier.at(2, 4))
+}
+
+@Composable
+fun GuildUIScope.GuildJoinRequest(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(AbyssContext.db) {
@@ -34,13 +42,14 @@ fun GuildUIScope.GuildJoinRequestListScreen() {
             }.map { row -> row[GuildJoinQueue.playerUUID] }
         }
     }
-    Grid(Modifier.size(9, 4)) {
+    Grid(modifier.size(9, 4)) {
         requests.forEach { newMember ->
-            Button(onClick = { nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember))) }) {
+            Button(onClick = { if (!player.hasGuildRequests()) player.closeInventory() else nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember))) }) {
                 Item(
                     newMember.toPlayer().head(
                         "$YELLOW$ITALIC${newMember.toPlayer()?.name}",
-                        "${BLUE}Click this to accept or deny the join-request."
+                        "${BLUE}Click this to accept or deny the join-request.",
+                        isFlat = true
                     )
                 )
             }

@@ -73,9 +73,9 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
         }
 
         /* Delete accepted guildinvite */
-//        GuildJoinQueue.deleteWhere {
-//            (GuildJoinQueue.playerUUID eq member.uniqueId) and (GuildJoinQueue.guildId eq guild)
-//        }
+        GuildJoinQueue.deleteWhere {
+            (GuildJoinQueue.playerUUID eq member.uniqueId) and (GuildJoinQueue.guildId eq guild)
+        }
     }
 }
 
@@ -131,8 +131,24 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
     }
 }
 
-fun OfflinePlayer.lookForGuild(guildName: String) {
-    val player = player!!
+fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
+    return transaction(AbyssContext.db) {
+
+        val guild = Guilds.select {
+            Guilds.name.lowerCase() eq guildName.lowercase()
+        }.firstOrNull()
+
+        if (guild == null) {
+            player?.error("There is no guild with the name ${ChatColor.DARK_RED}${ChatColor.ITALIC}$guildName.")
+            return@transaction null
+        }
+
+        return@transaction guildName
+    }
+}
+
+fun OfflinePlayer.requestToJoin(guildName: String) {
+    val player = player ?: return
     val requestMessage = "${ChatColor.GREEN}The Guild will receive your request!"
     val ownerMessage =
         "${ChatColor.GOLD}${ChatColor.ITALIC}${player.name} ${ChatColor.YELLOW}requested to join your guild."
@@ -152,6 +168,12 @@ fun OfflinePlayer.lookForGuild(guildName: String) {
             return@transaction
         }
 
+        /* Check if guild is in invite-only mode */
+        if (guild[Guilds.joinType] == GuildJoinType.Invite) {
+            player.error("${ChatColor.GOLD}$guildName ${ChatColor.YELLOW}is invite-only.")
+            return@transaction
+        }
+
         val id = Guilds.select {
             Guilds.name.lowerCase() eq guildName.lowercase()
         }.single()[Guilds.id]
@@ -165,21 +187,15 @@ fun OfflinePlayer.lookForGuild(guildName: String) {
             return@transaction
         }
 
+
         GuildJoinQueue.insert {
             it[playerUUID] = player.uniqueId
             it[guildId] = id
             it[joinType] = GuildJoinType.Request
         }
 
-        /* Check if guild is in invite-only mode */
-        if (guild[Guilds.joinType] == GuildJoinType.Invite) {
-            player.error("${ChatColor.GOLD}$guildName ${ChatColor.YELLOW}is invite-only.")
-            return@transaction
-        }
-
         val owner = Players.select {
-            (Players.guildId eq id) and
-                    ((Players.guildRank eq GuildRanks.Owner) or (Players.guildRank eq GuildRanks.Captain))
+            (Players.guildId eq id) and (Players.guildRank eq GuildRanks.Owner)
         }.single()[Players.playerUUID]
 
 
@@ -351,7 +367,7 @@ fun OfflinePlayer.getGuildName(): String {
     return transaction(AbyssContext.db) {
         val playerGuild = Players.select {
             Players.playerUUID eq uniqueId
-        }.single()[Players.guildId]
+        }.firstOrNull()?.get(Players.guildId) ?: return@transaction ""
 
         val guildName = Guilds.select {
             Guilds.id eq playerGuild
@@ -377,6 +393,10 @@ fun OfflinePlayer.getGuildOwner() : UUID {
     }
 }
 
+fun OfflinePlayer.isGuildOwner() : Boolean {
+    return player?.getGuildOwner() == player?.uniqueId
+}
+
 fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
     return transaction(AbyssContext.db) {
         val guilds = GuildJoinQueue.select {
@@ -399,6 +419,14 @@ fun OfflinePlayer.getGuildLevel(): Int? {
             Guilds.id eq playerGuild
         }.single()[Guilds.level]
         return@transaction guildLevel
+    }
+}
+
+fun String.getGuildLevel(): Int {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildLevel.lowercase()
+        }.singleOrNull()?.get(Guilds.level) ?: return@transaction 0
     }
 }
 
@@ -433,6 +461,26 @@ fun OfflinePlayer.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
         }.firstOrNull()
 
         return@transaction hasInvite !== null
+    }
+}
+
+fun OfflinePlayer.hasGuildInvites(): Boolean {
+    return transaction(AbyssContext.db) {
+        return@transaction GuildJoinQueue.select {
+            (GuildJoinQueue.joinType eq GuildJoinType.Invite) and (GuildJoinQueue.playerUUID eq uniqueId)
+        }.toList().isNotEmpty()
+    }
+}
+
+fun OfflinePlayer.hasGuildRequests(): Boolean {
+    return transaction(AbyssContext.db) {
+        val player = Players.select {
+            Players.playerUUID eq uniqueId
+        }.single()[Players.guildId]
+
+        return@transaction GuildJoinQueue.select {
+            (GuildJoinQueue.joinType eq GuildJoinType.Request) and (GuildJoinQueue.guildId eq player)
+        }.toList().isNotEmpty()
     }
 }
 
@@ -472,10 +520,10 @@ fun  OfflinePlayer.getNumberOfGuildRequests() : Int {
 }
 
 fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAll: Boolean = false) {
-    transaction(AbyssContext.db) {
+    return transaction(AbyssContext.db) {
         val id = GuildJoinQueue.select {
             GuildJoinQueue.playerUUID eq uniqueId
-        }.single()[GuildJoinQueue.guildId]
+        }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction
 
         if (removeAll) {
             GuildJoinQueue.deleteWhere {
@@ -506,4 +554,8 @@ fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
         return@transaction type
     }
     return joinType
+}
+
+fun OfflinePlayer.isAboveCaptain(): Boolean {
+    return (player?.getGuildRank() == GuildRanks.Owner || player?.getGuildRank() == GuildRanks.Captain)
 }

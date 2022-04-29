@@ -1,6 +1,7 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
@@ -8,6 +9,9 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.guilds.extensions.kickPlayerFromGuild
 import com.mineinabyss.guilds.extensions.promotePlayerInGuild
+import com.mineinabyss.mineinabyss.extensions.getGuildRank
+import com.mineinabyss.mineinabyss.extensions.kickPlayerFromGuild
+import com.mineinabyss.mineinabyss.extensions.promotePlayerInGuild
 import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 
@@ -18,18 +22,19 @@ fun GuildUIScope.GuildMemberOptionsScreen(member: OfflinePlayer) {
     // with the final button being kick.
     PromoteGuildMember(member, Modifier.at(1, 1))
     KickGuildMember(member, Modifier.at(5, 1))
-    BackButton(Modifier.at(2, 4))
+    BackButton(Modifier.at(4, 4))
 }
 
 @Composable
 fun GuildUIScope.PromoteGuildMember(member: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
+    enabled = (player.getGuildRank() == GuildRanks.Owner || player.getGuildRank() == GuildRanks.Captain),
     onClick = {
         player.promotePlayerInGuild(member)
         nav.back()
     }
 ) {
-    Text("$BLUE${ITALIC}Promote Member", modifier = Modifier.size(3, 2))
+    Text("$BLUE${ITALIC}Promote Member", modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -40,7 +45,7 @@ fun GuildUIScope.KickGuildMember(member: OfflinePlayer, modifier: Modifier) = Bu
         nav.back()
     }
 ) {
-    Text("$RED${ITALIC}Kick Member", modifier = Modifier.size(3, 2))
+    Text("$RED${ITALIC}Kick Member", modifier = Modifier.size(3, 3))
 }
 
 

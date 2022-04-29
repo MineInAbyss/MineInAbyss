@@ -24,10 +24,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuildUIScope.CurrentGuildScreen() {
-    val yLevel = guildLevel + 1
+    val yLevel = guildLevel + 2
     GuildMemberList(Modifier.at(1, 1))
     if (player.getGuildRank() != GuildRanks.Owner) {
-        LeaveGuildButton(player, Modifier.at(8, yLevel))
+        //LeaveGuildButton(player, Modifier.at(8, yLevel))
     }
     BackButton(Modifier.at(2, yLevel))
 }
@@ -52,22 +52,10 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
             Item(
                 member.head(
                     "$GOLD$ITALIC${member.name}",
-                    "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${member.getGuildRank()}"
+                    "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${member.getGuildRank()}",
+                    isFlat = true
                 )
             )
         }
-    }
-}
-
-@Composable
-fun GuildUIScope.LeaveGuildButton(player: Player, modifier: Modifier = Modifier) {
-    Button(
-        enabled = player.hasGuild(),
-        onClick = {
-            player.leaveGuild()
-            nav.back()
-        }) { enabled ->
-        if (enabled) Text("$RED${ITALIC}Leave Guild", modifier = modifier)
-        else Text("$RED${ITALIC}${STRIKETHROUGH}Leave Guild", modifier = modifier)
     }
 }

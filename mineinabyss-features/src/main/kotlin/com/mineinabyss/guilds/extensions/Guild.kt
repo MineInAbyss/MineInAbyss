@@ -6,6 +6,9 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.guilds.extensions.getGuildMemberCount
+import com.mineinabyss.guilds.extensions.getGuildName
+import com.mineinabyss.guilds.extensions.getGuildRank
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
@@ -178,3 +181,59 @@ fun Player.changeGuildJoinType() {
     }
 }
 
+fun Player.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>>  {
+    return transaction(AbyssContext.db) {
+        val playerRow = Players.select {
+            Players.playerUUID eq player!!.uniqueId
+        }.single()
+
+        val guildId = playerRow[Players.guildId]
+
+        Players.select {
+            (Players.guildId eq guildId)
+        }.map { row ->
+            Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+        }
+    }
+}
+
+fun String.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>> {
+    return transaction(AbyssContext.db) {
+        val guild = Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildMembers.lowercase()
+        }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList<Pair<GuildRanks, OfflinePlayer>>()
+
+        Players.select {
+            (Players.guildId eq guild)
+        }.map { row ->
+            Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+        }
+    }
+}
+
+fun getAllGuilds() : List<Triple<String, GuildJoinType, Int>> {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.selectAll().map {row -> Triple(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
+    }
+}
+
+fun displayGuildList(): List<Triple<String, GuildJoinType, Int>> {
+    val list = getAllGuilds().sortedBy { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first }
+
+    return if (list.size < 20) list.subList(0, list.size)
+    else list.subList(0, 20)
+}
+
+fun String.getOwnerFromGuildName() : OfflinePlayer {
+    return transaction(AbyssContext.db) {
+        val guild = Guilds.select {
+            Guilds.name eq this@getOwnerFromGuildName
+        }.first()[Guilds.id]
+
+        val player = Players.select {
+            Players.guildId eq guild
+        }.first()[Players.playerUUID]
+
+        return@transaction Bukkit.getOfflinePlayer(player)
+    }
+}
