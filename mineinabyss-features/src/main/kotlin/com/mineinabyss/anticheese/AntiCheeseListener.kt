@@ -68,7 +68,7 @@ class AntiCheeseListener : Listener {
 
             if (block.world.getBlockAt(loc).isSolid) return
 
-            for (i in inv.contents) {
+            for (i in inv.contents!!) {
                 if (i != null && i == item) {
                     i.subtract(1)
                     break

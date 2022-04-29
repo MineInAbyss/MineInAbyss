@@ -4,12 +4,12 @@ import com.mineinabyss.components.helpers.HideBossBarCompass
 import com.mineinabyss.components.helpers.PlayerCompassBar
 import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.autoscan.AutoScan
-import com.mineinabyss.geary.ecs.accessors.TargetScope
-import com.mineinabyss.geary.ecs.accessors.building.get
-import com.mineinabyss.geary.ecs.api.systems.TickingSystem
-import com.mineinabyss.geary.ecs.entities.parent
+import com.mineinabyss.geary.annotations.AutoScan
+import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.systems.TickingSystem
+import com.mineinabyss.geary.systems.accessors.TargetScope
+import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.helpers.bossbarCompass
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.looty.tracking.toGearyOrNull
@@ -26,7 +26,7 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
         val compassList =
-            player.inventory.contents.filter {
+            player.inventory.contents?.filter {
                 it != null && it.toGearyOrNull(player)?.has<StarCompass>() == true
             }
 
@@ -37,17 +37,17 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
             Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
 
         // Let player toggle between having a bossbar-compass or item compass
-        compassList.forEach { compass ->
+        compassList?.forEach { compass ->
             if (player.toGeary().has<HideBossBarCompass>()) {
-                compass.type = Material.COMPASS
-                compass.editItemMeta {
+                compass?.type = Material.COMPASS
+                compass?.editItemMeta {
                     this as CompassMeta
                     lodestone = starCompass.compassLocation
                     isLodestoneTracked = false
                 }
                 player.hideBossBar(playerBar.compassBar)
             } else {
-                compass.type = Material.PAPER
+                compass?.type = Material.PAPER
                 player.bossbarCompass(starCompass.compassLocation!!, playerBar.compassBar)
             }
         }

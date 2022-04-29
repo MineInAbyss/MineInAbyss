@@ -4,6 +4,9 @@ import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.guilds.extensions.getGuildName
+import com.mineinabyss.guilds.extensions.getGuildRank
+import com.mineinabyss.guilds.extensions.hasGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.MessageQueue
@@ -12,9 +15,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.mineinabyss.guilds.extensions.getGuildName
-import com.mineinabyss.guilds.extensions.getGuildRank
-import com.mineinabyss.guilds.extensions.hasGuild
 import com.okkero.skedule.schedule
 import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit
@@ -29,7 +29,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class GuildListener(val feature: GuildFeature) : Listener {
+class GuildListener(private val feature: GuildFeature) : Listener {
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {

@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import com.mineinabyss.guilds.database.GuildJoinQueue
 import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guilds.database.Players
+import com.mineinabyss.guilds.extensions.hasGuildRequests
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -14,7 +15,6 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.extensions.hasGuildRequests
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
