@@ -1,7 +1,6 @@
 package com.mineinabyss.relics.sickle
 
 import com.mineinabyss.components.relics.Sickle
-import com.mineinabyss.geary.annotations.AutoScan
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.commons.components.interaction.RightClicked
 import com.mineinabyss.geary.systems.GearyListener
@@ -16,7 +15,6 @@ import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
 
-@AutoScan
 class HarvestListener : GearyListener() {
     val SourceScope.player by get<Player>()
     val TargetScope.sickle by get<Sickle>()

@@ -19,7 +19,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.meta.CompassMeta
 import kotlin.time.Duration.Companion.seconds
 
-@AutoScan
 class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
     private val TargetScope.starCompass by get<StarCompass>()
 

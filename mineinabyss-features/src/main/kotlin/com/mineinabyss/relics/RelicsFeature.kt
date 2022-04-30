@@ -8,6 +8,7 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.geary
+import com.mineinabyss.relics.sickle.HarvestListener
 import com.mineinabyss.relics.sickle.SickleListener
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,6 +22,8 @@ class RelicsFeature : AbyssFeature {
         geary {
             systems(
                 ShowDepthListener(),
+                StarCompassSystem(),
+                HarvestListener(),
             )
         }
         registerEvents(SickleListener())
