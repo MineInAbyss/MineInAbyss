@@ -3,7 +3,7 @@ package com.mineinabyss.relics.sickle
 import com.mineinabyss.components.relics.Sickle
 import com.mineinabyss.geary.annotations.AutoScan
 import com.mineinabyss.geary.annotations.Handler
-import com.mineinabyss.geary.papermc.events.bridge.components.RightClicked
+import com.mineinabyss.geary.commons.components.interaction.RightClicked
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
@@ -30,7 +30,7 @@ class HarvestListener : GearyListener() {
         var totalHarvested = 0
         // Harvest surroundings
         for (relativePos in BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[target.sickle.radius]) {
-            val block = BlockUtil.relative(block, relativePos) ?: continue
+            val block = BlockUtil.relative(block, relativePos)
             if (harvestPlant(block, player)) {
                 item.editItemMeta {
                     damage += 1

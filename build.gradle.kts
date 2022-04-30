@@ -37,6 +37,10 @@ allprojects {
         compileOnly(libs.kotlinx.serialization.kaml)
         compileOnly(libs.kotlinx.coroutines)
         compileOnly(libs.minecraft.skedule)
+        compileOnly(libs.reflections)
+        implementation(libs.idofront.autoscan) {
+            exclude("org.reflections")
+        }
 
         compileOnly(libs.exposed.core) { isTransitive = false }
         compileOnly(libs.exposed.dao) { isTransitive = false }
@@ -56,7 +60,6 @@ allprojects {
         compileOnly("com.mineinabyss:protocolburrito:0.2.25")
         compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
         implementation("com.mineinabyss:idofront:$idofrontVersion")
-        implementation(libs.idofront.autoscan)
     }
 }
 

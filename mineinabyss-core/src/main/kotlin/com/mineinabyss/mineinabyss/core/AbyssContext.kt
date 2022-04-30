@@ -1,6 +1,6 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.mineinabyss.geary.api.addon.GearyAddon
+import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.plugin.getService

@@ -1,7 +1,7 @@
 package com.mineinabyss.plugin
 
-import com.mineinabyss.geary.api.addon.GearyAddon
-import com.mineinabyss.geary.api.addon.autoscan
+import com.mineinabyss.geary.addon.GearyAddon
+import com.mineinabyss.geary.addon.autoscan
 import com.mineinabyss.geary.papermc.dsl.gearyAddon
 import com.mineinabyss.geary.papermc.store.PrefabNamespaceMigrations
 import com.mineinabyss.guilds.database.GuildJoinQueue
@@ -42,7 +42,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             gearyAddon {
                 addon = this
                 autoscan("com.mineinabyss") {
-                    all()
+                    components()
                 }
             }
         }

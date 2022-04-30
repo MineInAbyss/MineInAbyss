@@ -2,8 +2,8 @@ package com.mineinabyss.pins
 
 import com.mineinabyss.components.pins.PinDrop
 import com.mineinabyss.geary.annotations.Handler
+import com.mineinabyss.geary.commons.components.interaction.Interacted
 import com.mineinabyss.geary.helpers.parent
-import com.mineinabyss.geary.papermc.events.bridge.components.Interacted
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
