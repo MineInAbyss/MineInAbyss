@@ -1,0 +1,17 @@
+[versions]
+geary = "0.15.89"
+gearyaddons = "0.5.27"
+looty = "0.6.48"
+guiy="0.5.15"
+deeperworld="0.4.74"
+
+[libraries]
+geary-papermc-core = { module = "com.mineinabyss:geary-papermc-core", version.ref = "geary" }
+geary-commons-papermc = { module = "com.mineinabyss:geary-commons-papermc", version.ref = "gearyaddons" }
+looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
+deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
+guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
+
+minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.2-SNAPSHOT"
+minecraft-plugin-gsit = "com.gecolay:gsit:1.0.6"
+minecraft-plugin-protocolburrito = "com.mineinabyss:protocolburrito:0.3.32"

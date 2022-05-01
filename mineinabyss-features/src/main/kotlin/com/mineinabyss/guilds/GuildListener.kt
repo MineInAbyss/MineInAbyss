@@ -1,5 +1,6 @@
 package com.mineinabyss.guilds
 
+import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
@@ -15,7 +16,8 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.okkero.skedule.schedule
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import nl.rutgerkok.blocklocker.group.GroupSystem
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -28,6 +30,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.time.Duration.Companion.seconds
 
 class GuildListener(private val feature: GuildFeature) : Listener {
 
@@ -38,9 +41,9 @@ class GuildListener(private val feature: GuildFeature) : Listener {
     }
 
     @EventHandler
-    fun PlayerJoinEvent.onJoin() {
-        mineInAbyss.schedule {
-            waitFor(20)
+    suspend fun PlayerJoinEvent.onJoin() {
+        delay(1.seconds)
+        withContext(mineInAbyss.asyncDispatcher) {
             transaction(AbyssContext.db) {
                 MessageQueue.select { MessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.sendMessage(it[content])

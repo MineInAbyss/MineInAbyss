@@ -1,8 +1,10 @@
 package com.mineinabyss.enchants.enchantments
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.enchants.CustomEnchants
+import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.okkero.skedule.schedule
+import kotlinx.coroutines.delay
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -24,13 +26,13 @@ class FrostAspectListener : Listener {
         val lastTime = System.currentTimeMillis()
 
         if (item.containsEnchantment(CustomEnchants.FROST_ASPECT)) {
-            mineInAbyss.schedule {
+            mineInAbyss.launch {
                 do {
                     val lastFreezeTime = System.currentTimeMillis()
                     do {
                         entity.freezeTicks = entity.maxFreezeTicks
                         freezeTimePassed += System.currentTimeMillis() - lastFreezeTime
-                        waitFor(1)
+                        delay(1.ticks)
                     } while ((freezeTimePassed < damageTimer.inWholeMilliseconds) &&
                         ((entity.freezeTicks == entity.maxFreezeTicks) ||
                                 (entity.freezeTicks in (1 until entity.maxFreezeTicks)))

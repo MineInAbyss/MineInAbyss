@@ -1,5 +1,6 @@
 package com.mineinabyss.guilds
 
+import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.guilds.extensions.addMemberToGuild
@@ -29,7 +30,8 @@ class GuildFeature(
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(GuildListener(this@GuildFeature), GuildChatSystem(this@GuildFeature))
+        server.pluginManager.registerSuspendingEvents(GuildListener(this@GuildFeature), this)
+        registerEvents(GuildChatSystem(this@GuildFeature))
 
 
         if (DeeperContext.isBlockLockerLoaded) {

@@ -32,7 +32,10 @@ dependencyResolutionManagement {
         maven("https://repo.mineinabyss.com/releases")
     }
 
-    versionCatalogs.create("libs").from("com.mineinabyss:catalog:$idofrontVersion")
+    versionCatalogs {
+        create("libs").from("com.mineinabyss:catalog:$idofrontVersion")
+        create("mialibs").from(files("gradle/mialibs.versions.toml"))
+    }
 }
 
 include(

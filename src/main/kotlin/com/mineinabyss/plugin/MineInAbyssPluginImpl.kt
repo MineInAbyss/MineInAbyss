@@ -1,5 +1,6 @@
 package com.mineinabyss.plugin
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.geary.addon.autoscan
 import com.mineinabyss.geary.papermc.dsl.gearyAddon
@@ -14,11 +15,12 @@ import com.mineinabyss.idofront.platforms.IdofrontPlatforms
 import com.mineinabyss.idofront.plugin.getServiceOrNull
 import com.mineinabyss.idofront.plugin.isPluginEnabled
 import com.mineinabyss.idofront.plugin.registerService
+import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssWorldManager
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.okkero.skedule.schedule
+import kotlinx.coroutines.delay
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
@@ -37,7 +39,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         saveDefaultConfig()
 
         var addon: GearyAddon? = null
-        if(isPluginEnabled("Geary")) {
+        if (isPluginEnabled("Geary")) {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
             gearyAddon {
                 addon = this
@@ -81,8 +83,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, MessageQueue)
         }
 
-        schedule {
-            waitFor(1)
+        launch {
+            delay(1.ticks)
 
             val config = MIAConfigImpl()
             config.load()

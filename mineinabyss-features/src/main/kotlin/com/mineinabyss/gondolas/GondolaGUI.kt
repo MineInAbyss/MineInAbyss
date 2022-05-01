@@ -12,7 +12,7 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.items.editItemMeta
-import net.kyori.adventure.text.Component
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.entity.Player
 
 @Composable
@@ -29,7 +29,7 @@ fun GuiyOwner.GondolaSelectionMenu(player: Player) {
 
 @Composable
 fun GondolaSpawn(player: Player, gondola: Gondola) = Item(
-    gondola.displayItem.toItemStack().editItemMeta { displayName(Component.text(gondola.name)) },
+    gondola.displayItem.toItemStack().editItemMeta { displayName(gondola.name.miniMsg()) },
     Modifier.clickable {
         player.teleport(gondola.location)
     })

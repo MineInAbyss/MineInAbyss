@@ -1,9 +1,9 @@
 package com.mineinabyss.curse.effects
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.curse.AscensionEffect
-import com.mineinabyss.idofront.time.inWholeTicks
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.okkero.skedule.schedule
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -15,11 +15,11 @@ sealed class AbstractAscensionEffect : AscensionEffect {
     abstract val iterations: Int
 
     override fun applyEffect(player: Player, ticks: Int) {
-        mineInAbyss.schedule {
-            waitFor(offset.inWholeTicks)
+        mineInAbyss.launch {
+            delay(offset)
             repeat(iterations) {
                 applyEffect(player)
-                waitFor(duration.inWholeTicks)
+                delay(duration)
             }
             cleanUp(Bukkit.getPlayer(player.uniqueId) ?: player) //get new player reference if player relogged
         }

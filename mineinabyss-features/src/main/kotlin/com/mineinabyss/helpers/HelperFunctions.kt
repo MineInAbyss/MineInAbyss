@@ -1,5 +1,6 @@
 package com.mineinabyss.helpers
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
@@ -7,7 +8,7 @@ import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.okkero.skedule.schedule
+import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
@@ -15,8 +16,9 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
-import kotlin.math.atan2
 import java.util.*
+import kotlin.math.atan2
+import kotlin.time.Duration.Companion.seconds
 
 
 fun dropItems(loc: Location, drop: ItemStack) {
@@ -39,21 +41,19 @@ fun Player.updateBalance() {
     val splitBalance = orthCoinBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
     val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
 
-    val currentBalance: Component =
-        if (data?.cloutTokensHeld!! > 0) {
-            /* Switch to NegativeSpace.PLUS when that is added to Idofront */
-            Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
-        } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
+    val currentBalance: Component = if (data?.cloutTokensHeld!! > 0) {
+        /* Switch to NegativeSpace.PLUS when that is added to Idofront */
+        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
+    } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
 
-    mineInAbyss.schedule {
+    mineInAbyss.launch {
         do {
             player?.sendActionBar(currentBalance)
-            waitFor(20)
-        } while ((data.orthCoinsHeld == orthCoinBalance && data.cloutTokensHeld == cloutBalance) && data.showPlayerBalance
-        )
-        return@schedule
+            delay(1.seconds)
+        } while (data.orthCoinsHeld == orthCoinBalance && data.cloutTokensHeld == cloutBalance && data.showPlayerBalance)
+        return@launch
     }
 }
 

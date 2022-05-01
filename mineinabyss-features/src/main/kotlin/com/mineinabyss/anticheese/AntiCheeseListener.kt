@@ -79,16 +79,16 @@ class AntiCheeseListener : Listener {
             block.world.dropItemNaturally(loc, item)
         }
     }
-}
 
-@EventHandler
-fun EntityDamageByEntityEvent.cancelMinecartTNT() {
-    if (damager is ExplosiveMinecart) isCancelled = true
-
-    // Cancels moving entities with fishing rods in Orth
     @EventHandler
-    fun PlayerFishEvent.cancelBlockGrief() {
-        if (caught?.type != EntityType.PLAYER && player.isInHub()) isCancelled = true
+    fun EntityDamageByEntityEvent.cancelMinecartTNT() {
+        if (damager is ExplosiveMinecart) isCancelled = true
+
+        // Cancels moving entities with fishing rods in Orth
+        @EventHandler
+        fun PlayerFishEvent.cancelBlockGrief() {
+            if (caught?.type != EntityType.PLAYER && player.isInHub()) isCancelled = true
+        }
     }
 }
 
