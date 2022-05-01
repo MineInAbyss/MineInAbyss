@@ -4,7 +4,6 @@ import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.messaging.color
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -42,10 +41,10 @@ class DescentFeature : AbyssFeature {
                                 descent.confirmedLeave = true
                                 sender.info(
                                     """
-                        &cYou are about to leave the game!!!
-                        &lYour progress will be lost&r&c, but any xp and money you earned will stay with you.
-                        Type /stopdescent again to leave
-                        """.trimIndent().color()
+                        <red>You are about to leave the game!!!
+                        <b>Your progress will be lost</b>, but any xp and money you earned will stay with you.
+                        Type /stopdescent again to leave.
+                        """.trimIndent()
                                 )
                             } else {
                                 player.health = 0.0

@@ -33,36 +33,34 @@ fun Player.depositCoins(amount: Int) {
         it.subtract(amount)
         return@forEach
     }
-
 }
 
 fun Player.withdrawCoins(amount: Int) {
-    val player = player ?: return
-    val data = player.playerData
-    val slot = player.inventory.firstEmpty()
+    val data = playerData
+    val slot = inventory.firstEmpty()
 
     if (slot == -1) {
-        player.error("No empty slots in inventory")
+        error("No empty slots in inventory")
         return
     }
 
     if (data.orthCoinsHeld == 0) {
-        player.error("Your account is empty...")
+        error("Your account is empty...")
         return
     }
 
     if (data.orthCoinsHeld < amount) {
-        player.error("You don't have that many Orth Coins!")
+        error("You don't have that many Orth Coins!")
         return
     }
 
-    loop@ for (i in 1..amount) {
-        val item = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin"))
-        player.inventory.addItem(item)
+    val item = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin")) ?: kotlin.error("No orth coin prefab found")
+    for (i in 1..amount) {
+        inventory.addItem(item)
         item.useWithLooty {
-            PlayerInventorySlotContext(player, slot).loadItem(this)
+            PlayerInventorySlotContext(this@withdrawCoins, slot).loadItem(this)
         }
         data.orthCoinsHeld -= 1
     }
-    player.success("Your Orth Coins have been withdrawn!")
+    success("Your Orth Coins have been withdrawn!")
 }

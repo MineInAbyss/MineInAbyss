@@ -6,9 +6,6 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.guilds.extensions.getGuildMemberCount
-import com.mineinabyss.guilds.extensions.getGuildName
-import com.mineinabyss.guilds.extensions.getGuildRank
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer

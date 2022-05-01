@@ -2,6 +2,8 @@ package com.mineinabyss.guilds
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
+import com.mineinabyss.guilds.extensions.addMemberToGuild
+import com.mineinabyss.guilds.extensions.hasGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -12,9 +14,6 @@ import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
-import com.mineinabyss.guilds.extensions.hasGuild
-import com.mineinabyss.guilds.extensions.addMemberToGuild
-import com.mineinabyss.guilds.extensions.hasGuild
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
