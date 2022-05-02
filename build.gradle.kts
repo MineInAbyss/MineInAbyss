@@ -3,7 +3,6 @@ plugins {
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.copyjar")
     id("com.mineinabyss.conventions.publication")
-//    kotlin("plugin.serialization") apply false
     kotlin("jvm") apply false
 }
 
@@ -22,6 +21,12 @@ allprojects {
         val libs = rootProject.libs
         val mialibs = rootProject.mialibs
 
+        // Shaded
+        implementation(libs.idofront.core)
+        implementation(libs.idofront.autoscan) {
+            exclude("org.reflections")
+        }
+
         // Geary platform
         compileOnly(mialibs.geary.papermc.core)
         compileOnly(mialibs.geary.commons.papermc)
@@ -34,18 +39,12 @@ allprojects {
         compileOnly(libs.kotlinx.coroutines)
         compileOnly(libs.minecraft.mccoroutine)
         compileOnly(libs.reflections)
-        implementation(libs.idofront.autoscan) {
-            exclude("org.reflections")
-        }
-
         compileOnly(libs.exposed.core) { isTransitive = false }
         compileOnly(libs.exposed.dao) { isTransitive = false }
         compileOnly(libs.exposed.jdbc) { isTransitive = false }
         compileOnly(libs.exposed.javatime) { isTransitive = false }
         compileOnly(libs.sqlite.jdbc)
         compileOnly(libs.minecraft.anvilgui)
-
-        implementation(libs.idofront.core)
 
         // Plugin libs
         compileOnly(libs.minecraft.plugin.vault) { exclude(group = "org.bukkit") }
@@ -57,12 +56,10 @@ allprojects {
         compileOnly(mialibs.minecraft.plugin.blocklocker)
         compileOnly(mialibs.minecraft.plugin.gsit)
         compileOnly(mialibs.minecraft.plugin.protocolburrito)
-
     }
 }
 
 dependencies {
-
     // Shaded
     implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
