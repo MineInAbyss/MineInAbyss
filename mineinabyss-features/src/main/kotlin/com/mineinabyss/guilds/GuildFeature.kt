@@ -63,7 +63,8 @@ class GuildFeature(
                             playerAction {
                                 val player = (sender as Player).toGeary()
                                 if (player.has<SpyOnGuildChat>()) player.remove<SpyOnGuildChat>()
-                                else player.setPersisting(SpyOnGuildChat)
+                                else player.getOrSetPersisting { SpyOnGuildChat() }
+                                sender.success("You are ${if (player.has<SpyOnGuildChat>()) "spying" else "no longer spying"} on other guild chats!")
                             }
                         }
                     }
