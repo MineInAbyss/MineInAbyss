@@ -2,7 +2,9 @@ package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.mineinabyss.components.guilds.GuildMaster
+import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.guilds.database.GuildRanks
 import com.mineinabyss.guilds.extensions.getGuildName
@@ -97,6 +99,7 @@ class GuildChatSystem(val feature: GuildFeature) : Listener {
         format = "${feature.guildChatPrefix}${player.displayName}: $message"
         Bukkit.getOnlinePlayers().forEach {
             if (!it.hasGuild()) return@forEach
+            if (it.toGeary().has<SpyOnGuildChat>()) recipients.add(it)
             if (it.getGuildName() == player.getGuildName()) recipients.add(it)
         }
     }

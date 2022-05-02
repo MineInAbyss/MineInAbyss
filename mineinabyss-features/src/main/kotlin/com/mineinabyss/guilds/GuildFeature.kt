@@ -1,13 +1,13 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
-import com.mineinabyss.guilds.extensions.addMemberToGuild
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.guilds.extensions.hasGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -18,7 +18,6 @@ import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 @Serializable
@@ -59,10 +58,13 @@ class GuildFeature(
                             guiy { GuildMainMenu(player, this@GuildFeature) }
                         }
                     }
-                    "test" {
-                        val playerName by stringArg()
-                        playerAction {
-                            (sender as Player).addMemberToGuild(Bukkit.getOfflinePlayer(playerName))
+                    "admin" {
+                        "spy" {
+                            playerAction {
+                                val player = (sender as Player).toGeary()
+                                if (player.has<SpyOnGuildChat>()) player.remove<SpyOnGuildChat>()
+                                else player.setPersisting(SpyOnGuildChat)
+                            }
                         }
                     }
                 }
