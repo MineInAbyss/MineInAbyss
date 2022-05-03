@@ -12,17 +12,17 @@ import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.helpers.isInHub
+import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.ChatColor.*
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
 
 @Serializable
 @SerialName("mineinabyss:show_depth")
-class ShowDepth()
+class ShowDepth
 
 class ShowDepthListener : GearyListener() {
     private val TargetScope.player by get<Player>()
@@ -39,24 +39,25 @@ class ShowDepthListener : GearyListener() {
 
         if (layer?.name != null) {
             if (player.isInHub()) {
-                player.sendMessage(
+                player.info(
                     """
-                $DARK_AQUA${ITALIC}The needle spins.
-                ${DARK_AQUA}You suddenly become aware that you are in ${layer.name}${DARK_AQUA}.""".trimIndent()
+                    <dark_aqua><i>The needle spins.</i>
+                    You suddenly become aware that you are in ${layer.name}<dark_aqua>.
+                    """.trimIndent()
                 )
                 return
             }
             if (!player.isInHub()) {
                 val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
-                player.sendMessage(
+                player.info(
                     """
-                $DARK_AQUA${ITALIC}The needle spins.
-                ${DARK_AQUA}You suddenly become aware that you are in the
-                ${layer.name} ${DARK_AQUA}and ${AQUA}${pluralizeMeters(depth)} ${DARK_AQUA}deep into the ${GREEN}Abyss${DARK_AQUA}.
-                """.trimIndent()
+                    <dark_aqua><i>The needle spins.</i>
+                    You suddenly become aware that you are in the
+                    ${layer.name}<dark_aqua> and <aqua>${pluralizeMeters(depth)}</aqua> deep into the <green>Abyss</green>.
+                    """.trimIndent()
                 )
             }
-        } else player.sendMessage("$ITALIC${DARK_AQUA}The compass wiggles slightly but does not otherwise respond.")
+        } else player.info("<i><dark_aqua>The compass wiggles slightly but does not otherwise respond.")
     }
 
     // TODO memoize total depth of each layer

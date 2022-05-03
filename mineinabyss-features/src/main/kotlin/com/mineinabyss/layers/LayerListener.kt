@@ -43,6 +43,7 @@ class LayerListener : Listener {
         val section = player.location.section ?: return
         val layerOfDeath = section.layer ?: return
         apply {
+            //TODO translatable key for dying in layer
             deathMessage(deathMessage()?.append(" ${layerOfDeath.deathMessage}".miniMsg()))
         }
     }
