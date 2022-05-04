@@ -12,6 +12,7 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.info
 import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.insert
