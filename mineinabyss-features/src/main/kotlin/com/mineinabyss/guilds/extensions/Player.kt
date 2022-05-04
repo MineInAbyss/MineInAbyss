@@ -7,7 +7,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -63,7 +62,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
         }
         player?.success("${member.name} joined your Guild!")
 
-        val joinMessage = "${ChatColor.GREEN}You have been accepted into ${player?.getGuildName()}"
+        val joinMessage = "<green>You have been accepted into ${player?.getGuildName()}"
         if (member.isOnline) member.player?.success(joinMessage)
         else {
             MessageQueue.insert {
@@ -83,7 +82,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
     // TODO send message when player not found
     val invitedMember = Bukkit.getOfflinePlayerIfCached(invitedPlayer) ?: return
     val inviteMessage =
-        "${ChatColor.YELLOW}You have been invited to join the ${ChatColor.GOLD}${this@invitePlayerToGuild.getGuildName()} ${ChatColor.YELLOW}guild."
+        "<yellow>You have been invited to join the <gold>${this@invitePlayerToGuild.getGuildName()}</gold> guild."
     transaction(AbyssContext.db) {
         /* Should invites be cancelled if player already is in one? */
         /* Or should this be checked when a player tries to accept an invite? */
@@ -100,7 +99,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
         //val owner = (invitedMember as Player).getGuildOwnerFromInvite().toPlayer()
         if (player?.hasGuildRequest() == true) {
             player?.error("This player has already requested to join your guild!")
-            player?.error("Navigate to the ${ChatColor.BOLD}Manage Join Request" + "menu to respond.")
+            player?.error("Navigate to the <b>Manage Join Request</b> menu to respond.")
             return@transaction
         }
 
@@ -139,7 +138,7 @@ fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
         }.firstOrNull()
 
         if (guild == null) {
-            player?.error("There is no guild with the name ${ChatColor.DARK_RED}${ChatColor.ITALIC}$guildName.")
+            player?.error("There is no guild with the name <dark_red><i>$guildName</i></dark_red>.")
             return@transaction null
         }
 
@@ -149,9 +148,9 @@ fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
 
 fun OfflinePlayer.requestToJoin(guildName: String) {
     val player = player ?: return
-    val requestMessage = "${ChatColor.GREEN}The Guild will receive your request!"
+    val requestMessage = "The Guild will receive your request!"
     val ownerMessage =
-        "${ChatColor.GOLD}${ChatColor.ITALIC}${player.name} ${ChatColor.YELLOW}requested to join your guild."
+        "<gold><i>${player.name}</i> <yellow>requested to join your guild."
 
     transaction(AbyssContext.db) {
         if (player.hasGuild()) {
@@ -164,13 +163,13 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
         }.firstOrNull()
 
         if (guild == null) {
-            player.error("There is no guild with the name ${ChatColor.DARK_RED}${ChatColor.ITALIC}$guildName.")
+            player.error("There is no guild with the name <dark_red><i>$guildName</i></dark_red>.")
             return@transaction
         }
 
         /* Check if guild is in invite-only mode */
         if (guild[Guilds.joinType] == GuildJoinType.Invite) {
-            player.error("${ChatColor.GOLD}$guildName ${ChatColor.YELLOW}is invite-only.")
+            player.error("<gold>$guildName <yellow>is invite-only.")
             return@transaction
         }
 
@@ -247,7 +246,7 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
         }
 
         val promoteMessage =
-            "${ChatColor.GREEN}You have been promoted to ${member.getGuildRank()} in ${ChatColor.ITALIC}${player?.getGuildName()}"
+            "You have been promoted to ${member.getGuildRank()} in <i>${player?.getGuildName()}"
 
         if (member.isOnline) member.player?.success(promoteMessage)
         else {
@@ -258,7 +257,7 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
         }
 
         /* Message owner */
-        this@promotePlayerInGuild.player?.success("You have promoted ${member.name} to ${ChatColor.ITALIC}${member.getGuildRank()}")
+        this@promotePlayerInGuild.player?.success("You have promoted ${member.name} to <i>${member.getGuildRank()}")
 
         return@transaction
     }
@@ -300,7 +299,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         }
 
         /* Message to actual kicked player online or offline */
-        val kickMessage = "You have been kicked from ${ChatColor.ITALIC}${player?.getGuildName()}"
+        val kickMessage = "You have been kicked from <i>${player?.getGuildName()}"
         if (member.isOnline) member.player?.error(kickMessage)
         else {
             MessageQueue.insert {
@@ -310,7 +309,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         }
 
         /* Message owner */
-        player?.success("You have kicked ${ChatColor.ITALIC}${member.name} from ${ChatColor.ITALIC}${player?.getGuildName()}!")
+        player?.success("You have kicked <i>${member.name}</i> from <i>${player?.getGuildName()}</i>!")
 
         return@transaction true
     }
@@ -339,7 +338,7 @@ fun Player.leaveGuild() {
         Players.deleteWhere {
             Players.playerUUID eq uniqueId
         }
-        player?.success("You have left ${ChatColor.ITALIC}${guildName}")
+        player?.success("You have left <i>${guildName}")
     }
 
 }

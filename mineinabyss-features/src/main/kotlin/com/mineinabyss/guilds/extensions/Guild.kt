@@ -4,10 +4,10 @@ import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -26,9 +26,9 @@ fun Player.createGuild(guildName: String, feature: GuildFeature) {
         val bannedWord = banned.toRegex().find(newGuildName)?.value
         if (banned.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
             if (bannedWord?.contains("([^a-zA-Z])".toRegex()) == true)
-                player?.error("Your Guild name can only contain the letters ${ChatColor.BOLD}a-z.")
+                player?.error("Your Guild name can only contain the letters <b>a-z</b>.")
             else
-                player?.error("Your Guild name contains a blocked word: ${ChatColor.BOLD}${bannedWord}.")
+                player?.error("Your Guild name contains a blocked word: <b>$bannedWord</b>.")
             player?.error("Please choose another name :)")
             return
         }
@@ -41,10 +41,10 @@ fun Player.createGuild(guildName: String, feature: GuildFeature) {
         }.firstOrNull()
 
         if (guild != null){
-            player?.error("There is already a guild registered with the name $guildName!")
+            player?.error("There is already a guild registered with the name <i>$guildName</i>!")
             return@transaction
         }
-        else player?.success("Your Guild has been registered with the name ${ChatColor.ITALIC}$guildName")
+        else player?.success("Your Guild has been registered with the name <i>$guildName")
 
         val rowID = Guilds.insert {
             it[name] = guildName
@@ -78,7 +78,7 @@ fun OfflinePlayer.deleteGuild() {
         Players.select {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
-            val deleteGuildMessage = "${ChatColor.RED}The Guild you were in has been deleted by the Owner."
+            val deleteGuildMessage = "The Guild you were in has been deleted by the Owner."
             val player = Bukkit.getPlayer(row[Players.playerUUID])
             if (player != null) {
                 player.error(deleteGuildMessage)
@@ -141,10 +141,10 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
             val changedNameMessage =
-                "${ChatColor.YELLOW}The Guild you were in has been renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}"
+                "<yellow>The Guild you were in has been renamed to <gold><i>$guildName"
             val player = Bukkit.getPlayer(row[Players.playerUUID])
             if (player != null) {
-                player.sendMessage(changedNameMessage)
+                player.info(changedNameMessage)
             } else {
                 MessageQueue.insert {
                     it[content] = changedNameMessage
@@ -152,7 +152,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
                 }
             }
         }
-        player?.success("Your guild was successfully renamed to ${ChatColor.GOLD}${ChatColor.ITALIC}${guildName}!")
+        player?.success("Your guild was successfully renamed to <gold><i>$guildName</i></gold>!")
     }
 }
 

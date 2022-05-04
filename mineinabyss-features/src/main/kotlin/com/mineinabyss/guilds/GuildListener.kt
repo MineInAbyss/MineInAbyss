@@ -15,6 +15,7 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.MessageQueue.content
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
@@ -48,7 +49,7 @@ class GuildListener(private val feature: GuildFeature) : Listener {
         withContext(mineInAbyss.asyncDispatcher) {
             transaction(AbyssContext.db) {
                 MessageQueue.select { MessageQueue.playerUUID eq player.uniqueId }.forEach {
-                    player.sendMessage(it[content])
+                    player.info(it[content])
                 }
                 MessageQueue.deleteWhere { MessageQueue.playerUUID eq player.uniqueId }
             }

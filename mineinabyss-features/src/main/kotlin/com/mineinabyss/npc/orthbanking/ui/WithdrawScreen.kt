@@ -9,7 +9,6 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.npc.orthbanking.withdrawCoins
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 @Composable
@@ -24,7 +23,7 @@ fun WithdrawScreen(player: Player) {
             broadcast(amount)
         }
     ) {
-        Text("${ChatColor.GOLD}${ChatColor.BOLD}Increase Withdrawal", modifier = Modifier.size(3, 2))
+        Text("<gold><b>Increase Withdrawal", modifier = Modifier.size(3, 2))
     }
 
     Button(
@@ -36,7 +35,7 @@ fun WithdrawScreen(player: Player) {
             player.closeInventory()
         }
     ) {
-        Text("${ChatColor.GOLD}${ChatColor.BOLD}Confirm Withdrawal")
+        Text("<gold><b>Confirm Withdrawal")
     }
 
     Button(
@@ -47,6 +46,6 @@ fun WithdrawScreen(player: Player) {
             broadcast(amount)
         }
     ) {
-        Text("${ChatColor.GOLD}${ChatColor.BOLD}Decrease Withdrawal", modifier = Modifier.size(3, 1))
+        Text("<gold><b>Decrease Withdrawal", modifier = Modifier.size(3, 1))
     }
 }

@@ -13,7 +13,6 @@ import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.geary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 @Serializable
@@ -57,11 +56,11 @@ class EnchantsFeature : AbyssFeature {
                         if (enchantmentLevel == 0) {
 
                             player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
-                            sender.success("Removed ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}from this item.")
+                            sender.success("Removed <b>${parsedEnchant.name}</b> from this item.")
                         }
                         if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
-                            if (levelRange.first == levelRange.last) sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} ${ChatColor.GREEN}to this item.")
-                            else sender.success("Applied ${ChatColor.BOLD}${parsedEnchant.name} $enchantmentLevel ${ChatColor.GREEN}to this item.")
+                            if (levelRange.first == levelRange.last) sender.success("Applied <b>${parsedEnchant.name}</b> to this item.")
+                            else sender.success("Applied <b>${parsedEnchant.name} $enchantmentLevel</b> to this item.")
                             player.inventory.itemInMainHand.addCustomEnchant(
                                 parsedEnchant as EnchantmentWrapper,
                                 enchantmentLevel

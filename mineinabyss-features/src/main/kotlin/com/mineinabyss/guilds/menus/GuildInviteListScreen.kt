@@ -16,6 +16,7 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
+import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
@@ -64,7 +65,7 @@ fun GuildUIScope.DenyAllInvites(modifier: Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite, true)
         nav.open(GuildScreen.MemberList(guildLevel, player))
-        player.sendMessage("$YELLOW${BOLD}❌${YELLOW}You denied all invites!")
+        player.info("$YELLOW${BOLD}❌${YELLOW}You denied all invites!")
     },
     modifier = modifier
 ) {

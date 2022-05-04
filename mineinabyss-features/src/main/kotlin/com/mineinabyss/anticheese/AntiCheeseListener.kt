@@ -6,7 +6,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
-import org.bukkit.ChatColor
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
@@ -37,15 +36,15 @@ class AntiCheeseListener : Listener {
         val player = entity as? Player ?: return
         if (cause == EntityPotionEffectEvent.Cause.MILK) {
             isCancelled = true
-            player.error("${ChatColor.BOLD}Milk ${ChatColor.RED}has been disabled")
+            player.error("<b>Milk</b> has been disabled")
         } else if (cause != EntityPotionEffectEvent.Cause.PLUGIN && cause != EntityPotionEffectEvent.Cause.COMMAND) {
             if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
                 isCancelled = true
-                player.error("The ${ChatColor.BOLD}Resistance Effect ${ChatColor.RED}has been disabled")
+                player.error("The <b>Resistance Effect</b> has been disabled")
             }
             if (newEffect?.type == PotionEffectType.SLOW_FALLING) {
                 isCancelled = true
-                player.error("${ChatColor.BOLD}Slow Falling ${ChatColor.RED}has been disabled")
+                player.error("<b>Slow Falling</b> has been disabled")
             }
         }
     }

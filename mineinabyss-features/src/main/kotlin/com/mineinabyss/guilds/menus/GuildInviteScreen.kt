@@ -59,7 +59,7 @@ fun GuildUIScope.AcceptGuildInvite(owner: OfflinePlayer, modifier: Modifier = Mo
 fun GuildUIScope.DeclineGuildInvite(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite)
-        player.sendMessage("$YELLOW${BOLD}❌ ${YELLOW}You denied the invite from $GOLD$ITALIC${owner.getGuildName()}")
+        player.info("$YELLOW${BOLD}❌ ${YELLOW}You denied the invite from $GOLD$ITALIC${owner.getGuildName()}")
         nav.back()
     }
 ) {
