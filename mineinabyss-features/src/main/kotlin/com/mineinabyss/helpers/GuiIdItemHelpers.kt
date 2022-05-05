@@ -36,9 +36,10 @@ fun ItemButton(name: String, vararg lore: String, customModelData: Int, modifier
 // Uses a shader to hide the entire tooltip
 // https://github.com/lolgeny/item-tooltip-remover
 fun ItemStack.NoToolTip(): ItemStack {
-    editItemMeta {
-        lore = listOf("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","                                                                                                                                                                                                                                                                                                                                                                                                                           ")
-    }
+    // Doesnt work with Mac's so disable for now
+//    editItemMeta {
+//        lore = listOf("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","                                                                                                                                                                                                                                                                                                                                                                                                                           ")
+//    }
     return this
 }
 
@@ -55,10 +56,10 @@ fun OfflinePlayer?.head(
         if (this is SkullMeta) {
             setDisplayName(title)
             setLore(lore.toList())
-            if (isFlat) setCustomModelData(1)
-            if (isLarge) setCustomModelData(2)
-            if (isCenterOfInv && !isLarge) setCustomModelData(3)
-            if (isCenterOfInv && isLarge) setCustomModelData(4)
+            if (isFlat) setCustomModelData(10)
+            if (isLarge) setCustomModelData(11)
+            if (isCenterOfInv && !isLarge) setCustomModelData(12)
+            if (isCenterOfInv && isLarge) setCustomModelData(13)
             owningPlayer = this@head
         }
     }
