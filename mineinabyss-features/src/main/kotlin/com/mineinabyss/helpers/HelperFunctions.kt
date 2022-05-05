@@ -1,13 +1,13 @@
 package com.mineinabyss.helpers
 
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.mineinabyss.core.MIAConfig
-import com.mineinabyss.mineinabyss.core.isAbyssWorld
-import com.mineinabyss.mineinabyss.core.layer
-import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.core.*
+import io.lumine.cosmetics.managers.gestures.GestureManager
+import io.lumine.cosmetics.players.Profile
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
@@ -122,6 +122,17 @@ fun handleCurse(player: Player, from: Location, to: Location) {
                 }
                 curseAccrued -= 10
             }
+        }
+    }
+}
+
+fun Player.playGesture(gesture: String) {
+    mcCosmetics.profiles.getProfile(name).ifPresent { profile: Profile? ->
+        mcCosmetics.gestureManager.getCosmetic(gesture).ifPresent { gesture ->
+            cosmetics.gesture = gesture
+            gesture.equip(profile)
+            playerData
+            (gesture.manager as GestureManager).playGesture(profile)
         }
     }
 }

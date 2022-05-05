@@ -14,6 +14,7 @@ allprojects {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
+        maven("https://mvn.lumine.io/repository/maven-public/") // MCCosmetics
         maven("https://jitpack.io")
     }
 
@@ -55,7 +56,7 @@ allprojects {
         compileOnly(mialibs.deeperworld)
         compileOnly(mialibs.minecraft.plugin.blocklocker)
         compileOnly(mialibs.minecraft.plugin.gsit)
-        compileOnly(mialibs.minecraft.plugin.protocolburrito)
+        compileOnly(mialibs.minecraft.plugin.mccosmetics)
     }
 }
 
