@@ -26,6 +26,13 @@ class ShopkeeperFeature : AbyssFeature {
                             Bukkit.dispatchCommand(console, "shopkeeper remote Mobdrop-Unfuckinator ${player.name}")
                         }
                     }
+                    "OrthCoinFixer"(desc = "Fixes broken Orth Coins") {
+                        playerAction {
+                            val player = sender as Player
+                            val console = Bukkit.getServer().consoleSender
+                            Bukkit.dispatchCommand(console, "shopkeeper remote Orth-Coin-Updater ${player.name}")
+                        }
+                    }
                 }
             }
             tabCompletion {
@@ -35,7 +42,7 @@ class ShopkeeperFeature : AbyssFeature {
                     ).filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "shopkeeper" -> listOf("UnfuckMobdrops")
+                            "shopkeeper" -> listOf("UnfuckMobdrops", "OrthCoinFixer")
                             else -> null
                         }
                     }
