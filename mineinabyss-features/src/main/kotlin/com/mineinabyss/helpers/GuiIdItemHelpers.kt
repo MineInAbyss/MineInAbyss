@@ -5,6 +5,7 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
 import de.erethon.headlib.HeadLib
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
@@ -13,6 +14,11 @@ import org.bukkit.inventory.meta.SkullMeta
 object TitleItem {
     fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
         setDisplayName(name)
+        setLore(lore.toList())
+        setCustomModelData(1)
+    }
+    fun ofComponent(name: Component, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
+        displayName(name)
         setLore(lore.toList())
         setCustomModelData(1)
     }

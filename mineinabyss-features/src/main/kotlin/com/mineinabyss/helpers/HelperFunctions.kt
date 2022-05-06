@@ -1,13 +1,10 @@
 package com.mineinabyss.helpers
 
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.core.*
-import io.lumine.cosmetics.managers.gestures.GestureManager
-import io.lumine.cosmetics.players.Profile
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
@@ -38,8 +35,8 @@ fun Player.updateBalance() {
     val data = player?.playerData
     val orthCoinBalance = data?.orthCoinsHeld
     val cloutBalance = data?.cloutTokensHeld
-    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
-    val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
+    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
+    val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
 
     val currentBalance: Component = if (data?.cloutTokensHeld!! > 0) {
         /* Switch to NegativeSpace.PLUS when that is added to Idofront */
@@ -126,14 +123,7 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Player.playGesture(gesture: String) {
-    mcCosmetics.profiles.getProfile(name).ifPresent { profile: Profile? ->
-        mcCosmetics.gestureManager.getCosmetic(gesture).ifPresent { gesture ->
-            cosmetics.gesture = gesture
-            gesture.equip(profile)
-            playerData
-            (gesture.manager as GestureManager).playGesture(profile)
-        }
-    }
+fun Player.getLinkedDiscordAccount() : String? {
+    return discordSRV.accountLinkManager.getDiscordId(player?.uniqueId) ?: return null
 }
 
