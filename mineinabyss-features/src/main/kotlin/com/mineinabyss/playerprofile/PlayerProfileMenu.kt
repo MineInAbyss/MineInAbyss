@@ -19,16 +19,18 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
+import org.bukkit.Statistic
 import org.bukkit.entity.Player
 
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = player.name.toList().joinToString { ":player_profile_$it:" }.replace(", ", "")
+    val ranks = DisplayRanks(player)
 
     Chest(setOf(viewer),
-        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName",
+        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName${ranks}",
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
@@ -57,7 +59,39 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
 
 @Composable
 fun PlayerHead(player: Player, modifier: Modifier) {
-    Item(player.head("", isLarge = true), modifier = modifier)
+    Item(
+        player.head(
+            "${LIGHT_PURPLE}${BOLD}${player.name}",
+            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
+            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
+            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h",
+            isLarge = true
+        ), modifier = modifier
+    )
+    Item(
+        TitleItem.of(
+            "${LIGHT_PURPLE}${BOLD}${player.name}",
+            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
+            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
+            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h"
+        ), modifier = modifier.at(1, 1)
+    )
+    Item(
+        TitleItem.of(
+            "${LIGHT_PURPLE}${BOLD}${player.name}",
+            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
+            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
+            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h"
+        ), modifier = modifier.at(0, 2)
+    )
+    Item(
+        TitleItem.of(
+            "${LIGHT_PURPLE}${BOLD}${player.name}",
+            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
+            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
+            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h"
+        ), modifier = modifier.at(1, 2)
+    )
 }
 
 @Composable
@@ -106,12 +140,10 @@ fun GuildButton(player: Player, viewer: Player) {
         guiy { GuildScreen.GuildLookupMembers(player.getGuildName()) }
     }) {
         Text(
-            "${ChatColor.GOLD}${ChatColor.BOLD}${ChatColor.ITALIC}${player.getGuildName()}",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Owner: ${ChatColor.YELLOW}${ChatColor.ITALIC}${
-                Bukkit.getOfflinePlayer(player.getGuildOwner()).name
-            }",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Level: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildLevel()}",
-            "${ChatColor.YELLOW}${ChatColor.BOLD}Guild Members: ${ChatColor.YELLOW}${ChatColor.ITALIC}${player.getGuildMemberCount()}"
+            "${GOLD}${BOLD}${ITALIC}${player.getGuildName()}",
+            "${YELLOW}${BOLD}Guild Owner: ${YELLOW}${ITALIC}${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}",
+            "${YELLOW}${BOLD}Guild Level: ${YELLOW}${ITALIC}${player.getGuildLevel()}",
+            "${YELLOW}${BOLD}Guild Members: ${YELLOW}${ITALIC}${player.getGuildMemberCount()}"
         )
     }
 }
@@ -123,11 +155,11 @@ fun DiscordButton(player: Player) {
 }
 
 @Composable
-fun DisplayRanks(player: Player): List<String> {
-    val list = mutableListOf<String>()
+fun DisplayRanks(player: Player): String {
+    var ranks = ""
     player.effectivePermissions.forEach { perm ->
         if (!perm.permission.startsWith("group.") || perm.permission == "group.default") return@forEach
-        else list.add(":${perm.permission.toString().removePrefix("group.")}:")
+        else ranks += ":player_profile_rank_${perm.permission.toString().removePrefix("group.")}:"
     }
-    return list
+    return ranks
 }
