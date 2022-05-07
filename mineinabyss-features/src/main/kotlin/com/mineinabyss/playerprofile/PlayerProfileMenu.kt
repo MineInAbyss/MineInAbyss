@@ -25,7 +25,6 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
-import java.util.stream.Collectors
 
 
 val luckPerms = LuckPermsProvider.get()
@@ -168,11 +167,32 @@ fun DiscordButton(player: Player) {
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    val groups: Set<String> =
+    val groups: List<String> =
         luckPerms.userManager.getUser(player.uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
-        ?.map { obj: InheritanceNode -> obj.groupName }
-        ?.collect(Collectors.toSet()) ?: return ""
+            ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: return ""
 
-    groups.filter { it == "default" }
-    return "${Space.of(34)}:player_profile_rank_${groups.first()}:"
+    val group = groups.filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.first()
+    val patreon = groups.first { it.contains("patreon") || it.contains("supporter") }
+    if (patreon.isNotEmpty()) {
+        return "${Space.of(34)}:player_profile_rank_$group:${Space.of(-6)}:player_profile_rank_$patreon:"
+    }
+    return "${Space.of(34)}:player_profile_rank_$group:"
 }
+
+val sortedRanks =
+    listOf(
+        "admin",
+        "seniordeveloper",
+        "communitymanager",
+        "seniorbuilder",
+        "seniordesigner",
+        "moderator",
+        "developer",
+        "buildlead",
+        "builder",
+        "designer",
+        "helper",
+        "juniordeveloper",
+        "juniorbuilder",
+        "juniordesigner"
+    ).withIndex().associate { it.value to it.index }
