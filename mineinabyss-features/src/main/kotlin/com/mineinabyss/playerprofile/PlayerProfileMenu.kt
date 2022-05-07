@@ -17,11 +17,19 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.helpers.*
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.miniMsg
+import net.luckperms.api.LuckPermsProvider
+import net.luckperms.api.node.NodeType
+import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
+import java.util.stream.Collectors
+
+
+val luckPerms = LuckPermsProvider.get()
 
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
@@ -30,12 +38,12 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val ranks = DisplayRanks(player)
 
     Chest(setOf(viewer),
-        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName${ranks}",
+        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName${Space.of(-42)}${ranks}",
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
         Column(Modifier.at(2, 0)) {
-            DisplayRanks(player)
+            //DisplayRanks(player)
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
@@ -150,16 +158,29 @@ fun GuildButton(player: Player, viewer: Player) {
 
 @Composable
 fun DiscordButton(player: Player) {
-    val linked = player.getLinkedDiscordAccount() ?: "<b>${player.name}</b> has not linked an account."
-    Item(TitleItem.ofComponent("<b><#718AD6>${linked}".miniMsg()))
+    val linked = player.getLinkedDiscordAccount()
+
+    if (linked == null) {
+        Item(TitleItem.ofComponent(
+            "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
+            "<#718AD6>linked an account.".miniMsg()))
+    } else Item(TitleItem.ofComponent("<b><#718AD6>${linked}".miniMsg()))
 }
 
 @Composable
 fun DisplayRanks(player: Player): String {
     var ranks = ""
-    player.effectivePermissions.forEach { perm ->
-        if (!perm.permission.startsWith("group.") || perm.permission == "group.default") return@forEach
-        else ranks += ":player_profile_rank_${perm.permission.toString().removePrefix("group.")}:"
+
+    val groups: Set<String> =
+        luckPerms.userManager.getUser(player.uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
+        ?.map { obj: InheritanceNode -> obj.groupName }
+        ?.collect(Collectors.toSet()) ?: return ranks
+
+    groups.forEach group@{ group ->
+        broadcast(group)
+        if (group == "default") return@group
+        else ranks += ":player_profile_rank_$group:${Space.of(-84)}"
     }
+
     return ranks
 }

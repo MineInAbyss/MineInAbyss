@@ -60,6 +60,7 @@ allprojects {
         compileOnly(mialibs.minecraft.plugin.gsit)
         compileOnly(mialibs.minecraft.plugin.mccosmetics)
         compileOnly(mialibs.minecraft.plugin.discordsrv)
+        compileOnly(mialibs.minecraft.plugin.luckperms)
     }
 }
 

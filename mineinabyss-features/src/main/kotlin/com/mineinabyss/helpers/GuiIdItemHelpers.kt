@@ -17,9 +17,9 @@ object TitleItem {
         setLore(lore.toList())
         setCustomModelData(1)
     }
-    fun ofComponent(name: Component, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
+    fun ofComponent(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
         displayName(name)
-        setLore(lore.toList())
+        lore(lore.toList())
         setCustomModelData(1)
     }
 }

@@ -15,7 +15,6 @@ val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin
 val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("MCCosmetics") as MCCosmeticsPlugin }
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 
-
 interface AbyssContext {
     companion object : AbyssContext by getService()
 
