@@ -17,7 +17,6 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.helpers.*
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
@@ -169,18 +168,11 @@ fun DiscordButton(player: Player) {
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    var ranks = ""
-
     val groups: Set<String> =
         luckPerms.userManager.getUser(player.uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }
-        ?.collect(Collectors.toSet()) ?: return ranks
+        ?.collect(Collectors.toSet()) ?: return ""
 
-    groups.forEach group@{ group ->
-        broadcast(group)
-        if (group == "default") return@group
-        else ranks += ":player_profile_rank_$group:${Space.of(-84)}"
-    }
-
-    return ranks
+    groups.filter { it == "default" }
+    return "${Space.of(34)}:player_profile_rank_${groups.first()}:"
 }

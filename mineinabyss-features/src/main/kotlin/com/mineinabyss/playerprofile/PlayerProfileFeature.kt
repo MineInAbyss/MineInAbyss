@@ -2,7 +2,6 @@ package com.mineinabyss.playerprofile
 
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -12,8 +11,6 @@ import org.bukkit.entity.Player
 class PlayerProfileFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-
-        registerEvents(PlayerProfileListener())
 
         commands {
             mineinabyss {
