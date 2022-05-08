@@ -6,6 +6,7 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
+import dev.geco.gsit.api.event.PlayerSitEvent
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
@@ -101,8 +102,13 @@ class GSitListener : Listener {
     }
 
     @EventHandler
-    fun PlayerGetUpSitEvent.handleCurseOnSitting() {
+    fun PlayerSitEvent.handleCurseOnSitting() {
         handleCurse(player, seat.location.toBlockLocation(), player.location)
+    }
+
+    @EventHandler
+    fun PlayerGetUpSitEvent.handleCurseOnSitting() {
+        handleCurse(player, player.location, seat.location.toBlockLocation())
     }
 }
 
