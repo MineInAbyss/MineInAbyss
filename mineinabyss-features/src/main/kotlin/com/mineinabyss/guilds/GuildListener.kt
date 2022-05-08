@@ -60,11 +60,8 @@ class GuildListener(private val feature: GuildFeature) : Listener {
 class GuildContainerSystem : GroupSystem() {
 
     override fun isInGroup(player: Player, guildName: String): Boolean {
-        val guild = player.hasGuild()
-        if (!guild) return false
-
-        val name = player.getGuildName()
-        return name.equals(guildName, true)
+        val name = player.getGuildName().replace(" ", "_")
+        return name.equals(guildName, true) && player.hasGuild()
     }
 
     override fun isGroupLeader(player: Player, groupName: String): Boolean {
