@@ -11,7 +11,8 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.ui.rememberNavigation
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.font.Space
-import org.bukkit.ChatColor.*
+import com.mineinabyss.idofront.messaging.miniMsg
+import org.bukkit.ChatColor.WHITE
 import org.bukkit.entity.Player
 
 sealed class BankScreen(val title: String, val height: Int) {
@@ -49,8 +50,8 @@ fun GuiyOwner.BankMenu(player: Player) {
 @Composable
 fun DepositCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button {
     Text(
-        "$GOLD${BOLD}Open Deposit Menu",
-        "${YELLOW}You currently have $ITALIC${data.orthCoinsHeld} ${YELLOW}coins in your account.",
+        "<gold><b>Open Deposit Menu",
+        "<yellow>You currently have <i>${data.orthCoinsHeld} <yellow>coins in your account.".miniMsg(),
         modifier = modifier.size(3, 2)
     )
 }
@@ -58,8 +59,8 @@ fun DepositCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = But
 @Composable
 fun WithdrawCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button {
     Text(
-        "$GOLD${BOLD}Open Withdrawal Menu",
-        "${YELLOW}You currently have $ITALIC${data.orthCoinsHeld} ${YELLOW}coins in your account.",
+        "<gold><b>Open Withdrawal Menu",
+        "<yellow>You currently have <i>${data.orthCoinsHeld} <yellow>coins in your account.".miniMsg(),
         modifier = modifier.size(3, 2)
     )
 }

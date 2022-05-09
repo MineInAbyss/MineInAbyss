@@ -22,7 +22,6 @@ import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor.*
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
 
@@ -67,35 +66,35 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
 fun PlayerHead(player: Player, modifier: Modifier) {
     Item(
         player.head(
-            "${LIGHT_PURPLE}${BOLD}${player.name}",
-            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
-            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
-            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h",
+            "<light_purple><b>${player.name}",
+            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
             isLarge = true
         ), modifier = modifier
     )
     Item(
         TitleItem.of(
-            "${LIGHT_PURPLE}${BOLD}${player.name}",
-            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
-            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
-            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h"
+            "<light_purple><b>${player.name}",
+            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
         ), modifier = modifier.at(1, 1)
     )
     Item(
         TitleItem.of(
-            "${LIGHT_PURPLE}${BOLD}${player.name}",
-            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
-            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
-            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h"
+            "<light_purple><b>${player.name}",
+            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
         ), modifier = modifier.at(0, 2)
     )
     Item(
         TitleItem.of(
-            "${LIGHT_PURPLE}${BOLD}${player.name}",
-            "${LIGHT_PURPLE}Deaths: ${AQUA}${player.getStatistic(Statistic.DEATHS)}",
-            "${LIGHT_PURPLE}Time played: ${AQUA}${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h",
-            "${LIGHT_PURPLE}Time since last death: ${AQUA}${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h"
+            "<light_purple><b>${player.name}",
+            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
         ), modifier = modifier.at(1, 2)
     )
 }
@@ -146,10 +145,10 @@ fun GuildButton(player: Player, viewer: Player) {
         guiy { GuildScreen.GuildLookupMembers(player.getGuildName()) }
     }) {
         Text(
-            "${GOLD}${BOLD}${ITALIC}${player.getGuildName()}",
-            "${YELLOW}${BOLD}Guild Owner: ${YELLOW}${ITALIC}${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}",
-            "${YELLOW}${BOLD}Guild Level: ${YELLOW}${ITALIC}${player.getGuildLevel()}",
-            "${YELLOW}${BOLD}Guild Members: ${YELLOW}${ITALIC}${player.getGuildMemberCount()}"
+            "<gold><b><i>${player.getGuildName()}",
+            "<yellow><b>Guild Owner: <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
+            "<yellow><b>Guild Level: <yellow><i>${player.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members: <yellow><i>${player.getGuildMemberCount()}".miniMsg()
         )
     }
 }

@@ -11,10 +11,12 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.pvp.ToggleIcon.disabled
 import com.mineinabyss.pvp.ToggleIcon.enabled
-import org.bukkit.ChatColor.*
+import org.bukkit.ChatColor.DARK_RED
+import org.bukkit.ChatColor.WHITE
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -35,9 +37,9 @@ fun EnablePvp(player: Player, modifier: Modifier) {
     val data = player.playerData
     Item(
         TitleItem.of(
-            "$DARK_GREEN${BOLD}Enable PvP",
-            "${GREEN}Enables pvp interactions with",
-            "${GREEN}other players in the Abyss."
+            "<dark_green><b>Enable PvP",
+            "<green>Enables pvp interactions with".miniMsg(),
+            "<green>other players in the Abyss.".miniMsg()
         ),
         modifier.size(3, 2).clickable {
             data.pvpStatus = true
@@ -54,9 +56,9 @@ fun DisablePvp(player: Player, modifier: Modifier) {
     val data = player.playerData
     Item(
         TitleItem.of(
-            "$DARK_RED${BOLD}Disable PvP",
-            "${RED}Disables pvp interactions with",
-            "${RED}other players in the Abyss."
+            "$DARK_RED<b>Disable PvP",
+            "<red>Disables pvp interactions with".miniMsg(),
+            "<red>other players in the Abyss.".miniMsg()
         ),
         modifier.size(3, 2).clickable {
             data.pvpStatus = false
@@ -80,8 +82,8 @@ fun TogglePvpPrompt(player: Player, modifier: Modifier) {
             isEnabled = data.showPvpPrompt
             player.success(
                 "PvP-prompt has been ${
-                    if (data.showPvpPrompt) "${BOLD}enabled"
-                    else "${BOLD}disabled"
+                    if (data.showPvpPrompt) "<b>enabled"
+                    else "<b>disabled"
                 }."
             )
         }
@@ -91,22 +93,24 @@ fun TogglePvpPrompt(player: Player, modifier: Modifier) {
 object ToggleIcon {
     val enabled = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(2)
-        setDisplayName("$BLUE${BOLD}Toggle PvP Prompt")
-        lore = listOf(
-            "${RED}Disable ${DARK_AQUA}this prompt from showing",
-            "${DARK_AQUA}when entering the ${GREEN}Abyss.",
-            "${DARK_AQUA}It can be re-opened at any time in ${GOLD}Orth."
+        displayName("<blue><b>Toggle PvP Prompt".miniMsg())
+        lore(
+            listOf(
+                "<red>Disable <dark_aqua>this prompt from showing".miniMsg(),
+                "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
+                "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
+            )
         )
     }
 
     val disabled =
         ItemStack(Material.PAPER).editItemMeta {
             setCustomModelData(3)
-            setDisplayName("$BLUE${BOLD}Toggle PvP Prompt")
-            lore = listOf(
-                "${GREEN}Enable ${DARK_AQUA}this prompt from",
-                "${DARK_AQUA}when entering the ${GREEN}Abyss.",
-                "${DARK_AQUA}It can be re-opened at any time in ${GOLD}Orth."
-            )
+            displayName("<blue><b>Toggle PvP Prompt".miniMsg())
+            lore(listOf(
+                "<green>Enable <dark_aqua>this prompt from".miniMsg(),
+                "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
+                "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
+            ))
         }
 }

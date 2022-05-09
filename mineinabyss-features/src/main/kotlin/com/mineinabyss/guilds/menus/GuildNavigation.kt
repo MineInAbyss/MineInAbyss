@@ -17,7 +17,6 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.NoToolTip
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.Navigator
@@ -26,8 +25,9 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
-import org.bukkit.ChatColor.*
+import org.bukkit.ChatColor.WHITE
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
@@ -130,14 +130,14 @@ fun GuildUIScope.HomeScreen(openedFromHQ: Boolean) {
 @Composable
 fun GuildUIScope.BackButton(modifier: Modifier = Modifier) {
     Button(onClick = { nav.back() }, modifier = modifier) {
-        Text("$RED${BOLD}Back")
+        Text("<red><b>Back")
     }
 }
 
 @Composable
 fun GuildUIScope.CloseButton(modifier: Modifier = Modifier) {
     Button(onClick = { player.closeInventory() }, modifier = modifier) {
-        Text("$RED${BOLD}Close")
+        Text("<red><b>Close")
     }
 }
 
@@ -148,11 +148,11 @@ fun GuildUIScope.CurrentGuildButton(onClick: () -> Unit) {
         onClick = onClick,
     ) { enabled ->
         if (enabled) Text(
-            "$GOLD${BOLD}Current Guild Info",
+            "<gold><b>Current Guild Info",
             modifier = Modifier.size(2, 2)
         ) else Text(
-            "$GOLD$BOLD${STRIKETHROUGH}View Guild Information",
-            "${RED}You are not a member of any guild.",
+            "<gold><b><st>View Guild Information",
+            "<red>You are not a member of any guild.".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
@@ -163,7 +163,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
     Button(
         enabled = !player.hasGuild(),
         onClick = {
-            val guildRenamePaper = TitleItem.of("Guild Name").NoToolTip()
+            val guildRenamePaper = TitleItem.of("Guild Name")
             if (player.hasGuild()) {
                 player.error("You already have a guild.")
                 nav.back()
@@ -189,11 +189,11 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
             ))
         }
     ) { enabled ->
-        if (enabled) Text("$GOLD${BOLD}Create a Guild", modifier = Modifier.size(2, 2))
+        if (enabled) Text("<gold><b>Create a Guild", modifier = Modifier.size(2, 2))
         else Text(
-            "$GOLD$ITALIC${STRIKETHROUGH}Create a Guild",
-            "${RED}You have to leave your current",
-            "${RED}Guild before you can create one.",
+            "<gold><i><st>Create a Guild",
+            "<red>You have to leave your current".miniMsg(),
+            "<red>Guild before you can create one.".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
@@ -208,11 +208,11 @@ fun GuildUIScope.GuildInvitesButton(modifier: Modifier = Modifier) {
     ) { enabled ->
         /* Icon that notifies player there are new invites */
         if (enabled) {
-            Text("${DARK_GREEN}Manage Guild Invites")
+            Text("<dark_green>Manage Guild Invites")
         }
         /* Custom Icon for "darkerened" out icon indicating no invites */
         else {
-            Text("$DARK_GREEN${STRIKETHROUGH}Manage Guild Invites")
+            Text("<dark_green><st>Manage Guild Invites")
         }
     }
 }
@@ -224,10 +224,10 @@ fun GuildUIScope.GuildLookupListButton(modifier: Modifier = Modifier) {
         onClick = { nav.open(GuildList) }
     ) { enabled ->
         if (enabled) {
-            Text("$GOLD${BOLD}Browse all Guilds", modifier = Modifier.size(2, 2))
+            Text("<gold><b>Browse all Guilds", modifier = Modifier.size(2, 2))
         } else Text(
-            "$GOLD${BOLD}${STRIKETHROUGH}Browse all Guilds",
-            "${YELLOW}There are currently no Guilds registered.",
+            "<gold><b><st>Browse all Guilds",
+            "<yellow>There are currently no Guilds registered.".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }

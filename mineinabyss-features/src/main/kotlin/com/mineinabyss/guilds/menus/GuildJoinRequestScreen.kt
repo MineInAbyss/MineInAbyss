@@ -13,7 +13,6 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
-import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.insert
 
@@ -27,7 +26,7 @@ fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
 
 @Composable
 fun GuildUIScope.PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Item(newMember.head("${YELLOW}${ITALIC}${newMember.name}", isCenterOfInv = true, isLarge = true))
+    Item(newMember.head("<yellow><i>${newMember.name}", isCenterOfInv = true, isLarge = true))
 }
 
 @Composable
@@ -47,7 +46,7 @@ fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer
     },
     modifier = modifier
 ) {
-    Text("${GREEN}Accept Join-Request", modifier = Modifier.size(3, 3))
+    Text("<green>Accept Join-Request", modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -55,9 +54,9 @@ fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlaye
     modifier = modifier,
     onClick = {
         newMember.removeGuildQueueEntries(GuildJoinType.Request)
-        player.info("${YELLOW}${BOLD}❌ ${YELLOW}You denied the join-request from ${newMember.name}")
+        player.info("<yellow><b>❌ <yellow>You denied the join-request from ${newMember.name}")
         val requestDeniedMessage =
-            "${RED}Your request to join ${ITALIC}${player.getGuildName()} has been denied!"
+            "<red>Your request to join <i>${player.getGuildName()} has been denied!"
         if (newMember.isOnline) newMember.player?.error(requestDeniedMessage)
         else {
             MessageQueue.insert {
@@ -68,7 +67,7 @@ fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlaye
         nav.back()
     }
 ) {
-    Text("${RED}Decline Join-Request", modifier = Modifier.size(3, 3))
+    Text("<red>Decline Join-Request", modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -76,9 +75,9 @@ fun GuildUIScope.DeclineAllGuildRequests(modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Request, true)
-        player.info("${YELLOW}${BOLD}❌ ${YELLOW}You denied all join-requests for your guild!")
+        player.info("<yellow><b>❌ <yellow>You denied all join-requests for your guild!")
         nav.back()
     }
 ) {
-    Text("${RED}Decline All Join-Request")
+    Text("<red>Decline All Join-Request")
 }

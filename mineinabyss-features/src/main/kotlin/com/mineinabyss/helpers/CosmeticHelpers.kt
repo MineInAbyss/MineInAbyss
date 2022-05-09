@@ -23,7 +23,7 @@ fun Player.playGesture(gesture: String) {
     }
 }
 
-fun Player.getCosmeticBackpack() : ItemStack? {
+fun Player.getCosmeticBackpack() : ItemStack {
     val profile = mcCosmetics.profiles.getProfile(this).getEquipped(BackAccessory::class.java)
     if (profile.isEmpty) return ItemStack(Material.AIR)
     val cosmetic = profile.get().cosmetic ?: return ItemStack(Material.AIR)

@@ -12,7 +12,6 @@ import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.NoToolTip
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
@@ -21,8 +20,8 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
-import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -47,8 +46,8 @@ fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
             }) {
                 Item(
                     member.head(
-                        "$GOLD$ITALIC${member.name}",
-                        "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${rank}",
+                        "<gold><i>{member.name}",
+                        "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                         isFlat = true
                     )
                 )
@@ -59,7 +58,7 @@ fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
 
 @Composable
 fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
-    val guildInvitePaper = TitleItem.of("Player Name").NoToolTip()
+    val guildInvitePaper = TitleItem.of("Player Name")
     Button(
         enabled = player.isAboveCaptain(),
         modifier = modifier,
@@ -83,7 +82,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
             ))
         }
     ) {
-        Text("${YELLOW}Invite Player to Guild")
+        Text("<yellow>Invite Player to Guild")
     }
 }
 
@@ -102,14 +101,14 @@ fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
         }
     ) { enabled ->
         if (enabled) Text(
-            "${DARK_GREEN}Manage Guild Join Requests",
-            "$YELLOW${ITALIC}There ${if (plural) "are" else "is"} currently $GOLD$BOLD$requestAmount ",
-            "$YELLOW${ITALIC}join-request${if (plural) "s" else ""} for your guild."
+            "<dark_green>Manage Guild Join Requests",
+            "<yellow><i>There ${if (plural) "are" else "is"} currently <gold><b>$requestAmount ".miniMsg(),
+            "<yellow><i>join-request${if (plural) "s" else ""} for your guild.".miniMsg()
         )
         else Text(
-            "$DARK_GREEN${STRIKETHROUGH}Manage Guild Join Requests",
-            "$RED${ITALIC}There are currently no ",
-            "$RED${ITALIC}join-requests for your guild."
+            "<dark_green><st>Manage Guild Join Requests",
+            "<red><i>There are currently no ".miniMsg(),
+            "<red><i>join-requests for your guild.".miniMsg()
         )
     }
 
@@ -135,19 +134,19 @@ fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
 object JoinTypeIcon {
     val any = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(4)
-        setDisplayName("${DARK_GREEN}Toggle Guild Join Type")
-        lore = listOf("${YELLOW}Currently players can join via:$GOLD$ITALIC Any")
+        setDisplayName("<dark_green>Toggle Guild Join Type")
+        lore = listOf("<yellow>Currently players can join via:<gold><i> Any")
     }
 
     val invite = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(5)
-        setDisplayName("${DARK_GREEN}Toggle Guild Join Type")
-        lore = listOf("${YELLOW}Currently players can join via:$GOLD$ITALIC Invite")
+        setDisplayName("<dark_green>Toggle Guild Join Type")
+        lore = listOf("<yellow>Currently players can join via:<gold><i> Invite")
     }
 
     val request = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(6)
-        setDisplayName("${DARK_GREEN}Toggle Guild Join Type")
-        lore = listOf("${YELLOW}Currently players can join via:$GOLD$ITALIC Request")
+        setDisplayName("<dark_green>Toggle Guild Join Type")
+        lore = listOf("<yellow>Currently players can join via:<gold><i> Request")
     }
 }

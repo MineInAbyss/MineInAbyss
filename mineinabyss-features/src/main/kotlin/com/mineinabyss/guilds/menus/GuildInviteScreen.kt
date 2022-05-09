@@ -12,6 +12,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 
@@ -26,11 +27,11 @@ fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
 @Composable
 fun GuildUIScope.GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
     Item(owner.head(
-        "$GOLD${BOLD}Current Guild Info:",
-        "$YELLOW${BOLD}Guild Name: $YELLOW$ITALIC${owner.getGuildName()}",
-        "$YELLOW${BOLD}Guild Owner: $YELLOW$ITALIC${owner.name}",
-        "$YELLOW${BOLD}Guild Level: $YELLOW$ITALIC${owner.getGuildLevel()}",
-        "$YELLOW${BOLD}Guild Members: $YELLOW$ITALIC${owner.getGuildMemberCount()}",
+        "<gold><b>Current Guild Info:",
+        "<yellow><b>Guild Name: <yellow><i>${owner.getGuildName()}".miniMsg(),
+        "<yellow><b>Guild Owner: <yellow><i>${owner.name}".miniMsg(),
+        "<yellow><b>Guild Level: <yellow><i>${owner.getGuildLevel()}".miniMsg(),
+        "<yellow><b>Guild Members: <yellow><i>${owner.getGuildMemberCount()}".miniMsg(),
         isCenterOfInv = true, isLarge = true
     ), modifier = modifier)
 }
@@ -53,16 +54,16 @@ fun GuildUIScope.AcceptGuildInvite(owner: OfflinePlayer, modifier: Modifier = Mo
     },
     modifier = modifier
 ) {
-    Text("${GREEN}Accept Invite", modifier = Modifier.size(3, 3))
+    Text("<green>Accept Invite", modifier = Modifier.size(3, 3))
 }
 
 @Composable
 fun GuildUIScope.DeclineGuildInvite(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite)
-        player.info("$YELLOW${BOLD}❌ ${YELLOW}You denied the invite from $GOLD$ITALIC${owner.getGuildName()}")
+        player.info("$YELLOW<b>❌ <yellow>You denied the invite from $GOLD$ITALIC${owner.getGuildName()}")
         nav.back()
     }
 ) {
-    Text("${RED}Decline Invite", modifier = modifier.size(3, 3))
+    Text("<red>Decline Invite", modifier = modifier.size(3, 3))
 }
