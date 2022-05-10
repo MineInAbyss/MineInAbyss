@@ -13,6 +13,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.insert
 
@@ -26,7 +27,7 @@ fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
 
 @Composable
 fun GuildUIScope.PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Item(newMember.head("<yellow><i>${newMember.name}", isCenterOfInv = true, isLarge = true))
+    Item(newMember.head("<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
 }
 
 @Composable
@@ -46,7 +47,7 @@ fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer
     },
     modifier = modifier
 ) {
-    Text("<green>Accept Join-Request", modifier = Modifier.size(3, 3))
+    Text("<green>Accept Join-Request".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -67,7 +68,7 @@ fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlaye
         nav.back()
     }
 ) {
-    Text("<red>Decline Join-Request", modifier = Modifier.size(3, 3))
+    Text("<red>Decline Join-Request".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -79,5 +80,5 @@ fun GuildUIScope.DeclineAllGuildRequests(modifier: Modifier) = Button(
         nav.back()
     }
 ) {
-    Text("<red>Decline All Join-Request")
+    Text("<red>Decline All Join-Request".miniMsg())
 }

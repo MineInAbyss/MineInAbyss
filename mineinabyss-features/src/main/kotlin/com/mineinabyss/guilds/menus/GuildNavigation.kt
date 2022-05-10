@@ -130,14 +130,14 @@ fun GuildUIScope.HomeScreen(openedFromHQ: Boolean) {
 @Composable
 fun GuildUIScope.BackButton(modifier: Modifier = Modifier) {
     Button(onClick = { nav.back() }, modifier = modifier) {
-        Text("<red><b>Back")
+        Text("<red><b>Back".miniMsg())
     }
 }
 
 @Composable
 fun GuildUIScope.CloseButton(modifier: Modifier = Modifier) {
     Button(onClick = { player.closeInventory() }, modifier = modifier) {
-        Text("<red><b>Close")
+        Text("<red><b>Close".miniMsg())
     }
 }
 
@@ -148,10 +148,10 @@ fun GuildUIScope.CurrentGuildButton(onClick: () -> Unit) {
         onClick = onClick,
     ) { enabled ->
         if (enabled) Text(
-            "<gold><b>Current Guild Info",
+            "<gold><b>Current Guild Info".miniMsg(),
             modifier = Modifier.size(2, 2)
         ) else Text(
-            "<gold><b><st>View Guild Information",
+            "<gold><b><st>View Guild Information".miniMsg(),
             "<red>You are not a member of any guild.".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
@@ -189,9 +189,9 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
             ))
         }
     ) { enabled ->
-        if (enabled) Text("<gold><b>Create a Guild", modifier = Modifier.size(2, 2))
+        if (enabled) Text("<gold><b>Create a Guild".miniMsg(), modifier = Modifier.size(2, 2))
         else Text(
-            "<gold><i><st>Create a Guild",
+            "<gold><i><st>Create a Guild".miniMsg(),
             "<red>You have to leave your current".miniMsg(),
             "<red>Guild before you can create one.".miniMsg(),
             modifier = Modifier.size(2, 2)
@@ -208,11 +208,11 @@ fun GuildUIScope.GuildInvitesButton(modifier: Modifier = Modifier) {
     ) { enabled ->
         /* Icon that notifies player there are new invites */
         if (enabled) {
-            Text("<dark_green>Manage Guild Invites")
+            Text("<dark_green>Manage Guild Invites".miniMsg())
         }
         /* Custom Icon for "darkerened" out icon indicating no invites */
         else {
-            Text("<dark_green><st>Manage Guild Invites")
+            Text("<dark_green><st>Manage Guild Invites".miniMsg())
         }
     }
 }
@@ -224,9 +224,9 @@ fun GuildUIScope.GuildLookupListButton(modifier: Modifier = Modifier) {
         onClick = { nav.open(GuildList) }
     ) { enabled ->
         if (enabled) {
-            Text("<gold><b>Browse all Guilds", modifier = Modifier.size(2, 2))
+            Text("<gold><b>Browse all Guilds".miniMsg(), modifier = Modifier.size(2, 2))
         } else Text(
-            "<gold><b><st>Browse all Guilds",
+            "<gold><b><st>Browse all Guilds".miniMsg(),
             "<yellow>There are currently no Guilds registered.".miniMsg(),
             modifier = Modifier.size(2, 2)
         )

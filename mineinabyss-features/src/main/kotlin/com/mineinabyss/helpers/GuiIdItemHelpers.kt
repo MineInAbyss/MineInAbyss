@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.miniMsg
 import de.erethon.headlib.HeadLib
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -13,12 +12,12 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 
 object TitleItem {
-    fun of(name: String, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
+    fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
         setDisplayName(name)
-        lore(lore.toList())
+        setLore(lore.toList())
         setCustomModelData(1)
     }
-    fun ofComponent(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
+    fun of(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
         displayName(name)
         lore(lore.toList())
         setCustomModelData(1)
@@ -26,7 +25,12 @@ object TitleItem {
 }
 
 @Composable
-fun Text(name: String, vararg lore: Component, modifier: Modifier = Modifier) {
+fun Text(name: String, vararg lore: String, modifier: Modifier = Modifier) {
+    Item(TitleItem.of(name, *lore), modifier)
+}
+
+@Composable
+fun Text(name: Component, vararg lore: Component, modifier: Modifier = Modifier) {
     Item(TitleItem.of(name, *lore), modifier)
 }
 
@@ -51,7 +55,7 @@ fun ItemStack.NoToolTip(): ItemStack {
 }
 
 fun OfflinePlayer?.head(
-    title: String,
+    title: Component,
     vararg lore: Component,
     isFlat: Boolean = false,
     isLarge: Boolean = false,
@@ -61,7 +65,7 @@ fun OfflinePlayer?.head(
 
     return ItemStack(Material.PLAYER_HEAD).editItemMeta {
         if (this is SkullMeta) {
-            displayName(title.miniMsg())
+            displayName(title)
             lore(lore.toList())
             if (isFlat) setCustomModelData(10)
             if (isLarge) setCustomModelData(11)

@@ -37,7 +37,7 @@ fun EnablePvp(player: Player, modifier: Modifier) {
     val data = player.playerData
     Item(
         TitleItem.of(
-            "<dark_green><b>Enable PvP",
+            "<dark_green><b>Enable PvP".miniMsg(),
             "<green>Enables pvp interactions with".miniMsg(),
             "<green>other players in the Abyss.".miniMsg()
         ),
@@ -56,7 +56,7 @@ fun DisablePvp(player: Player, modifier: Modifier) {
     val data = player.playerData
     Item(
         TitleItem.of(
-            "$DARK_RED<b>Disable PvP",
+            "$DARK_RED<b>Disable PvP".miniMsg(),
             "<red>Disables pvp interactions with".miniMsg(),
             "<red>other players in the Abyss.".miniMsg()
         ),

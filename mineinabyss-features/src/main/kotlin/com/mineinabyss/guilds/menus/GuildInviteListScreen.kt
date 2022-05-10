@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guilds.database.GuildJoinQueue
 import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guilds.extensions.getGuildMemberCount
+import com.mineinabyss.guilds.extensions.getGuildName
 import com.mineinabyss.guilds.extensions.getGuildOwnerFromInvite
 import com.mineinabyss.guilds.extensions.removeGuildQueueEntries
 import com.mineinabyss.guiy.components.Grid
@@ -18,7 +19,6 @@ import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
-import org.bukkit.ChatColor.YELLOW
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -49,7 +49,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
                 nav.open(GuildScreen.Invite(owner))
             }) {
                 Item(player.head(
-                    "<gold><b>Guildname: <yellow><i>{owner.getGuildName()}",
+                    "<gold><b>Guildname: <yellow><i>${owner.getGuildName()}".miniMsg(),
                     "<blue>Click this to accept or deny invite.".miniMsg(),
                     "<blue>Info about the guild can also be found in here.".miniMsg(),
                     isFlat = true
@@ -64,9 +64,9 @@ fun GuildUIScope.DenyAllInvites(modifier: Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite, true)
         nav.open(GuildScreen.MemberList(guildLevel, player))
-        player.info("$YELLOW<b>❌<yellow>You denied all invites!")
+        player.info("<gold><b>❌<yellow>You denied all invites!")
     },
     modifier = modifier
 ) {
-    Text("<red>Decline All Invites")
+    Text("<red>Decline All Invites".miniMsg())
 }

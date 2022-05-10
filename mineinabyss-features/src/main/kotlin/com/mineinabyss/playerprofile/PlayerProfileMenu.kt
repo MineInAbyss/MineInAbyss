@@ -19,8 +19,6 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.luckperms.api.LuckPermsProvider
-import net.luckperms.api.node.NodeType
-import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Bukkit
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
@@ -66,7 +64,7 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
 fun PlayerHead(player: Player, modifier: Modifier) {
     Item(
         player.head(
-            "<light_purple><b>${player.name}",
+            "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
@@ -75,7 +73,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
     )
     Item(
         TitleItem.of(
-            "<light_purple><b>${player.name}",
+            "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
@@ -83,7 +81,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
     )
     Item(
         TitleItem.of(
-            "<light_purple><b>${player.name}",
+            "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
@@ -91,7 +89,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
     )
     Item(
         TitleItem.of(
-            "<light_purple><b>${player.name}",
+            "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
@@ -131,12 +129,12 @@ fun CosmeticBackpack(player: Player) {
 
 @Composable
 fun OrthCoinBalance(player: Player) {
-    Item(TitleItem.ofComponent("<#FFBB1C>${player.playerData.orthCoinsHeld} Orth Coins".miniMsg()))
+    Item(TitleItem.of("<#FFBB1C>${player.playerData.orthCoinsHeld} Orth Coins".miniMsg()))
 }
 
 @Composable
 fun CloutTokenBalance(player: Player) {
-    Item(TitleItem.ofComponent("<#7289DA>${player.playerData.cloutTokensHeld} Clout Tokens".miniMsg()))
+    Item(TitleItem.of("<#7289DA>${player.playerData.cloutTokensHeld} Clout Tokens".miniMsg()))
 }
 
 @Composable
@@ -145,10 +143,10 @@ fun GuildButton(player: Player, viewer: Player) {
         guiy { GuildScreen.GuildLookupMembers(player.getGuildName()) }
     }) {
         Text(
-            "<gold><b><i>${player.getGuildName()}",
-            "<yellow><b>Guild Owner: <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
-            "<yellow><b>Guild Level: <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members: <yellow><i>${player.getGuildMemberCount()}".miniMsg()
+            "<gold><b><i>${player.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
         )
     }
 }
@@ -158,20 +156,16 @@ fun DiscordButton(player: Player) {
     val linked = player.getLinkedDiscordAccount()
 
     if (linked == null) {
-        Item(TitleItem.ofComponent(
+        Item(TitleItem.of(
             "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
             "<#718AD6>linked an account.".miniMsg()))
-    } else Item(TitleItem.ofComponent("<b><#718AD6>${linked}".miniMsg()))
+    } else Item(TitleItem.of("<b><#718AD6>${linked}".miniMsg()))
 }
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    val groups: List<String> =
-        luckPerms.userManager.getUser(player.uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
-            ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: return ""
-
-    val group = groups.filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.first()
-    val patreon = groups.first { it.contains("patreon") || it.contains("supporter") }
+    val group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.first()
+    val patreon = player.getGroups().first { it.contains("patreon") || it.contains("supporter") }
     if (patreon.isNotEmpty()) {
         return "${Space.of(34)}:player_profile_rank_$group:${Space.of(-6)}:player_profile_rank_$patreon:"
     }

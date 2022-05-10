@@ -42,11 +42,11 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
                 }) {
                 Item(
                     owner.head(
-                        "<gold><i>$guildName",
-                        "<yellow><b>Guild Owner: <yellow><i>${owner.name}".miniMsg(),
-                        "<yellow><b>Guild Level: <yellow><i>${guildLevel}".miniMsg(),
-                        "<yellow><b>Guild Jointype: <yellow><i>${joinType}".miniMsg(),
-                        "<yellow><b>Guild Membercount: <yellow><i>${owner.getGuildMemberCount()} / ${
+                        "<gold><i>$guildName".miniMsg(),
+                        "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
+                        "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
+                        "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
+                        "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${
                             owner.getGuildLevel()?.times(5)
                         }".miniMsg(),
                         isFlat = true
@@ -65,7 +65,7 @@ fun GuildUIScope.PreviousButton(modifier: Modifier = Modifier) {
         }
     ) {
         Text(
-            "<yellow><b>Previous",
+            "<yellow><b>Previous".miniMsg(),
             "<red>This feature is not yet implemented.".miniMsg()
         )
     }
@@ -79,7 +79,7 @@ fun GuildUIScope.NextButton(modifier: Modifier = Modifier) {
             displayGuildList()
         }) {
         Text(
-            "<yellow><b>Next",
+            "<yellow><b>Next".miniMsg(),
             "<red>This feature is not yet implemented.".miniMsg()
         )
     }
@@ -108,7 +108,7 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
                 ))
         }
     ) {
-        Text("<gold><b>Search for a Guild by name")
+        Text("<gold><b>Search for a Guild by name".miniMsg())
     }
 }
 

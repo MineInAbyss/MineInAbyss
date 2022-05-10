@@ -8,6 +8,7 @@ import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.npc.orthbanking.withdrawCoins
 import org.bukkit.entity.Player
 
@@ -23,7 +24,7 @@ fun WithdrawScreen(player: Player) {
             broadcast(amount)
         }
     ) {
-        Text("<gold><b>Increase Withdrawal", modifier = Modifier.size(3, 2))
+        Text("<gold><b>Increase Withdrawal".miniMsg(), modifier = Modifier.size(3, 2))
     }
 
     Button(
@@ -35,7 +36,7 @@ fun WithdrawScreen(player: Player) {
             player.closeInventory()
         }
     ) {
-        Text("<gold><b>Confirm Withdrawal")
+        Text("<gold><b>Confirm Withdrawal".miniMsg())
     }
 
     Button(
@@ -46,6 +47,6 @@ fun WithdrawScreen(player: Player) {
             broadcast(amount)
         }
     ) {
-        Text("<gold><b>Decrease Withdrawal", modifier = Modifier.size(3, 1))
+        Text("<gold><b>Decrease Withdrawal".miniMsg(), modifier = Modifier.size(3, 1))
     }
 }

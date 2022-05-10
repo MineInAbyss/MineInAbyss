@@ -32,7 +32,7 @@ fun Player.getCosmeticBackpack() : ItemStack {
 
 }
 
-fun Player.getCosmeticHat() : ItemStack? {
+fun Player.getCosmeticHat() : ItemStack {
     val profile = mcCosmetics.profiles.getProfile(this).getEquipped(Hat::class.java)
     if (profile.isEmpty) return ItemStack(Material.AIR)
     val cosmetic = profile.get().cosmetic ?: return ItemStack(Material.AIR)

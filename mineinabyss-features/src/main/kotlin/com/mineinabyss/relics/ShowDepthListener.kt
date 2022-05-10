@@ -13,6 +13,7 @@ import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -43,7 +44,7 @@ class ShowDepthListener : GearyListener() {
                     """
                     <dark_aqua><i>The needle spins.</i>
                     You suddenly become aware that you are in ${layer.name}<dark_aqua>.
-                    """.trimIndent()
+                    """.trimIndent().miniMsg()
                 )
                 return
             }
@@ -54,7 +55,7 @@ class ShowDepthListener : GearyListener() {
                     <dark_aqua><i>The needle spins.</i>
                     You suddenly become aware that you are in the
                     ${layer.name}<dark_aqua> and <aqua>${pluralizeMeters(depth)}</aqua> deep into the <green>Abyss</green>.
-                    """.trimIndent()
+                    """.trimIndent().miniMsg()
                 )
             }
         } else player.info("<i><dark_aqua>The compass wiggles slightly but does not otherwise respond.")

@@ -5,9 +5,12 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.core.*
+import com.mineinabyss.playerprofile.luckPerms
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
+import net.luckperms.api.node.NodeType
+import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -125,5 +128,10 @@ fun handleCurse(player: Player, from: Location, to: Location) {
 
 fun Player.getLinkedDiscordAccount() : String? {
     return discordSRV.accountLinkManager.getDiscordId(player?.uniqueId)
+}
+
+fun Player.getGroups() : List<String> {
+    return luckPerms.userManager.getUser(player?.uniqueId!!)?.getNodes(NodeType.INHERITANCE)?.stream()
+        ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
 

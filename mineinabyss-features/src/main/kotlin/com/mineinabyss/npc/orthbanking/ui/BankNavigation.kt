@@ -50,7 +50,7 @@ fun GuiyOwner.BankMenu(player: Player) {
 @Composable
 fun DepositCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button {
     Text(
-        "<gold><b>Open Deposit Menu",
+        "<gold><b>Open Deposit Menu".miniMsg(),
         "<yellow>You currently have <i>${data.orthCoinsHeld} <yellow>coins in your account.".miniMsg(),
         modifier = modifier.size(3, 2)
     )
@@ -59,7 +59,7 @@ fun DepositCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = But
 @Composable
 fun WithdrawCurrencyOption(data: PlayerData, modifier: Modifier = Modifier) = Button {
     Text(
-        "<gold><b>Open Withdrawal Menu",
+        "<gold><b>Open Withdrawal Menu".miniMsg(),
         "<yellow>You currently have <i>${data.orthCoinsHeld} <yellow>coins in your account.".miniMsg(),
         modifier = modifier.size(3, 2)
     )

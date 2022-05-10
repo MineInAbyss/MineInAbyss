@@ -16,7 +16,6 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
-import org.bukkit.ChatColor.GREEN
 import org.bukkit.entity.Player
 
 @Composable
@@ -50,7 +49,7 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
             nav.open(GuildScreen.MemberList(guildLevel, player))
         }
     ) {
-        Text("$GREEN<b>Guild Member List", modifier = Modifier.size(2, 2))
+        Text("<green><b>Guild Member List".miniMsg(), modifier = Modifier.size(2, 2))
     }
 }
 
@@ -75,11 +74,11 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
             ))
         }
     ) {
-        Text("<gold><b>Change Guild Name",
-            "<yellow><b>Guild Name: <yellow><i>${player.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner: <yellow><i>${player.name}".miniMsg(),
-            "<yellow><b>Guild Level: <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members: <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
+        Text("<gold><b>Change Guild Name".miniMsg(),
+            "<yellow><b>Guild Name:</b> <yellow><i>${player.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${player.name}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
@@ -89,7 +88,7 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "<red><b><st>Level up Guildrank",
+            "<red><b><st>Level up Guildrank".miniMsg(),
             "<red>This feature is not yet implemented.".miniMsg()
         )
     }
@@ -99,7 +98,7 @@ fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "<gold><b><st>Guild Housing", modifier = Modifier.size(2, 2),
+            "<gold><b><st>Guild Housing".miniMsg(), modifier = Modifier.size(2, 2),
             lore = arrayOf("<red>This feature is not yet implemented.".miniMsg())
         )
     }
@@ -109,7 +108,7 @@ fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "<dark_red><b><st>Guild Wars", modifier = Modifier.size(2, 2),
+            "<dark_red><b><st>Guild Wars".miniMsg(), modifier = Modifier.size(2, 2),
             lore = arrayOf("<red>This feature is not yet implemented.".miniMsg())
         )
     }
@@ -123,9 +122,9 @@ fun GuildUIScope.GuildDisbandButton(modifier: Modifier = Modifier) {
         onClick = { nav.open(GuildScreen.Disband) }
     ) { enabled ->
         if (enabled)
-            Text("<red><b>Disband Guild")
+            Text("<red><b>Disband Guild".miniMsg())
         else
-            Text("<red><b><st>Disband Guild")
+            Text("<red><b><st>Disband Guild".miniMsg())
 
 
     }
@@ -140,9 +139,9 @@ fun GuildUIScope.GuildLeaveButton(player: Player, modifier: Modifier) {
             nav.open(GuildScreen.Leave)
         }) { enabled ->
         if (enabled)
-            Text("<red><i>Leave Guild")
+            Text("<red><i>Leave Guild".miniMsg())
         else
-            Text("<red><i><st>Leave Guild")
+            Text("<red><i><st>Leave Guild".miniMsg())
 
     }
 }

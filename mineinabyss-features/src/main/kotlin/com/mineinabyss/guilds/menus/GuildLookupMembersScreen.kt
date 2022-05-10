@@ -26,7 +26,7 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
 
 @Composable
 fun GuildUIScope.GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
-    Item(owner.head("<yellow><i>${owner.name}", isCenterOfInv = true, isLarge = true), modifier = modifier)
+    Item(owner.head("<yellow><i>${owner.name}".miniMsg(), isCenterOfInv = true, isLarge = true), modifier = modifier)
 }
 
 @Composable
@@ -36,7 +36,7 @@ fun GuildUIScope.GuildMembersButton(modifier: Modifier, guildName: String) {
             Button {
                 Item(
                     member.head(
-                        "<gold><i>${member.name}",
+                        "<gold><i>${member.name}".miniMsg(),
                         "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                         isFlat = true
                     )
@@ -54,16 +54,16 @@ fun GuildUIScope.RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, g
             player.requestToJoin(guildName)
     }) {
         if (!inviteOnly && !player.hasGuild()) {
-            Text("<green>Request to join <dark_green><i>$guildName")
+            Text("<green>Request to join <dark_green><i>$guildName".miniMsg())
         }
         else if (inviteOnly) {
-            Text("<red><st>Request to join <i>$guildName",
+            Text("<red><st>Request to join <i>$guildName".miniMsg(),
                 "<dark_red><i>This guild can currently only".miniMsg(),
                 "<dark_red><i>be joined by invites.".miniMsg()
             )
         }
         else if (player.hasGuild()) {
-            Text("<red><st>Request to join <i>$guildName",
+            Text("<red><st>Request to join <i>$guildName".miniMsg(),
                 "<dark_red><i>You have to leave your Guild".miniMsg(),
                 "<dark_red><i>before requesting to join another.".miniMsg()
             )

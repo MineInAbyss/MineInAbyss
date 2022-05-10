@@ -46,7 +46,7 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
         members.sortedBy { it.first }.forEach { (rank, member) ->
             Item(
                 member.head(
-                    "<gold><i>$member.name",
+                    "<gold><i>$member.name".miniMsg(),
                     "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                     isFlat = true
                 )

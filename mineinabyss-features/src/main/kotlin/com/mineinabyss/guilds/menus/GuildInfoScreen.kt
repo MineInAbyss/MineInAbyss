@@ -41,12 +41,12 @@ fun GuildUIScope.GuildInfoScreen() {
 fun GuildUIScope.CurrentGuildInfoButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "<gold><b>Current Guild Info:",
-            "<yellow><b>Guild Name: <yellow><i>${player.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner: <yellow><i>${
+            "<gold><b>Current Guild Info</b>".miniMsg(),
+            "<yellow><b>Guild Name:</b> <yellow><i>${player.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${
                 Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
-            "<yellow><b>Guild Level: <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members: <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }

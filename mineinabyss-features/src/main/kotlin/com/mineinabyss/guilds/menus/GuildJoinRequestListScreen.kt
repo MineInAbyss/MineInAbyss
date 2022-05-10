@@ -47,7 +47,7 @@ fun GuildUIScope.GuildJoinRequest(modifier: Modifier = Modifier) {
             Button(onClick = { if (!player.hasGuildRequests()) player.closeInventory() else nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember))) }) {
                 Item(
                     newMember.toPlayer().head(
-                        "<yellow><i>${newMember.toPlayer()?.name}",
+                        "<yellow><i>${newMember.toPlayer()?.name}".miniMsg(),
                         "<blue>Click this to accept or deny the join-request.".miniMsg(),
                         isFlat = true
                     )
