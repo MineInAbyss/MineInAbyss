@@ -129,12 +129,12 @@ fun CosmeticBackpack(player: Player) {
 
 @Composable
 fun OrthCoinBalance(player: Player) {
-    Item(TitleItem.of("<#FFBB1C>${player.playerData.orthCoinsHeld} Orth Coins".miniMsg()))
+    Item(TitleItem.of("<#FFBB1C>${player.playerData.orthCoinsHeld} <b>Orth Coins".miniMsg()))//
 }
 
 @Composable
 fun MittyTokenBalance(player: Player) {
-    Item(TitleItem.of("<#7289DA>${player.playerData.mittyTokensHeld} Mitty Tokens".miniMsg()))
+    Item(TitleItem.of("<#b74b4d>${player.playerData.mittyTokensHeld} <b>Mitty Tokens".miniMsg()))
 }
 
 @Composable
@@ -164,12 +164,12 @@ fun DiscordButton(player: Player) {
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    val group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull() ?: return ""
-    val patreon = player.getGroups().first { it.contains("patreon") || it.contains("supporter") }
-    if (patreon.isNotEmpty()) {
-        return "${Space.of(34)}:player_profile_rank_$group:${Space.of(-6)}:player_profile_rank_$patreon:"
-    }
-    return "${Space.of(34)}:player_profile_rank_$group:"
+    var group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull()
+    val patreon = player.getGroups().firstOrNull { it.contains("patreon") || it.contains("supporter") }
+    group = if (group != null) "${Space.of(34)}:player_profile_rank_$group:" else Space.of(34)
+    if (patreon?.isNotEmpty() == true) group +=  ":${Space.of(-6)}:player_profile_rank_$patreon:"
+
+    return group
 }
 
 val sortedRanks =

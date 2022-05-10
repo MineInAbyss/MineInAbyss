@@ -1,11 +1,8 @@
 package com.mineinabyss.patreons
 
-import com.mineinabyss.components.players.Patreon
-import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -29,11 +26,6 @@ class PatreonFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "patreon"(desc = "Patreon-supporter related commands") {
-                    "test" {
-                        playerAction {
-                            (player.toGeary().has<Patreon>()).broadcastVal()
-                        }
-                    }
                     "prefix"(desc = "Change your prefix emote") {
                         "remove" {
                             playerAction {
