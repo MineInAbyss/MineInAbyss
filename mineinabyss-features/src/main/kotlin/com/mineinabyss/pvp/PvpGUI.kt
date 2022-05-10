@@ -15,7 +15,6 @@ import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.pvp.ToggleIcon.disabled
 import com.mineinabyss.pvp.ToggleIcon.enabled
-import org.bukkit.ChatColor.DARK_RED
 import org.bukkit.ChatColor.WHITE
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -56,7 +55,7 @@ fun DisablePvp(player: Player, modifier: Modifier) {
     val data = player.playerData
     Item(
         TitleItem.of(
-            "$DARK_RED<b>Disable PvP".miniMsg(),
+            "<dark_red><b>Disable PvP".miniMsg(),
             "<red>Disables pvp interactions with".miniMsg(),
             "<red>other players in the Abyss.".miniMsg()
         ),
@@ -108,7 +107,7 @@ object ToggleIcon {
             setCustomModelData(3)
             displayName("<blue><b>Toggle PvP Prompt".miniMsg())
             lore(listOf(
-                "<green>Enable <dark_aqua>this prompt from".miniMsg(),
+                "<green>Enable <dark_aqua>this prompt from showing".miniMsg(),
                 "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
                 "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
             ))

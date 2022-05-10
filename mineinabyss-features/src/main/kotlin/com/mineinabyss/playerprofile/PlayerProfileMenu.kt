@@ -42,7 +42,7 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
-            if (isPatreon) CloutTokenBalance(player)
+            if (isPatreon) MittyTokenBalance(player)
             GuildButton(player, viewer)
             DiscordButton(player)
         }
@@ -133,8 +133,8 @@ fun OrthCoinBalance(player: Player) {
 }
 
 @Composable
-fun CloutTokenBalance(player: Player) {
-    Item(TitleItem.of("<#7289DA>${player.playerData.cloutTokensHeld} Clout Tokens".miniMsg()))
+fun MittyTokenBalance(player: Player) {
+    Item(TitleItem.of("<#7289DA>${player.playerData.mittyTokensHeld} Mitty Tokens".miniMsg()))
 }
 
 @Composable
@@ -164,7 +164,7 @@ fun DiscordButton(player: Player) {
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    val group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.first()
+    val group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull() ?: return ""
     val patreon = player.getGroups().first { it.contains("patreon") || it.contains("supporter") }
     if (patreon.isNotEmpty()) {
         return "${Space.of(34)}:player_profile_rank_$group:${Space.of(-6)}:player_profile_rank_$patreon:"

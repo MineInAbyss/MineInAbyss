@@ -37,13 +37,13 @@ fun Player.isInHub() = MIAConfig.data.hubSection == player?.location?.let { Worl
 fun Player.updateBalance() {
     val data = player?.playerData
     val orthCoinBalance = data?.orthCoinsHeld
-    val cloutBalance = data?.cloutTokensHeld
+    val mittyTokenBalance = data?.mittyTokensHeld
     val splitBalance = orthCoinBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
-    val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
+    val splitSupporterBalance = mittyTokenBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
 
-    val currentBalance: Component = if (data?.cloutTokensHeld!! > 0) {
+    val currentBalance: Component = if (data?.mittyTokensHeld!! > 0) {
         /* Switch to NegativeSpace.PLUS when that is added to Idofront */
-        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
+        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:mittytoken:")
     } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
@@ -52,7 +52,7 @@ fun Player.updateBalance() {
         do {
             player?.sendActionBar(currentBalance)
             delay(1.seconds)
-        } while (data.orthCoinsHeld == orthCoinBalance && data.cloutTokensHeld == cloutBalance && data.showPlayerBalance)
+        } while (data.orthCoinsHeld == orthCoinBalance && data.mittyTokensHeld == mittyTokenBalance && data.showPlayerBalance)
         return@launch
     }
 }

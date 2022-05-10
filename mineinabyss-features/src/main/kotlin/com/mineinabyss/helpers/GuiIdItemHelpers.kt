@@ -35,11 +35,11 @@ fun Text(name: Component, vararg lore: Component, modifier: Modifier = Modifier)
 }
 
 @Composable
-fun ItemButton(name: String, vararg lore: String, customModelData: Int, modifier: Modifier = Modifier) {
+fun ItemButton(name: Component, vararg lore: Component, customModelData: Int, modifier: Modifier = Modifier) {
     Item(
         ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName(name)
-            setLore(lore.toList())
+            displayName(name)
+            lore(lore.toList())
             setCustomModelData(customModelData)
         }, modifier)
 }

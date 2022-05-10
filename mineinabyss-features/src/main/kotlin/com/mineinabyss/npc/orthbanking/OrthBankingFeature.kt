@@ -42,7 +42,7 @@ class OrthBankingFeature : AbyssFeature {
                             if (!player.isInHub()) return@playerAction
 
                             data.orthCoinsHeld += amount
-                            data.cloutTokensHeld += amount
+                            data.mittyTokensHeld += amount
                             //currItem.subtract(currItem.amount)
                             //currItem.subtract(currItem.amount).broadcastVal("amount: ")
                             if (data.showPlayerBalance) player.updateBalance()
@@ -64,7 +64,7 @@ class OrthBankingFeature : AbyssFeature {
 //                        }
 
                             if (data.orthCoinsHeld > 0) data.orthCoinsHeld -= amount
-                            if (data.cloutTokensHeld > 0) data.cloutTokensHeld -= amount
+                            if (data.mittyTokensHeld > 0) data.mittyTokensHeld -= amount
                             if (data.showPlayerBalance) player.updateBalance()
                         }
                     }
