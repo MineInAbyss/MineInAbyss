@@ -2,18 +2,23 @@ package com.mineinabyss.anticheese
 
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.helpers.isInHub
+import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import dev.geco.gsit.api.event.PlayerSitEvent
+import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Dispenser
+import org.bukkit.block.Lectern
 import org.bukkit.block.data.Directional
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockDispenseEvent
 import org.bukkit.event.block.BlockPistonExtendEvent
@@ -21,6 +26,8 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.player.PlayerFishEvent
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
 
 class AntiCheeseListener : Listener {
@@ -83,12 +90,25 @@ class AntiCheeseListener : Listener {
     @EventHandler
     fun EntityDamageByEntityEvent.cancelMinecartTNT() {
         if (damager is ExplosiveMinecart) isCancelled = true
+    }
 
-        // Cancels moving entities with fishing rods in Orth
-        @EventHandler
-        fun PlayerFishEvent.cancelBlockGrief() {
-            if (caught?.type != EntityType.PLAYER && player.isInHub()) isCancelled = true
-        }
+    // Cancels moving entities with fishing rods in Orth
+    @EventHandler
+    fun PlayerFishEvent.cancelBlockGrief() {
+        if (caught?.type != EntityType.PLAYER && player.isInHub()) isCancelled = true
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    fun PlayerInteractEvent.onInteractPrivatedLectern() {
+        val block = clickedBlock ?: return
+        if (rightClicked && block.type == Material.LECTERN && BlockLockerAPIv2.isProtected(block))
+            player.openInventory((block.state as Lectern).inventory)
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    fun PlayerTakeLecternBookEvent.onTakeBookPrivatedLectern() {
+        if (!BlockLockerAPIv2.isAllowed(player, lectern.block, true))
+            isCancelled = true
     }
 }
 
