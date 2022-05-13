@@ -8,6 +8,7 @@ import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
@@ -141,7 +142,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
             val changedNameMessage =
-                "<yellow>The Guild you were in has been renamed to <gold><i>$guildName"
+                "${YELLOW}The Guild you were in has been renamed to ${GOLD}${ITALIC}$guildName"
             val player = Bukkit.getPlayer(row[Players.playerUUID])
             if (player != null) {
                 player.info(changedNameMessage)
@@ -152,7 +153,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
                 }
             }
         }
-        player?.success("Your guild was successfully renamed to <gold><i>$guildName</i></gold>!")
+        player?.success("Your guild was successfully renamed to ${GOLD}${ITALIC}$guildName!")
     }
 }
 

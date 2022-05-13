@@ -12,7 +12,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
-import org.bukkit.ChatColor.*
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
@@ -26,11 +26,11 @@ fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
 @Composable
 fun GuildUIScope.GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
     Item(owner.head(
-        "$GOLD${BOLD}Current Guild Info:",
-        "$YELLOW${BOLD}Guild Name: $YELLOW$ITALIC${owner.getGuildName()}",
-        "$YELLOW${BOLD}Guild Owner: $YELLOW$ITALIC${owner.name}",
-        "$YELLOW${BOLD}Guild Level: $YELLOW$ITALIC${owner.getGuildLevel()}",
-        "$YELLOW${BOLD}Guild Members: $YELLOW$ITALIC${owner.getGuildMemberCount()}",
+        "<gold><b>Current Guild Info</b>".miniMsg(),
+        "<yellow><b>Guild Name:</b> <yellow><i>${owner.getGuildName()}".miniMsg(),
+        "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
+        "<yellow><b>Guild Level:</b> <yellow><i>${owner.getGuildLevel()}".miniMsg(),
+        "<yellow><b>Guild Members:</b> <yellow><i>${owner.getGuildMemberCount()}".miniMsg(),
         isCenterOfInv = true, isLarge = true
     ), modifier = modifier)
 }
@@ -53,16 +53,16 @@ fun GuildUIScope.AcceptGuildInvite(owner: OfflinePlayer, modifier: Modifier = Mo
     },
     modifier = modifier
 ) {
-    Text("${GREEN}Accept Invite", modifier = Modifier.size(3, 3))
+    Text("<green>Accept Invite".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
 fun GuildUIScope.DeclineGuildInvite(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite)
-        player.info("$YELLOW${BOLD}❌ ${YELLOW}You denied the invite from $GOLD$ITALIC${owner.getGuildName()}")
+        player.info("<gold><b>❌ <yellow>You denied the invite from <gold><i>${owner.getGuildName()}")
         nav.back()
     }
 ) {
-    Text("${RED}Decline Invite", modifier = modifier.size(3, 3))
+    Text("<red>Decline Invite".miniMsg(), modifier = modifier.size(3, 3))
 }

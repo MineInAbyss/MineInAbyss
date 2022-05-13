@@ -10,7 +10,7 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import org.bukkit.ChatColor.*
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
@@ -32,7 +32,7 @@ fun GuildUIScope.PromoteGuildMember(member: OfflinePlayer, modifier: Modifier) =
         nav.back()
     }
 ) {
-    Text("$BLUE${ITALIC}Promote Member", modifier = Modifier.size(3, 3))
+    Text("<blue><i>Promote Member".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -43,7 +43,7 @@ fun GuildUIScope.KickGuildMember(member: OfflinePlayer, modifier: Modifier) = Bu
         nav.back()
     }
 ) {
-    Text("$RED${ITALIC}Kick Member", modifier = Modifier.size(3, 3))
+    Text("<red><i>Kick Member".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 

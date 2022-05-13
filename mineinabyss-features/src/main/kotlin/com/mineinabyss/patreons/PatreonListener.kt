@@ -2,25 +2,21 @@ package com.mineinabyss.patreons
 
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.helpers.getGroups
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
 
 class PatreonListener : Listener {
 
     @EventHandler
     fun PlayerJoinEvent.addPatreonComponent() {
-        if (!player.hasPermission("group.patreon") && !player.hasPermission("group.patreonplus")) return
-        if (!player.toGeary().has<Patreon>()) player.toGeary().setPersisting(Patreon)
+        val isPatreon = player.getGroups().contains("patreon")
+
+        if (!isPatreon) return
+        if (!player.toGeary().has<Patreon>()) player.toGeary().getOrSetPersisting { Patreon() }
         val patreon = player.toGeary().get<Patreon>() ?: return
 
-        if (player.hasPermission("group.patreonplus")) patreon.tier = 2
-        else patreon.tier = 1
-    }
-
-    @EventHandler
-    fun PlayerQuitEvent.saveLastMonth() {
-        val patreon = player.toGeary().get<Patreon>() ?: return
+        if (player.getGroups().any { it -> it == "patreonplus" }) patreon.tier = 2
     }
 }

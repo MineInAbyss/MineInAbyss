@@ -11,6 +11,7 @@ import com.mineinabyss.geary.datatypes.RelationValueId
 import com.mineinabyss.geary.helpers.componentId
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -46,7 +47,7 @@ fun Player.removeDescentContext() {
         """
                 <bold>Welcome back to Orth!
             <gray>Run lasted ${Duration.between(delve.startDate.toInstant(), Instant.now()).toKotlinDuration()}
-            """.trimIndent()
+            """.trimIndent().miniMsg()
     )
     gearyPlayer.remove<DescentContext>()
 

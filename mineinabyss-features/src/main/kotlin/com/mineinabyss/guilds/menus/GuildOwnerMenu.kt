@@ -9,14 +9,13 @@ import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.NoToolTip
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
+import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
-import org.bukkit.ChatColor.*
 import org.bukkit.entity.Player
 
 @Composable
@@ -50,13 +49,13 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
             nav.open(GuildScreen.MemberList(guildLevel, player))
         }
     ) {
-        Text("$GREEN${BOLD}Guild Member List", modifier = Modifier.size(2, 2))
+        Text("<green><b>Guild Member List".miniMsg(), modifier = Modifier.size(2, 2))
     }
 }
 
 @Composable
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
-    val renameItem = TitleItem.of(player.getGuildName()).NoToolTip()
+    val renameItem = TitleItem.of(player.getGuildName())
     Button(
         enabled = player.isAboveCaptain(),
         modifier = modifier,
@@ -75,11 +74,11 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
             ))
         }
     ) {
-        Text("${GOLD}${BOLD}Change Guild Name",
-            "$YELLOW${BOLD}Guild Name: $YELLOW$ITALIC${player.getGuildName()}",
-            "$YELLOW${BOLD}Guild Owner: $YELLOW$ITALIC${player.name}",
-            "$YELLOW${BOLD}Guild Level: $YELLOW$ITALIC${player.getGuildLevel()}",
-            "$YELLOW${BOLD}Guild Members: $YELLOW$ITALIC${player.getGuildMemberCount()}",
+        Text("<gold><b>Change Guild Name".miniMsg(),
+            "<yellow><b>Guild Name:</b> <yellow><i>${player.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${player.name}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
@@ -89,8 +88,8 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "$RED${BOLD}${STRIKETHROUGH}Level up Guildrank",
-            "${RED}This feature is not yet implemented."
+            "<red><b><st>Level up Guildrank".miniMsg(),
+            "<red>This feature is not yet implemented.".miniMsg()
         )
     }
 }
@@ -99,8 +98,8 @@ fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "$GOLD${BOLD}${STRIKETHROUGH}Guild Housing", modifier = Modifier.size(2, 2),
-            lore = arrayOf("${RED}This feature is not yet implemented.")
+            "<gold><b><st>Guild Housing".miniMsg(), modifier = Modifier.size(2, 2),
+            lore = arrayOf("<red>This feature is not yet implemented.".miniMsg())
         )
     }
 }
@@ -109,8 +108,8 @@ fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "${DARK_RED}${BOLD}${STRIKETHROUGH}Guild Wars", modifier = Modifier.size(2, 2),
-            lore = arrayOf("${RED}This feature is not yet implemented.")
+            "<dark_red><b><st>Guild Wars".miniMsg(), modifier = Modifier.size(2, 2),
+            lore = arrayOf("<red>This feature is not yet implemented.".miniMsg())
         )
     }
 }
@@ -123,9 +122,9 @@ fun GuildUIScope.GuildDisbandButton(modifier: Modifier = Modifier) {
         onClick = { nav.open(GuildScreen.Disband) }
     ) { enabled ->
         if (enabled)
-            Text("$RED${BOLD}Disband Guild")
+            Text("<red><b>Disband Guild".miniMsg())
         else
-            Text("$RED${BOLD}${STRIKETHROUGH}Disband Guild")
+            Text("<red><b><st>Disband Guild".miniMsg())
 
 
     }
@@ -140,9 +139,9 @@ fun GuildUIScope.GuildLeaveButton(player: Player, modifier: Modifier) {
             nav.open(GuildScreen.Leave)
         }) { enabled ->
         if (enabled)
-            Text("$RED${ITALIC}Leave Guild")
+            Text("<red><i>Leave Guild".miniMsg())
         else
-            Text("$RED${ITALIC}${STRIKETHROUGH}Leave Guild")
+            Text("<red><i><st>Leave Guild".miniMsg())
 
     }
 }

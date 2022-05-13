@@ -3,7 +3,6 @@ package com.mineinabyss.cosmetics
 import com.mineinabyss.helpers.playGesture
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -17,7 +16,6 @@ import org.bukkit.entity.Player
 class MCCosmeticsFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(MCCosmeticsIntegration())
         commands {
             mineinabyss {
                 "gesture" {

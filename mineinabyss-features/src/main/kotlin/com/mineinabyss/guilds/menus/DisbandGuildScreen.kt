@@ -9,7 +9,7 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import org.bukkit.ChatColor.*
+import com.mineinabyss.idofront.messaging.miniMsg
 
 @Composable
 fun GuildUIScope.GuildDisbandScreen() {
@@ -27,7 +27,7 @@ fun GuildUIScope.ConfirmButton(modifier: Modifier = Modifier) = Button(
         player.deleteGuild()
         player.closeInventory()
     }) {
-    Text("${GREEN}${BOLD}Confirm Guild Disbanding", modifier = Modifier.size(3, 3))
+    Text("<green><b>Confirm Guild Disbanding".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -35,5 +35,5 @@ fun GuildUIScope.CancelButton(modifier: Modifier = Modifier) = Button(
     modifier,
     onClick = { nav.back() }
 ) {
-    Text("${RED}${BOLD}Cancel Guild Disbanding", modifier = Modifier.size(3, 3))
+    Text("<red><b>Cancel Guild Disbanding".miniMsg(), modifier = Modifier.size(3, 3))
 }

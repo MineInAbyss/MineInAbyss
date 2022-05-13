@@ -15,6 +15,8 @@ allprojects {
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
         maven("https://mvn.lumine.io/repository/maven-public/") // MCCosmetics
+        maven("https://m2.dv8tion.net/releases") // DiscordSRV
+        maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://jitpack.io")
     }
 
@@ -57,6 +59,8 @@ allprojects {
         compileOnly(mialibs.minecraft.plugin.blocklocker)
         compileOnly(mialibs.minecraft.plugin.gsit)
         compileOnly(mialibs.minecraft.plugin.mccosmetics)
+        compileOnly(mialibs.minecraft.plugin.discordsrv)
+        compileOnly(mialibs.minecraft.plugin.luckperms)
     }
 }
 

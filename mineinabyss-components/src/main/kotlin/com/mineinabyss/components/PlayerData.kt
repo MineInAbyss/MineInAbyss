@@ -18,7 +18,7 @@ class PlayerData(
     var pvpUndecided: Boolean = true,
     var pvpStatus: Boolean = false,
     var orthCoinsHeld: Int = 0,
-    var cloutTokensHeld: Int = 0,
+    var mittyTokensHeld: Int = 0,
     var showPlayerBalance: Boolean = true,
     var guildChatStatus: Boolean = false,
     @Transient var recentRightclickedEntity: Entity? = null

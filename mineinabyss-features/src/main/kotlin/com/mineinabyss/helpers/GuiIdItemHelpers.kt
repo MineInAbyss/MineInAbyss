@@ -5,6 +5,7 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
 import de.erethon.headlib.HeadLib
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
@@ -16,6 +17,11 @@ object TitleItem {
         setLore(lore.toList())
         setCustomModelData(1)
     }
+    fun of(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
+        displayName(name)
+        lore(lore.toList())
+        setCustomModelData(1)
+    }
 }
 
 @Composable
@@ -24,11 +30,16 @@ fun Text(name: String, vararg lore: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ItemButton(name: String, vararg lore: String, customModelData: Int, modifier: Modifier = Modifier) {
+fun Text(name: Component, vararg lore: Component, modifier: Modifier = Modifier) {
+    Item(TitleItem.of(name, *lore), modifier)
+}
+
+@Composable
+fun ItemButton(name: Component, vararg lore: Component, customModelData: Int, modifier: Modifier = Modifier) {
     Item(
         ItemStack(Material.PAPER).editItemMeta {
-            setDisplayName(name)
-            setLore(lore.toList())
+            displayName(name)
+            lore(lore.toList())
             setCustomModelData(customModelData)
         }, modifier)
 }
@@ -44,8 +55,8 @@ fun ItemStack.NoToolTip(): ItemStack {
 }
 
 fun OfflinePlayer?.head(
-    title: String,
-    vararg lore: String,
+    title: Component,
+    vararg lore: Component,
     isFlat: Boolean = false,
     isLarge: Boolean = false,
     isCenterOfInv: Boolean = false,
@@ -54,8 +65,8 @@ fun OfflinePlayer?.head(
 
     return ItemStack(Material.PLAYER_HEAD).editItemMeta {
         if (this is SkullMeta) {
-            setDisplayName(title)
-            setLore(lore.toList())
+            displayName(title)
+            lore(lore.toList())
             if (isFlat) setCustomModelData(10)
             if (isLarge) setCustomModelData(11)
             if (isCenterOfInv && !isLarge) setCustomModelData(12)

@@ -14,9 +14,9 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -47,8 +47,8 @@ fun GuildUIScope.GuildJoinRequest(modifier: Modifier = Modifier) {
             Button(onClick = { if (!player.hasGuildRequests()) player.closeInventory() else nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember))) }) {
                 Item(
                     newMember.toPlayer().head(
-                        "$YELLOW$ITALIC${newMember.toPlayer()?.name}",
-                        "${BLUE}Click this to accept or deny the join-request.",
+                        "<yellow><i>${newMember.toPlayer()?.name}".miniMsg(),
+                        "<blue>Click this to accept or deny the join-request.".miniMsg(),
                         isFlat = true
                     )
                 )

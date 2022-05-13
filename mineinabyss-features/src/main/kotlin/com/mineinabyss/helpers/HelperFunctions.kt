@@ -1,16 +1,16 @@
 package com.mineinabyss.helpers
 
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.mineinabyss.core.*
-import io.lumine.cosmetics.managers.gestures.GestureManager
-import io.lumine.cosmetics.players.Profile
+import com.mineinabyss.playerprofile.luckPerms
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
+import net.luckperms.api.node.NodeType
+import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -37,13 +37,13 @@ fun Player.isInHub() = MIAConfig.data.hubSection == player?.location?.let { Worl
 fun Player.updateBalance() {
     val data = player?.playerData
     val orthCoinBalance = data?.orthCoinsHeld
-    val cloutBalance = data?.cloutTokensHeld
-    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
-    val splitSupporterBalance = cloutBalance.toString().toList().joinToString { ":$it:" }.replace(", ", "")
+    val mittyTokenBalance = data?.mittyTokensHeld
+    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
+    val splitSupporterBalance = mittyTokenBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
 
-    val currentBalance: Component = if (data?.cloutTokensHeld!! > 0) {
+    val currentBalance: Component = if (data?.mittyTokensHeld!! > 0) {
         /* Switch to NegativeSpace.PLUS when that is added to Idofront */
-        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:clouttoken:")
+        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:mittytoken:")
     } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
@@ -52,7 +52,7 @@ fun Player.updateBalance() {
         do {
             player?.sendActionBar(currentBalance)
             delay(1.seconds)
-        } while (data.orthCoinsHeld == orthCoinBalance && data.cloutTokensHeld == cloutBalance && data.showPlayerBalance)
+        } while (data.orthCoinsHeld == orthCoinBalance && data.mittyTokensHeld == mittyTokenBalance && data.showPlayerBalance)
         return@launch
     }
 }
@@ -126,14 +126,12 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Player.playGesture(gesture: String) {
-    mcCosmetics.profiles.getProfile(name).ifPresent { profile: Profile? ->
-        mcCosmetics.gestureManager.getCosmetic(gesture).ifPresent { gesture ->
-            cosmetics.gesture = gesture
-            gesture.equip(profile)
-            playerData
-            (gesture.manager as GestureManager).playGesture(profile)
-        }
-    }
+fun Player.getLinkedDiscordAccount() : String? {
+    return discordSRV.accountLinkManager.getDiscordId(player?.uniqueId)
+}
+
+fun Player.getGroups() : List<String> {
+    return luckPerms.userManager.getUser(player?.uniqueId!!)?.getNodes(NodeType.INHERITANCE)?.stream()
+        ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
 

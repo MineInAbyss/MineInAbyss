@@ -8,15 +8,14 @@ import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.NoToolTip
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
+import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
-import org.bukkit.ChatColor.*
 
 @Composable
 fun GuildUIScope.GuildLookupListScreen() {
@@ -43,13 +42,13 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
                 }) {
                 Item(
                     owner.head(
-                        "${GOLD}${ITALIC}${guildName}",
-                        "${YELLOW}${BOLD}Guild Owner: ${YELLOW}${ITALIC}${owner.name}",
-                        "${YELLOW}${BOLD}Guild Level: ${YELLOW}${ITALIC}${guildLevel}",
-                        "${YELLOW}${BOLD}Guild Jointype: ${YELLOW}${ITALIC}${joinType}",
-                        "${YELLOW}${BOLD}Guild Membercount: ${YELLOW}${ITALIC}${owner.getGuildMemberCount()} / ${
+                        "<gold><i>$guildName".miniMsg(),
+                        "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
+                        "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
+                        "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
+                        "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${
                             owner.getGuildLevel()?.times(5)
-                        }",
+                        }".miniMsg(),
                         isFlat = true
                     )
                 )
@@ -66,8 +65,8 @@ fun GuildUIScope.PreviousButton(modifier: Modifier = Modifier) {
         }
     ) {
         Text(
-            "${YELLOW}${BOLD}Previous",
-            "${RED}This feature is not yet implemented."
+            "<yellow><b>Previous".miniMsg(),
+            "<red>This feature is not yet implemented.".miniMsg()
         )
     }
 }
@@ -80,15 +79,15 @@ fun GuildUIScope.NextButton(modifier: Modifier = Modifier) {
             displayGuildList()
         }) {
         Text(
-            "${YELLOW}${BOLD}Next",
-            "${RED}This feature is not yet implemented."
+            "<yellow><b>Next".miniMsg(),
+            "<red>This feature is not yet implemented.".miniMsg()
         )
     }
 }
 
 @Composable
 fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
-    val button = TitleItem.of("Guild Name").NoToolTip()
+    val button = TitleItem.of("Guild Name")
     Button(
         modifier = modifier,
         onClick = {
@@ -109,7 +108,7 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
                 ))
         }
     ) {
-        Text("${GOLD}${BOLD}Search for a Guild by name")
+        Text("<gold><b>Search for a Guild by name".miniMsg())
     }
 }
 

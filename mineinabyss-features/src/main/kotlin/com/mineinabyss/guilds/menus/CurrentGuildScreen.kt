@@ -10,9 +10,9 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.head
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor.*
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -46,8 +46,8 @@ fun GuildUIScope.GuildMemberList(modifier: Modifier) {
         members.sortedBy { it.first }.forEach { (rank, member) ->
             Item(
                 member.head(
-                    "$GOLD$ITALIC${member.name}",
-                    "$YELLOW${BOLD}Guild Rank: $YELLOW$ITALIC${rank}",
+                    "<gold><i>$member.name".miniMsg(),
+                    "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                     isFlat = true
                 )
             )

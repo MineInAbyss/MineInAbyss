@@ -11,7 +11,7 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
-import org.bukkit.ChatColor.*
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
@@ -26,7 +26,7 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
 
 @Composable
 fun GuildUIScope.GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
-    Item(owner.head("${YELLOW}${ITALIC}${owner.name}", isCenterOfInv = true, isLarge = true), modifier = modifier)
+    Item(owner.head("<yellow><i>${owner.name}".miniMsg(), isCenterOfInv = true, isLarge = true), modifier = modifier)
 }
 
 @Composable
@@ -36,8 +36,8 @@ fun GuildUIScope.GuildMembersButton(modifier: Modifier, guildName: String) {
             Button {
                 Item(
                     member.head(
-                        "${GOLD}${ITALIC}${member.name}",
-                        "${YELLOW}${BOLD}Guild Rank: ${YELLOW}${ITALIC}${rank}",
+                        "<gold><i>${member.name}".miniMsg(),
+                        "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                         isFlat = true
                     )
                 )
@@ -54,18 +54,18 @@ fun GuildUIScope.RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, g
             player.requestToJoin(guildName)
     }) {
         if (!inviteOnly && !player.hasGuild()) {
-            Text("${GREEN}Request to join ${DARK_GREEN}${ITALIC}$guildName")
+            Text("<green>Request to join <dark_green><i>$guildName".miniMsg())
         }
         else if (inviteOnly) {
-            Text("${RED}${STRIKETHROUGH}Request to join ${ITALIC}$guildName",
-                "${DARK_RED}${ITALIC}This guild can currently only",
-                "${DARK_RED}${ITALIC}be joined by invites."
+            Text("<red><st>Request to join <i>$guildName".miniMsg(),
+                "<dark_red><i>This guild can currently only".miniMsg(),
+                "<dark_red><i>be joined by invites.".miniMsg()
             )
         }
         else if (player.hasGuild()) {
-            Text("${RED}${STRIKETHROUGH}Request to join ${ITALIC}$guildName",
-                "${DARK_RED}${ITALIC}You have to leave your Guild",
-                "${DARK_RED}${ITALIC}before requesting to join another."
+            Text("<red><st>Request to join <i>$guildName".miniMsg(),
+                "<dark_red><i>You have to leave your Guild".miniMsg(),
+                "<dark_red><i>before requesting to join another.".miniMsg()
             )
         }
     }
