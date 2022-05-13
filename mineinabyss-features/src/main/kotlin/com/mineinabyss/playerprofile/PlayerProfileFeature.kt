@@ -35,7 +35,7 @@ class PlayerProfileFeature : AbyssFeature {
                     1 -> listOf("profile").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "profile" -> list
+                            "profile" -> list.filter { it.startsWith(args[1]) }
                             else -> null
                         }
                     }

@@ -30,10 +30,9 @@ val luckPerms = LuckPermsProvider.get()
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = player.name.toList().joinToString { ":player_profile_$it:" }.replace(", ", "")
-    val ranks = DisplayRanks(player)
 
     Chest(setOf(viewer),
-        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName${Space.of(-42)}${ranks}",
+        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName${Space.of(-42)}${DisplayRanks(player)}",
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
@@ -66,7 +65,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
         player.head(
             "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
             isLarge = true
         ), modifier = modifier
@@ -75,7 +74,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
         TitleItem.of(
             "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
         ), modifier = modifier.at(1, 1)
     )
@@ -83,7 +82,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
         TitleItem.of(
             "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
         ), modifier = modifier.at(0, 2)
     )
@@ -91,7 +90,7 @@ fun PlayerHead(player: Player, modifier: Modifier) {
         TitleItem.of(
             "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.TOTAL_WORLD_TIME) / 20 / 3600}h".miniMsg(),
+            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
         ), modifier = modifier.at(1, 2)
     )
@@ -129,12 +128,14 @@ fun CosmeticBackpack(player: Player) {
 
 @Composable
 fun OrthCoinBalance(player: Player) {
-    Item(TitleItem.of("<#FFBB1C>${player.playerData.orthCoinsHeld} <b>Orth Coins".miniMsg()))//
+    val amount = player.playerData.orthCoinsHeld
+    Item(TitleItem.of("<#FFBB1C>${amount} <b>Orth Coin${if (amount != 1) "s" else ""}".miniMsg()))
 }
 
 @Composable
 fun MittyTokenBalance(player: Player) {
-    Item(TitleItem.of("<#b74b4d>${player.playerData.mittyTokensHeld} <b>Mitty Tokens".miniMsg()))
+    val amount = player.playerData.mittyTokensHeld
+    Item(TitleItem.of("<#b74b4d>${amount} <b>Mitty Token${if (amount != 1) "s" else ""}".miniMsg()))
 }
 
 @Composable

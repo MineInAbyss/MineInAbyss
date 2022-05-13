@@ -11,7 +11,7 @@ class PatreonListener : Listener {
 
     @EventHandler
     fun PlayerJoinEvent.addPatreonComponent() {
-        val isPatreon = player.getGroups().contains("patreon")
+        val isPatreon = (player.getGroups().contains("patreon") || player.getGroups().contains("patreonplus"))
 
         if (!isPatreon) return
         if (!player.toGeary().has<Patreon>()) player.toGeary().getOrSetPersisting { Patreon() }
