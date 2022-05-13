@@ -127,7 +127,7 @@ fun handleCurse(player: Player, from: Location, to: Location) {
 }
 
 fun Player.getLinkedDiscordAccount() : String? {
-    return discordSRV.accountLinkManager.getDiscordId(player?.uniqueId)
+    return runCatching { discordSRV.accountLinkManager.getDiscordId(player?.uniqueId) }.getOrNull()
 }
 
 fun Player.getGroups() : List<String> {

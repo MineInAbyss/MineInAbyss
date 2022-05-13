@@ -142,12 +142,15 @@ fun GuildButton(player: Player, viewer: Player) {
     Button(enabled = player.hasGuild() && !viewer.hasGuild(), onClick = {
         guiy { GuildScreen.GuildLookupMembers(player.getGuildName()) }
     }) {
-        Text(
-            "<gold><b><i>${player.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
-            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
-        )
+        if (player.hasGuild()) {
+            Text(
+                "<gold><b><i>${player.getGuildName()}".miniMsg(),
+                "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
+                "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
+                "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
+            )
+        }
+        else Text("<gold><b><i>${player.name}</b> is not".miniMsg(), "<gold><i>in any guild.".miniMsg())
     }
 }
 
