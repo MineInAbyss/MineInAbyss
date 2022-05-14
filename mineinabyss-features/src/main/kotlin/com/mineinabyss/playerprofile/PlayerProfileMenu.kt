@@ -163,7 +163,7 @@ fun DiscordButton(player: Player) {
         Item(TitleItem.of(
             "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
             "<#718AD6>linked an account.".miniMsg()))
-    } else Item(TitleItem.of("<b><#718AD6>${linked}".miniMsg()))
+    } else Item(TitleItem.of("<b><#718AD6>${player.name} is linked with <b>${linked}</b>.".miniMsg()))
 }
 
 @Composable
