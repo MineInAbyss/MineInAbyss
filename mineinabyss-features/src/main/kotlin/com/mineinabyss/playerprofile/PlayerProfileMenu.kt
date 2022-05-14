@@ -97,34 +97,22 @@ fun PlayerHead(player: Player, modifier: Modifier) {
 }
 
 @Composable
-fun HelmetSlot(player: Player) {
-    Item(player.equipment.helmet)
-}
+fun HelmetSlot(player: Player) = Item(player.equipment.helmet)
 
 @Composable
-fun ChestplateSlot(player: Player) {
-    Item(player.equipment.chestplate)
-}
+fun ChestplateSlot(player: Player) = Item(player.equipment.chestplate)
 
 @Composable
-fun LeggingsSlot(player: Player) {
-    Item(player.equipment.leggings)
-}
+fun LeggingsSlot(player: Player) = Item(player.equipment.leggings)
 
 @Composable
-fun BootsSlot(player: Player) {
-    Item(player.equipment.boots)
-}
+fun BootsSlot(player: Player) = Item(player.equipment.boots)
 
 @Composable
-fun CosmeticHat(player: Player) {
-    Item(player.getCosmeticHat())
-}
+fun CosmeticHat(player: Player) = Item(player.getCosmeticHat().itemStack)
 
 @Composable
-fun CosmeticBackpack(player: Player) {
-    Item(player.getCosmeticBackpack())
-}
+fun CosmeticBackpack(player: Player) = Item(player.getCosmeticBackpack().itemStack)
 
 @Composable
 fun OrthCoinBalance(player: Player) {
