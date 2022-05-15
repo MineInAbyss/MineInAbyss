@@ -19,7 +19,7 @@ object CustomEnchants {
     val BIRD_SWATTER = EnchantmentWrapper("birdswatter", "Bird Swatter", 5, EnchantmentTarget.WEAPON, color(0,220,60))
     val JAW_BREAKER = EnchantmentWrapper("jawbreaker", "Jaw Breaker", 3, EnchantmentTarget.WEAPON, color(150,20,150))
     val BANE_OF_KUONGATARI = EnchantmentWrapper("baneofkuongatari", "Bane of Kuongatari", 1, EnchantmentTarget.WEAPON, color(0,200,80))
-
+    val MAGNETISM = EnchantmentWrapper("magnetism", "Magnetism", 1, EnchantmentTarget.TOOL, color(200,200,80))
 
     fun register() {
         val registered: Boolean = Enchantment.values().contains(SOULBOUND)
@@ -27,6 +27,12 @@ object CustomEnchants {
 
         val registered2: Boolean = Enchantment.values().contains(FROST_ASPECT)
         if (!registered2) registerEnchantment(FROST_ASPECT)
+
+        val registered3: Boolean = Enchantment.values().contains(BIRD_SWATTER)
+        if (!registered3) registerEnchantment(BIRD_SWATTER)
+
+        val registered4: Boolean = Enchantment.values().contains(MAGNETISM)
+        if (!registered4) registerEnchantment(MAGNETISM)
     }
 
     private fun registerEnchantment(enchantment: Enchantment) {
