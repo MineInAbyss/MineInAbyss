@@ -1,13 +1,18 @@
 package com.mineinabyss.cosmetics
 
 import com.mineinabyss.components.cosmetics.cosmetics
+import com.mineinabyss.components.players.Backpack
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.equipCosmeticBackPack
 import com.mineinabyss.helpers.getCosmeticBackpack
 import com.mineinabyss.helpers.unequipCosmeticBackpack
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.serialization.toSerializable
+import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent
+import io.github.fisher2911.hmccosmetics.gui.ArmorItem
 import org.bukkit.Material
 import org.bukkit.block.ShulkerBox
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
@@ -16,22 +21,35 @@ import org.bukkit.inventory.meta.BlockStateMeta
 
 class CosmeticListener : Listener {
 
+    // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
+    @EventHandler
+    fun CosmeticChangeEvent.onEquipBackpack() {
+        val player = user as? Player ?: return
+        if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player.toGeary().has<Backpack>()) {
+            player.cosmetics.cosmeticBackpack = cosmeticItem.id
+            isCancelled = true
+        }
+    }
+
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
         if (player.isSneaking && rightClicked) {
             if (player.getCosmeticBackpack().itemStack.type == Material.AIR) {
-                val type = item?.type.toString().replace("_SHULKER_BOX", "").lowercase()
+                val i = item?.type.toString().lowercase()
+                val type = if (!i.startsWith("shulker")) i.replace("_shulker_box", "") else i
                 val meta = (item?.itemMeta as? BlockStateMeta)?.blockState as? ShulkerBox ?: return
 
                 isCancelled = true
+                val backpack = player.toGeary().getOrSetPersisting { Backpack() }
                 meta.inventory.filterNotNull().forEach {
-                    player.cosmetics.backpackContent?.add(it.toSerializable())
+                    backpack.backpackContent?.add(it.toSerializable())
                 }
                 item?.subtract(1)
-                if (player.cosmetics.cosmeticBackpack == null)
-                    player.equipCosmeticBackPack("default_$type")
-                else
-                    player.equipCosmeticBackPack(player.cosmetics.cosmeticBackpack!!)
+                if (player.cosmetics.cosmeticBackpack == null) {
+                    if (type.contains("shulker")) player.equipCosmeticBackPack("default_yellow")
+                    else player.equipCosmeticBackPack("default_$type")
+                }
+                else player.equipCosmeticBackPack(player.cosmetics.cosmeticBackpack!!)
             }
             else {
                 val inv = player.inventory
@@ -40,7 +58,7 @@ class CosmeticListener : Listener {
                 val box = bsm.blockState as? ShulkerBox ?: return
 
                 isCancelled = true
-                player.cosmetics.backpackContent?.forEach {
+                player.toGeary().get<Backpack>()?.backpackContent?.forEach {
                     box.inventory.addItem(it.toItemStack())
                 }
                 bsm.blockState = box
@@ -53,7 +71,8 @@ class CosmeticListener : Listener {
                     inv.setItem(inv.firstEmpty(), item)
                 else return
                 player.unequipCosmeticBackpack()
-                player.cosmetics.backpackContent?.clear()
+                player.toGeary().get<Backpack>()?.backpackContent?.clear()
+                player.toGeary().remove<Backpack>()
             }
         }
     }
