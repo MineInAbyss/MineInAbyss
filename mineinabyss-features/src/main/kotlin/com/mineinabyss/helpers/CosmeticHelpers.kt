@@ -1,6 +1,5 @@
 package com.mineinabyss.helpers
 
-import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.mineinabyss.core.mcCosmetics
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem
 import io.github.fisher2911.hmccosmetics.api.HMCCosmeticsAPI
@@ -12,7 +11,6 @@ import org.bukkit.entity.Player
 fun Player.playGesture(gesture: String) {
     mcCosmetics.profiles.getProfile(name).ifPresent { profile: Profile? ->
         mcCosmetics.gestureManager.getCosmetic(gesture).ifPresent { gesture ->
-            cosmetics.gesture = gesture
             gesture.equip(profile)
             (gesture.manager as GestureManager).playGesture(profile)
         }

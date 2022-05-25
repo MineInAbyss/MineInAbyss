@@ -24,8 +24,8 @@ class CosmeticListener : Listener {
     // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
     @EventHandler
     fun CosmeticChangeEvent.onEquipBackpack() {
-        val player = (user as? User ?: return).player
-        if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player!!.toGeary().has<Backpack>()) {
+        val player = (user as? User ?: return).player ?: return
+        if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player.toGeary().has<Backpack>()) {
             player.cosmetics.cosmeticBackpack = cosmeticItem.id
             isCancelled = true
         }
@@ -34,7 +34,9 @@ class CosmeticListener : Listener {
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
         if (player.isSneaking && rightClicked) {
+            // Put backpack on and store backpack-inv
             if (player.getCosmeticBackpack().itemStack.type == Material.AIR) {
+                // Get the color of the players backpack, or non-colored, from the material
                 val i = item?.type.toString().lowercase()
                 val type = if (!i.startsWith("shulker")) i.replace("_shulker_box", "") else i
                 val meta = (item?.itemMeta as? BlockStateMeta)?.blockState as? ShulkerBox ?: return
@@ -45,19 +47,26 @@ class CosmeticListener : Listener {
                     backpack.backpackContent?.add(it.toSerializable())
                 }
                 item?.subtract(1)
+
+                // Use default color backpack or custom one if specified so by the component
                 if (player.cosmetics.cosmeticBackpack == null) {
                     if (type.contains("shulker")) player.equipCosmeticBackPack("default_yellow")
                     else player.equipCosmeticBackPack("default_$type")
                 }
                 else player.equipCosmeticBackPack(player.cosmetics.cosmeticBackpack!!)
             }
+
+            // Remove backpack and refill backpack with inventory
             else {
+                // Create a new itemstack of the cosmetic backpack
                 val inv = player.inventory
                 val item = ItemStack(player.getCosmeticBackpack().itemStack)
                 val bsm = (item.itemMeta as? BlockStateMeta) ?: return
                 val box = bsm.blockState as? ShulkerBox ?: return
 
                 isCancelled = true
+
+                // Add all the items on the component back into the backpack
                 player.toGeary().get<Backpack>()?.backpackContent?.forEach {
                     box.inventory.addItem(it.toItemStack())
                 }
@@ -70,6 +79,8 @@ class CosmeticListener : Listener {
                 else if (inv.firstEmpty() != -1)
                     inv.setItem(inv.firstEmpty(), item)
                 else return
+
+                // Unequip the backpack from the player
                 player.unequipCosmeticBackpack()
                 player.toGeary().get<Backpack>()?.backpackContent?.clear()
                 player.toGeary().remove<Backpack>()
