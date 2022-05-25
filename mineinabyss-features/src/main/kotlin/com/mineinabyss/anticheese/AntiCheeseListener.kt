@@ -14,12 +14,14 @@ import org.bukkit.block.BlockFace
 import org.bukkit.block.Dispenser
 import org.bukkit.block.Lectern
 import org.bukkit.block.data.Directional
+import org.bukkit.block.data.type.RespawnAnchor
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockDispenseEvent
 import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
@@ -31,6 +33,15 @@ import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
 
 class AntiCheeseListener : Listener {
+
+    @EventHandler
+    fun PlayerInteractEvent.onInteractAnchor() {
+        val block = clickedBlock ?: return
+        val data = block.blockData as? RespawnAnchor ?: return
+        if (action != Action.RIGHT_CLICK_BLOCK) return
+        if (data.charges >= data.maximumCharges) isCancelled = true
+    }
+
     @EventHandler
     fun BlockPlaceEvent.preventPlacement() {
         if (player.location.layer?.blockBlacklist?.contains(blockPlaced.type) == true) {
