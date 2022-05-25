@@ -10,9 +10,9 @@ import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.serialization.toSerializable
 import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem
+import io.github.fisher2911.hmccosmetics.user.User
 import org.bukkit.Material
 import org.bukkit.block.ShulkerBox
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
@@ -24,8 +24,8 @@ class CosmeticListener : Listener {
     // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
     @EventHandler
     fun CosmeticChangeEvent.onEquipBackpack() {
-        val player = user as? Player ?: return
-        if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player.toGeary().has<Backpack>()) {
+        val player = (user as? User ?: return).player
+        if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player!!.toGeary().has<Backpack>()) {
             player.cosmetics.cosmeticBackpack = cosmeticItem.id
             isCancelled = true
         }
