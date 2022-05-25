@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.Database
 /** A reference to the MineInAbyss plugin */
 val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin("MineInAbyss") as MineInAbyssPlugin }
 val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("MCCosmetics") as MCCosmeticsPlugin }
-val hmcCosmetics: HMCCosmetics by lazy { Bukkit.getPluginManager().getPlugin("HMCosmetics") as HMCCosmetics }
+val hmcCosmetics: HMCCosmetics by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmetics }
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 
 interface AbyssContext {
