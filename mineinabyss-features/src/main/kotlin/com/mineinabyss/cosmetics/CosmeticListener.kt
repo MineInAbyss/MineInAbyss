@@ -1,5 +1,6 @@
 package com.mineinabyss.cosmetics
 
+import com.mineinabyss.components.cosmetics.Cosmetics
 import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.components.players.Backpack
 import com.mineinabyss.geary.papermc.access.toGeary
@@ -26,7 +27,7 @@ class CosmeticListener : Listener {
     fun CosmeticChangeEvent.onEquipBackpack() {
         val player = (user as? User ?: return).player ?: return
         if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player.toGeary().has<Backpack>()) {
-            player.cosmetics.cosmeticBackpack = cosmeticItem.id
+            player.toGeary() { setPersisting(Cosmetics(cosmeticBackpack = cosmeticItem.id)) }
             isCancelled = true
         }
     }
