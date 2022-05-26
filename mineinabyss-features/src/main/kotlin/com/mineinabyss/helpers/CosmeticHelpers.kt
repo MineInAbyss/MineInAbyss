@@ -7,17 +7,14 @@ import io.github.fisher2911.hmccosmetics.api.CosmeticItem
 import io.github.fisher2911.hmccosmetics.api.HMCCosmeticsAPI
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem
 import io.lumine.cosmetics.managers.gestures.GestureManager
-import io.lumine.cosmetics.players.Profile
 import org.bukkit.entity.Player
 
-fun Player.playGesture(gesture: String) {
-    mcCosmetics.profiles.getProfile(name).ifPresent profile@{ profile: Profile? ->
-        mcCosmetics.gestureManager.getCosmetic(gesture).ifPresent gesture@{ gesture ->
-            player?.toGeary { setPersisting(Cosmetics(gesture = gesture)) } ?: return@gesture
-            gesture.equip(profile)
-            (gesture.manager as GestureManager).playGesture(profile)
-        }
-    }
+fun Player.playGesture(gestureName: String) {
+    val profile = mcCosmetics.profiles.getProfile(this)
+    val gesture = mcCosmetics.gestureManager.getCosmetic(gestureName).get()
+    toGeary { setPersisting(Cosmetics(gesture = gesture)) }
+    gesture.equip(profile)
+    (gesture.manager as GestureManager).playGesture(profile)
 }
 
 fun Player.getCosmeticHat(): CosmeticItem = HMCCosmeticsAPI.getUserCurrentItem(uniqueId, ArmorItem.Type.HAT)

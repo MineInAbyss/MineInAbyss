@@ -6,6 +6,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("mineinabyss:backpack")
-class Backpack(
-    var backpackContent: MutableList<SerializableItemStack>? = mutableListOf()
-)
+data class Backpack(val backpackContent: MutableList<SerializableItemStack>? = mutableListOf())

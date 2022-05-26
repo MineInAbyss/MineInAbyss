@@ -9,6 +9,9 @@ import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("mineinabyss:cosmetics")
-data class Cosmetics(val gesture: @Contextual Gesture? = null, val cosmeticBackpack: String? = null)
+data class Cosmetics(
+    val gesture: @Contextual Gesture? = null,
+    val cosmeticBackpack: String? = null
+)
 
 val Player.cosmetics get() = toGeary().getOrSetPersisting { Cosmetics() }
