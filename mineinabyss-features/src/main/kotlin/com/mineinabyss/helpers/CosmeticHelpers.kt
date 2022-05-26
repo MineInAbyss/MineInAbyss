@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 fun Player.playGesture(gestureName: String) {
     val profile = mcCosmetics.profiles.getProfile(this)
     val gesture = mcCosmetics.gestureManager.getCosmetic(gestureName).get()
-    toGeary { setPersisting(Cosmetics(gesture = gesture)) }
+    toGeary { setPersisting(Cosmetics(gesture = gestureName)) }
     gesture.equip(profile)
     (gesture.manager as GestureManager).playGesture(profile)
 }
