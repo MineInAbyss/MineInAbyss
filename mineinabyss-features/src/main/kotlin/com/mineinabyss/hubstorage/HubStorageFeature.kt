@@ -22,7 +22,7 @@ class HubStorageFeature: AbyssFeature {
                         if (player.isInHub())
                             player.openHubStorage()
                         else
-                            sender.error("You are not in the hub area.")
+                            player.error("You are not in the hub area.")
                     }
                 }
             }

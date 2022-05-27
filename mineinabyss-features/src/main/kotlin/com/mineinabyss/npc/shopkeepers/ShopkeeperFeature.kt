@@ -1,7 +1,6 @@
 package com.mineinabyss.npc.shopkeepers
 
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -14,7 +13,6 @@ import org.bukkit.entity.Player
 @SerialName("shopkeeper")
 class ShopkeeperFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(ShopkeeperListener())
 
         commands {
             mineinabyss {

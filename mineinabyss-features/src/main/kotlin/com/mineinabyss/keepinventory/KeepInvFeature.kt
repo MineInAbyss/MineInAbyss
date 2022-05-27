@@ -19,7 +19,7 @@ class KeepInvFeature(
     val KeepInvInVoid: Boolean = true
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(KeepInvListener())
+        registerEvents(KeepInvListener(this@KeepInvFeature))
 
         commands {
             mineinabyss {

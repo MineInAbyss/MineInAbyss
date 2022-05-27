@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.messaging.miniMsg
 import de.erethon.headlib.HeadLib
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -13,7 +14,7 @@ import org.bukkit.inventory.meta.SkullMeta
 
 object TitleItem {
     fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
-        setDisplayName(name)
+        displayName(name.miniMsg())
         setLore(lore.toList())
         setCustomModelData(1)
     }
@@ -32,26 +33,6 @@ fun Text(name: String, vararg lore: String, modifier: Modifier = Modifier) {
 @Composable
 fun Text(name: Component, vararg lore: Component, modifier: Modifier = Modifier) {
     Item(TitleItem.of(name, *lore), modifier)
-}
-
-@Composable
-fun ItemButton(name: Component, vararg lore: Component, customModelData: Int, modifier: Modifier = Modifier) {
-    Item(
-        ItemStack(Material.PAPER).editItemMeta {
-            displayName(name)
-            lore(lore.toList())
-            setCustomModelData(customModelData)
-        }, modifier)
-}
-
-// Uses a shader to hide the entire tooltip
-// https://github.com/lolgeny/item-tooltip-remover
-fun ItemStack.NoToolTip(): ItemStack {
-    // Doesnt work with Mac's so disable for now
-//    editItemMeta {
-//        lore = listOf("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","                                                                                                                                                                                                                                                                                                                                                                                                                           ")
-//    }
-    return this
 }
 
 fun OfflinePlayer?.head(

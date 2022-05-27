@@ -42,7 +42,6 @@ fun Player.updateBalance() {
     val splitSupporterBalance = mittyTokenBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
 
     val currentBalance: Component = if (data?.mittyTokensHeld!! > 0) {
-        /* Switch to NegativeSpace.PLUS when that is added to Idofront */
         Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:mittytoken:")
     } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
 
