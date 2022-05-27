@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.potion.PotionEffectType
 
-class InteractionListener : Listener {
+class MiscListener : Listener {
     @EventHandler
     fun ProjectileHitEvent.onDouseItemFrame() {
         val entity = entity as? ThrownPotion ?: return
