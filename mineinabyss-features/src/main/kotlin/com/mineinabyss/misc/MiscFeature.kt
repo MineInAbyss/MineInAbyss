@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("invisibleItemFrames")
+@SerialName("miscFeature")
 class MiscFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(MiscListener())
