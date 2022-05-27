@@ -21,13 +21,15 @@ class CosmeticsFeature : AbyssFeature {
                 "cosmetic" {
                     "menu" {
                         playerAction {
-                            if (hmcCosmetics.isEnabled) hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
+                            if (mineInAbyss.server.pluginManager.isPluginEnabled("HMCCosmetics"))
+                                hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
                         }
                     }
                     "gesture" {
                         val gesture by stringArg()
                         playerAction {
-                            (sender as Player).playGesture(gesture)
+                            if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics"))
+                                    (sender as Player).playGesture(gesture)
                         }
                     }
                 }
@@ -35,9 +37,11 @@ class CosmeticsFeature : AbyssFeature {
             tabCompletion {
                 val emotes: MutableList<String> = ArrayList()
 
-                for (gesture in mcCosmetics.gestureManager.allCosmetics) {
-                    if ((this.sender as Player).hasPermission(gesture.permission))
-                        emotes.add(gesture.key)
+                if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics")) {
+                    for (gesture in mcCosmetics.gestureManager.allCosmetics) {
+                        if ((this.sender as Player).hasPermission(gesture.permission))
+                            emotes.add(gesture.key)
+                    }
                 }
 
                 when (args.size) {
