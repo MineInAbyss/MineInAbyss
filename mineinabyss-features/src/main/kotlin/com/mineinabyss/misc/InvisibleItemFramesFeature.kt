@@ -1,7 +1,8 @@
-package com.mineinabyss.invisibleItemFrames
+package com.mineinabyss.misc
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
+import com.mineinabyss.misc.InteractionListener
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

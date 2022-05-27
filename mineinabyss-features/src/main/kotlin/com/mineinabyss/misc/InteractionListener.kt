@@ -1,4 +1,4 @@
-package com.mineinabyss.invisibleItemFrames
+package com.mineinabyss.misc
 
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.ThrownPotion
