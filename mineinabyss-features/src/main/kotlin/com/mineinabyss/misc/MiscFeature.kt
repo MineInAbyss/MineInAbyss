@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("miscFeature")
+@SerialName("misc")
 class MiscFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         registerEvents(MiscListener())
