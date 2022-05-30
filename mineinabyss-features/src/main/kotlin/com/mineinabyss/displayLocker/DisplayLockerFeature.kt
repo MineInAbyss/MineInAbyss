@@ -1,5 +1,6 @@
 package com.mineinabyss.displayLocker
 
+import com.comphenix.protocol.PacketType.Play
 import com.mineinabyss.components.armorstandlock.LockArmorStand
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
@@ -29,54 +30,111 @@ class DisplayLockerFeature: AbyssFeature {
 
         commands {
             mineinabyss {
-                "lock"(desc="display locker commands") {
-                    val player = sender as Player
-                    val entity = player.playerData.recentRightclickedEntity
-                    val locked = entity?.toGeary()?.get<LockArmorStand>()
+                "lock"(desc = "Protection related commands") {
+                    "toggle"(desc = "Toggles if a display item should be protected or not") {
+                        playerAction {
+                            val player = sender as Player
+                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
 
-                    "toggle"(desc="toggles locking on display item") playerAction@{
-                        locked?.lockState = !locked?.lockState!!
-                        entity.setGravity(!locked.lockState)
-                        entity.toGeary().encodeComponentsTo(entity)
-                        if (locked.lockState) player.success("this ${entity.name} is now protected!")
-                        else player.error("this ${entity.name} is no longer protected!")
-                    }
-                    "add"(desc="add a player to this display item") {
-                        val playerName by stringArg()
-                        val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
-
-                        if (!locked?.isAllowed(uuid)!!) {
-                            locked.allowedAccess.add(uuid)
+                            locked.lockState = !locked.lockState
+                            entity.setGravity(!locked.lockState)
                             entity.toGeary().encodeComponentsTo(entity)
-                            player.success("$playerName is now able to interact with this ${entity.name}.")
-                        } else player.error("$playerName is already able to interact with this ${entity.name}")
-                    }
-                    "remove"(desc="remove a player from this display item") {
-                        val playerName by stringArg {parseErrorMessage = { "There is no player with the name: $passed." }}
-                        val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
-
-                        if (!locked?.isAllowed(uuid)!!) player.error("$playerName is unable to interact with this ${entity.name}.")
-                        else {
-                            locked.allowedAccess.remove(uuid)
-                            entity.toGeary().encodeComponentsTo(entity)
-                            player.success("$playerName was successfully removed from this ${entity.name}.")
+                            if (locked.lockState) player.success("This ${entity.name} is now protected!")
+                            else player.error("This ${entity.name} is no longer protected!")
                         }
                     }
-                    "clear"(desc="clear all other players from this display item") {
-                        locked?.allowedAccess?.clear()
-                        locked?.allowedAccess?.add(locked.owner)
-                        entity?.toGeary()?.encodeComponentsTo(entity)
-                        player.success("all other players were successfully removed from this ${entity?.name}.")
-                    }
-                    "list"(desc="list all players that are currently able to interact with this display item") {
-                        if (!locked?.lockState!!) player.error("this ${entity.name} is currently unprotected, anyone can interact with it.")
-                        else {
-                            player.success("The following people are able to interact with your ${entity.name}:")
-                            locked.allowedAccess.forEach {
-                                player.info(it.toPlayer()?.name)
+                    "add"(desc = "Add a player to this display item.") {
+                        val playerName by stringArg()
+                        playerAction {
+                            val player = sender as Player
+                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
+
+                            if (locked.isAllowed(uuid)) {
+                                player.error("$playerName can already interact with this ${entity.name}")
+                                return@playerAction
+                            }
+                            else {
+                                locked.allowedAccess.add(uuid)
+                                entity.toGeary().encodeComponentsTo(entity)
+                                player.success("$playerName can now interact with this ${entity.name}")
                             }
                         }
                     }
+
+                    "remove"(desc = "Remove a player to this display item.") {
+                        val playerName by stringArg {
+                            parseErrorMessage = { "No player with name: $passed." }
+                        }
+                        playerAction {
+                            val player = sender as Player
+                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
+
+                            if (locked.isAllowed(uuid)) {
+                                locked.allowedAccess.remove(uuid)
+                                entity.toGeary().encodeComponentsTo(entity)
+                                player.success("$playerName has been removed from this ${entity.name}")
+                                return@playerAction
+                            }
+                            player.error("$playerName cannot interact with this ${entity.name}")
+                        }
+                    }
+
+                    "clear"(desc = "Clear all other players from this display item") {
+                        playerAction {
+                            val player = sender as Player
+                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+
+                            locked.allowedAccess.clear()
+                            locked.allowedAccess.add(locked.owner)
+                            entity.toGeary().encodeComponentsTo(entity)
+                            player.success("All players were removed from this ${entity.name}")
+                        }
+                    }
+
+                    "check" (desc = "Get a list of all players allowed to interact with this display item.") {
+                        playerAction {
+                            val player = sender as Player
+                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+
+                            if (locked.lockState) {
+                                player.success("The following people can interact with your ${entity.name}:")
+                                locked.allowedAccess.forEach {
+                                    player.info(it.toPlayer()?.name)
+                                }
+                            }
+                            else {
+                                player.error("This ${entity.name} is not protected.")
+                                player.error("Anyone can interact with it.")
+                            }
+                        }
+                    }
+                }
+            }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf(
+                        "lock"
+                    ).filter { it.startsWith(args[0]) }
+                    2 -> {
+                        when (args[0]) {
+                            "lock" -> listOf("add", "remove", "clear", "check", "toggle")
+                            else -> null
+
+                        }
+                    }
+                    3 -> when (args[1]) {
+                        "add" -> Bukkit.getOnlinePlayers().map { it.name }
+                        "remove" -> Bukkit.getOnlinePlayers().map { it.name }
+                        else -> null
+                    }
+                    else -> null
                 }
             }
         }

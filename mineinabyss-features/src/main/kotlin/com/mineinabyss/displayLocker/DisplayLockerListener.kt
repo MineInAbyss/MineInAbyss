@@ -76,7 +76,7 @@ class DisplayLockerListener: Listener {
 
         if (!armorStand.lockState) return
         if (!armorStand.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
-            player.error("You do not have access to interacting with this armor stand!")
+            player.error("You do not have access to interact with this display item!")
             isCancelled = true
             return
         }
@@ -95,7 +95,7 @@ class DisplayLockerListener: Listener {
         }
 
         if (!armorStand.isAllowed(attacker.uniqueId) && !attacker.hasPermission("mineinabyss.lockarmorstand.bypass")) {
-            attacker.error("You do not have access to interacting with this armor stand!")
+            attacker.error("You do not have access to interact with this ${entity.name}")
             isCancelled = true
         }
     }
@@ -110,7 +110,7 @@ class DisplayLockerListener: Listener {
         if (!armorStandGeary.lockState) return
 
         if (!armorStandGeary.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockarmorstand.bypass")) {
-            player.error("You do not have access to fishing this armor stand!")
+            player.error("You do not have access to this display item")
             hook.remove()
             isCancelled = true
         }
