@@ -1,6 +1,5 @@
 package com.mineinabyss.displayLocker
 
-import com.comphenix.protocol.PacketType.Play
 import com.mineinabyss.components.armorstandlock.LockArmorStand
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
@@ -8,7 +7,6 @@ import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
@@ -17,7 +15,6 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
-import net.minecraft.util.DirectoryLock.LockException
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -97,7 +94,7 @@ class DisplayLockerFeature: AbyssFeature {
                         }
                     }
 
-                    "check" (desc = "Get a list of all players allowed to interact with this display item.") {
+                    "list" (desc = "Get a list of all players allowed to interact with this display item.") {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction

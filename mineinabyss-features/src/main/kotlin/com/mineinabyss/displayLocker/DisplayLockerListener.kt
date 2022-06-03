@@ -6,12 +6,8 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
-import com.mineinabyss.geary.papermc.systems.WearableItemListener.rightClickArmorStand
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.spawning.spawn
-import com.mineinabyss.mineinabyss.core.discordSRV
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -29,7 +25,6 @@ import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.json.XMLTokener.entity
 
 
 class DisplayLockerListener: Listener {
