@@ -1,6 +1,6 @@
 package com.mineinabyss.displayLocker
 
-import com.mineinabyss.components.armorstandlock.LockArmorStand
+import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
@@ -32,7 +32,7 @@ class DisplayLockerFeature: AbyssFeature {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             locked.lockState = !locked.lockState
                             entity.setGravity(!locked.lockState)
@@ -46,7 +46,7 @@ class DisplayLockerFeature: AbyssFeature {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
 
                             if (locked.isAllowed(uuid)) {
@@ -68,7 +68,7 @@ class DisplayLockerFeature: AbyssFeature {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
 
                             if (locked.isAllowed(uuid)) {
@@ -85,7 +85,7 @@ class DisplayLockerFeature: AbyssFeature {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             locked.allowedAccess.clear()
                             locked.allowedAccess.add(locked.owner)
@@ -98,7 +98,7 @@ class DisplayLockerFeature: AbyssFeature {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             if (locked.lockState) {
                                 player.success("The following people can interact with your ${entity.name}:")

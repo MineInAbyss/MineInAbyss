@@ -1,13 +1,14 @@
 package com.mineinabyss.displayLocker
 
-import com.mineinabyss.components.armorstandlock.LockArmorStand
-import com.mineinabyss.components.armorstandlock.lockedStand
+import com.mineinabyss.components.displaylocker.LockDisplayItem
+import com.mineinabyss.components.displaylocker.lockedStand
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.spawning.spawn
+import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -32,9 +33,9 @@ class DisplayLockerListener: Listener {
     fun HangingPlaceEvent.onPlaceItemFrame() {
         val frame = entity as? ItemFrame ?: return
         val player = player ?: return
-        frame.toGeary().setPersisting(LockArmorStand(player.uniqueId, false, mutableSetOf(player.uniqueId)))
+        frame.toGeary().setPersisting(LockDisplayItem(player.uniqueId, false, mutableSetOf(player.uniqueId)))
         player.playerData.recentRightclickedEntity = frame
-        player.error("Use /mia lock toggle to protect this Item Frame")
+        player.error("Use </mia lock toggle> to protect this Armor Stand")
     }
 
     @EventHandler
@@ -52,14 +53,14 @@ class DisplayLockerListener: Listener {
 
         newLocation.spawn<ArmorStand>()?.apply {
             setRotation(player.location.yaw - 180, 0.0F)
-            toGearyOrNull()?.setPersisting(LockArmorStand(player.uniqueId, false, mutableSetOf(player.uniqueId)))
+            toGearyOrNull()?.setPersisting(LockDisplayItem(player.uniqueId, false, mutableSetOf(player.uniqueId)))
             this.toGearyOrNull()?.encodeComponentsTo(this)
             player.playerData.recentRightclickedEntity = this
         } ?: return
 
         if (player.gameMode != GameMode.CREATIVE) player.inventory.itemInMainHand.subtract()
         player.playSound(newLocation, Sound.ENTITY_ARMOR_STAND_PLACE, 1f, 1f)
-        player.error("Use /mia lock toggle to protect this Armor Stand.")
+        player.error("Use </mia lock toggle> to protect this Armor Stand")
     }
 
     @EventHandler
