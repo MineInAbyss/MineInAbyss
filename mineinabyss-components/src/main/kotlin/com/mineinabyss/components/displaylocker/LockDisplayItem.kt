@@ -19,4 +19,4 @@ data class LockDisplayItem(
     }
 }
 
-val Entity.lockedStand get() = toGeary().get<LockDisplayItem>()
+val Entity.lockedDisplay get() = toGeary().get<LockDisplayItem>()

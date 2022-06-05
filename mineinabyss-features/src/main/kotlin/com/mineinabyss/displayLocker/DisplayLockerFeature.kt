@@ -33,10 +33,9 @@ class DisplayLockerFeature: AbyssFeature {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
                             val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
-
                             locked.lockState = !locked.lockState
                             entity.setGravity(!locked.lockState)
-                            entity.toGeary().encodeComponentsTo(entity)
+
                             if (locked.lockState) player.success("This ${entity.name} is now protected!")
                             else player.error("This ${entity.name} is no longer protected!")
                         }
