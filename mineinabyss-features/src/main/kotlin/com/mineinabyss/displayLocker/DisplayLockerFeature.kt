@@ -1,6 +1,6 @@
-package com.mineinabyss.armorstandlock
+package com.mineinabyss.displayLocker
 
-import com.mineinabyss.components.armorstandlock.LockArmorStand
+import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
@@ -15,99 +15,98 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("lock_armorstand")
-class ArmorStandLockingFeature : AbyssFeature {
+
+@kotlinx.serialization.Serializable
+@SerialName("lock_display_item")
+class DisplayLockerFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(ArmorStandLockingListener())
+        registerEvents(DisplayLockerListener())
 
         commands {
             mineinabyss {
                 "lock"(desc = "Protection related commands") {
-                    "toggle"(desc = "Toggles if an armor stand should be protected or not") {
+                    "toggle"(desc = "Toggles if a display item should be protected or not") {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
-
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             locked.lockState = !locked.lockState
                             entity.setGravity(!locked.lockState)
-                            entity.toGeary().encodeComponentsTo(entity)
-                            if (locked.lockState) player.success("This armor stand is now protected!")
-                            else player.error("This armor stand is no longer protected!")
+
+                            if (locked.lockState) player.success("This ${entity.name} is now protected!")
+                            else player.error("This ${entity.name} is no longer protected!")
                         }
                     }
-                    "add"(desc = "Add a player to this armor stand.") {
+                    "add"(desc = "Add a player to this display item.") {
                         val playerName by stringArg()
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
 
                             if (locked.isAllowed(uuid)) {
-                                player.error("This player can already interact with this armor stand")
+                                player.error("$playerName can already interact with this ${entity.name}")
                                 return@playerAction
                             }
                             else {
                                 locked.allowedAccess.add(uuid)
                                 entity.toGeary().encodeComponentsTo(entity)
-                                player.success("$playerName can now interact with this armor stand")
+                                player.success("$playerName can now interact with this ${entity.name}")
                             }
                         }
                     }
 
-                    "remove"(desc = "Remove a player to this armor stand.") {
+                    "remove"(desc = "Remove a player to this display item.") {
                         val playerName by stringArg {
                             parseErrorMessage = { "No player with name: $passed." }
                         }
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
 
                             if (locked.isAllowed(uuid)) {
                                 locked.allowedAccess.remove(uuid)
                                 entity.toGeary().encodeComponentsTo(entity)
-                                player.success("$playerName has been removed from this armor stand")
+                                player.success("$playerName has been removed from this ${entity.name}")
                                 return@playerAction
                             }
-                            player.error("This player cannot interact with this armor stand")
+                            player.error("$playerName cannot interact with this ${entity.name}")
                         }
                     }
 
-                    "clear"(desc = "Clear all other players from this armor stand.") {
+                    "clear"(desc = "Clear all other players from this display item") {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             locked.allowedAccess.clear()
                             locked.allowedAccess.add(locked.owner)
                             entity.toGeary().encodeComponentsTo(entity)
-                            player.success("All players were removed from this armor stand")
+                            player.success("All players were removed from this ${entity.name}")
                         }
                     }
 
-                    "check" (desc = "Get a list of all players allowed to interact with this armor stand.") {
+                    "list" (desc = "Get a list of all players allowed to interact with this display item.") {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
-                            val locked = entity.toGeary().get<LockArmorStand>() ?: return@playerAction
+                            val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             if (locked.lockState) {
-                                player.success("These people can interact with your armor stand:")
+                                player.success("The following people can interact with your ${entity.name}:")
                                 locked.allowedAccess.forEach {
                                     player.info(it.toPlayer()?.name)
                                 }
                             }
                             else {
-                                player.error("This armor stand is not protected.")
+                                player.error("This ${entity.name} is not protected.")
                                 player.error("Anyone can interact with it.")
                             }
                         }
