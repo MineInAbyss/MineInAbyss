@@ -51,7 +51,7 @@ fun Player.updateBalance() {
         do {
             player?.sendActionBar(currentBalance)
             delay(1.seconds)
-        } while (data.orthCoinsHeld == orthCoinBalance && data.mittyTokensHeld == mittyTokenBalance && data.showPlayerBalance)
+        } while ((data.orthCoinsHeld == orthCoinBalance) && (data.mittyTokensHeld == mittyTokenBalance) && data.showPlayerBalance)
         return@launch
     }
 }
