@@ -3,9 +3,10 @@ rootProject.name = "mineinabyss"
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenLocal()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://papermc.io/repo/repository/maven-public/") //Paper
+        maven("https://repo.papermc.io/repository/maven-public/") //Paper
     }
 
     plugins {
@@ -29,6 +30,7 @@ dependencyResolutionManagement {
     val idofrontVersion: String by settings
 
     repositories {
+        mavenLocal()
         maven("https://repo.mineinabyss.com/releases")
     }
 
