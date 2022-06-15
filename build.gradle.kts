@@ -59,7 +59,6 @@ allprojects {
         compileOnly(mialibs.minecraft.plugin.blocklocker)
         compileOnly(mialibs.minecraft.plugin.gsit)
         compileOnly(mialibs.minecraft.plugin.mccosmetics)
-        compileOnly(mialibs.minecraft.plugin.hmccosmetics)
         compileOnly(mialibs.minecraft.plugin.discordsrv)
         compileOnly(mialibs.minecraft.plugin.luckperms)
     }
