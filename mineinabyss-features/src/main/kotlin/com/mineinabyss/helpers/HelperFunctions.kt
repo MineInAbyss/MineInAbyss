@@ -56,8 +56,8 @@ fun Player.updateBalance() {
     }
 }
 
-fun Player.bossbarCompass(loc: Location, bar: BossBar) {
-    if (loc.world != player?.world) {
+fun Player.bossbarCompass(loc: Location?, bar: BossBar) {
+    if (loc == null || loc.world != player?.world) {
         bar.name(Component.text(":arrow_null:"))
         return
     }

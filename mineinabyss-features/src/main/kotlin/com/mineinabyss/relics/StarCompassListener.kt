@@ -7,6 +7,7 @@ import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.AutoScan
 import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.geary.systems.TickingSystem
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.geary.systems.accessors.get
@@ -27,16 +28,17 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
         val compassList =
             player.inventory.contents?.filter {
                 it != null && it.toGearyOrNull(player)?.has<StarCompass>() == true
-            }
+            } ?: return
 
-        val playerBar = player.toGeary().getOrSetPersisting { PlayerCompassBar() }
+        val playerBar = player.toGearyOrNull()?.getOrSetPersisting { PlayerCompassBar() } ?: return
         val sectionCenter = player.location.section?.region?.center
 
         if (sectionCenter != null) starCompass.compassLocation =
             Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
+        else starCompass.compassLocation = null
 
         // Let player toggle between having a bossbar-compass or item compass
-        compassList?.forEach { compass ->
+        compassList.forEach { compass ->
             if (player.toGeary().has<HideBossBarCompass>()) {
                 compass?.type = Material.COMPASS
                 compass?.editItemMeta {
@@ -47,7 +49,7 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
                 player.hideBossBar(playerBar.compassBar)
             } else {
                 compass?.type = Material.PAPER
-                player.bossbarCompass(starCompass.compassLocation!!, playerBar.compassBar)
+                player.bossbarCompass(starCompass.compassLocation, playerBar.compassBar)
             }
         }
     }
