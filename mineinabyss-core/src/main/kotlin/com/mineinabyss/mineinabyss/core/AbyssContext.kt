@@ -5,16 +5,12 @@ import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.plugin.getService
 import github.scarsz.discordsrv.DiscordSRV
-import io.github.fisher2911.hmccosmetics.HMCCosmetics
-import io.lumine.cosmetics.MCCosmeticsPlugin
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.Database
 
 /** A reference to the MineInAbyss plugin */
 val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin("MineInAbyss") as MineInAbyssPlugin }
-val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("MCCosmetics") as MCCosmeticsPlugin }
-val hmcCosmetics: HMCCosmetics by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmetics }
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 
 interface AbyssContext {

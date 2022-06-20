@@ -2,16 +2,19 @@ package com.mineinabyss.helpers
 
 import com.mineinabyss.components.cosmetics.Cosmetics
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.mineinabyss.core.mcCosmetics
+import io.lumine.cosmetics.MCCosmeticsPlugin
 import io.lumine.cosmetics.api.cosmetics.ItemCosmetic
 import io.lumine.cosmetics.managers.back.BackAccessory
 import io.lumine.cosmetics.managers.gestures.CustomPlayerModel
 import io.lumine.cosmetics.managers.gestures.QuitMethod
 import io.lumine.cosmetics.managers.hats.Hat
 import io.lumine.cosmetics.managers.offhand.Offhand
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+
+val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("MCCosmetics") as MCCosmeticsPlugin }
 
 fun Player.playGesture(gestureName: String) {
     toGeary { setPersisting(Cosmetics(gesture = gestureName)) }

@@ -1,13 +1,16 @@
 package com.mineinabyss.cosmetics
 
+import com.mineinabyss.helpers.mcCosmetics
 import com.mineinabyss.helpers.playGesture
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.mineinabyss.core.*
+import com.mineinabyss.mineinabyss.core.AbyssFeature
+import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
+import com.mineinabyss.mineinabyss.core.commands
+import com.mineinabyss.mineinabyss.core.mineInAbyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 
 @Serializable
@@ -21,14 +24,15 @@ class CosmeticsFeature : AbyssFeature {
                 "cosmetic" {
                     "menu" {
                         playerAction {
-                            if (mineInAbyss.server.pluginManager.isPluginEnabled("HMCCosmetics"))
-                                hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
+                            val player = sender as Player
+                            if (mcCosmetics.isEnabled)
+                                mcCosmetics.menuManager.customizeMenu.open(player, mcCosmetics.profiles.getProfile(player))
                         }
                     }
                     "gesture" {
                         val gesture by stringArg()
                         playerAction {
-                            if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics"))
+                            if (mcCosmetics.isEnabled)
                                     (sender as Player).playGesture(gesture)
                         }
                     }
