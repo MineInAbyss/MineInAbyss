@@ -24,9 +24,7 @@ class PatreonListener : Listener {
             return
         }
 
-        if (!gearyPlayer.has<Patreon>()) gearyPlayer.getOrSetPersisting { Patreon() }
-        val patreon = gearyPlayer.get<Patreon>() ?: return
-
+        val patreon = gearyPlayer.getOrSetPersisting { Patreon() }
         if (player.getGroups().any { it -> it == "patreonplus" }) patreon.tier = 2
     }
 }
