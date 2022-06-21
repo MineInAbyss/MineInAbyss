@@ -1,17 +1,15 @@
 package com.mineinabyss.cosmetics
 
-import com.mineinabyss.components.cosmetics.Cosmetics
 import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.components.players.Backpack
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.helpers.equipCosmeticBackPack
+import com.mineinabyss.helpers.equipCosmeticBackpack
 import com.mineinabyss.helpers.getCosmeticBackpack
-import com.mineinabyss.helpers.unequipCosmeticBackpack
+import com.mineinabyss.helpers.unEquipCosmeticBackpack
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.serialization.toSerializable
-import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent
-import io.github.fisher2911.hmccosmetics.gui.ArmorItem
-import io.github.fisher2911.hmccosmetics.user.User
+import io.lumine.cosmetics.api.events.CosmeticEquipEvent
+import io.lumine.cosmetics.api.events.CosmeticUnequipEvent
 import org.bukkit.Material
 import org.bukkit.block.ShulkerBox
 import org.bukkit.event.EventHandler
@@ -22,21 +20,22 @@ import org.bukkit.inventory.meta.BlockStateMeta
 
 class CosmeticListener : Listener {
 
-    // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
+    // Cancel MCCosmetics backpack equip if player isn't wearing a backpack
     @EventHandler
-    fun CosmeticChangeEvent.onEquipBackpack() {
-        val player = (user as? User ?: return).player ?: return
-        if (cosmeticItem.type == ArmorItem.Type.BACKPACK && !player.toGeary().has<Backpack>()) {
-            player.toGeary() { setPersisting(Cosmetics(cosmeticBackpack = cosmeticItem.id)) }
-            isCancelled = true
-        }
+    fun CosmeticEquipEvent.onEquipBackpack() {
+
+    }
+
+    @EventHandler
+    fun CosmeticUnequipEvent.onUnequipBackpack() {
+
     }
 
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
         if (player.isSneaking && rightClicked) {
             // Put backpack on and store backpack-inv
-            if (player.getCosmeticBackpack().itemStack.type == Material.AIR) {
+            if (player.getCosmeticBackpack().type == Material.AIR) {
                 // Get the color of the players backpack, or non-colored, from the material
                 val i = item?.type.toString().lowercase()
                 val type = if (!i.startsWith("shulker")) i.replace("_shulker_box", "") else i
@@ -51,17 +50,17 @@ class CosmeticListener : Listener {
 
                 // Use default color backpack or custom one if specified so by the component
                 if (player.cosmetics.cosmeticBackpack == null) {
-                    if (type.contains("shulker")) player.equipCosmeticBackPack("default_yellow")
-                    else player.equipCosmeticBackPack("default_$type")
+                    if (type.contains("shulker")) player.equipCosmeticBackpack("default_yellow")
+                    else player.equipCosmeticBackpack("default_$type")
                 }
-                else player.equipCosmeticBackPack(player.cosmetics.cosmeticBackpack!!)
+                else player.equipCosmeticBackpack(player.cosmetics.cosmeticBackpack!!)
             }
 
             // Remove backpack and refill backpack with inventory
             else {
                 // Create a new itemstack of the cosmetic backpack
                 val inv = player.inventory
-                val item = ItemStack(player.getCosmeticBackpack().itemStack)
+                val item = ItemStack(player.getCosmeticBackpack())
                 val bsm = (item.itemMeta as? BlockStateMeta) ?: return
                 val box = bsm.blockState as? ShulkerBox ?: return
 
@@ -82,7 +81,8 @@ class CosmeticListener : Listener {
                 else return
 
                 // Unequip the backpack from the player
-                player.unequipCosmeticBackpack()
+                // Move to Unequip-event when implemented
+                player.unEquipCosmeticBackpack()
                 player.toGeary().get<Backpack>()?.backpackContent?.clear()
                 player.toGeary().remove<Backpack>()
             }
