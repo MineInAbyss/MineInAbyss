@@ -9,9 +9,9 @@ import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
-import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -61,7 +61,8 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
         modifier = modifier,
         onClick = {
             if (!player.isAboveCaptain()) return@Button
-            nav.open(UniversalScreens.Anvil(
+            nav.open(
+                UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title("${Space.of(-65)}:guild_name_menu:")
                     .itemLeft(renameItem)

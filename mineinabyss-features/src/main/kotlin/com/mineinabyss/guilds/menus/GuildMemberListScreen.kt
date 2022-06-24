@@ -12,10 +12,10 @@ import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
-import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
@@ -69,7 +69,8 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
                 player.error("Change it to 'Any' or 'Invite-only' mode to invite others.")
                 return@Button
             }
-            nav.open(UniversalScreens.Anvil(
+            nav.open(
+                UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title("${Space.of(-64)}${Space.of(1)}:guild_search_menu:")
                     .itemLeft(guildInvitePaper)

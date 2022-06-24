@@ -6,19 +6,18 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.*
+import com.mineinabyss.guiy.navigation.rememberNavigation
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.helpers.ui.rememberNavigation
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
-import org.bukkit.ChatColor.WHITE
 import org.bukkit.entity.Player
 
 sealed class BankScreen(val title: String, val height: Int) {
-    object Default : BankScreen("${Space.of(-18)}$WHITE:orthbanking_menu:", 4)
-    object Deposit : BankScreen("${Space.of(-18)}$WHITE:orthbanker_deposit_menu:", 5)
-    object Widthdraw : BankScreen("${Space.of(18)}$WHITE:orthbanker_withdrawal_menu:", 5)
+    object Default : BankScreen("${Space.of(-18)}<white>:orthbanking_menu:", 4)
+    object Deposit : BankScreen("${Space.of(-18)}<white>:orthbanker_deposit_menu:", 5)
+    object Widthdraw : BankScreen("${Space.of(18)}<white>:orthbanker_withdrawal_menu:", 5)
 }
 
 @Composable

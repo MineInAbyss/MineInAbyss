@@ -15,7 +15,6 @@ import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.pvp.ToggleIcon.disabled
 import com.mineinabyss.pvp.ToggleIcon.enabled
-import org.bukkit.ChatColor.WHITE
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -23,7 +22,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.PvpPrompt(player: Player) {
-    Chest(setOf(player), "${Space.of(-12)}$WHITE:pvp_menu_toggle:", Modifier.height(4),
+    Chest(setOf(player), "${Space.of(-12)}<white>:pvp_menu_toggle:", Modifier.height(4),
         onClose = { reopen() }) {
         EnablePvp(player, Modifier.at(1, 1))
         DisablePvp(player, Modifier.at(5, 1))

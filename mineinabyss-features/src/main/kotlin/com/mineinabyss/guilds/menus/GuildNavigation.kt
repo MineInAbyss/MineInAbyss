@@ -17,53 +17,52 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.navigation.Navigator
+import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
-import com.mineinabyss.helpers.ui.Navigator
-import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
-import org.bukkit.ChatColor.WHITE
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 sealed class GuildScreen(var title: String, val height: Int) {
     class Default(player: Player) :
         GuildScreen(
-            title = "${Space.of(-14)}$WHITE${decideMainMenu(player)}",
+            title = "${Space.of(-14)}<white>${decideMainMenu(player)}",
             height = 4
         )
 
-    object GuildInfo : GuildScreen("${Space.of(-12)}$WHITE:guild_member_menu:", 6)
+    object GuildInfo : GuildScreen("${Space.of(-12)}<white>:guild_member_menu:", 6)
 
     class CurrentGuild(val guildLevel: Int) :
-        GuildScreen("${Space.of(-12)}${Space.of(1)}$WHITE:current_guild_menu_${guildLevel}:", guildLevel + 3)
+        GuildScreen("${Space.of(-12)}${Space.of(1)}<white>:current_guild_menu_${guildLevel}:", guildLevel + 3)
 
-    object Leave : GuildScreen("${Space.of(-12)}$WHITE:guild_disband_or_leave_menu:", 5)
-    object Disband : GuildScreen("${Space.of(-12)}$WHITE:guild_disband_or_leave_menu:", 5)
-    object Owner : GuildScreen("${Space.of(-12)}$WHITE:guild_owner_menu:", 6)
+    object Leave : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
+    object Disband : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
+    object Owner : GuildScreen("${Space.of(-12)}<white>:guild_owner_menu:", 6)
 
-    object GuildList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_list_menu:", 6)
+    object GuildList : GuildScreen(title = "${Space.of(-12)}<white>:guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: String) :
-        GuildScreen("${Space.of(-12)}$WHITE${":guild_lookup_members${guildName.getGuildLevel()}"}:", guildName.getGuildLevel() + 3)
+        GuildScreen("${Space.of(-12)}<white>${":guild_lookup_members${guildName.getGuildLevel()}"}:", guildName.getGuildLevel() + 3)
 
     // Forgot to add to pack so this is fine for now
-    object InviteList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_join_requests_menu:", 5)
-    class Invite(val owner: OfflinePlayer) : GuildScreen(title = "${Space.of(-12)}$WHITE:handle_guild_invites:", 5)
+    object InviteList : GuildScreen(title = "${Space.of(-12)}<white>:guild_join_requests_menu:", 5)
+    class Invite(val owner: OfflinePlayer) : GuildScreen(title = "${Space.of(-12)}<white>:handle_guild_invites:", 5)
 
-    object JoinRequestList : GuildScreen(title = "${Space.of(-12)}$WHITE:guild_join_requests_menu:", 5)
+    object JoinRequestList : GuildScreen(title = "${Space.of(-12)}<white>:guild_join_requests_menu:", 5)
     class JoinRequest(val from: OfflinePlayer) :
-        GuildScreen("${Space.of(-12)}$WHITE:handle_guild_join_requests:", 5)
+        GuildScreen("${Space.of(-12)}<white>:handle_guild_join_requests:", 5)
 
     class MemberOptions(val member: OfflinePlayer) :
-        GuildScreen("${Space.of(-12)}$WHITE:guild_member_action_menu:", 5)
+        GuildScreen("${Space.of(-12)}<white>:guild_member_action_menu:", 5)
 
     class MemberList(val guildLevel: Int, player: Player) :
-        GuildScreen("${Space.of(-12)}$WHITE${decideMemberMenu(player)}", guildLevel + 2)
+        GuildScreen("${Space.of(-12)}<white>${decideMemberMenu(player)}", guildLevel + 2)
 }
 
 typealias GuildNav = Navigator<GuildScreen>
@@ -200,7 +199,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
 }
 
 @Composable
-fun GuildUIScope.GuildInvitesButton(modifier: Modifier = Modifier) {
+fun GuildUIScope.GuildInvitesButton() {
     val guildOwner = player.getGuildOwnerFromInvite().toPlayer() ?: return
     Button(
         enabled = player.hasGuildInvite(guildOwner),
@@ -218,7 +217,7 @@ fun GuildUIScope.GuildInvitesButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.GuildLookupListButton(modifier: Modifier = Modifier) {
+fun GuildUIScope.GuildLookupListButton() {
     Button(
         enabled = getAllGuilds().isNotEmpty(),
         onClick = { nav.open(GuildList) }

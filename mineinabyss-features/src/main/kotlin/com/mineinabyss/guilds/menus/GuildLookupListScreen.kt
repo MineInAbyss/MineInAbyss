@@ -8,10 +8,10 @@ import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
-import com.mineinabyss.helpers.ui.UniversalScreens
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -58,7 +58,7 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.PreviousButton(modifier: Modifier = Modifier) {
+fun PreviousButton(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         onClick = {
@@ -72,7 +72,7 @@ fun GuildUIScope.PreviousButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.NextButton(modifier: Modifier = Modifier) {
+fun NextButton(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         onClick = {
