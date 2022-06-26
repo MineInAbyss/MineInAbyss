@@ -1,5 +1,6 @@
 package com.mineinabyss.anticheese
 
+import com.destroystokyo.paper.event.block.AnvilDamagedEvent
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.idofront.messaging.error
@@ -23,6 +24,11 @@ import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.potion.PotionEffectType
 
 class AntiCheeseListener : Listener {
+
+    @EventHandler
+    fun AnvilDamagedEvent.onDamageAnvilOrth() {
+        if ((viewers.firstOrNull() as? Player)?.isInHub() == true) isCancelled = true
+    }
 
     @EventHandler
     fun BlockPlaceEvent.preventPlacement() {
