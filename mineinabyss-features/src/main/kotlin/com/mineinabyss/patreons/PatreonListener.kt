@@ -4,6 +4,7 @@ import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.getGroups
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -17,7 +18,7 @@ class PatreonListener : Listener {
 
         // Remove perks from old patreons
         if (!isPatreon && gearyPlayer.has<Patreon>()) {
-            patreon.removePatreonPerks()
+            player.removePatreonPerks()
             gearyPlayer.remove<Patreon>()
             return
         }
