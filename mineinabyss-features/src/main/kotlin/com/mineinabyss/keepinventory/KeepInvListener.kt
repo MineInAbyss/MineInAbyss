@@ -12,9 +12,9 @@ class KeepInvListener(private val feature: KeepInvFeature) : Listener {
         if ((feature.KeepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
             player.playerData.keepInvStatus) {
             keepInventory = true
-            drops.clear()
             keepLevel = true
             droppedExp = 0
+            drops.clear()
         } else keepInventory = false
     }
 }

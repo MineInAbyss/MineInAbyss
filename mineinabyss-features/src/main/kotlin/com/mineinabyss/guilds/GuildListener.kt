@@ -73,7 +73,7 @@ class GuildContainerSystem : GroupSystem() {
 
 }
 
-class GuildChatSystem(val feature: GuildFeature) : Listener {
+class GuildChatSystem(private val feature: GuildFeature) : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun AsyncPlayerChatEvent.overrideVentureChat() {

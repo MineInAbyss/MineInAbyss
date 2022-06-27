@@ -15,15 +15,9 @@ class PvpDamageListener : Listener {
         val player = entity as? Player ?: return
 
         val attacker: Player = when (damager) {
-            is Projectile -> {
-                (damager as Projectile).shooter as? Player ?: return
-            }
-            is Player -> {
-                (damager as Player)
-            }
-            else -> {
-                return
-            }
+            is Projectile -> (damager as Projectile).shooter as? Player ?: return
+            is Player -> damager as Player
+            else -> return
         }
 
         if ((player.location.layer?.hasPvpDefault == true)

@@ -23,8 +23,6 @@ class LayerListener : Listener {
 
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
         if (PlayerManager.playerCanTeleport(player)) {
-            val fromSection = fromSection
-            val toSection = toSection
             val fromLayer = fromSection.layer ?: return
             val toLayer = toSection.layer ?: return
 

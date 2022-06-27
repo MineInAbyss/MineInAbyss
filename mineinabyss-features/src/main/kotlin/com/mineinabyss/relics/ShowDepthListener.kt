@@ -11,7 +11,7 @@ import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.geary.systems.accessors.get
-import com.mineinabyss.helpers.isInHub
+import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.layer
@@ -46,9 +46,8 @@ class ShowDepthListener : GearyListener() {
                     You suddenly become aware that you are in ${layer.name}<dark_aqua>.
                     """.trimIndent().miniMsg()
                 )
-                return
             }
-            if (!player.isInHub()) {
+            else {
                 val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
                 player.info(
                     """

@@ -1,7 +1,7 @@
 package com.mineinabyss.relics.sickle
 
+import com.destroystokyo.paper.MaterialTags
 import com.mineinabyss.helpers.ItemDrop
-import com.mineinabyss.helpers.dropItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -26,7 +26,6 @@ class SickleListener : Listener {
         val block = clickedBlock ?: return
 
         if (hand != EquipmentSlot.HAND || action != Action.RIGHT_CLICK_BLOCK) return
-
         if (harvestPlant(block, player)) {
             player.swingMainHand()
             block.world.playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
@@ -36,6 +35,7 @@ class SickleListener : Listener {
 
 fun harvestPlant(block: Block, player: Player): Boolean {
     val handItem = player.inventory.itemInMainHand
+    val data = block.blockData
 
     if (handItem.type == Material.SHEARS) return false
     if (handItem.type == block.type) return false
@@ -54,17 +54,15 @@ fun harvestPlant(block: Block, player: Player): Boolean {
 
     val drops: Set<ItemDrop> = blockList[block.type] ?: return false
 
-    if (block.blockData is Ageable) {
-        val aging: Ageable = block.blockData as Ageable
-
-        if (aging.age != aging.maximumAge) return false
+    if (data is Ageable) {
+        if (data.age != data.maximumAge) return false
 
         val breakCrop = BlockBreakEvent(block, player)
         Bukkit.getPluginManager().callEvent(breakCrop)
         if (breakCrop.isCancelled) return false
 
-        aging.age = 0
-        block.blockData = aging
+        data.age = 0
+        block.blockData = data
     } else {
         val breakBlock = BlockBreakEvent(block, player)
         Bukkit.getPluginManager().callEvent(breakBlock)
@@ -74,28 +72,19 @@ fun harvestPlant(block: Block, player: Player): Boolean {
     }
 
     fun applyFortune(count: Int): Int {
-        if (handItem.type != Material.WOODEN_HOE &&
-            handItem.type != Material.STONE_HOE &&
-            handItem.type != Material.IRON_HOE &&
-            handItem.type != Material.GOLDEN_HOE &&
-            handItem.type != Material.DIAMOND_HOE &&
-            handItem.type != Material.NETHERITE_HOE
-        ) return count
+        if (!MaterialTags.HOES.isTagged(handItem)) return count
         val level = handItem.itemMeta?.getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS) ?: return count
 
         // Do we have bonus drops?
         return if (Random.nextDouble() > 2 / (level + 2)) {
             // Yes, how many extra drops?
             count + (2..level + 1).random()
-        } else {
-            count
-        }
+        } else count
     }
 
-    for (drop: ItemDrop in drops) {
-        dropItems(
-            block.location,
-            ItemStack(
+    drops.forEach { drop ->
+        block.world.dropItemNaturally(
+            block.location, ItemStack(
                 drop.material,
                 if (drop.applyFortune) applyFortune(drop.dropAmount.random()) else drop.dropAmount.random()
             )

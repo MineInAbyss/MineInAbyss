@@ -16,10 +16,8 @@ class PatreonListener : Listener {
         val gearyPlayer = player.toGeary()
 
         // Remove perks from old patreons
-        if (!isPatreon && player.toGeary().has<Patreon>()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "luckperms user ${player.name} meta clear prefix")
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "nick ${player.name} off")
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "nametagedit player ${player.name} clear")
+        if (!isPatreon && gearyPlayer.has<Patreon>()) {
+            patreon.removePatreonPerks()
             gearyPlayer.remove<Patreon>()
             return
         }
@@ -27,4 +25,10 @@ class PatreonListener : Listener {
         val patreon = gearyPlayer.getOrSetPersisting { Patreon() }
         if (player.getGroups().any { it -> it == "patreonplus" }) patreon.tier = 2
     }
+}
+
+private fun Player.removePatreonPerks() {
+    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "luckperms user ${name} meta clear prefix")
+    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "nick ${name} off")
+    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "nametagedit player ${name} clear")
 }
