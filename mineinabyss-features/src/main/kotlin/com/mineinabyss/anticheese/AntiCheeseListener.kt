@@ -8,11 +8,9 @@ import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import dev.geco.gsit.api.event.PlayerSitEvent
-import net.minecraft.world.level.block.SculkVeinBlock
 import org.bukkit.Material
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
-import org.bukkit.block.data.type.Door
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.ExplosiveMinecart
@@ -33,6 +31,9 @@ class AntiCheeseListener : Listener {
     fun BlockSpreadEvent.onSculkSpread() {
         if (block.type == Material.SCULK || block.type == Material.SCULK_VEIN) isCancelled = true
     }
+
+
+
 
     @EventHandler
     fun AnvilDamagedEvent.onDamageAnvilOrth() {
