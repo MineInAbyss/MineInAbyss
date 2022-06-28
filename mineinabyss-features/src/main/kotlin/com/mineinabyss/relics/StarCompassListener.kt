@@ -30,7 +30,7 @@ class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
                 it != null && it.toGearyOrNull(player)?.has<StarCompass>() == true
             } ?: return
 
-        val playerBar = player.toGearyOrNull()?.getOrSetPersisting { PlayerCompassBar() } ?: return
+        val playerBar = player.toGeary().getOrSetPersisting { PlayerCompassBar() }
         val sectionCenter = player.location.section?.region?.center
 
         if (sectionCenter != null) starCompass.compassLocation =

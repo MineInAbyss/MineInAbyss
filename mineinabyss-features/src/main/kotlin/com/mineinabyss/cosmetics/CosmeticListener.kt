@@ -1,5 +1,6 @@
 package com.mineinabyss.cosmetics
 
+import com.destroystokyo.paper.MaterialTags
 import com.mineinabyss.components.cosmetics.cosmetics
 import com.mineinabyss.components.players.Backpack
 import com.mineinabyss.geary.papermc.access.toGeary
@@ -8,8 +9,6 @@ import com.mineinabyss.helpers.getCosmeticBackpack
 import com.mineinabyss.helpers.unEquipCosmeticBackpack
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.serialization.toSerializable
-import io.lumine.cosmetics.api.events.CosmeticEquipEvent
-import io.lumine.cosmetics.api.events.CosmeticUnequipEvent
 import org.bukkit.Material
 import org.bukkit.block.ShulkerBox
 import org.bukkit.event.EventHandler
@@ -21,15 +20,15 @@ import org.bukkit.inventory.meta.BlockStateMeta
 class CosmeticListener : Listener {
 
     // Cancel MCCosmetics backpack equip if player isn't wearing a backpack
-    @EventHandler
-    fun CosmeticEquipEvent.onEquipBackpack() {
-
-    }
-
-    @EventHandler
-    fun CosmeticUnequipEvent.onUnequipBackpack() {
-
-    }
+//    @EventHandler
+//    fun CosmeticEquipEvent.onEquipBackpack() {
+//
+//    }
+//
+//    @EventHandler
+//    fun CosmeticUnequipEvent.onUnequipBackpack() {
+//
+//    }
 
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
@@ -50,7 +49,7 @@ class CosmeticListener : Listener {
 
                 // Use default color backpack or custom one if specified so by the component
                 if (player.cosmetics.cosmeticBackpack == null) {
-                    if (type.contains("shulker")) player.equipCosmeticBackpack("default_yellow")
+                    if (MaterialTags.SHULKER_BOXES.isTagged(item!!)) player.equipCosmeticBackpack("default_yellow")
                     else player.equipCosmeticBackpack("default_$type")
                 }
                 else player.equipCosmeticBackpack(player.cosmetics.cosmeticBackpack!!)

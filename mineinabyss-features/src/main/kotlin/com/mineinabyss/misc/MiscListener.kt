@@ -23,8 +23,7 @@ class MiscListener : Listener {
 
     @EventHandler
     fun PlayerInteractEvent.onInteractAnchor() {
-        val block = clickedBlock ?: return
-        val data = block.blockData as? RespawnAnchor ?: return
+        val data = clickedBlock?.blockData as? RespawnAnchor ?: return
         if (action != Action.RIGHT_CLICK_BLOCK) return
         if (data.charges >= data.maximumCharges) isCancelled = true
     }

@@ -1,8 +1,8 @@
 package com.mineinabyss.npc.orthbanking
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.helpers.isInHub
 import com.mineinabyss.helpers.updateBalance
+import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.registerEvents

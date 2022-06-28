@@ -10,8 +10,6 @@ import kotlinx.serialization.Serializable
 @SerialName("layers")
 class LayersFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(
-            LayerListener()
-        )
+        registerEvents(LayerListener())
     }
 }

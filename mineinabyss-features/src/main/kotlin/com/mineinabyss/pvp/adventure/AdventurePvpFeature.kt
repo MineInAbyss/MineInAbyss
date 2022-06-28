@@ -1,7 +1,7 @@
 package com.mineinabyss.pvp.adventure
 
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.helpers.isInHub
+import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.registerEvents

@@ -32,18 +32,14 @@ class SurvivalPvpFeature : AbyssFeature {
                             player.error("Pvp cannot be toggled in this layer.")
                             return@playerAction
                         }
-                        guiy {
-                            PvpPrompt(player)
-                        }
+                        guiy { PvpPrompt(player) }
                     }
                 }
             }
             tabCompletion {
                 when (args.size) {
-                    1 -> listOf(
-                        "pvp"
-                    ).filter { it.startsWith(args[0]) }
-                    else -> null
+                    1 -> listOf("pvp").filter { it.startsWith(args.first()) }
+                    else -> emptyList()
                 }
             }
         }

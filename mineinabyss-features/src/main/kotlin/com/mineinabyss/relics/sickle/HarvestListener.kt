@@ -17,7 +17,7 @@ import org.bukkit.entity.Player
 
 class HarvestListener : GearyListener() {
     val SourceScope.player by get<Player>()
-    val TargetScope.sickle by get<Sickle>()
+    private val TargetScope.sickle by get<Sickle>()
     val EventScope.sickle by get<RightClicked>()
 
     @Handler
@@ -28,15 +28,14 @@ class HarvestListener : GearyListener() {
         var totalHarvested = 0
         // Harvest surroundings
         for (relativePos in BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[target.sickle.radius]) {
-            val block = BlockUtil.relative(block, relativePos)
-            if (harvestPlant(block, player)) {
+            val b = BlockUtil.relative(block, relativePos)
+            if (harvestPlant(b, player)) {
                 item.editItemMeta {
                     damage += 1
                 }
                 if (item.itemMeta.damage >= item.type.maxDurability) {
                     item.subtract()
-                    player.world
-                        .playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
+                    player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
                     break // stop loop
                 }
                 ++totalHarvested
@@ -46,8 +45,7 @@ class HarvestListener : GearyListener() {
         // Damage item if we harvested at least one plant
         if (totalHarvested > 0) {
             player.swingMainHand()
-            block.world
-                .playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
+            player.playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
         }
     }
 }
