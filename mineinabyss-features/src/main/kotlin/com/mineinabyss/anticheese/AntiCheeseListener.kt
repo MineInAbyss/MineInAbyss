@@ -2,7 +2,6 @@ package com.mineinabyss.anticheese
 
 import com.destroystokyo.paper.MaterialTags
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent
-import com.destroystokyo.paper.event.block.AnvilDamagedEvent
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.error
