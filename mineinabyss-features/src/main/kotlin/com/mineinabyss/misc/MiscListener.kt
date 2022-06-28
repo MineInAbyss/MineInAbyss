@@ -12,17 +12,25 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
 
 class MiscListener : Listener {
 
+
+
     @EventHandler
     fun PlayerInteractEvent.onInteractAnchor() {
         val data = clickedBlock?.blockData as? RespawnAnchor ?: return
         if (action != Action.RIGHT_CLICK_BLOCK) return
         if (data.charges >= data.maximumCharges) isCancelled = true
+    }
+
+    @EventHandler
+    fun PrepareAnvilEvent.removeAnvilMaxRepairCost() {
+        inventory.maximumRepairCost = 10000
     }
 
     @EventHandler
