@@ -1,11 +1,14 @@
 package com.mineinabyss.misc
 
+import com.mineinabyss.components.displaylocker.LockDisplayItem
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Material
 import org.bukkit.block.Lectern
 import org.bukkit.block.data.type.RespawnAnchor
 import org.bukkit.entity.ItemFrame
+import org.bukkit.entity.Player
 import org.bukkit.entity.ThrownPotion
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -36,9 +39,13 @@ class MiscListener : Listener {
     @EventHandler
     fun ProjectileHitEvent.onDouseItemFrame() {
         val entity = entity as? ThrownPotion ?: return
+        val player = entity.shooter as? Player ?: return
         if (hitEntity !is ItemFrame) return
         if (entity.potionMeta.basePotionData.type.effectType != PotionEffectType.INVISIBILITY) return
-        hitEntity?.location?.getNearbyEntitiesByType(ItemFrame::class.java, 1.0)?.forEach { frame -> frame.isVisible = false
+        hitEntity?.location?.getNearbyEntitiesByType(ItemFrame::class.java, 1.0)?.forEach { frame ->
+            val lockable = frame.toGeary().get<LockDisplayItem>()
+            if (lockable?.lockState == true && lockable.allowedAccess.contains(player.uniqueId)) return@forEach
+            frame.isVisible = false
         }
     }
 
