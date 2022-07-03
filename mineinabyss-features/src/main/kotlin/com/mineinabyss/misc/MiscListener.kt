@@ -22,20 +22,6 @@ import org.bukkit.potion.PotionEffectType
 
 class MiscListener : Listener {
 
-
-
-    @EventHandler
-    fun PlayerInteractEvent.onInteractAnchor() {
-        val data = clickedBlock?.blockData as? RespawnAnchor ?: return
-        if (action != Action.RIGHT_CLICK_BLOCK) return
-        if (data.charges >= data.maximumCharges) isCancelled = true
-    }
-
-    @EventHandler
-    fun PrepareAnvilEvent.removeAnvilMaxRepairCost() {
-        inventory.maximumRepairCost = 10000
-    }
-
     @EventHandler
     fun ProjectileHitEvent.onDouseItemFrame() {
         val entity = entity as? ThrownPotion ?: return
@@ -47,6 +33,18 @@ class MiscListener : Listener {
             if (lockable?.lockState == true && lockable.allowedAccess.contains(player.uniqueId)) return@forEach
             frame.isVisible = false
         }
+    }
+
+    @EventHandler
+    fun PlayerInteractEvent.onInteractAnchor() {
+        val data = clickedBlock?.blockData as? RespawnAnchor ?: return
+        if (action != Action.RIGHT_CLICK_BLOCK) return
+        if (data.charges >= data.maximumCharges || item?.type != Material.GLOWSTONE) isCancelled = true
+    }
+
+    @EventHandler
+    fun PrepareAnvilEvent.removeAnvilMaxRepairCost() {
+        inventory.maximumRepairCost = 10000
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
