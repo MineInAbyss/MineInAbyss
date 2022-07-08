@@ -38,7 +38,7 @@ fun GuildUIScope.GuildMemberListScreen() {
 @Composable
 fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
     Grid(modifier.size(5, guildLevel)) {
-        player.getGuildMembers().sortedBy { it.first; it.second.name }.forEach { (rank, member) ->
+        player.getGuildMembers().sortedWith(compareBy { it.first; it.second.name }).forEach { (rank, member) ->
             Button(onClick = {
                 if (member != player && player.isAboveCaptain()) {
                     nav.open(GuildScreen.MemberOptions(member))

@@ -216,7 +216,7 @@ fun getAllGuilds() : List<Triple<String, GuildJoinType, Int>> {
 }
 
 fun displayGuildList(): List<Triple<String, GuildJoinType, Int>> {
-    val list = getAllGuilds().sortedBy { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first }
+    val list = getAllGuilds().sortedWith(compareBy { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first })
 
     return if (list.size < 20) list.subList(0, list.size)
     else list.subList(0, 20)

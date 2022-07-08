@@ -25,14 +25,14 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
 }
 
 @Composable
-fun GuildUIScope.GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
+fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
     Item(owner.head("<yellow><i>${owner.name}".miniMsg(), isCenterOfInv = true, isLarge = true), modifier = modifier)
 }
 
 @Composable
 fun GuildUIScope.GuildMembersButton(modifier: Modifier, guildName: String) {
     Grid(modifier.size(5, guildLevel)) {
-        guildName.getGuildMembers().sortedBy { it.first; it.second.name }.forEach { (rank, member) ->
+        guildName.getGuildMembers().sortedWith(compareBy { it.first; it.second.name }).forEach { (rank, member) ->
             Button {
                 Item(
                     member.head(
