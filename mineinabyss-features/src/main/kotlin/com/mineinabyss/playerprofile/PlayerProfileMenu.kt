@@ -109,10 +109,10 @@ fun LeggingsSlot(player: Player) = Item(player.equipment.leggings)
 fun BootsSlot(player: Player) = Item(player.equipment.boots)
 
 @Composable
-fun CosmeticHat(player: Player) = Item(player.getCosmeticHat())
+fun CosmeticHat(player: Player) = player.getCosmeticHat()
 
 @Composable
-fun CosmeticBackpack(player: Player) = Item(player.getCosmeticBackpack())
+fun CosmeticBackpack(player: Player) = player.getCosmeticBackpack()
 
 @Composable
 fun OrthCoinBalance(player: Player) {
