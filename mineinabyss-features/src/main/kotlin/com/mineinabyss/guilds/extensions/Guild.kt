@@ -221,8 +221,7 @@ fun getAllGuilds(): List<Triple<String, GuildJoinType, Int>> {
 }
 
 fun displayGuildList(queryName: String? = null): List<Triple<String, GuildJoinType, Int>> {
-    val comparator = compareBy<Triple<String, GuildJoinType, Int>>
-    { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first }
+    val comparator = compareBy<Triple<String, GuildJoinType, Int>> { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first }
     return if (queryName == null)
         getAllGuilds().sortedWith(comparator)
     else getAllGuilds().filter { it.first.startsWith(queryName) }.sortedWith(comparator)

@@ -22,8 +22,7 @@ import net.wesjd.anvilgui.AnvilGUI
 @Composable
 fun GuildUIScope.GuildLookupListScreen(pageNumber: Int) {
     GuildListButton(Modifier.at(2, 0), pageNumber)
-    GuildListBackButton(Modifier.at(0, 5))
-    //LookForGuildButton(Modifier.at(7, 5))
+    BackButton(Modifier.at(0, 5))
 }
 
 private val defaultList = displayGuildList().chunked(20)
@@ -53,9 +52,7 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, pageNumber: Int)
                         "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
                         "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
                         "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
-                        "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${
-                            owner.getGuildLevel()?.times(5)
-                        }".miniMsg(),
+                        "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}".miniMsg(),
                         isFlat = true
                     )
                 )
@@ -107,13 +104,4 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, pageNumber: Int)
                 ))
         }
     ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
-}
-
-@Composable
-private fun GuildUIScope.GuildListBackButton(modifier: Modifier = Modifier) {
-    Button(onClick = {
-        nav.back()
-    }, modifier = modifier) {
-        Text("<red><b>Back".miniMsg())
-    }
 }
