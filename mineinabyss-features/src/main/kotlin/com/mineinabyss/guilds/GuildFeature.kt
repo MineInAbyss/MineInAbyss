@@ -6,6 +6,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.guilds.extensions.depositCoinsToGuild
+import com.mineinabyss.guilds.extensions.getGuildBalance
 import com.mineinabyss.guilds.extensions.hasGuild
 import com.mineinabyss.guilds.extensions.withdrawCoinsFromGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
@@ -13,6 +14,7 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -44,8 +46,19 @@ class GuildFeature(
             mineinabyss {
                 "guild"(desc = "Guild related commands") {
                     "balance"(desc = "Guild Balance related commands") {
-                        "deposit" {
-                            val amount by intArg()
+                        "view"(desc = "Viewe your guilds balance") {
+                            playerAction {
+                                val player = sender as Player
+                                if (!player.hasGuild()) {
+                                    player.error("You do not have any guild.")
+                                    return@playerAction
+                                }
+
+                                player.info("<yellow>Your guild's balance is <gold>${player.getGuildBalance()}</gold>.")
+                            }
+                        }
+                        "deposit"(desc = "Deposit Orth Coins into your guild balance") {
+                            val amount by intArg { default = 1}
                             playerAction {
                                 val player = sender as Player
                                 if (amount <= 0) {
@@ -54,13 +67,13 @@ class GuildFeature(
                                 }
                                 if (amount > player.inventory.itemInMainHand.amount) {
                                     player.error("You don't have that many coins.")
-                                    player.error("Depositing ${player.inventory.itemInMainHand.amount} coins.")
-                                    player.depositCoinsToGuild(player.inventory.itemInMainHand.amount)
-                                } else player.depositCoinsToGuild(amount)
+                                    return@playerAction
+                                }
+                                player.depositCoinsToGuild(amount)
                             }
                         }
-                        "withdraw" {
-                            var amount by intArg()
+                        "withdraw"(desc = "Withdraw Orth Coins from your guild balance") {
+                            var amount by intArg { default = 1 }
                             playerAction {
                                 val player = sender as Player
                                 if (amount <= 0) {
@@ -109,9 +122,16 @@ class GuildFeature(
                     ).filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "guild" -> listOf("chat", "menu")
+                            "guild" -> listOf("balance", "chat", "menu")
                             else -> null
-
+                        }
+                    }
+                    3 -> {
+                        when (args[1]) {
+                            "balance" -> listOf("view", "deposit", "withdraw")
+                            "chat" -> emptyList()
+                            "menu" -> emptyList()
+                            else -> null
                         }
                     }
                     else -> null

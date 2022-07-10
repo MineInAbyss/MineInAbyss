@@ -9,6 +9,9 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.looty.LootyFactory
+import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventorySlotContext
+import com.mineinabyss.looty.ecs.components.itemcontexts.useWithLooty
+import com.mineinabyss.looty.loadItem
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
@@ -241,21 +244,19 @@ fun String.getOwnerFromGuildName() : OfflinePlayer {
 }
 
 fun Player.depositCoinsToGuild(amount: Int) {
-    val item = inventory.itemInMainHand
-    val orthcoin = item.toGearyOrNull(this)?.has<OrthCoin>()
-
     if (!hasGuild()) {
         error("You must be in a guild to withdraw coins.")
         return
     }
 
-    if (orthcoin != true) {
-        error("You must be holding an OrthCoin to deposit coins.")
+    if (inventory.itemInMainHand.toGearyOrNull(this)?.has<OrthCoin>() != true) {
+        error("You must be holding an Orth Coin to make a deposit.")
         return
     }
 
-    item.subtract(amount)
+    inventory.itemInMainHand.subtract(amount)
     updateGuildBalance(amount)
+    success("You deposited $amount Orth Coins to your guild.")
 }
 
 fun Player.withdrawCoinsFromGuild(amount: Int) {
@@ -269,6 +270,11 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
         return
     }
 
+    if (getGuildBalance() - amount < 0) {
+        error("You do not have enough coins in your guild to withdraw $amount coins.")
+        return
+    }
+
     val slot = inventory.firstEmpty()
     if (slot == -1) {
         error("You do not have enough space in your inventory to withdraw the coins.")
@@ -276,6 +282,9 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
     }
 
     val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
+    orthCoin?.useWithLooty {
+        PlayerInventorySlotContext(this@withdrawCoinsFromGuild, slot).loadItem(this)
+    }
     if (orthCoin == null) {
         error("Could not create OrthCoin.")
         error("Cancelling withdrawal!")
@@ -283,8 +292,8 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
     }
 
     updateGuildBalance(-amount)
-    orthCoin.amount = amount
-    inventory.setItem(slot, orthCoin)
+    inventory.addItem(orthCoin.asQuantity(amount))
+    success("You withdrew $amount Orth Coins from your guild.")
 }
 
 private fun Player.updateGuildBalance(amount: Int) {
@@ -298,7 +307,7 @@ private fun Player.updateGuildBalance(amount: Int) {
         }.single()[Guilds.balance]
 
         Guilds.update({Guilds.id eq guildId}) {
-            it[balance] = (bal - amount)
+            it[balance] = (bal + amount)
         }
     }
 }
