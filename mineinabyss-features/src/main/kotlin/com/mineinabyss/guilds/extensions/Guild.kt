@@ -1,11 +1,15 @@
 package com.mineinabyss.guilds.extensions
 
+import com.mineinabyss.components.npc.orthbanking.OrthCoin
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.looty.LootyFactory
+import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
@@ -233,5 +237,68 @@ fun String.getOwnerFromGuildName() : OfflinePlayer {
         }.first()[Players.playerUUID]
 
         return@transaction Bukkit.getOfflinePlayer(player)
+    }
+}
+
+fun Player.depositCoinsToGuild(amount: Int) {
+    val item = inventory.itemInMainHand
+    val orthcoin = item.toGearyOrNull(this)?.has<OrthCoin>()
+
+    if (!hasGuild()) {
+        error("You must be in a guild to withdraw coins.")
+        return
+    }
+
+    if (orthcoin != true) {
+        error("You must be holding an OrthCoin to deposit coins.")
+        return
+    }
+
+    item.subtract(amount)
+    updateGuildBalance(amount)
+}
+
+fun Player.withdrawCoinsFromGuild(amount: Int) {
+    if (!hasGuild()) {
+        error("You must be in a guild to withdraw coins.")
+        return
+    }
+
+    if (!isGuildOwner()) {
+        error("You must be the guild owner to withdraw coins.")
+        return
+    }
+
+    val slot = inventory.firstEmpty()
+    if (slot == -1) {
+        error("You do not have enough space in your inventory to withdraw the coins.")
+        return
+    }
+
+    val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
+    if (orthCoin == null) {
+        error("Could not create OrthCoin.")
+        error("Cancelling withdrawal!")
+        return
+    }
+
+    updateGuildBalance(-amount)
+    orthCoin.amount = amount
+    inventory.setItem(slot, orthCoin)
+}
+
+private fun Player.updateGuildBalance(amount: Int) {
+    transaction(AbyssContext.db) {
+        val guildId = Players.select {
+            Players.playerUUID eq uniqueId
+        }.single()[Players.guildId]
+
+        val bal = Guilds.select {
+            Guilds.id eq guildId
+        }.single()[Guilds.balance]
+
+        Guilds.update({Guilds.id eq guildId}) {
+            it[balance] = (bal - amount)
+        }
     }
 }

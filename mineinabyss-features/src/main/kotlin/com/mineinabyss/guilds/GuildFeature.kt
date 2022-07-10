@@ -5,9 +5,12 @@ import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.guilds.extensions.depositCoinsToGuild
 import com.mineinabyss.guilds.extensions.hasGuild
+import com.mineinabyss.guilds.extensions.withdrawCoinsFromGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -40,6 +43,35 @@ class GuildFeature(
         commands {
             mineinabyss {
                 "guild"(desc = "Guild related commands") {
+                    "balance"(desc = "Guild Balance related commands") {
+                        "deposit" {
+                            val amount by intArg()
+                            playerAction {
+                                val player = sender as Player
+                                if (amount <= 0) {
+                                    player.error("You must deposit at least 1 coin.")
+                                    return@playerAction
+                                }
+                                if (amount > player.inventory.itemInMainHand.amount) {
+                                    player.error("You don't have that many coins.")
+                                    player.error("Depositing ${player.inventory.itemInMainHand.amount} coins.")
+                                    player.depositCoinsToGuild(player.inventory.itemInMainHand.amount)
+                                } else player.depositCoinsToGuild(amount)
+                            }
+                        }
+                        "withdraw" {
+                            var amount by intArg()
+                            playerAction {
+                                val player = sender as Player
+                                if (amount <= 0) {
+                                    player.error("You can't withdraw 0 or less coins!")
+                                    return@playerAction
+                                }
+                                if (amount > 64) amount = 64
+                                player.withdrawCoinsFromGuild(amount)
+                            }
+                        }
+                    }
                     "chat"(desc = "Toggle guild chat") {
                         playerAction {
                             val player = sender as Player
