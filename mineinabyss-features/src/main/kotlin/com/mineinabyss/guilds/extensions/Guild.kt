@@ -314,6 +314,7 @@ fun String.canLevelUpGuild() : Boolean {
 fun Player.levelUpGuild() {
     val guildName = getGuildName()
     val cost = guildName.getGuildLevelUpCost() ?: return
+    val guildMembers = getGuildMembers().filter { it.second.uniqueId != uniqueId }.map { it.second }
     updateGuildBalance(-cost)
     transaction(AbyssContext.db) {
         val lvl = Guilds.select {
@@ -324,7 +325,21 @@ fun Player.levelUpGuild() {
             it[level] = lvl + 1
         }
     }
-    success("You have leveled up your guild to level <b>${guildName.getGuildLevel()}</b>!")
+
+    val newLvl = guildName.getGuildLevel()
+    val lvlUpMessage = "<gold>Your guild has leveled up to level <b>${newLvl}</b>!"
+
+    success("You have leveled up your guild to level <b>${newLvl}</b>!")
+    guildMembers.forEach { member ->
+        if (member.isOnline) {
+            (member as Player).sendMessage(lvlUpMessage)
+        } else {
+            MessageQueue.insert {
+                it[content] = lvlUpMessage
+                it[playerUUID] = member.uniqueId
+            }
+        }
+    }
     closeInventory()
 }
 
