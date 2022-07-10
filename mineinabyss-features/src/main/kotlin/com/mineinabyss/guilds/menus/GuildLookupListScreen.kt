@@ -1,6 +1,6 @@
 package com.mineinabyss.guilds.menus
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
@@ -21,16 +21,19 @@ import net.wesjd.anvilgui.AnvilGUI
 fun GuildUIScope.GuildLookupListScreen() {
     GuildListButton(Modifier.at(2, 0))
     BackButton(Modifier.at(0, 5))
-    PreviousButton(Modifier.at(3, 5))
-    NextButton(Modifier.at(5, 5))
     LookForGuildButton(Modifier.at(7, 5))
 }
 
-//TODO Fix Next/Previous buttons
+val guildList = displayGuildList().chunked(20)
+const val pageNumber = 0
+
 @Composable
 fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
+    var pageNum by remember { mutableStateOf(pageNumber) }
+    var guildPageList by remember { mutableStateOf(guildList[pageNum]) }
+
     Grid(modifier.size(5, 5)) {
-        displayGuildList().forEach { (guildName, joinType, guildLevel) ->
+        guildPageList.forEach { (guildName, joinType, guildLevel) ->
             val owner = guildName.getOwnerFromGuildName()
             Button(
                 onClick = {
@@ -55,34 +58,25 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
             }
         }
     }
-}
 
-@Composable
-fun PreviousButton(modifier: Modifier = Modifier) {
+    // Moved out of separate functions due to remember not working with separate functions
     Button(
-        modifier = modifier,
+        enabled = pageNum > 0,
+        modifier = modifier.at(3, 5),
         onClick = {
+            pageNum--
+            guildPageList = guildList[pageNum]
         }
-    ) {
-        Text(
-            "<yellow><b>Previous".miniMsg(),
-            "<red>This feature is not yet implemented.".miniMsg()
-        )
-    }
-}
+    ) { Text("<yellow><b>Previous".miniMsg()) }
 
-@Composable
-fun NextButton(modifier: Modifier = Modifier) {
     Button(
-        modifier = modifier,
+        enabled = pageNum < (guildList.size - 1),
+        modifier = modifier.at(5, 5),
         onClick = {
-            displayGuildList()
-        }) {
-        Text(
-            "<yellow><b>Next".miniMsg(),
-            "<red>This feature is not yet implemented.".miniMsg()
-        )
-    }
+            pageNum++
+            guildPageList = guildList[pageNum]
+        }
+    ) { Text("<yellow><b>Next".miniMsg()) }
 }
 
 @Composable
@@ -107,8 +101,6 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
                         }
                 ))
         }
-    ) {
-        Text("<gold><b>Search for a Guild by name".miniMsg())
-    }
+    ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
 }
 
