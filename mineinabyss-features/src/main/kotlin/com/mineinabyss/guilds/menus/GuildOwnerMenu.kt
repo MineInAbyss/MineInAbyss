@@ -80,6 +80,7 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
             "<yellow><b>Guild Owner:</b> <yellow><i>${player.name}".miniMsg(),
             "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
             "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
+            "<yellow><b>Guild Balance:</b> <yellow><i>${player.getGuildBalance()}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
@@ -87,11 +88,29 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
 
 @Composable
 fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
-    Button(modifier = modifier) {
-        Text(
-            "<red><b><st>Level up Guildrank".miniMsg(),
-            "<red>This feature is not yet implemented.".miniMsg()
-        )
+    val guild = player.getGuildName()
+    val isMaxLevel = guild.getGuildLevelUpCost() == null
+    Button(
+        enabled = player.canLevelUpGuild(),
+        onClick = { player.levelUpGuild() },
+        modifier = modifier) { enabled ->
+        if (enabled)
+            Text(
+                "<red><b>Level up Guildrank".miniMsg(),
+                "<gold>Next level-up will cost <b>${guild.getGuildLevelUpCost()} coins</b>.".miniMsg()
+            )
+        else if (isMaxLevel)
+            Text(
+                "<red><b><st>Level up Guildrank".miniMsg(),
+                "<darkred>Your guild has reached the current max-level.".miniMsg()
+            )
+        else {
+            Text(
+                "<red><b><st>Level up Guildrank".miniMsg(),
+                "<red>You need <b>${guild.getGuildLevelUpCost()} coins</b> in your".miniMsg(),
+                "<red>guild balance to level up your guildrank.".miniMsg()
+            )
+        }
     }
 }
 

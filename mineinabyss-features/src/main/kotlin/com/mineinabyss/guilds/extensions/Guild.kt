@@ -296,6 +296,48 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
     success("You withdrew $amount Orth Coins from your guild.")
 }
 
+fun Player.canLevelUpGuild() : Boolean {
+    val guild = getGuildName()
+    val levelUpCost = guild.getGuildLevelUpCost() ?: return false
+    val balance = getGuildBalance()
+
+    return balance >= levelUpCost
+}
+
+fun String.canLevelUpGuild() : Boolean {
+    val levelUpCost = getGuildLevelUpCost() ?: return false
+    val balance = getGuildBalance()
+
+    return balance >= levelUpCost
+}
+
+fun Player.levelUpGuild() {
+    val guildName = getGuildName()
+    val cost = guildName.getGuildLevelUpCost() ?: return
+    updateGuildBalance(-cost)
+    transaction(AbyssContext.db) {
+        val lvl = Guilds.select {
+            Guilds.name.lowerCase() eq guildName.lowercase()
+        }.singleOrNull()?.get(Guilds.level) ?: return@transaction 0
+
+        Guilds.update({Guilds.name.lowerCase() eq guildName.lowercase()}) {
+            it[level] = lvl + 1
+        }
+    }
+    success("You have leveled up your guild to level <b>${guildName.getGuildLevel()}</b>!")
+    closeInventory()
+}
+
+fun String.getGuildLevelUpCost() : Int? {
+    return when (getGuildLevel()) {
+        1 -> 25
+        2 -> 50
+        3 -> 100
+        4 -> 200
+        else -> null
+    }
+}
+
 private fun Player.updateGuildBalance(amount: Int) {
     transaction(AbyssContext.db) {
         val guildId = Players.select {
@@ -307,6 +349,18 @@ private fun Player.updateGuildBalance(amount: Int) {
         }.single()[Guilds.balance]
 
         Guilds.update({Guilds.id eq guildId}) {
+            it[balance] = (bal + amount)
+        }
+    }
+}
+
+private fun String.updateGuildBalance(amount: Int) {
+    transaction(AbyssContext.db) {
+        val bal = Guilds.select {
+            Guilds.name eq this@updateGuildBalance
+        }.single()[Guilds.balance]
+
+        Guilds.update({Guilds.name eq this@updateGuildBalance}) {
             it[balance] = (bal + amount)
         }
     }
