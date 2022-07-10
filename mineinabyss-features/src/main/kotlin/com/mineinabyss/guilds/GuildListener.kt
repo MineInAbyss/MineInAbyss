@@ -78,6 +78,7 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun AsyncPlayerChatEvent.overrideVentureChat() {
         if (player.playerData.guildChatStatus && !player.hasGuild()) {
+            player.playerData.guildChatStatus = false
             player.error("You cannot use guild chat without a guild.")
             player.success("Guild chat has been toggled OFF")
             return
@@ -86,7 +87,7 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
         if (player.playerData.guildChatStatus && player.hasGuild()) isCancelled = true
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun AsyncPlayerChatEvent.toggleGuildChat() {
 
         if (!player.playerData.guildChatStatus || !player.hasGuild()) return
