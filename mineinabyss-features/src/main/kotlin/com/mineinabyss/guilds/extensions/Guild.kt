@@ -21,12 +21,12 @@ import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Player.createGuild(guildName: String, feature: GuildFeature) {
+fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
 
     if (newGuildName.length > feature.guildNameMaxLength) {
-        error("Your guild name was longer than the maximum allowed length.")
-        error("Please make it shorter than ${feature.guildNameMaxLength} characters.")
+        player?.error("Your guild name was longer than the maximum allowed length.")
+        player?.error("Please make it shorter than ${feature.guildNameMaxLength} characters.")
         return
     }
 
@@ -34,10 +34,10 @@ fun Player.createGuild(guildName: String, feature: GuildFeature) {
         val bannedWord = banned.toRegex().find(newGuildName)?.value
         if (banned.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
             if (bannedWord?.contains("([^a-zA-Z])".toRegex()) == true)
-                this.error("Your Guild name can only contain the letters <b>a-z</b>.")
+                player?.error("Your Guild name can only contain the letters <b>a-z</b>.")
             else
-                this.error("Your Guild name contains a blocked word: <b>$bannedWord</b>.")
-            this.error("Please choose another name :)")
+                player?.error("Your Guild name contains a blocked word: <b>$bannedWord</b>.")
+            player?.error("Please choose another name :)")
             return
         }
     }
@@ -48,11 +48,10 @@ fun Player.createGuild(guildName: String, feature: GuildFeature) {
             Guilds.name.lowerCase() eq guildName.lowercase()
         }.firstOrNull()
 
-        if (guild != null){
-            this@createGuild.error("There is already a guild registered with the name <i>$guildName</i>!")
+        if (guild != null) {
+            player?.error("There is already a guild registered with the name <i>$guildName</i>!")
             return@transaction
-        }
-        else success("Your Guild has been registered with the name <i>$guildName")
+        } else player?.success("Your Guild has been registered with the name <i>$guildName")
 
         val rowID = Guilds.insert {
             it[name] = guildName
@@ -88,8 +87,7 @@ fun Player.deleteGuild() {
             val deleteGuildMessage = "The Guild you were in has been deleted by the Owner."
             val player = Bukkit.getPlayer(row[Players.playerUUID])
 
-            player?.error(deleteGuildMessage) ?:
-            MessageQueue.insert {
+            player?.error(deleteGuildMessage) ?: MessageQueue.insert {
                 it[content] = deleteGuildMessage
                 it[playerUUID] = row[Players.playerUUID]
             }
@@ -132,12 +130,12 @@ fun Player.changeStoredGuildName(newGuildName: String) {
 
 
 
-        if (guild != null){
+        if (guild != null) {
             error("There is already a guild registered with this name!")
             return@transaction
         }
 
-        Guilds.update({Guilds.id eq guildId}) {
+        Guilds.update({ Guilds.id eq guildId }) {
             it[name] = newGuildName
         }
 
@@ -179,13 +177,13 @@ fun Player.changeGuildJoinType() {
             GuildJoinType.Request -> GuildJoinType.Invite
         }
 
-        Guilds.update({Guilds.id eq guildId}) {
+        Guilds.update({ Guilds.id eq guildId }) {
             it[joinType] = newType
         }
     }
 }
 
-fun Player.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>>  {
+fun Player.getGuildMembers(): List<Pair<GuildRanks, OfflinePlayer>> {
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq player!!.uniqueId
@@ -201,7 +199,7 @@ fun Player.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>>  {
     }
 }
 
-fun String.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>> {
+fun String.getGuildMembers(): List<Pair<GuildRanks, OfflinePlayer>> {
     return transaction(AbyssContext.db) {
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildMembers.lowercase()
@@ -215,20 +213,22 @@ fun String.getGuildMembers() : List<Pair<GuildRanks, OfflinePlayer>> {
     }
 }
 
-fun getAllGuilds() : List<Triple<String, GuildJoinType, Int>> {
+fun getAllGuilds(): List<Triple<String, GuildJoinType, Int>> {
     return transaction(AbyssContext.db) {
-        return@transaction Guilds.selectAll().map {row -> Triple(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
+        return@transaction Guilds.selectAll()
+            .map { row -> Triple(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
     }
 }
 
-fun displayGuildList(): List<Triple<String, GuildJoinType, Int>> {
-    val list = getAllGuilds().sortedWith(compareBy { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first })
-
-    return if (list.size < 20) list.subList(0, list.size)
-    else list.subList(0, 20)
+fun displayGuildList(queryName: String? = null): List<Triple<String, GuildJoinType, Int>> {
+    val comparator = compareBy<Triple<String, GuildJoinType, Int>>
+    { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first }
+    return if (queryName == null)
+        getAllGuilds().sortedWith(comparator)
+    else getAllGuilds().filter { it.first.startsWith(queryName) }.sortedWith(comparator)
 }
 
-fun String.getOwnerFromGuildName() : OfflinePlayer {
+fun String.getOwnerFromGuildName(): OfflinePlayer {
     return transaction(AbyssContext.db) {
         val guild = Guilds.select {
             Guilds.name eq this@getOwnerFromGuildName
@@ -295,7 +295,7 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
     success("You withdrew $amount Orth Coins from your guild.")
 }
 
-fun Player.canLevelUpGuild() : Boolean {
+fun Player.canLevelUpGuild(): Boolean {
     val guild = getGuildName()
     val levelUpCost = guild.getGuildLevelUpCost() ?: return false
     val balance = getGuildBalance()
@@ -303,7 +303,7 @@ fun Player.canLevelUpGuild() : Boolean {
     return balance >= levelUpCost
 }
 
-fun String.canLevelUpGuild() : Boolean {
+fun String.canLevelUpGuild(): Boolean {
     val levelUpCost = getGuildLevelUpCost() ?: return false
     val balance = getGuildBalance()
 
@@ -320,7 +320,7 @@ fun Player.levelUpGuild() {
             Guilds.name.lowerCase() eq guildName.lowercase()
         }.singleOrNull()?.get(Guilds.level) ?: return@transaction 0
 
-        Guilds.update({Guilds.name.lowerCase() eq guildName.lowercase()}) {
+        Guilds.update({ Guilds.name.lowerCase() eq guildName.lowercase() }) {
             it[level] = lvl + 1
         }
     }
@@ -342,7 +342,7 @@ fun Player.levelUpGuild() {
     closeInventory()
 }
 
-fun String.getGuildLevelUpCost() : Int? {
+fun String.getGuildLevelUpCost(): Int? {
     return when (getGuildLevel()) {
         1 -> 25
         2 -> 50
@@ -362,7 +362,7 @@ private fun Player.updateGuildBalance(amount: Int) {
             Guilds.id eq guildId
         }.single()[Guilds.balance]
 
-        Guilds.update({Guilds.id eq guildId}) {
+        Guilds.update({ Guilds.id eq guildId }) {
             it[balance] = (bal + amount)
         }
     }
@@ -374,7 +374,7 @@ private fun String.updateGuildBalance(amount: Int) {
             Guilds.name eq this@updateGuildBalance
         }.single()[Guilds.balance]
 
-        Guilds.update({Guilds.name eq this@updateGuildBalance}) {
+        Guilds.update({ Guilds.name eq this@updateGuildBalance }) {
             it[balance] = (bal + amount)
         }
     }

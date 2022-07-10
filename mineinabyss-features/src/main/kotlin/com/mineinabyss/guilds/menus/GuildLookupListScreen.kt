@@ -1,6 +1,7 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.*
+import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
@@ -14,24 +15,27 @@ import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
 
 @Composable
-fun GuildUIScope.GuildLookupListScreen() {
-    GuildListButton(Modifier.at(2, 0))
-    BackButton(Modifier.at(0, 5))
-    LookForGuildButton(Modifier.at(7, 5))
+fun GuildUIScope.GuildLookupListScreen(pageNumber: Int) {
+    GuildListButton(Modifier.at(2, 0), pageNumber)
+    GuildListBackButton(Modifier.at(0, 5))
+    //LookForGuildButton(Modifier.at(7, 5))
 }
 
-val guildList = displayGuildList().chunked(20)
-const val pageNumber = 0
+private val defaultList = displayGuildList().chunked(20)
+private var queriedList: List<List<Triple<String, GuildJoinType, Int>>>? = null
 
 @Composable
-fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
+fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, pageNumber: Int) {
+    val queriedGuildList = queriedList ?: defaultList
     var pageNum by remember { mutableStateOf(pageNumber) }
-    var guildPageList by remember { mutableStateOf(guildList[pageNum]) }
+    var guildPageList by remember { mutableStateOf(queriedGuildList[pageNum]) }
 
+    queriedList = null
     Grid(modifier.size(5, 5)) {
         guildPageList.forEach { (guildName, joinType, guildLevel) ->
             val owner = guildName.getOwnerFromGuildName()
@@ -65,25 +69,26 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier) {
         modifier = modifier.at(3, 5),
         onClick = {
             pageNum--
-            guildPageList = guildList[pageNum]
+            guildPageList = queriedGuildList[pageNum]
+            nav.reset()
+            nav.open(GuildScreen.GuildList(pageNum))
         }
     ) { Text("<yellow><b>Previous".miniMsg()) }
 
     Button(
-        enabled = pageNum < (guildList.size - 1),
+        enabled = pageNum < (queriedGuildList.size - 1),
         modifier = modifier.at(5, 5),
         onClick = {
             pageNum++
-            guildPageList = guildList[pageNum]
+            guildPageList = queriedGuildList[pageNum]
+            nav.reset()
+            nav.open(GuildScreen.GuildList(pageNum))
         }
     ) { Text("<yellow><b>Next".miniMsg()) }
-}
 
-@Composable
-fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
     val button = TitleItem.of("Guild Name")
     Button(
-        modifier = modifier,
+        modifier = modifier.at(7,5),
         onClick = {
             nav.open(
                 UniversalScreens.Anvil(
@@ -93,10 +98,10 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
                         .onComplete { player, guildName: String ->
-                            if (player.hasGuild() && player.getGuildName().lowercase() == guildName.lowercase())
-                                nav.open(GuildScreen.MemberList(guildLevel, player))
-                            else if (player.verifyGuildName(guildName) != null)
-                                nav.open(GuildScreen.GuildLookupMembers(guildName))
+                            if (displayGuildList(guildName).isEmpty())
+                                player.error("No guild found with that name")
+                            else
+                                queriedList = displayGuildList(guildName).chunked(20)
                             AnvilGUI.Response.close()
                         }
                 ))
@@ -104,3 +109,11 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier) {
     ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
 }
 
+@Composable
+private fun GuildUIScope.GuildListBackButton(modifier: Modifier = Modifier) {
+    Button(onClick = {
+        nav.back()
+    }, modifier = modifier) {
+        Text("<red><b>Back".miniMsg())
+    }
+}
