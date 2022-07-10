@@ -10,6 +10,7 @@ import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.playerprofile.luckPerms
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
@@ -31,12 +32,13 @@ fun Player.updateBalance() {
     val data = player?.playerData
     val orthCoinBalance = data?.orthCoinsHeld
     val mittyTokenBalance = data?.mittyTokensHeld
-    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
-    val splitSupporterBalance = mittyTokenBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
+    val font = Key.key("orthbanking")
+    val orthCoinComponent = Component.text("${orthCoinBalance}:orthcoin:").font(font)
+    val mittyTokenComponent = Component.text("${mittyTokenBalance}:mittytoken:").font(font)
 
     val currentBalance: Component = if (data?.mittyTokensHeld!! > 0) {
-        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:mittytoken:")
-    } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
+        Component.text(Space.of(128)).append(orthCoinComponent).append(mittyTokenComponent)
+    } else Component.text(Space.of(160)).append(orthCoinComponent)
 
     if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
 

@@ -18,6 +18,8 @@ import com.mineinabyss.helpers.*
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.text.Component
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
 import org.bukkit.Statistic
@@ -29,10 +31,10 @@ val luckPerms = LuckPermsProvider.get()
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val isPatreon = player.toGeary().has<Patreon>()
-    val titleName = player.name.toList().joinToString { ":player_profile_$it:" }.replace(", ", "")
+    val titleName = Component.text(player.name).font(Key.key("playerprofile"))
 
     Chest(setOf(viewer),
-        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}$titleName${Space.of(-42)}${DisplayRanks(player)}",
+        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}${titleName}${Space.of(-42)}${DisplayRanks(player)}",
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
