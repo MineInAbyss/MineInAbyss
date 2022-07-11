@@ -2,6 +2,7 @@ package com.mineinabyss.guilds.extensions
 
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.papermc.helpers.heldLootyItem
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
@@ -13,7 +14,6 @@ import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventorySlotContext
 import com.mineinabyss.looty.ecs.components.itemcontexts.useWithLooty
 import com.mineinabyss.looty.loadItem
-import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -247,8 +247,7 @@ fun Player.depositCoinsToGuild(amount: Int) {
         error("You must be in a guild to withdraw coins.")
         return
     }
-
-    if (inventory.itemInMainHand.toGearyOrNull(this)?.has<OrthCoin>() != true) {
+    if (heldLootyItem?.has<OrthCoin>() != true) {
         error("You must be holding an Orth Coin to make a deposit.")
         return
     }

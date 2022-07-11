@@ -5,11 +5,13 @@ import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.guilds.extensions.*
+import com.mineinabyss.guilds.extensions.depositCoinsToGuild
+import com.mineinabyss.guilds.extensions.getGuildBalance
+import com.mineinabyss.guilds.extensions.hasGuild
+import com.mineinabyss.guilds.extensions.withdrawCoinsFromGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
-import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -21,7 +23,6 @@ import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 @Serializable
@@ -43,13 +44,6 @@ class GuildFeature(
 
         commands {
             mineinabyss {
-                "debug" {
-                    val player by stringArg()
-                    action {
-                        val player = Bukkit.getOfflinePlayer(player)
-                        player.createGuild(player.name.toString(), this@GuildFeature)
-                    }
-                }
                 "guild"(desc = "Guild related commands") {
                     "balance"(desc = "Guild Balance related commands") {
                         "view"(desc = "Viewe your guilds balance") {
