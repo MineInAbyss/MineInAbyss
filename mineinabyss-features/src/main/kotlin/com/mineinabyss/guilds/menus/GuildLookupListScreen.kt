@@ -95,10 +95,14 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, pageNumber: Int)
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
                         .onComplete { player, guildName: String ->
-                            if (displayGuildList(guildName).isEmpty())
-                                player.error("No guild found with that name")
-                            else
-                                queriedList = displayGuildList(guildName).chunked(20)
+                            val guilds = displayGuildList(guildName)
+                            if (guilds.isEmpty()) player.error("No guild found with that name")
+                            else queriedList = guilds.chunked(20)
+
+                            pageNum = 0
+                            guildPageList = queriedGuildList[pageNum]
+                            nav.reset()
+                            nav.open(GuildScreen.GuildList(pageNum))
                             AnvilGUI.Response.close()
                         }
                 ))
