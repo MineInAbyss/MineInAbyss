@@ -20,10 +20,13 @@ import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 
 val luckPerms = LuckPermsProvider.get()
@@ -31,10 +34,12 @@ val luckPerms = LuckPermsProvider.get()
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val isPatreon = player.toGeary().has<Patreon>()
-    val titleName = Component.text(player.name).font(Key.key("playerprofile"))
+    val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
+    val titleComponent = Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}")
+    val rankComponent = Component.text("${Space.of(-42)}${DisplayRanks(player)}")
 
     Chest(setOf(viewer),
-        "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}${titleName}${Space.of(-42)}${DisplayRanks(player)}",
+        titleComponent.append(titleName).append(rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
@@ -111,10 +116,10 @@ fun LeggingsSlot(player: Player) = Item(player.equipment.leggings)
 fun BootsSlot(player: Player) = Item(player.equipment.boots)
 
 @Composable
-fun CosmeticHat(player: Player) = Item(player.getCosmeticHat())
+fun CosmeticHat(player: Player) = /*Item(player.getCosmeticHat())*/ Item(ItemStack(Material.AIR))
 
 @Composable
-fun CosmeticBackpack(player: Player) = Item(player.getCosmeticBackpack())
+fun CosmeticBackpack(player: Player) = /*Item(player.getCosmeticBackpack())*/ Item(ItemStack(Material.AIR))
 
 @Composable
 fun OrthCoinBalance(player: Player) {
