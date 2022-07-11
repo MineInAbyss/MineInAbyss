@@ -9,6 +9,8 @@ import com.mineinabyss.guilds.database.GuildJoinQueue
 import com.mineinabyss.guilds.database.Guilds
 import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.helpers.MessageQueue
+import com.mineinabyss.helpers.generateGifs
+import com.mineinabyss.helpers.generateImages
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.platforms.IdofrontPlatforms
@@ -37,6 +39,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
 
     override fun onEnable() {
         saveDefaultConfig()
+        generateImages()
+        generateGifs()
 
         var addon: GearyAddon? = null
         if (isPluginEnabled("Geary")) {
