@@ -1,12 +1,13 @@
 package com.mineinabyss.playerprofile
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildScreen
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
@@ -23,10 +24,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 
 val luckPerms = LuckPermsProvider.get()
@@ -35,8 +34,10 @@ val luckPerms = LuckPermsProvider.get()
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
-    val titleComponent = Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}")
+    val titleComponent =
+        Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}")
     val rankComponent = Component.text("${Space.of(-42)}${DisplayRanks(player)}")
+    var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
 
     Chest(setOf(viewer),
         titleComponent.append(titleName).append(rankComponent),
@@ -44,7 +45,7 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
         Column(Modifier.at(2, 0)) {
-            //DisplayRanks(player)
+            DisplayRanks(player)
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
@@ -55,13 +56,17 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
         Column(Modifier.at(7, 0)) {
             CosmeticHat(player)
             CosmeticBackpack(player)
+            Spacer(height = 1)
+            ToggleArmorVisibility {
+                player.playerData.displayProfileArmor = !hideArmorIcons
+                hideArmorIcons = !hideArmorIcons
+            }
         }
         Column(Modifier.at(8, 0)) {
-            HelmetSlot(player)
-
-            ChestplateSlot(player)
-            LeggingsSlot(player)
-            BootsSlot(player)
+            HelmetSlot(player, hideArmorIcons)
+            ChestplateSlot(player, hideArmorIcons)
+            LeggingsSlot(player, hideArmorIcons)
+            BootsSlot(player, hideArmorIcons)
         }
     }
 }
@@ -104,22 +109,41 @@ fun PlayerHead(player: Player, modifier: Modifier) {
 }
 
 @Composable
-fun HelmetSlot(player: Player) = Item(player.equipment.helmet)
+fun HelmetSlot(player: Player, hideArmorIcons: Boolean) =
+    if (hideArmorIcons) Item(player.equipment.helmet) else Item(null)
+
 
 @Composable
-fun ChestplateSlot(player: Player) = Item(player.equipment.chestplate)
+fun ChestplateSlot(player: Player, hideArmorIcons: Boolean) =
+    if (hideArmorIcons) Item(player.equipment.chestplate) else Item(null)
+
 
 @Composable
-fun LeggingsSlot(player: Player) = Item(player.equipment.leggings)
+fun LeggingsSlot(player: Player, hideArmorIcons: Boolean) =
+    if (hideArmorIcons) Item(player.equipment.leggings) else Item(null)
+
 
 @Composable
-fun BootsSlot(player: Player) = Item(player.equipment.boots)
+fun BootsSlot(player: Player, hideArmorIcons: Boolean) =
+    if (hideArmorIcons) Item(player.equipment.boots) else Item(null)
+
 
 @Composable
-fun CosmeticHat(player: Player) = /*Item(player.getCosmeticHat())*/ Item(ItemStack(Material.AIR))
+fun ToggleArmorVisibility(toggleArmor: () -> Unit = ({})) {
+    Button(onClick = toggleArmor) {
+        Text(
+            "<dark_purple>Toggle armor visibility".miniMsg(),
+            "<light_purple>Hides the visibility of your armor".miniMsg(),
+            "<light_purple>from other players viewing your profile".miniMsg()
+        )
+    }
+}
 
 @Composable
-fun CosmeticBackpack(player: Player) = /*Item(player.getCosmeticBackpack())*/ Item(ItemStack(Material.AIR))
+fun CosmeticHat(player: Player) = /*Item(player.getCosmeticHat())*/ Item(null)
+
+@Composable
+fun CosmeticBackpack(player: Player) = /*Item(player.getCosmeticBackpack())*/ Item(null)
 
 @Composable
 fun OrthCoinBalance(player: Player) {
@@ -145,8 +169,7 @@ fun GuildButton(player: Player, viewer: Player) {
                 "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
                 "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
             )
-        }
-        else Text("<gold><b><i>${player.name}</b> is not".miniMsg(), "<gold><i>in any guild.".miniMsg())
+        } else Text("<gold><b><i>${player.name}</b> is not".miniMsg(), "<gold><i>in any guild.".miniMsg())
     }
 }
 
@@ -155,9 +178,12 @@ fun DiscordButton(player: Player) {
     val linked = player.getLinkedDiscordAccount()
 
     if (linked == null) {
-        Item(TitleItem.of(
-            "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
-            "<#718AD6>linked an account.".miniMsg()))
+        Item(
+            TitleItem.of(
+                "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
+                "<#718AD6>linked an account.".miniMsg()
+            )
+        )
     } else Item(TitleItem.of("<b><#718AD6>${player.name} is linked with <b>${linked}</b>.".miniMsg()))
 }
 
@@ -166,7 +192,7 @@ fun DisplayRanks(player: Player): String {
     var group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull()
     val patreon = player.getGroups().firstOrNull { it.contains("patreon") || it.contains("supporter") }
     group = if (group != null) "${Space.of(34)}:player_profile_rank_$group:" else Space.of(34)
-    if (patreon?.isNotEmpty() == true) group +=  ":${Space.of(-6)}:player_profile_rank_$patreon:"
+    if (patreon?.isNotEmpty() == true) group += ":${Space.of(-6)}:player_profile_rank_$patreon:"
 
     return group
 }
