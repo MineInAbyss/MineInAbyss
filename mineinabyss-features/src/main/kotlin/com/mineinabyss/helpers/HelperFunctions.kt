@@ -7,11 +7,11 @@ import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.mineinabyss.playerprofile.luckPerms
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
+import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
@@ -27,6 +27,8 @@ data class ItemDrop(
     val dropAmount: IntRange,
     val applyFortune: Boolean = true
 )
+
+val luckPerms = LuckPermsProvider.get()
 
 fun Player.updateBalance() {
     val data = player?.playerData

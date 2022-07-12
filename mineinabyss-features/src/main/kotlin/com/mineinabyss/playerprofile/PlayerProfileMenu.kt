@@ -22,13 +22,9 @@ import com.mineinabyss.idofront.messaging.miniMsg
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
-import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
-
-
-val luckPerms = LuckPermsProvider.get()
 
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
@@ -129,7 +125,7 @@ fun BootsSlot(player: Player, hideArmorIcons: Boolean) =
 
 
 @Composable
-fun ToggleArmorVisibility(toggleArmor: () -> Unit = ({})) {
+fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
     Button(onClick = toggleArmor) {
         Text(
             "<dark_purple>Toggle armor visibility".miniMsg(),
@@ -140,10 +136,10 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit = ({})) {
 }
 
 @Composable
-fun CosmeticHat(player: Player) = /*Item(player.getCosmeticHat())*/ Item(null)
+fun CosmeticHat(player: Player) = Item(player.getCosmeticHat())
 
 @Composable
-fun CosmeticBackpack(player: Player) = /*Item(player.getCosmeticBackpack())*/ Item(null)
+fun CosmeticBackpack(player: Player) = Item(player.getCosmeticBackpack())
 
 @Composable
 fun OrthCoinBalance(player: Player) {

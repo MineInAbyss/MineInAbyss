@@ -21,7 +21,26 @@ import net.wesjd.anvilgui.AnvilGUI
 
 @Composable
 fun GuildUIScope.GuildLookupListScreen(pageNumber: Int) {
-    GuildListButton(Modifier.at(2, 0), pageNumber)
+    val queriedGuildList = queriedList ?: defaultList
+    var pageNum by remember { mutableStateOf(pageNumber) }
+    var guildPageList by remember { mutableStateOf(queriedGuildList[pageNum]) }
+
+    GuildListButton(Modifier.at(2, 0), guildPageList)
+    PreviousPageButton(Modifier.at(3, 5), pageNum) {
+        pageNum--
+        guildPageList = queriedGuildList[pageNum]
+        nav.refresh()
+    }
+    NextPageButton(Modifier.at(5, 5), pageNum, queriedGuildList) {
+        pageNum++
+        guildPageList = queriedGuildList[pageNum]
+        nav.refresh()
+    }
+    LookForGuildButton(Modifier.at(7,5)) {
+        pageNum = 0
+        guildPageList = queriedGuildList[pageNum]
+        nav.refresh()
+    }
     BackButton(Modifier.at(0, 5))
 }
 
@@ -29,11 +48,7 @@ private val defaultList = displayGuildList().chunked(20)
 private var queriedList: List<List<Triple<String, GuildJoinType, Int>>>? = null
 
 @Composable
-fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, pageNumber: Int) {
-    val queriedGuildList = queriedList ?: defaultList
-    var pageNum by remember { mutableStateOf(pageNumber) }
-    var guildPageList by remember { mutableStateOf(queriedGuildList[pageNum]) }
-
+fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: List<Triple<String, GuildJoinType, Int>>) {
     queriedList = null
     Grid(modifier.size(5, 5)) {
         guildPageList.forEach { (guildName, joinType, guildLevel) ->
@@ -61,48 +76,94 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, pageNumber: Int)
     }
 
     // Moved out of separate functions due to remember not working with separate functions
+//    Button(
+//        enabled = pageNum > 0,
+//        modifier = modifier.at(3, 5),
+//        onClick = {
+//            pageNum--
+//            guildPageList = queriedGuildList[pageNum]
+//            nav.reset()
+//            nav.open(GuildScreen.GuildList(pageNum))
+//        }
+//    ) { Text("<yellow><b>Previous".miniMsg()) }
+//
+//    Button(
+//        enabled = pageNum < (queriedGuildList.size - 1),
+//        modifier = modifier.at(5, 5),
+//        onClick = {
+//            pageNum++
+//            guildPageList = queriedGuildList[pageNum]
+//            nav.reset()
+//            nav.open(GuildScreen.GuildList(pageNum))
+//        }
+//    ) { Text("<yellow><b>Next".miniMsg()) }
+
+//    Button(
+//        modifier = modifier.at(7, 5),
+//        onClick = {
+//            nav.open(
+//                UniversalScreens.Anvil(
+//                    AnvilGUI.Builder()
+//                        .title("${Space.of(-64)}${Space.of(1)}:guild_search_menu:")
+//                        .itemLeft(TitleItem.of("Guild Name"))
+//                        .plugin(guiyPlugin)
+//                        .onClose { nav.back() }
+//                        .onComplete { player, guildName: String ->
+//                            val guilds = displayGuildList(guildName)
+//                            if (guilds.isEmpty()) player.error("No guild found with that name")
+//                            else queriedList = guilds.chunked(20)
+//
+//                            pageNum = 0
+//                            guildPageList = queriedGuildList[pageNum]
+//                            nav.reset()
+//                            nav.open(GuildScreen.GuildList(pageNum))
+//                            AnvilGUI.Response.close()
+//                        }
+//                ))
+//        }
+//    ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
+}
+
+@Composable
+fun PreviousPageButton(modifier: Modifier = Modifier, pageNum: Int, onClick: () -> Unit) {
     Button(
         enabled = pageNum > 0,
         modifier = modifier.at(3, 5),
-        onClick = {
-            pageNum--
-            guildPageList = queriedGuildList[pageNum]
-            nav.reset()
-            nav.open(GuildScreen.GuildList(pageNum))
-        }
+        onClick = onClick
     ) { Text("<yellow><b>Previous".miniMsg()) }
+}
 
+@Composable
+fun NextPageButton(
+    modifier: Modifier,
+    pageNum: Int,
+    queriedGuildList: List<List<Triple<String, GuildJoinType, Int>>>,
+    onClick: () -> Unit
+) {
     Button(
         enabled = pageNum < (queriedGuildList.size - 1),
         modifier = modifier.at(5, 5),
-        onClick = {
-            pageNum++
-            guildPageList = queriedGuildList[pageNum]
-            nav.reset()
-            nav.open(GuildScreen.GuildList(pageNum))
-        }
+        onClick = onClick
     ) { Text("<yellow><b>Next".miniMsg()) }
+}
 
-    val button = TitleItem.of("Guild Name")
+@Composable
+fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: () -> Unit) {
     Button(
-        modifier = modifier.at(7,5),
+        modifier = modifier.at(7, 5),
         onClick = {
             nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
                         .title("${Space.of(-64)}${Space.of(1)}:guild_search_menu:")
-                        .itemLeft(button)
+                        .itemLeft(TitleItem.of("Guild Name"))
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
                         .onComplete { player, guildName: String ->
                             val guilds = displayGuildList(guildName)
                             if (guilds.isEmpty()) player.error("No guild found with that name")
                             else queriedList = guilds.chunked(20)
-
-                            pageNum = 0
-                            guildPageList = queriedGuildList[pageNum]
-                            nav.reset()
-                            nav.open(GuildScreen.GuildList(pageNum))
+                            run(onClick)
                             AnvilGUI.Response.close()
                         }
                 ))
