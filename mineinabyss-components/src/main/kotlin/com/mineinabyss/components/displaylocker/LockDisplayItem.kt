@@ -13,10 +13,6 @@ data class LockDisplayItem(
     val owner: @Serializable(with = UUIDSerializer::class) UUID,
     var lockState: Boolean,
     val allowedAccess: MutableSet<@Serializable(with = UUIDSerializer::class) UUID>
-) {
-    fun isAllowed(uuid: UUID) : Boolean {
-        return uuid in allowedAccess
-    }
-}
+)
 
 val Entity.lockedDisplay get() = toGeary().get<LockDisplayItem>()

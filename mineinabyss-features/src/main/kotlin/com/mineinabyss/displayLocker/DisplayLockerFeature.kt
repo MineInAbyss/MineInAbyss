@@ -21,9 +21,11 @@ import org.bukkit.entity.Player
 
 @kotlinx.serialization.Serializable
 @SerialName("lock_display_item")
-class DisplayLockerFeature: AbyssFeature {
+class DisplayLockerFeature(
+    val bypassPermission: String = "mineinabyss.lockdisplay.bypass",
+) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(DisplayLockerListener())
+        registerEvents(DisplayLockerListener(this@DisplayLockerFeature))
 
         commands {
             mineinabyss {
@@ -31,7 +33,7 @@ class DisplayLockerFeature: AbyssFeature {
                     "toggle"(desc = "Toggles if a display item should be protected or not") {
                         playerAction {
                             val player = sender as Player
-                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val entity = player.playerData.getRecentEntity() ?: return@playerAction
                             val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             locked.lockState = !locked.lockState
                             entity.setGravity(!locked.lockState)
@@ -44,11 +46,11 @@ class DisplayLockerFeature: AbyssFeature {
                         val playerName by stringArg()
                         playerAction {
                             val player = sender as Player
-                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val entity = player.playerData.getRecentEntity() ?: return@playerAction
                             val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
 
-                            if (locked.isAllowed(uuid)) {
+                            if (uuid in locked.allowedAccess) {
                                 player.error("$playerName can already interact with this ${entity.name}")
                                 return@playerAction
                             }
@@ -66,11 +68,11 @@ class DisplayLockerFeature: AbyssFeature {
                         }
                         playerAction {
                             val player = sender as Player
-                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val entity = player.playerData.getRecentEntity() ?: return@playerAction
                             val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                             val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
 
-                            if (locked.isAllowed(uuid)) {
+                            if (uuid in locked.allowedAccess) {
                                 locked.allowedAccess.remove(uuid)
                                 entity.toGeary().encodeComponentsTo(entity)
                                 player.success("$playerName has been removed from this ${entity.name}")
@@ -83,7 +85,7 @@ class DisplayLockerFeature: AbyssFeature {
                     "clear"(desc = "Clear all other players from this display item") {
                         playerAction {
                             val player = sender as Player
-                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val entity = player.playerData.getRecentEntity() ?: return@playerAction
                             val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             locked.allowedAccess.clear()
@@ -96,7 +98,7 @@ class DisplayLockerFeature: AbyssFeature {
                     "list" (desc = "Get a list of all players allowed to interact with this display item.") {
                         playerAction {
                             val player = sender as Player
-                            val entity = player.playerData.recentRightclickedEntity ?: return@playerAction
+                            val entity = player.playerData.getRecentEntity() ?: return@playerAction
                             val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                             if (locked.lockState) {
