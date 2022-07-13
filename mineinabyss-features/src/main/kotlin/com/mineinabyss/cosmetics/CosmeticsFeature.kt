@@ -1,5 +1,6 @@
 package com.mineinabyss.cosmetics
 
+import com.mineinabyss.helpers.hmcCosmetics
 import com.mineinabyss.helpers.mcCosmetics
 import com.mineinabyss.helpers.playGesture
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -11,6 +12,7 @@ import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 
 @Serializable
@@ -24,16 +26,17 @@ class CosmeticsFeature : AbyssFeature {
                 "cosmetic" {
                     "menu" {
                         playerAction {
-                            val player = sender as Player
-                            if (mcCosmetics.isEnabled)
-                                mcCosmetics.menuManager.customizeMenu.open(player, mcCosmetics.profiles.getProfile(player))
+                            if (hmcCosmetics.isEnabled) hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
+                            if (mineInAbyss.server.pluginManager.isPluginEnabled("HMCCosmetics"))
+                                hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
                         }
                     }
                     "gesture" {
                         val gesture by stringArg()
                         playerAction {
-                            if (mcCosmetics.isEnabled)
-                                    (sender as Player).playGesture(gesture)
+                            (sender as Player).playGesture(gesture)
+                            if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics"))
+                                (sender as Player).playGesture(gesture)
                         }
                     }
                 }
@@ -43,7 +46,7 @@ class CosmeticsFeature : AbyssFeature {
 
                 if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics")) {
                     for (gesture in mcCosmetics.gestureManager.allCosmetics) {
-                        if ((this.sender as Player).hasPermission(gesture.permission))
+                        if ((sender as Player).hasPermission(gesture.permission))
                             emotes.add(gesture.key)
                     }
                 }
