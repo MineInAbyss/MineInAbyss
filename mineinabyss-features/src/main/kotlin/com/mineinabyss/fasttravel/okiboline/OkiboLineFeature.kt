@@ -17,7 +17,9 @@ import org.bukkit.Location
 @Serializable
 @SerialName("okibo_line")
 class OkiboLineFeature(
-    val okiboPoints: List<@Serializable(with = LocationSerializer::class) Location>
+    val okiboPoints: List<@Serializable(with = LocationSerializer::class) Location>,
+    val okiboImagesFromURL: List<String> = emptyList(),
+    val okiboImagesFromFilePath: List<String> = emptyList(),
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 
