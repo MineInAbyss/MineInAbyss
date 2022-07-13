@@ -5,6 +5,7 @@ import com.mineinabyss.components.displaylocker.lockedDisplay
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.spawning.spawn
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent
@@ -75,7 +76,7 @@ class DisplayLockerListener : Listener {
 
         if (armorStand.owner == player.uniqueId && player.inventory.itemInMainHand.type == Material.AIR)
             player.playerData.recentRightclickedEntity = rightClicked
-
+        broadcast("${player.name} rightclicked ${player.playerData.recentRightclickedEntity} which is same as as: ${player.playerData.recentRightclickedEntity == rightClicked}!")
         if (!armorStand.lockState) return
         if (!armorStand.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockdisplay.bypass")) {
             player.error("You do not have access to interact with this ${rightClicked.name}!")
@@ -90,6 +91,7 @@ class DisplayLockerListener : Listener {
 
         if (frame.owner == player.uniqueId && player.inventory.itemInMainHand.type == Material.AIR)
             player.playerData.recentRightclickedEntity = itemFrame
+        broadcast("${player.name} rightclicked ${player.playerData.recentRightclickedEntity} which is same as frame: ${player.playerData.recentRightclickedEntity == itemFrame}!")
 
         if (!frame.lockState) return
         if (!frame.isAllowed(player.uniqueId) && !player.hasPermission("mineinabyss.lockdisplay.bypass")) {

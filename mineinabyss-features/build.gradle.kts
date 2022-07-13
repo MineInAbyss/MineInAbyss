@@ -9,6 +9,6 @@ plugins {
 dependencies {
     compileOnly(project(":mineinabyss-core"))
 
-    compileOnly(mialibs.guiy)
+    compileOnly(miaLibs.guiy)
     compileOnly(libs.minecraft.headlib)
 }

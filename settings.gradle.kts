@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("libs").from("com.mineinabyss:catalog:$idofrontVersion")
-        create("mialibs").from(files("gradle/mialibs.versions.toml"))
+        create("miaLibs").from(files("gradle/miaLibs.versions.toml"))
     }
 }
 
