@@ -31,24 +31,24 @@ data class ItemDrop(
 val luckPerms = LuckPermsProvider.get()
 
 fun Player.updateBalance() {
-    val data = player?.playerData
-    val orthCoinBalance = data?.orthCoinsHeld
-    val mittyTokenBalance = data?.mittyTokensHeld
+    val orthCoinBalance = playerData.orthCoinsHeld
+    val mittyTokenBalance = playerData.mittyTokensHeld
     val font = Key.key("orthbanking")
     val orthCoinComponent = Component.text("${orthCoinBalance}:orthcoin:").font(font)
     val mittyTokenComponent = Component.text("${mittyTokenBalance}:mittytoken:").font(font)
 
-    val currentBalance: Component = if (data?.mittyTokensHeld!! > 0) {
-        Component.text(Space.of(128)).append(orthCoinComponent).append(mittyTokenComponent)
-    } else Component.text(Space.of(160)).append(orthCoinComponent)
+    val currentBalance: Component =
+        if (playerData.mittyTokensHeld > 0)
+            Component.text(Space.of(128)).append(orthCoinComponent).append(mittyTokenComponent)
+        else Component.text(Space.of(160)).append(orthCoinComponent)
 
-    if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
+    if (playerData.orthCoinsHeld < 0) playerData.orthCoinsHeld = 0
 
     mineInAbyss.launch {
         do {
-            player?.sendActionBar(currentBalance)
+            sendActionBar(currentBalance)
             delay(1.seconds)
-        } while ((data.orthCoinsHeld == orthCoinBalance) && (data.mittyTokensHeld == mittyTokenBalance) && data.showPlayerBalance)
+        } while ((playerData.orthCoinsHeld == orthCoinBalance) && (playerData.mittyTokensHeld == mittyTokenBalance) && playerData.showPlayerBalance)
         return@launch
     }
 }
@@ -122,11 +122,11 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Player.getLinkedDiscordAccount() : String? {
+fun Player.getLinkedDiscordAccount(): String? {
     return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull()
 }
 
-fun Player.getGroups() : List<String> {
+fun Player.getGroups(): List<String> {
     return luckPerms.userManager.getUser(player?.uniqueId!!)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
