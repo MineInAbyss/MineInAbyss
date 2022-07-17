@@ -7,7 +7,6 @@ import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildScreen
 import com.mineinabyss.guiy.components.Item
-import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
@@ -28,20 +27,21 @@ import org.bukkit.entity.Player
 
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
+    var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
     val titleComponent =
-        Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon:" else ":"}${Space.of(-178)}")
+        Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon" else ""}${if (!hideArmorIcons) "_armor_hidden:" else "_armor_visible:"}${Space.of(-178)}")
     val rankComponent = Component.text("${Space.of(-42)}${DisplayRanks(player)}")
-    var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
 
     Chest(setOf(viewer),
         titleComponent.append(titleName).append(rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
-        Column(Modifier.at(2, 0)) {
-            DisplayRanks(player)
+        ToggleArmorVisibility {
+            player.playerData.displayProfileArmor = !hideArmorIcons
+            hideArmorIcons = player.playerData.displayProfileArmor
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
@@ -52,11 +52,6 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
         Column(Modifier.at(7, 0)) {
             CosmeticHat(player)
             CosmeticBackpack(player)
-            Spacer(height = 1)
-            ToggleArmorVisibility {
-                player.playerData.displayProfileArmor = !hideArmorIcons
-                hideArmorIcons = !hideArmorIcons
-            }
         }
         Column(Modifier.at(8, 0)) {
             HelmetSlot(player, hideArmorIcons)
@@ -126,20 +121,20 @@ fun BootsSlot(player: Player, hideArmorIcons: Boolean) =
 
 @Composable
 fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
-    Button(onClick = toggleArmor) {
+    Button(onClick = toggleArmor, modifier = Modifier.at(7,3)) {
         Text(
-            "<dark_purple>Toggle armor visibility".miniMsg(),
-            "<light_purple>Hides the visibility of your armor".miniMsg(),
-            "<light_purple>from other players viewing your profile".miniMsg()
+            "<b><dark_purple>Toggle armor visibility".miniMsg(),
+            "<light_purple>Hides your armor from other".miniMsg(),
+            "<light_purple>players viewing your profile".miniMsg()
         )
     }
 }
 
 @Composable
-fun CosmeticHat(player: Player) = player.getCosmeticHat()
+fun CosmeticHat(player: Player) = player.getCosmeticHat().itemStack
 
 @Composable
-fun CosmeticBackpack(player: Player) = player.getCosmeticBackpack()
+fun CosmeticBackpack(player: Player) = player.getCosmeticBackpack().itemStack
 
 @Composable
 fun OrthCoinBalance(player: Player) {
