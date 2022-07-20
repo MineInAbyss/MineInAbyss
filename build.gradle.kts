@@ -22,7 +22,7 @@ allprojects {
 
     dependencies {
         val libs = rootProject.libs
-        val mialibs = rootProject.mialibs
+        val miaLibs = rootProject.miaLibs
 
         // Shaded
         implementation(libs.idofront.core)
@@ -31,9 +31,9 @@ allprojects {
         }
 
         // Geary platform
-        compileOnly(mialibs.geary.papermc.core)
-        compileOnly(mialibs.geary.commons.papermc)
-        compileOnly(mialibs.looty)
+        compileOnly(miaLibs.geary.papermc.core)
+        compileOnly(miaLibs.geary.commons.papermc)
+        compileOnly(miaLibs.looty)
 
         // MineInAbyss platform
         compileOnly(libs.kotlin.stdlib)
@@ -55,13 +55,13 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
 
-        compileOnly(mialibs.deeperworld)
-        compileOnly(mialibs.minecraft.plugin.blocklocker)
-        compileOnly(mialibs.minecraft.plugin.gsit)
-        compileOnly(mialibs.minecraft.plugin.mccosmetics)
-        compileOnly(mialibs.minecraft.plugin.hmccosmetics)
-        compileOnly(mialibs.minecraft.plugin.discordsrv)
-        compileOnly(mialibs.minecraft.plugin.luckperms)
+        compileOnly(miaLibs.deeperworld)
+        compileOnly(miaLibs.minecraft.plugin.blocklocker)
+        compileOnly(miaLibs.minecraft.plugin.gsit)
+        compileOnly(miaLibs.minecraft.plugin.mccosmetics)
+        compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
+        compileOnly(miaLibs.minecraft.plugin.discordsrv)
+        compileOnly(miaLibs.minecraft.plugin.luckperms)
     }
 }
 
