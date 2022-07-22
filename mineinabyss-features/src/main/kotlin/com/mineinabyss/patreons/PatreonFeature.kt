@@ -8,7 +8,6 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.serialization.SerializableItemStack
 import com.mineinabyss.idofront.serialization.toSerializable
 import com.mineinabyss.looty.LootyFactory
@@ -36,7 +35,7 @@ class PatreonFeature(
         geary {
             systems()
         }
-        registerEvents(PatreonListener())
+        //registerEvents(PatreonListener())
 
         commands {
             mineinabyss {
