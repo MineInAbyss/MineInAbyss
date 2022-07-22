@@ -55,6 +55,7 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
 
+        compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
