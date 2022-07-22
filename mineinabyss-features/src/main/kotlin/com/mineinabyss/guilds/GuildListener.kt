@@ -14,11 +14,11 @@ import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.MessageQueue.content
-import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
+import io.papermc.paper.event.player.AsyncChatEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import nl.rutgerkok.blocklocker.group.GroupSystem
@@ -27,7 +27,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.jetbrains.exposed.sql.deleteWhere
@@ -75,31 +74,20 @@ class GuildContainerSystem : GroupSystem() {
 
 class GuildChatSystem(private val feature: GuildFeature) : Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    fun AsyncPlayerChatEvent.overrideVentureChat() {
-        if (player.playerData.guildChatStatus && !player.hasGuild()) {
-            player.playerData.guildChatStatus = false
-            player.error("You cannot use guild chat without a guild.")
-            player.success("Guild chat has been toggled OFF")
-            return
-        }
-
-        if (player.playerData.guildChatStatus && player.hasGuild()) isCancelled = true
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    fun AsyncPlayerChatEvent.toggleGuildChat() {
-
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun AsyncChatEvent.onGuildChat() {
         if (!player.playerData.guildChatStatus || !player.hasGuild()) return
         isCancelled = false
 
-        recipients.clear()
-        recipients.add(player)
-        format = "${feature.guildChatPrefix}${player.displayName}: $message"
+        viewers().clear()
+        viewers().add(player)
+        message("${feature.guildChatPrefix}${player.displayName()}: ${originalMessage()}".miniMsg())
         Bukkit.getOnlinePlayers().forEach {
-            if (!it.hasGuild()) return@forEach
-            if (it.toGeary().has<SpyOnGuildChat>()) recipients.add(it)
-            if (it.getGuildName() == player.getGuildName()) recipients.add(it)
+            when {
+                it.toGeary().has<SpyOnGuildChat>() -> viewers().add(it)
+                it.getGuildName() == player.getGuildName() -> viewers().add(it)
+                else -> return@forEach
+            }
         }
     }
 }
