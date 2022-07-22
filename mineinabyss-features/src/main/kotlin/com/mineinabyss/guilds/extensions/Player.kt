@@ -5,6 +5,7 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -328,6 +329,7 @@ fun Player.leaveGuild() {
 
         val memberRank = playerRow[Players.guildRank]
         val guildName = player?.getGuildName() ?: return@transaction
+        val owner = guildName.getOwnerFromGuildName()
 
         /* Deletes player-entry if player has a guild */
         if (memberRank == GuildRanks.Owner) {
@@ -338,7 +340,10 @@ fun Player.leaveGuild() {
         Players.deleteWhere {
             Players.playerUUID eq uniqueId
         }
+        val leftMessage = "<i>${player?.name}</i> has left your guild!"
         player?.success("You have left <i>${guildName}")
+        owner.player?.warn(leftMessage) ?:
+        MessageQueue.insert { it[content] = leftMessage; it[playerUUID] = owner.uniqueId }
     }
 
 }

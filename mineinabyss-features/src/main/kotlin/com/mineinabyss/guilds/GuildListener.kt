@@ -16,6 +16,7 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.MessageQueue.content
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.messaging.serialize
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import io.papermc.paper.event.player.AsyncChatEvent
@@ -81,7 +82,7 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
 
         viewers().clear()
         viewers().add(player)
-        message("${feature.guildChatPrefix}${player.displayName()}: ${originalMessage()}".miniMsg())
+        message("${feature.guildChatPrefix}${player.displayName().serialize()}: ${originalMessage().serialize()}".miniMsg())
         Bukkit.getOnlinePlayers().forEach {
             when {
                 it.toGeary().has<SpyOnGuildChat>() -> viewers().add(it)
