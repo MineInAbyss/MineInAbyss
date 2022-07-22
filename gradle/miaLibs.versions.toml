@@ -4,6 +4,7 @@ gearyaddons = "0.6.37"
 looty = "0.7.56"
 guiy="0.6.21"
 deeperworld="0.5.76"
+chatty="0.2.21"
 
 [libraries]
 geary-papermc-core = { module = "com.mineinabyss:geary-papermc-core", version.ref = "geary" }
@@ -11,6 +12,7 @@ geary-commons-papermc = { module = "com.mineinabyss:geary-commons-papermc", vers
 looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
+chatty = { module = "com.mineinabyss:chatty", version.ref = "chatty" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.0.7"
