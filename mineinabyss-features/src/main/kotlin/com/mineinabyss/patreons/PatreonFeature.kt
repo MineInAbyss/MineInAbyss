@@ -3,6 +3,7 @@ package com.mineinabyss.patreons
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -15,7 +16,6 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.geary
-import com.mineinabyss.playerprofile.luckPerms
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.luckperms.api.context.ImmutableContextSet

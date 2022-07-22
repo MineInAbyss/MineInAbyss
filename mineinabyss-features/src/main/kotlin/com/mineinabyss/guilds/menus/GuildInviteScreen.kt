@@ -18,8 +18,8 @@ import org.bukkit.OfflinePlayer
 @Composable
 fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
     GuildLabel(owner, Modifier.at(4, 0))
-    AcceptGuildInvite(owner, Modifier.at(1, 1))
-    DeclineGuildInvite(owner, Modifier.at(5, 1))
+    AcceptGuildInviteButton(owner, Modifier.at(1, 1))
+    DeclineGuildInviteButton(owner, Modifier.at(5, 1))
     BackButton(Modifier.at(4, 4))
 }
 
@@ -36,7 +36,7 @@ fun GuildUIScope.GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
 }
 
 @Composable
-fun GuildUIScope.AcceptGuildInvite(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
+fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
         if (owner.getGuildJoinType() == GuildJoinType.Request) {
             player.error("This guild is in 'Request-only' mode.")
@@ -57,7 +57,7 @@ fun GuildUIScope.AcceptGuildInvite(owner: OfflinePlayer, modifier: Modifier = Mo
 }
 
 @Composable
-fun GuildUIScope.DeclineGuildInvite(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
+fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite)
         player.info("<gold><b>❌ <yellow>You denied the invite from <gold><i>${owner.getGuildName()}")

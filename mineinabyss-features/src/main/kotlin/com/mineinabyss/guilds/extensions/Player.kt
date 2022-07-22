@@ -429,6 +429,28 @@ fun String.getGuildLevel(): Int {
     }
 }
 
+fun OfflinePlayer.getGuildBalance(): Int {
+    return transaction(AbyssContext.db) {
+        val guildId = Players.select {
+            Players.playerUUID eq uniqueId
+        }.first()[Players.guildId]
+
+        val guildBalance = Guilds.select {
+            Guilds.id eq guildId
+        }.single()[Guilds.balance]
+
+        return@transaction guildBalance
+    }
+}
+
+fun String.getGuildBalance(): Int {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildBalance.lowercase()
+        }.singleOrNull()?.get(Guilds.balance) ?: return@transaction 0
+    }
+}
+
 fun OfflinePlayer.getGuildMemberCount(): Int {
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {

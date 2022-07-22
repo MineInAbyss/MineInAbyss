@@ -88,7 +88,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
 }
 
 @Composable
-fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
+private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
     val requestAmount = player.getNumberOfGuildRequests()
     val plural = requestAmount != 1
     Button(
@@ -116,7 +116,7 @@ fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 }
 
 @Composable
-fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
+private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
     val item = if (joinType == GuildJoinType.Any) any else if (joinType == GuildJoinType.Invite) invite else request
     Button(
@@ -132,7 +132,7 @@ fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     }
 }
 
-object JoinTypeIcon {
+private object JoinTypeIcon {
     val any = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(4)
         displayName("<dark_green><b>Toggle Guild Join Type".miniMsg())
