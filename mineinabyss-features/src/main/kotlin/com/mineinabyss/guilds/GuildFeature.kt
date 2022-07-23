@@ -28,7 +28,7 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    val guildChatPrefix: String = "",
+    val guildChatPrefix: String = ":survival:\uF805:guildchat: ",
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {

@@ -3,9 +3,7 @@ package com.mineinabyss.guilds.extensions
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.messaging.warn
+import com.mineinabyss.idofront.messaging.*
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -149,9 +147,8 @@ fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
 
 fun OfflinePlayer.requestToJoin(guildName: String) {
     val player = player ?: return
-    val requestMessage = "The Guild will receive your request!"
-    val ownerMessage =
-        "<gold><i>${player.name}</i> <yellow>requested to join your guild."
+    val requestMessage = "The Guild will receive your request!".miniMsg()
+    val ownerMessage = "<gold><i>${player.name}</i> <yellow>requested to join your guild.".miniMsg()
 
     transaction(AbyssContext.db) {
         if (player.hasGuild()) {
@@ -203,7 +200,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
             owner.toPlayer()?.sendMessage(ownerMessage)
         } else {
             MessageQueue.insert {
-                it[content] = ownerMessage
+                it[this.content] = ownerMessage.serialize()
                 it[playerUUID] = owner
             }
         }
@@ -214,7 +211,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
             return@transaction
         } else {
             MessageQueue.insert {
-                it[content] = requestMessage
+                it[content] = requestMessage.serialize()
                 it[playerUUID] = uniqueId
             }
             return@transaction

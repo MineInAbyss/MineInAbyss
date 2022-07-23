@@ -1,6 +1,7 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
+import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.components.playerData
@@ -75,13 +76,10 @@ class GuildContainerSystem : GroupSystem() {
 
 class GuildChatSystem(private val feature: GuildFeature) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     fun AsyncChatEvent.onGuildChat() {
         if (!player.playerData.guildChatStatus || !player.hasGuild()) return
-        isCancelled = false
-
         viewers().clear()
-        viewers().add(player)
         message("${feature.guildChatPrefix}${player.displayName().serialize()}: ${originalMessage().serialize()}".miniMsg())
         Bukkit.getOnlinePlayers().forEach {
             when {
@@ -90,5 +88,10 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
                 else -> return@forEach
             }
         }
+        viewers().forEach {
+            RendererExtension().render(player, player.displayName(), message(), it)
+        }
+        isCancelled = true
+        viewers().clear()
     }
 }
