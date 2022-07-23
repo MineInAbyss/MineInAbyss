@@ -1,6 +1,9 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
+import com.mineinabyss.chatty.helpers.emoteFixer
+import com.mineinabyss.chatty.helpers.serializeLegacy
+import com.mineinabyss.chatty.helpers.stripTags
 import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.components.guilds.SpyOnGuildChat
@@ -20,6 +23,12 @@ import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.messaging.serialize
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
+import github.scarsz.discordsrv.api.ListenerPriority
+import github.scarsz.discordsrv.api.Subscribe
+import github.scarsz.discordsrv.api.events.GameChatMessagePreProcessEvent
+import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component
+import github.scarsz.discordsrv.dependencies.kyori.adventure.text.TextReplacementConfig
+import github.scarsz.discordsrv.dependencies.kyori.adventure.text.minimessage.MiniMessage
 import io.papermc.paper.event.player.AsyncChatEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -93,5 +102,55 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
         }
         isCancelled = true
         viewers().clear()
+    }
+
+    @Subscribe(priority = ListenerPriority.LOW)
+    fun GameChatMessagePreProcessEvent.onChat() {
+        if (player.playerData.guildChatStatus) {
+            isCancelled = true
+            return
+        }
+    }
+
+    private fun Component.cleanUpHackyFix() =
+        this.replaceText(TextReplacementConfig.builder().match("<<").replacement("<").build())
+
+
+    private fun String.cleanUpHackyFix() =
+        this.replace("<<", "<").serializeLegacy().stripTags()
+
+    private fun String.translateEmoteIDs(): String {
+        var translated = this
+        emoteFixer.emotes.entries.forEach { (emoteId, replacement) ->
+            val id = ":$emoteId:"
+            if (id in this) {
+                translated = translated.replace(id, replacement)
+            }
+        }
+        return translated.cleanUpHackyFix()
+    }
+
+    private fun Component.translateEmoteIDsToComponent(): Component {
+        var translated = this
+        emoteFixer.emotes.entries.forEach { (emoteId, replacement) ->
+            val id = ":$emoteId:"
+            if (id in translated.deserialize()) {
+                translated = translated.replaceText(
+                    TextReplacementConfig.builder().match(id)
+                        .replacement("<$replacement".miniMessage()).build()
+                )
+            }
+        }
+        return translated.cleanUpHackyFix()
+    }
+
+    private fun Component.deserialize(): String {
+        return MiniMessage.builder().build()
+            .serialize(this)
+    }
+
+    private fun String.miniMessage(): Component {
+        return MiniMessage.builder().build()
+            .deserialize(this)
     }
 }
