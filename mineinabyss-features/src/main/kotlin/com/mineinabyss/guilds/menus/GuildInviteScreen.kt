@@ -24,7 +24,7 @@ fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
 }
 
 @Composable
-fun GuildUIScope.GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
+fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
     Item(owner.head(
         "<gold><b>Current Guild Info</b>".miniMsg(),
         "<yellow><b>Guild Name:</b> <yellow><i>${owner.getGuildName()}".miniMsg(),
@@ -38,16 +38,22 @@ fun GuildUIScope.GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
 @Composable
 fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
+        if (!owner.hasGuild()) {
+            nav.reset()
+            player.error("This guild does not exist anymore!")
+            return@Button
+        }
         if (owner.getGuildJoinType() == GuildJoinType.Request) {
             player.error("This guild is in 'Request-only' mode.")
             player.error("Change it to 'Any' or 'Invite-only' mode to accept invites.")
             return@Button
         }
-        owner.addMemberToGuild(player)
         if (owner.getGuildMemberCount() >= guildLevel * 5 + 1) {
             player.error("This guild has reached its current member cap!")
             return@Button
         }
+
+        owner.addMemberToGuild(player)
         player.removeGuildQueueEntries(GuildJoinType.Request)
         nav.back()
     },
@@ -60,7 +66,8 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
 fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite)
-        player.info("<gold><b>❌ <yellow>You denied the invite from <gold><i>${owner.getGuildName()}")
+        if (owner.hasGuild())
+            player.info("<gold><b>❌ <yellow>You denied the invite from <gold><i>${owner.getGuildName()}")
         nav.back()
     }
 ) {

@@ -29,7 +29,6 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
 
         val id = guildRow[Guilds.id]
         val level = guildRow[Guilds.level]
-        val joinType = guildRow[Guilds.joinType]
 
         val memberGuildCheck = Players.select {
             Players.playerUUID eq member.uniqueId
@@ -147,7 +146,7 @@ fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
 
 fun OfflinePlayer.requestToJoin(guildName: String) {
     val player = player ?: return
-    val requestMessage = "The Guild will receive your request!".miniMsg()
+    val requestMessage = "The Guild will receive your request!"
     val ownerMessage = "<gold><i>${player.name}</i> <yellow>requested to join your guild.".miniMsg()
 
     transaction(AbyssContext.db) {
@@ -211,7 +210,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
             return@transaction
         } else {
             MessageQueue.insert {
-                it[content] = requestMessage.serialize()
+                it[content] = requestMessage
                 it[playerUUID] = uniqueId
             }
             return@transaction
@@ -579,6 +578,6 @@ fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
     return joinType
 }
 
-fun OfflinePlayer.isAboveCaptain(): Boolean {
+fun OfflinePlayer.isCaptainOrAbove(): Boolean {
     return (player?.getGuildRank() == GuildRanks.Owner || player?.getGuildRank() == GuildRanks.Captain)
 }

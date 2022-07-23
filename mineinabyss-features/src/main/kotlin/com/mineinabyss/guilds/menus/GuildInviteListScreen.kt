@@ -39,12 +39,11 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
         GuildJoinQueue.select {
             (GuildJoinQueue.joinType eq GuildJoinType.Invite) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)
-        }.map { row -> Pair(memberCount, row[GuildJoinQueue.guildId]) }
+        }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
 
     }
     Grid(modifier.size(9, 4)) {
-        //TODO instead of using a Pair, create a private class and name first/second properly
-        invites.sortedBy { it.first }.forEach { (memberCount, guild) ->
+        invites.sortedBy { it.memberCount }.forEach { _ ->
             Button(onClick = {
                 nav.open(GuildScreen.Invite(owner))
             }) {
@@ -69,4 +68,8 @@ fun GuildUIScope.DenyAllInvitesButton(modifier: Modifier) = Button(
     modifier = modifier
 ) {
     Text("<red>Decline All Invites".miniMsg())
+}
+
+//TODO Repeat this instead of using pairs everywhere
+private class Invite(val memberCount: Int, val guildIds: Int) {
 }

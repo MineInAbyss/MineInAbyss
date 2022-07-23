@@ -57,10 +57,10 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     val renameItem = TitleItem.of(player.getGuildName())
     Button(
-        enabled = player.isAboveCaptain(),
+        enabled = player.isCaptainOrAbove(),
         modifier = modifier,
         onClick = {
-            if (!player.isAboveCaptain()) return@Button
+            if (!player.isCaptainOrAbove()) return@Button
             nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
@@ -118,7 +118,7 @@ fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
+fun GuildHouseButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
             "<gold><b><st>Guild Housing".miniMsg(), modifier = Modifier.size(2, 2),
@@ -128,7 +128,7 @@ fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
+fun GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
             "<dark_red><b><st>Guild Wars".miniMsg(), modifier = Modifier.size(2, 2),

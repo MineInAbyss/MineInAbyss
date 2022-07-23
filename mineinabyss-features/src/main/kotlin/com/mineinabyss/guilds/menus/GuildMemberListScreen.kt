@@ -40,7 +40,7 @@ fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
     Grid(modifier.size(5, guildLevel)) {
         player.getGuildMembers().sortedWith(compareBy { it.first; it.second.name }).forEach { (rank, member) ->
             Button(onClick = {
-                if (member != player && player.isAboveCaptain()) {
+                if (member != player && player.isCaptainOrAbove()) {
                     nav.open(GuildScreen.MemberOptions(member))
                 }
             }) {
@@ -60,7 +60,7 @@ fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
 fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
     val guildInvitePaper = TitleItem.of("Player Name")
     Button(
-        enabled = player.isAboveCaptain(),
+        enabled = player.isCaptainOrAbove(),
         modifier = modifier,
         onClick = {
             //if (player.isAboveCaptain()) return@Button
@@ -96,7 +96,7 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
         /* Icon that notifies player there are new invites */
         modifier = modifier,
         onClick = {
-            if (player.isAboveCaptain()) {
+            if (player.isCaptainOrAbove()) {
                 nav.open(GuildScreen.JoinRequestList)
             }
         }
@@ -122,7 +122,7 @@ private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     Button(
         modifier = modifier,
         onClick = {
-            if (player.isAboveCaptain()) {
+            if (player.isCaptainOrAbove()) {
                 player.changeGuildJoinType()
                 joinType = player.getGuildJoinType()
             }

@@ -26,7 +26,7 @@ fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
 }
 
 @Composable
-fun GuildUIScope.PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
+fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
     Item(newMember.head("<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
 }
 
@@ -66,6 +66,8 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
             }
         }
         nav.back()
+        if (player.getNumberOfGuildRequests() == 0)
+            nav.back()
     }
 ) {
     Text("<red>Decline Join-Request".miniMsg(), modifier = Modifier.size(3, 3))
