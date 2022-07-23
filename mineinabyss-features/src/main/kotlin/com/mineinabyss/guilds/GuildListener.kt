@@ -83,7 +83,11 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
     fun AsyncChatEvent.onGuildChat() {
         if (!player.playerData.guildChatStatus || !player.hasGuild()) return
         viewers().clear()
-        message("${feature.guildChatPrefix}${player.displayName().serialize()}: ${originalMessage().serialize()}".miniMsg())
+        message(
+            "${feature.guildChatPrefix}${
+                player.displayName().serialize()
+            }: ${originalMessage().serialize()}".miniMsg()
+        )
         Bukkit.getOnlinePlayers().forEach {
             when {
                 it.toGeary().has<SpyOnGuildChat>() -> viewers().add(it)
@@ -100,9 +104,7 @@ class GuildChatSystem(private val feature: GuildFeature) : Listener {
 
     @Subscribe(priority = ListenerPriority.LOW)
     fun GameChatMessagePreProcessEvent.onChat() {
-        if (player.playerData.guildChatStatus) {
-            isCancelled = true
-            return
-        }
+        if (isCancelled || !player.hasGuild() || !player.playerData.guildChatStatus) return
+        else isCancelled = true
     }
 }
