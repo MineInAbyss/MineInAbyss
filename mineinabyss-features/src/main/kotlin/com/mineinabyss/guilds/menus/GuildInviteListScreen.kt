@@ -26,7 +26,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Composable
 fun GuildUIScope.GuildInviteListScreen() {
     GuildInvites(Modifier.at(1, 1))
-    DenyAllInvites(Modifier.at(8, 4))
+    DenyAllInvitesButton(Modifier.at(8, 4))
     BackButton(Modifier.at(2, 4))
 }
 
@@ -60,7 +60,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.DenyAllInvites(modifier: Modifier) = Button(
+fun GuildUIScope.DenyAllInvitesButton(modifier: Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite, true)
         nav.open(GuildScreen.MemberList(guildLevel, player))
