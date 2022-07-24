@@ -23,7 +23,7 @@ class PlayerData(
     var mittyTokensHeld: Int = 0,
     var showPlayerBalance: Boolean = true,
     var displayProfileArmor: Boolean = true,
-    var guildChatStatus: Boolean = false,
+    //var guildChatStatus: Boolean = false,
     var recentInteractEntity: @Serializable(with = UUIDSerializer::class) UUID? = null
 ) {
     val level: Int get() = exp.toInt() / 10 //TODO write a proper formula

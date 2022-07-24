@@ -1,8 +1,11 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
+import com.mineinabyss.chatty.ChattyConfig
+import com.mineinabyss.chatty.components.ChannelType
+import com.mineinabyss.chatty.helpers.chattyConfig
+import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
-import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.guilds.extensions.depositCoinsToGuild
@@ -16,7 +19,7 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -28,19 +31,20 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    val guildChatPrefix: String = ":survival:\uF805:guildchat: ",
+    private val guildChatPrefix: String = ":survival:\uF805:guildchat: ",
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         server.pluginManager.registerSuspendingEvents(GuildListener(this@GuildFeature), this)
-        registerEvents(GuildChatSystem(this@GuildFeature))
-
 
         if (DeeperContext.isBlockLockerLoaded) {
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
         }
+
+        if (AbyssContext.isChattyLoaded)
+            chattyConfig.channels.putIfAbsent(guildChannelId, guildChattyChannel)
 
         commands {
             mineinabyss {
@@ -58,7 +62,7 @@ class GuildFeature(
                             }
                         }
                         "deposit"(desc = "Deposit Orth Coins into your guild balance") {
-                            val amount by intArg { default = 1}
+                            val amount by intArg { default = 1 }
                             playerAction {
                                 val player = sender as Player
                                 if (amount <= 0) {
@@ -87,15 +91,10 @@ class GuildFeature(
                     }
                     "chat"(desc = "Toggle guild chat") {
                         playerAction {
-                            val player = sender as Player
-                            val data = player.playerData
-                            if (!player.hasGuild()) {
-                                if (data.guildChatStatus) data.guildChatStatus = false
-                                player.error("You cannot use guild chat without a guild")
-                                return@playerAction
-                            }
-                            data.guildChatStatus = !data.guildChatStatus
-                            player.success("Guild chat has been toggled ${if (data.guildChatStatus) "ON" else "OFF"}!")
+                            val player = sender as? Player ?: return@playerAction
+
+                            if (player.hasGuild()) player.swapChannelCommand(guildChannelId)
+                            else player.error("You cannot use guild chat without a guild")
                         }
                     }
                     "menu"(desc = "Open Guild Menu") {
@@ -138,6 +137,27 @@ class GuildFeature(
                 }
             }
         }
-
     }
+
+    private val guildChatFormat =
+        ChattyConfig.Format(
+            useDisplayName = true,
+            prefix = this.guildChatPrefix,
+            suffix = ": ",
+            messageFormat = "<gold>"
+        )
+
+    val guildChattyChannel =
+        ChattyConfig.ChattyChannel(
+            channelType = ChannelType.PRIVATE,
+            proxy = false,
+            discordsrv = false,
+            isDefaultChannel = false,
+            isStaffChannel = false,
+            format = guildChatFormat,
+            channelRadius = 0,
+            channelAliases = emptyList()
+        )
+
+    private val guildChannelId = "guild"
 }
