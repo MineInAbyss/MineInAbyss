@@ -40,11 +40,12 @@ val guildChannel =
         channelAliases = emptyList()
     )
 
-private const val guildChannelId = "guild"
+
 
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
+    val guildChannelId: String = "guild",
     private val guildChattyChannel: ChattyChannel = guildChannel,
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
