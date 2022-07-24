@@ -1,7 +1,7 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.mineinabyss.chatty.ChattyConfig
+import com.mineinabyss.chatty.ChattyConfig.ChattyChannel
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.swapChannelCommand
@@ -28,10 +28,24 @@ import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.entity.Player
 
+val guildChannel =
+    ChattyChannel(
+        channelType = ChannelType.PRIVATE,
+        proxy = false,
+        discordsrv = false,
+        isDefaultChannel = false,
+        isStaffChannel = false,
+        format = ":survival:%chatty_shift_-4%%chatty_shift_-4%:guildchat: %chatty_player_displayname%:<gold> ",
+        channelRadius = 0,
+        channelAliases = emptyList()
+    )
+
+private const val guildChannelId = "guild"
+
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    private val guildChatPrefix: String = ":survival:\uF805:guildchat: ",
+    private val guildChattyChannel: ChattyChannel = guildChannel,
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {
@@ -44,7 +58,7 @@ class GuildFeature(
         }
 
         if (AbyssContext.isChattyLoaded)
-            chattyConfig.channels.putIfAbsent(guildChannelId, guildChattyChannel)
+            chattyConfig.channels.putIfAbsent(guildChannelId, this@GuildFeature.guildChattyChannel)
 
         commands {
             mineinabyss {
@@ -138,26 +152,4 @@ class GuildFeature(
             }
         }
     }
-
-    private val guildChatFormat =
-        ChattyConfig.Format(
-            useDisplayName = true,
-            prefix = this.guildChatPrefix,
-            suffix = ": ",
-            messageFormat = "<gold>"
-        )
-
-    val guildChattyChannel =
-        ChattyConfig.ChattyChannel(
-            channelType = ChannelType.PRIVATE,
-            proxy = false,
-            discordsrv = false,
-            isDefaultChannel = false,
-            isStaffChannel = false,
-            format = guildChatFormat,
-            channelRadius = 0,
-            channelAliases = emptyList()
-        )
-
-    private val guildChannelId = "guild"
 }
