@@ -317,7 +317,7 @@ fun Player.levelUpGuild() {
     transaction(AbyssContext.db) {
         val lvl = Guilds.select {
             Guilds.name.lowerCase() eq guildName.lowercase()
-        }.singleOrNull()?.get(Guilds.level) ?: return@transaction 0
+        }.firstOrNull()?.get(Guilds.level) ?: return@transaction 0
 
         Guilds.update({ Guilds.name.lowerCase() eq guildName.lowercase() }) {
             it[level] = lvl + 1

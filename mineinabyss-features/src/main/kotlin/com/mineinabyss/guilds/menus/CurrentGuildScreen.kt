@@ -6,6 +6,7 @@ import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.guilds.extensions.getGuildRank
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
@@ -19,7 +20,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuildUIScope.CurrentGuildScreen() {
-    val yLevel = guildLevel + 2
+    val yLevel = minOf(guildLevel + 2, MAX_CHEST_HEIGHT)
     GuildMemberList(Modifier.at(1, 1))
     if (player.getGuildRank() != GuildRanks.Owner) {
         //LeaveGuildButton(player, Modifier.at(8, yLevel))

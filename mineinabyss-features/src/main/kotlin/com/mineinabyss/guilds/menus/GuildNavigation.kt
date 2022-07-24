@@ -9,6 +9,7 @@ import com.mineinabyss.guilds.menus.DecideMenus.decideMemberMenu
 import com.mineinabyss.guilds.menus.GuildScreen.*
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.layout.Column
@@ -40,7 +41,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
     object GuildInfo : GuildScreen("${Space.of(-12)}<white>:guild_member_menu:", 6)
 
     class CurrentGuild(val guildLevel: Int) :
-        GuildScreen("${Space.of(-12)}${Space.of(1)}<white>:current_guild_menu_${guildLevel}:", guildLevel + 3)
+        GuildScreen("${Space.of(-12)}${Space.of(1)}<white>:current_guild_menu_${guildLevel}:", minOf(guildLevel + 3, MAX_CHEST_HEIGHT))
 
     object Leave : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
     object Disband : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
@@ -48,7 +49,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
 
     class GuildList (val pageNumber: Int): GuildScreen(title = "${Space.of(-12)}<white>:guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: String) :
-        GuildScreen("${Space.of(-12)}<white>${":guild_lookup_members${guildName.getGuildLevel()}"}:", guildName.getGuildLevel() + 3)
+        GuildScreen("${Space.of(-12)}<white>${":guild_lookup_members${guildName.getGuildLevel()}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
     // Forgot to add to pack so this is fine for now
     object InviteList : GuildScreen(title = "${Space.of(-12)}<white>:guild_join_requests_menu:", 5)
@@ -62,7 +63,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
         GuildScreen("${Space.of(-12)}<white>:guild_member_action_menu:", 5)
 
     class MemberList(val guildLevel: Int, player: Player) :
-        GuildScreen("${Space.of(-12)}<white>${decideMemberMenu(player)}", guildLevel + 2)
+        GuildScreen("${Space.of(-12)}<white>${decideMemberMenu(player)}", minOf(guildLevel + 2, MAX_CHEST_HEIGHT))
 }
 
 typealias GuildNav = Navigator<GuildScreen>
