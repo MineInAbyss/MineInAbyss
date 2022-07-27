@@ -6,7 +6,7 @@ import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.commands.arguments.intArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
@@ -30,9 +30,10 @@ class OrthBankingFeature : AbyssFeature {
 
         commands {
             mineinabyss {
-                "bank"(desc = "Orthbanking related commands"){
+                "bank"(desc = "Orthbanking related commands") {
                     "balance"(desc = "Toggles whether or not the balance should be shown.") {
-                        playerAction {
+                        ensureSenderIsPlayer()
+                        action {
                             val player = sender as Player
                             val data = player.playerData
                             data.showPlayerBalance = !data.showPlayerBalance
@@ -41,23 +42,24 @@ class OrthBankingFeature : AbyssFeature {
                     }
                     "deposit"(desc = "Dev command until Guiy can take items") {
                         val amount by intArg { default = 1 }
-                        playerAction {
+                        ensureSenderIsPlayer()
+                        action {
                             val player = sender as Player
                             val data = player.playerData
                             val currItem = player.inventory.itemInMainHand
 
                             if (!player.isInHub()) {
                                 player.error("You must be in Orth to make a deposit.")
-                                return@playerAction
+                                return@action
                             }
                             if (currItem.toGearyOrNull(player)?.has<OrthCoin>() != true) {
                                 player.error("You must be holding an Orth Coin to deposit.")
-                                return@playerAction
+                                return@action
                             }
 
                             if (amount > player.inventory.itemInMainHand.amount) {
                                 player.error("You don't have that many coins.")
-                                return@playerAction
+                                return@action
                             }
 
                             currItem.subtract(amount)
@@ -67,21 +69,22 @@ class OrthBankingFeature : AbyssFeature {
                     }
                     "withdraw"(desc = "Dev command until Guiy can take items") {
                         var amount by intArg { default = 1 }
-                        playerAction {
+                        ensureSenderIsPlayer()
+                        action {
                             val player = sender as Player
                             val data = player.playerData
                             val slot = player.inventory.firstEmpty()
 
-                            if (!player.isInHub()) return@playerAction
+                            if (!player.isInHub()) return@action
                             if (amount <= 0) {
                                 player.error("You can't withdraw 0 or less coins!")
-                                return@playerAction
+                                return@action
                             }
                             if (amount > 64) amount = 64
 
                             if (slot == -1) {
                                 player.error("You do not have enough space in your inventory to withdraw the coins.")
-                                return@playerAction
+                                return@action
                             }
                             val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
                             orthCoin?.useWithLooty {
@@ -89,7 +92,7 @@ class OrthBankingFeature : AbyssFeature {
                             }
                             if (orthCoin == null) {
                                 player.error("Failed to create Orth Coin.")
-                                return@playerAction
+                                return@action
                             }
 
                             if (data.orthCoinsHeld > 0) data.orthCoinsHeld -= amount
@@ -105,12 +108,14 @@ class OrthBankingFeature : AbyssFeature {
                     1 -> listOf(
                         "bank"
                     ).filter { it.startsWith(args[0]) }
+
                     2 -> {
                         when (args[0]) {
                             "bank" -> listOf("withdraw", "deposit", "balance")
                             else -> null
                         }
                     }
+
                     else -> null
                 }
             }
