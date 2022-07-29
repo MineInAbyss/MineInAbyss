@@ -8,7 +8,8 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("mineinabyss:okiboline")
 class OkiboLine(
-    var useGifForMenuTransition: Boolean = true
+    var useGifForMenuTransition: Boolean = true,
+    var currentPoint: Int = 1,
 )
 
 val Player.okiboLine get() = toGeary().getOrSetPersisting { OkiboLine() }
