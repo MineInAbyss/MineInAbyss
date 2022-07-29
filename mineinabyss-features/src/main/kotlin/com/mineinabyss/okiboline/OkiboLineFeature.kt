@@ -1,5 +1,6 @@
-package com.mineinabyss.fasttravel.okiboline
+package com.mineinabyss.okiboline
 
+import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.generateOkiboLineLocationImages
 import com.mineinabyss.helpers.generateOkiboLineTransitionGIFs
 import com.mineinabyss.hubstorage.isInHub
@@ -10,9 +11,11 @@ import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
+import com.mineinabyss.okiboline.menus.OkiboLineMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
+import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("okibo_line")
@@ -35,10 +38,10 @@ class OkiboLineFeature(
             mineinabyss {
                 "okibo_line"(desc = "Commands related to Okibo Line System in Orth") {
                     playerAction {
-                        if (!player.isInHub()) {
+                        val player = sender as? Player ?: return@playerAction
+                        if (!player.isInHub())
                             player.error("You must be in <gold>Orth</gold> to use this command.")
-                            return@playerAction
-                        }
+                        else guiy { OkiboLineMenu(player) }
                     }
                 }
             }

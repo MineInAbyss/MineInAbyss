@@ -1,4 +1,4 @@
-package com.mineinabyss.fasttravel.okiboline.menus
+package com.mineinabyss.okiboline.menus
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.fasttravel.okiboline.okiboLine
@@ -19,12 +19,12 @@ import org.bukkit.entity.Player
 //TODO Reuse the page stuff from Guild Lookup List to move between points
 
 @Composable
-fun GuiyOwner.OkiboLineScreen(player: Player) {
+fun GuiyOwner.OkiboLineMenu(player: Player) {
     val playGif = player.okiboLine.useGifForMenuTransition
     Chest(
         setOf(player),
         title = "Okibo Line",
-        Modifier.height(5),
+        Modifier.height(6),
         onClose = { player.closeInventory() }) {
         Row(Modifier.at(0, 2)) {
             PreviousOkiboPointButton(playGif)
