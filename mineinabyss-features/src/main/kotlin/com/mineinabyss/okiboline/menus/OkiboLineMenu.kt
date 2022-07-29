@@ -7,7 +7,10 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
+import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.okiboMenus
+import com.mineinabyss.helpers.ui.composables.Button
+import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.entity.Player
 
 //TODO Consider using fontmagic-stuff from Combimagnetron to make a dynamic map
@@ -19,7 +22,6 @@ import org.bukkit.entity.Player
 
 @Composable
 fun GuiyOwner.OkiboLineMenu(player: Player) {
-    //val playGif = player.okiboLine.useGifForMenuTransition
     val currentPoint = player.okiboLine.currentPoint
     var pageNum by remember { mutableStateOf(currentPoint) }
     var okiboMenuImage by remember { mutableStateOf(okiboMenus[pageNum]) }
@@ -38,38 +40,23 @@ fun GuiyOwner.OkiboLineMenu(player: Player) {
             pageNum++
             okiboMenuImage = okiboMenus[pageNum]
         }
-        /*Row(Modifier.at(0, 2)) {
-            PreviousOkiboPointButton()
-            Spacer(width = 8)
-            NextOkiboPointButton()
-        }*/
     }
 }
 
 @Composable
 fun PreviousOkiboPointButton(modifier: Modifier = Modifier, currentPoint: Int, onClick: () -> Unit) {
-
+    Button(
+        enabled = currentPoint > 1,
+        modifier = modifier.at(3, 5),
+        onClick = onClick
+    ) { Text("<yellow><b>Previous Okibo Point".miniMsg()) }
 }
 
 @Composable
 fun NextOkiboPointButton(modifier: Modifier = Modifier, currentPoint: Int, onClick: () -> Unit) {
-
+    Button(
+        enabled = currentPoint < (okiboMenus.size),
+        modifier = modifier.at(5, 5),
+        onClick = onClick
+    ) { Text("<yellow><b>Next Okibo Point".miniMsg()) }
 }
-
-/*@Composable
-fun PreviousOkiboPointButton(playGifForPointTransition: Boolean) {
-    if (playGifForPointTransition) {
-        //TODO
-    } else {
-        //TODO
-    }
-}
-
-@Composable
-fun NextOkiboPointButton(playGifForPointTransition: Boolean) {
-    if (playGifForPointTransition) {
-        //TODO
-    } else {
-        //TODO
-    }
-}*/

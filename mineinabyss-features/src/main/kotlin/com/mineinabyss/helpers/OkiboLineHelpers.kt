@@ -2,6 +2,7 @@ package com.mineinabyss.helpers
 
 import com.combimagnetron.imageloader.Image
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.okiboline.OkiboLineFeature
 import net.kyori.adventure.key.Key
@@ -11,14 +12,13 @@ import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.nio.file.Path
 
-//TODO Should the static images be just in the RP or generated?
-// Could either have the low FPS only happen with the gif part or always
-// So either consistently bad FPS in Okibo Menu or only on transition portion
-
-var okiboMenus= listOf<Component>()
+var okiboMenus = listOf<Component>()
 
 fun generateOkiboLineLocationImages(feature: OkiboLineFeature) {
-    mineInAbyss.launch { generateOkiboImages(feature) }
+    mineInAbyss.launch {
+        generateOkiboImages(feature)
+        broadcast("<green>Okibo line images generated!")
+    }
 }
 
 private fun generateOkiboImages(feature: OkiboLineFeature) {
@@ -35,11 +35,17 @@ private fun generateOkiboImages(feature: OkiboLineFeature) {
 }
 
 private fun convertToImageComponent(image: String, font: Key): TextComponent {
-    return LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat().hexColors().build().deserialize(image).style(
-        Style.style().font(font).build())
+    return LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat().hexColors().build()
+        .deserialize(image).style(
+        Style.style().font(font).build()
+    )
 }
 
-private fun convertFileToImageString(fileName: String, ascent: Int = 8, colorType: Image.ColorType = Image.ColorType.LEGACY): String {
+private fun convertFileToImageString(
+    fileName: String,
+    ascent: Int = 8,
+    colorType: Image.ColorType = Image.ColorType.LEGACY
+): String {
     val path = Path.of(mineInAbyss.dataFolder.absolutePath + "/images/" + fileName)
     return Image.builder().image(path).colorType(colorType).ascent(ascent).build().generate()
 }

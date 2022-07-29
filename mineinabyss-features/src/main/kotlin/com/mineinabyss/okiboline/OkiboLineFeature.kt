@@ -39,7 +39,6 @@ class OkiboLineFeature(
         }
 
         generateOkiboLineLocationImages(this@OkiboLineFeature)
-        //generateOkiboLineTransitionGIFs()
 
         registerEvents(OkiboLineListener())
         commands {
@@ -63,6 +62,7 @@ class OkiboLineFeature(
             tabCompletion {
                 when (args.size) {
                     1 -> listOf("okibo_line").filter { it.startsWith(args[0]) }
+                    2 -> listOf("menu", "regen").filter { it.startsWith(args[1]) }
                     else -> null
                 }
             }
