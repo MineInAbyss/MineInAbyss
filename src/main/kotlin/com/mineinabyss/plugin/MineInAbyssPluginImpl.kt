@@ -37,8 +37,6 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
 
     override fun onEnable() {
         saveDefaultConfig()
-//        generateImages()
-//        generateGifs()
 
         var addon: GearyAddon? = null
         if (isPluginEnabled("Geary")) {
