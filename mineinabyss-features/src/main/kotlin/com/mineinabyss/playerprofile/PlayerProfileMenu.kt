@@ -40,8 +40,10 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
         ToggleArmorVisibility {
-            player.playerData.displayProfileArmor = !hideArmorIcons
-            hideArmorIcons = player.playerData.displayProfileArmor
+            if (player == viewer) {
+                player.playerData.displayProfileArmor = !hideArmorIcons
+                hideArmorIcons = player.playerData.displayProfileArmor
+            }
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
