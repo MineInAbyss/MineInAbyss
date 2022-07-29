@@ -98,7 +98,7 @@ class OrthBankingFeature : AbyssFeature {
                             if (data.orthCoinsHeld > 0) data.orthCoinsHeld -= amount
                             if (data.showPlayerBalance) player.updateBalance()
                             player.inventory.addItem(orthCoin.asQuantity(amount))
-                            player.success("You withdrew $amount Orth Coins from your guild.")
+                            player.success("You withdrew $amount Orth Coins from your balance.")
                         }
                     }
                 }
