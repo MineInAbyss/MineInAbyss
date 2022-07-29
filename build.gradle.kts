@@ -26,7 +26,7 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(mialibs.minecraft.plugin.imageloader)
+        implementation(miaLibs.minecraft.plugin.imageloader)
         implementation(libs.idofront.core)
         implementation(libs.idofront.autoscan) {
             exclude("org.reflections")
