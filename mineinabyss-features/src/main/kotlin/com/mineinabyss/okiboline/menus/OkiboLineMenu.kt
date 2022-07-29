@@ -7,6 +7,7 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
+import com.mineinabyss.helpers.okiboMenus
 import org.bukkit.entity.Player
 
 //TODO Consider using fontmagic-stuff from Combimagnetron to make a dynamic map
@@ -14,31 +15,28 @@ import org.bukkit.entity.Player
 // Needs to be tested on subpar machines tho, as on a high-end PC the FPS-loss is massive but still acceptable
 // 3060ti, 5800x, 32gb RAM and 450 -> 45 fps
 
-/*
-https://cdn.discordapp.net/attachments/758785982005903431/1002695422780899418/unknown.png
-https://cdn.discordapp.net/attachments/758785982005903431/1002696130817167430/unknown.png
-https://cdn.discordapp.net/attachments/758785982005903431/1002695462043783178/unknown.png
-*/
-
-
 //TODO Reuse the page stuff from Guild Lookup List to move between points
 
 @Composable
 fun GuiyOwner.OkiboLineMenu(player: Player) {
-    val playGif = player.okiboLine.useGifForMenuTransition
+    //val playGif = player.okiboLine.useGifForMenuTransition
     val currentPoint = player.okiboLine.currentPoint
     var pageNum by remember { mutableStateOf(currentPoint) }
+    var okiboMenuImage by remember { mutableStateOf(okiboMenus[pageNum]) }
+
     Chest(
         setOf(player),
-        title = "Okibo Line",
+        title = okiboMenuImage,
         Modifier.height(6),
         onClose = { player.closeInventory() }) {
 
         PreviousOkiboPointButton(Modifier.at(0,3), pageNum) {
             pageNum--
+            okiboMenuImage = okiboMenus[pageNum]
         }
         NextOkiboPointButton(Modifier.at(7, 3), pageNum) {
             pageNum++
+            okiboMenuImage = okiboMenus[pageNum]
         }
         /*Row(Modifier.at(0, 2)) {
             PreviousOkiboPointButton()

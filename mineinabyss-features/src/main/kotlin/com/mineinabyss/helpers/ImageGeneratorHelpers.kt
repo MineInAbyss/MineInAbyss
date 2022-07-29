@@ -3,7 +3,6 @@ package com.mineinabyss.helpers
 import androidx.compose.runtime.Composable
 import com.combimagnetron.imageloader.Gif
 import com.combimagnetron.imageloader.Image
-import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -33,11 +32,11 @@ fun GuiyOwner.test(viewer: Player, title: Component) {
 }
 
 fun generateImages() {
-    mineInAbyss.launch { generateGuildMenu() }
+    //mineInAbyss.launch { generateGuildMenu() }
 }
 
 fun generateGifs() {
-    generateGif()
+    //generateGif()
 }
 
 private fun generateGuildMenu() {
@@ -58,12 +57,12 @@ private fun convertFileToGif(fileName: String, ascent: Int = 8, colorType: Image
 
 }
 
-private fun convertFileToImageString(fileName: String, ascent: Int = 8, colorType: Image.ColorType = Image.ColorType.LEGACY): String {
-    val path = Path.of(mineInAbyss.dataFolder.absolutePath + fileName)
+fun convertFileToImageString(fileName: String, ascent: Int = 8, colorType: Image.ColorType = Image.ColorType.LEGACY): String {
+    val path = Path.of(mineInAbyss.dataFolder.absolutePath + "/images/" + fileName)
     return Image.builder().image(path).colorType(colorType).ascent(ascent).build().generate()
 }
 
-private fun convertImageUrlToImageString(url: String, ascent: Int = 8, coloType: Image.ColorType = Image.ColorType.LEGACY): String {
+internal fun convertImageUrlToImageString(url: String, ascent: Int = 8, coloType: Image.ColorType = Image.ColorType.LEGACY): String {
     return Image.builder().image(url).colorType(coloType).ascent(ascent).build().generate()
 }
 
