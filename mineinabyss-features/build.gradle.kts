@@ -9,6 +9,7 @@ plugins {
 dependencies {
     compileOnly(project(":mineinabyss-core"))
 
-    compileOnly(mialibs.guiy)
+    compileOnly(miaLibs.guiy)
+    compileOnly(miaLibs.chatty)
     compileOnly(libs.minecraft.headlib)
 }

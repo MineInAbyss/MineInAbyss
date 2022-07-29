@@ -15,7 +15,8 @@ val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("Discor
 
 interface AbyssContext {
     companion object : AbyssContext by getService()
-
+    val isChattyLoaded: Boolean
+        get() = mineInAbyss.server.pluginManager.isPluginEnabled("chatty")
     val isGSitLoaded: Boolean
         get() = mineInAbyss.server.pluginManager.isPluginEnabled("GSit")
     val econ: Economy?

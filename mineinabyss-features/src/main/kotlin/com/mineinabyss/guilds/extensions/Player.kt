@@ -3,8 +3,7 @@ package com.mineinabyss.guilds.extensions
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.messaging.*
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -30,7 +29,6 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
 
         val id = guildRow[Guilds.id]
         val level = guildRow[Guilds.level]
-        val joinType = guildRow[Guilds.joinType]
 
         val memberGuildCheck = Players.select {
             Players.playerUUID eq member.uniqueId
@@ -149,8 +147,7 @@ fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
 fun OfflinePlayer.requestToJoin(guildName: String) {
     val player = player ?: return
     val requestMessage = "The Guild will receive your request!"
-    val ownerMessage =
-        "<gold><i>${player.name}</i> <yellow>requested to join your guild."
+    val ownerMessage = "<gold><i>${player.name}</i> <yellow>requested to join your guild.".miniMsg()
 
     transaction(AbyssContext.db) {
         if (player.hasGuild()) {
@@ -202,7 +199,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
             owner.toPlayer()?.sendMessage(ownerMessage)
         } else {
             MessageQueue.insert {
-                it[content] = ownerMessage
+                it[this.content] = ownerMessage.serialize()
                 it[playerUUID] = owner
             }
         }
@@ -328,6 +325,7 @@ fun Player.leaveGuild() {
 
         val memberRank = playerRow[Players.guildRank]
         val guildName = player?.getGuildName() ?: return@transaction
+        val owner = guildName.getOwnerFromGuildName()
 
         /* Deletes player-entry if player has a guild */
         if (memberRank == GuildRanks.Owner) {
@@ -338,7 +336,10 @@ fun Player.leaveGuild() {
         Players.deleteWhere {
             Players.playerUUID eq uniqueId
         }
+        val leftMessage = "<i>${player?.name}</i> has left your guild!"
         player?.success("You have left <i>${guildName}")
+        owner.player?.warn(leftMessage) ?:
+        MessageQueue.insert { it[content] = leftMessage; it[playerUUID] = owner.uniqueId }
     }
 
 }
@@ -426,6 +427,28 @@ fun String.getGuildLevel(): Int {
         return@transaction Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildLevel.lowercase()
         }.singleOrNull()?.get(Guilds.level) ?: return@transaction 0
+    }
+}
+
+fun OfflinePlayer.getGuildBalance(): Int {
+    return transaction(AbyssContext.db) {
+        val guildId = Players.select {
+            Players.playerUUID eq uniqueId
+        }.first()[Players.guildId]
+
+        val guildBalance = Guilds.select {
+            Guilds.id eq guildId
+        }.single()[Guilds.balance]
+
+        return@transaction guildBalance
+    }
+}
+
+fun String.getGuildBalance(): Int {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildBalance.lowercase()
+        }.singleOrNull()?.get(Guilds.balance) ?: return@transaction 0
     }
 }
 
@@ -555,6 +578,6 @@ fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
     return joinType
 }
 
-fun OfflinePlayer.isAboveCaptain(): Boolean {
+fun OfflinePlayer.isCaptainOrAbove(): Boolean {
     return (player?.getGuildRank() == GuildRanks.Owner || player?.getGuildRank() == GuildRanks.Captain)
 }

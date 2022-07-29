@@ -5,6 +5,7 @@ import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
@@ -17,7 +18,7 @@ import org.bukkit.OfflinePlayer
 @Composable
 fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
     val owner = guildName.getOwnerFromGuildName()
-    val height = owner.getGuildLevel()?.plus(2) ?: 3
+    val height = minOf(owner.getGuildLevel()?.plus(2) ?: 3, MAX_CHEST_HEIGHT)
     GuildLabel(Modifier.at(4, 0), owner)
     GuildMembersButton(Modifier.at(1, 1), guildName)
     BackButton(Modifier.at(0, height))

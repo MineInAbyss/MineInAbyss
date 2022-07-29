@@ -23,13 +23,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuildUIScope.GuildJoinRequestListScreen() {
-    GuildJoinRequest(Modifier.at(1, 1))
-    DenyAllInvites(Modifier.at(8, 4))
+    GuildJoinRequestButton(Modifier.at(1, 1))
+    DenyAllInvitesButton(Modifier.at(8, 4))
     BackButton(Modifier.at(2, 4))
 }
 
 @Composable
-fun GuildUIScope.GuildJoinRequest(modifier: Modifier = Modifier) {
+fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(AbyssContext.db) {
@@ -44,7 +44,10 @@ fun GuildUIScope.GuildJoinRequest(modifier: Modifier = Modifier) {
     }
     Grid(modifier.size(9, 4)) {
         requests.forEach { newMember ->
-            Button(onClick = { if (!player.hasGuildRequests()) player.closeInventory() else nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember))) }) {
+            Button(onClick = {
+                if (!player.hasGuildRequests()) player.closeInventory()
+                else nav.open(GuildScreen.JoinRequest(Bukkit.getOfflinePlayer(newMember)))
+            }) {
                 Item(
                     newMember.toPlayer().head(
                         "<yellow><i>${newMember.toPlayer()?.name}".miniMsg(),
@@ -55,7 +58,7 @@ fun GuildUIScope.GuildJoinRequest(modifier: Modifier = Modifier) {
             }
         }
     }
-    DeclineAllGuildRequests(Modifier.at(8, 4))
+    DeclineAllGuildRequestsButton(Modifier.at(8, 4))
 
     BackButton(Modifier.at(2, 4))
 }

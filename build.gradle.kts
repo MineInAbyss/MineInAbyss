@@ -11,6 +11,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        //mavenLocal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
@@ -22,7 +23,7 @@ allprojects {
 
     dependencies {
         val libs = rootProject.libs
-        val mialibs = rootProject.mialibs
+        val miaLibs = rootProject.miaLibs
 
         // Shaded
         implementation(mialibs.minecraft.plugin.imageloader)
@@ -32,9 +33,9 @@ allprojects {
         }
 
         // Geary platform
-        compileOnly(mialibs.geary.papermc.core)
-        compileOnly(mialibs.geary.commons.papermc)
-        compileOnly(mialibs.looty)
+        compileOnly(miaLibs.geary.papermc.core)
+        compileOnly(miaLibs.geary.commons.papermc)
+        compileOnly(miaLibs.looty)
 
         // MineInAbyss platform
         compileOnly(libs.kotlin.stdlib)
@@ -56,13 +57,14 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
 
-        compileOnly(mialibs.deeperworld)
-        compileOnly(mialibs.minecraft.plugin.blocklocker)
-        compileOnly(mialibs.minecraft.plugin.gsit)
-        compileOnly(mialibs.minecraft.plugin.mccosmetics)
-        compileOnly(mialibs.minecraft.plugin.hmccosmetics)
-        compileOnly(mialibs.minecraft.plugin.discordsrv)
-        compileOnly(mialibs.minecraft.plugin.luckperms)
+        compileOnly(miaLibs.chatty)
+        compileOnly(miaLibs.deeperworld)
+        compileOnly(miaLibs.minecraft.plugin.blocklocker)
+        compileOnly(miaLibs.minecraft.plugin.gsit)
+        compileOnly(miaLibs.minecraft.plugin.mccosmetics)
+        compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
+        compileOnly(miaLibs.minecraft.plugin.discordsrv)
+        compileOnly(miaLibs.minecraft.plugin.luckperms)
     }
 }
 

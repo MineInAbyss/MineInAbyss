@@ -15,16 +15,15 @@ import org.bukkit.OfflinePlayer
 
 @Composable
 fun GuildUIScope.GuildMemberOptionsScreen(member: OfflinePlayer) {
-    /* Large playerhead or playermodel :pogo: */
     //TODO I'd like a row of buttons here that let you click on the exact rank to give a player,
     // with the final button being kick.
-    PromoteGuildMember(member, Modifier.at(1, 1))
-    KickGuildMember(member, Modifier.at(5, 1))
+    PromoteGuildMemberButton(member, Modifier.at(1, 1))
+    KickGuildMemberButton(member, Modifier.at(5, 1))
     BackButton(Modifier.at(4, 4))
 }
 
 @Composable
-fun GuildUIScope.PromoteGuildMember(member: OfflinePlayer, modifier: Modifier) = Button(
+fun GuildUIScope.PromoteGuildMemberButton(member: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
     enabled = (player.getGuildRank() == GuildRanks.Owner || player.getGuildRank() == GuildRanks.Captain),
     onClick = {
@@ -36,7 +35,7 @@ fun GuildUIScope.PromoteGuildMember(member: OfflinePlayer, modifier: Modifier) =
 }
 
 @Composable
-fun GuildUIScope.KickGuildMember(member: OfflinePlayer, modifier: Modifier) = Button(
+fun GuildUIScope.KickGuildMemberButton(member: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
         player.kickPlayerFromGuild(member)

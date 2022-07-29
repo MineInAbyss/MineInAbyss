@@ -20,18 +20,18 @@ import org.jetbrains.exposed.sql.insert
 @Composable
 fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
     PlayerLabel(Modifier.at(4, 0), from)
-    AcceptGuildRequest(Modifier.at(1, 1), from)
-    DeclineGuildRequest(Modifier.at(5, 1), from)
+    AcceptGuildRequestButton(Modifier.at(1, 1), from)
+    DeclineGuildRequestButton(Modifier.at(5, 1), from)
     BackButton(Modifier.at(4, 4))
 }
 
 @Composable
-fun GuildUIScope.PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
+fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
     Item(newMember.head("<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
 }
 
 @Composable
-fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer) = Button(
+fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     onClick = {
         if (player.getGuildJoinType() == GuildJoinType.Invite) {
             player.error("Your guild is in 'Invite-only' mode.")
@@ -51,7 +51,7 @@ fun GuildUIScope.AcceptGuildRequest(modifier: Modifier, newMember: OfflinePlayer
 }
 
 @Composable
-fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlayer) = Button(
+fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     modifier = modifier,
     onClick = {
         newMember.removeGuildQueueEntries(GuildJoinType.Request)
@@ -66,13 +66,15 @@ fun GuildUIScope.DeclineGuildRequest(modifier: Modifier, newMember: OfflinePlaye
             }
         }
         nav.back()
+        if (player.getNumberOfGuildRequests() == 0)
+            nav.back()
     }
 ) {
     Text("<red>Decline Join-Request".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
-fun GuildUIScope.DeclineAllGuildRequests(modifier: Modifier) = Button(
+fun GuildUIScope.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Request, true)

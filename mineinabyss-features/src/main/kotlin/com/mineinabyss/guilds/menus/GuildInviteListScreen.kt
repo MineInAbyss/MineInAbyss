@@ -26,7 +26,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Composable
 fun GuildUIScope.GuildInviteListScreen() {
     GuildInvites(Modifier.at(1, 1))
-    DenyAllInvites(Modifier.at(8, 4))
+    DenyAllInvitesButton(Modifier.at(8, 4))
     BackButton(Modifier.at(2, 4))
 }
 
@@ -39,12 +39,11 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
         GuildJoinQueue.select {
             (GuildJoinQueue.joinType eq GuildJoinType.Invite) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)
-        }.map { row -> Pair(memberCount, row[GuildJoinQueue.guildId]) }
+        }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
 
     }
     Grid(modifier.size(9, 4)) {
-        //TODO instead of using a Pair, create a private class and name first/second properly
-        invites.sortedBy { it.first }.forEach { (memberCount, guild) ->
+        invites.sortedBy { it.memberCount }.forEach { _ ->
             Button(onClick = {
                 nav.open(GuildScreen.Invite(owner))
             }) {
@@ -60,7 +59,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.DenyAllInvites(modifier: Modifier) = Button(
+fun GuildUIScope.DenyAllInvitesButton(modifier: Modifier) = Button(
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.Invite, true)
         nav.open(GuildScreen.MemberList(guildLevel, player))
@@ -69,4 +68,8 @@ fun GuildUIScope.DenyAllInvites(modifier: Modifier) = Button(
     modifier = modifier
 ) {
     Text("<red>Decline All Invites".miniMsg())
+}
+
+//TODO Repeat this instead of using pairs everywhere
+private class Invite(val memberCount: Int, val guildIds: Int) {
 }

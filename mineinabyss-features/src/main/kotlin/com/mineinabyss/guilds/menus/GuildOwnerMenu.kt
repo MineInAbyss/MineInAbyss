@@ -57,29 +57,31 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     val renameItem = TitleItem.of(player.getGuildName())
     Button(
-        enabled = player.isAboveCaptain(),
+        enabled = player.isCaptainOrAbove(),
         modifier = modifier,
         onClick = {
-            if (!player.isAboveCaptain()) return@Button
+            if (!player.isCaptainOrAbove()) return@Button
             nav.open(
                 UniversalScreens.Anvil(
-                AnvilGUI.Builder()
-                    .title("${Space.of(-65)}:guild_name_menu:")
-                    .itemLeft(renameItem)
-                    .plugin(guiyPlugin)
-                    .onClose { nav.back() }
-                    .onComplete { player, guildName: String ->
-                        player.changeStoredGuildName(guildName)
-                        AnvilGUI.Response.close()
-                    }
-            ))
+                    AnvilGUI.Builder()
+                        .title("${Space.of(-65)}:guild_name_menu:")
+                        .itemLeft(renameItem)
+                        .plugin(guiyPlugin)
+                        .onClose { nav.back() }
+                        .onComplete { player, guildName: String ->
+                            player.changeStoredGuildName(guildName)
+                            AnvilGUI.Response.close()
+                        }
+                ))
         }
     ) {
-        Text("<gold><b>Change Guild Name".miniMsg(),
+        Text(
+            "<gold><b>Change Guild Name".miniMsg(),
             "<yellow><b>Guild Name:</b> <yellow><i>${player.getGuildName()}".miniMsg(),
             "<yellow><b>Guild Owner:</b> <yellow><i>${player.name}".miniMsg(),
             "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
             "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
+            "<yellow><b>Guild Balance:</b> <yellow><i>${player.getGuildBalance()}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
@@ -87,16 +89,36 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
 
 @Composable
 fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
-    Button(modifier = modifier) {
-        Text(
-            "<red><b><st>Level up Guildrank".miniMsg(),
-            "<red>This feature is not yet implemented.".miniMsg()
-        )
+    val guild = player.getGuildName()
+    val isMaxLevel = guild.getGuildLevelUpCost() == null
+    Button(
+        enabled = player.canLevelUpGuild(),
+        onClick = { player.levelUpGuild() },
+        modifier = modifier
+    ) { enabled ->
+        when {
+            enabled ->
+                Text(
+                    "<red><b>Level up Guildrank".miniMsg(),
+                    "<gold>Next level-up will cost <b>${guild.getGuildLevelUpCost()} coins</b>.".miniMsg()
+                )
+            isMaxLevel ->
+                Text(
+                    "<red><b><st>Level up Guildrank".miniMsg(),
+                    "<dark_red>Your guild has reached the current max-level.".miniMsg()
+                )
+            else ->
+                Text(
+                    "<red><b><st>Level up Guildrank".miniMsg(),
+                    "<red>You need <b>${guild.getGuildLevelUpCost()} coins</b> in your".miniMsg(),
+                    "<red>guild balance to level up your guildrank.".miniMsg()
+                )
+        }
     }
 }
 
 @Composable
-fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
+fun GuildHouseButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
             "<gold><b><st>Guild Housing".miniMsg(), modifier = Modifier.size(2, 2),
@@ -106,7 +128,7 @@ fun GuildUIScope.GuildHouseButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.GuildRelationshipButton(modifier: Modifier = Modifier) {
+fun GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
             "<dark_red><b><st>Guild Wars".miniMsg(), modifier = Modifier.size(2, 2),

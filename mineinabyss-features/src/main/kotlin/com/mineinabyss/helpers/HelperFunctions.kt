@@ -7,10 +7,11 @@ import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
-import com.mineinabyss.playerprofile.luckPerms
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
+import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
@@ -27,24 +28,27 @@ data class ItemDrop(
     val applyFortune: Boolean = true
 )
 
+val luckPerms = LuckPermsProvider.get()
+
 fun Player.updateBalance() {
-    val data = player?.playerData
-    val orthCoinBalance = data?.orthCoinsHeld
-    val mittyTokenBalance = data?.mittyTokensHeld
-    val splitBalance = orthCoinBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
-    val splitSupporterBalance = mittyTokenBalance.toString().toList().joinToString { ":banking_$it:" }.replace(", ", "")
+    val orthCoinBalance = playerData.orthCoinsHeld
+    val mittyTokenBalance = playerData.mittyTokensHeld
+    val font = Key.key("orthbanking")
+    val orthCoinComponent = Component.text("${orthCoinBalance}:orthcoin:").font(font)
+    val mittyTokenComponent = Component.text("${mittyTokenBalance}:mittytoken:").font(font)
 
-    val currentBalance: Component = if (data?.mittyTokensHeld!! > 0) {
-        Component.text("${Space.of(128)}${splitBalance}:orthcoin: $splitSupporterBalance:mittytoken:")
-    } else Component.text("${Space.of(160)}${splitBalance}:orthcoin:")
+    val currentBalance: Component =
+        if (playerData.mittyTokensHeld > 0)
+            Component.text(Space.of(128)).append(orthCoinComponent).append(mittyTokenComponent)
+        else Component.text(Space.of(160)).append(orthCoinComponent)
 
-    if (data.orthCoinsHeld < 0) data.orthCoinsHeld = 0
+    if (playerData.orthCoinsHeld < 0) playerData.orthCoinsHeld = 0
 
     mineInAbyss.launch {
         do {
-            player?.sendActionBar(currentBalance)
+            sendActionBar(currentBalance)
             delay(1.seconds)
-        } while ((data.orthCoinsHeld == orthCoinBalance) && (data.mittyTokensHeld == mittyTokenBalance) && data.showPlayerBalance)
+        } while ((playerData.orthCoinsHeld == orthCoinBalance) && (playerData.mittyTokensHeld == mittyTokenBalance) && playerData.showPlayerBalance)
         return@launch
     }
 }
@@ -118,11 +122,11 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Player.getLinkedDiscordAccount() : String? {
+fun Player.getLinkedDiscordAccount(): String? {
     return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull()
 }
 
-fun Player.getGroups() : List<String> {
+fun Player.getGroups(): List<String> {
     return luckPerms.userManager.getUser(player?.uniqueId!!)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
