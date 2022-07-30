@@ -234,10 +234,10 @@ fun GuildUIScope.GuildLookupListButton() {
 }
 
 object DecideMenus {
-    val hasGuildAndInvites = ":guild_main_menu_has_guild_and_has_invites:"
-    val hasGuildAndNoInvites = ":guild_main_menu_has_guild_and_no_invites:"
-    val noGuildAndInvites = ":guild_main_menu_no_guild_and_has_invites:"
-    val noGuildAndNoInvites = ":guild_main_menu_no_guild_and_no_invites:"
+    private const val hasGuildAndInvites = ":guild_main_menu_has_guild_and_has_invites:"
+    private const val hasGuildAndNoInvites = ":guild_main_menu_has_guild_and_no_invites:"
+    private const val noGuildAndInvites = ":guild_main_menu_no_guild_and_has_invites:"
+    private const val noGuildAndNoInvites = ":guild_main_menu_no_guild_and_no_invites:"
 
     fun decideMainMenu(player: Player): String {
         return when {
@@ -248,8 +248,10 @@ object DecideMenus {
         }
     }
 
+    //TODO Implement lists for guilds, making one able to have more than 5(25) members
     fun decideMemberMenu(player: Player): String {
-        return if (player.hasGuildRequests()) ":guild_member_management_menu_${player.getGuildLevel()}_has_request:"
-        else ":guild_member_management_menu_${player.getGuildLevel()}_no_request:"
+        val menuHeight = minOf(player.getGuildLevel() ?: 3, 4)
+        return if (player.hasGuildRequests()) ":guild_member_management_menu_${menuHeight}_has_request:"
+        else ":guild_member_management_menu_${menuHeight}_no_request:"
     }
 }

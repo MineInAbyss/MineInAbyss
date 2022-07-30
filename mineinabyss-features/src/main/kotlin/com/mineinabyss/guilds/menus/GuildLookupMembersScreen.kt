@@ -18,7 +18,7 @@ import org.bukkit.OfflinePlayer
 @Composable
 fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
     val owner = guildName.getOwnerFromGuildName()
-    val height = minOf(owner.getGuildLevel()?.plus(2) ?: 3, MAX_CHEST_HEIGHT)
+    val height = minOf(owner.getGuildLevel()?.plus(2) ?: 3, MAX_CHEST_HEIGHT - 1)
     GuildLabel(Modifier.at(4, 0), owner)
     GuildMembersButton(Modifier.at(1, 1), guildName)
     BackButton(Modifier.at(0, height))

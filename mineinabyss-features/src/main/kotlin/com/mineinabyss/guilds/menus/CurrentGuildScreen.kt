@@ -20,12 +20,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuildUIScope.CurrentGuildScreen() {
-    val yLevel = minOf(guildLevel + 2, MAX_CHEST_HEIGHT)
     GuildMemberList(Modifier.at(1, 1))
     if (player.getGuildRank() != GuildRanks.Owner) {
         //LeaveGuildButton(player, Modifier.at(8, yLevel))
     }
-    BackButton(Modifier.at(2, yLevel))
+    BackButton(Modifier.at(2, minOf(guildLevel + 2, MAX_CHEST_HEIGHT - 1)))
 }
 
 

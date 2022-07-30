@@ -8,10 +8,7 @@ import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.guilds.extensions.depositCoinsToGuild
-import com.mineinabyss.guilds.extensions.getGuildBalance
-import com.mineinabyss.guilds.extensions.hasGuild
-import com.mineinabyss.guilds.extensions.withdrawCoinsFromGuild
+import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
@@ -39,13 +36,12 @@ val guildChannel =
         channelRadius = 0,
         channelAliases = emptyList()
     )
-
+const val guildChannelId: String = "Guild Chat"
 
 
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    val guildChannelId: String = "guild",
     private val guildChattyChannel: ChattyChannel = guildChannel,
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
@@ -58,8 +54,11 @@ class GuildFeature(
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
         }
 
-        if (AbyssContext.isChattyLoaded)
-            chattyConfig.channels.putIfAbsent(guildChannelId, this@GuildFeature.guildChattyChannel)
+        if (AbyssContext.isChattyLoaded) {
+            getAllGuilds().forEach {
+                chattyConfig.channels.putIfAbsent("${it.first} $guildChannelId", this@GuildFeature.guildChattyChannel)
+            }
+        }
 
         commands {
             mineinabyss {
@@ -108,7 +107,11 @@ class GuildFeature(
                         playerAction {
                             val player = sender as? Player ?: return@playerAction
 
-                            if (player.hasGuild()) player.swapChannelCommand(guildChannelId)
+                            if (player.hasGuild()) {
+                                val name = player.getGuildName()
+                                chattyConfig.channels.putIfAbsent("$name $guildChannelId", this@GuildFeature.guildChattyChannel)
+                                player.swapChannelCommand("$name $guildChannelId")
+                            }
                             else player.error("You cannot use guild chat without a guild")
                         }
                     }
