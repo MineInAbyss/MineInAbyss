@@ -10,7 +10,6 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -50,7 +49,7 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
             return@Button
         }
         val ownerLevel = owner.getGuildLevel() ?: return@Button
-        if (owner.getGuildMemberCount().broadcastVal("count: ") >= ownerLevel * 5) {
+        if (owner.getGuildMemberCount() >= ownerLevel * 5) {
             player.error("This guild has reached its current member cap!")
             return@Button
         }

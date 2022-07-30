@@ -7,7 +7,6 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.updateBalance
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.npc.orthbanking.withdrawCoins
 import org.bukkit.entity.Player
@@ -21,7 +20,6 @@ fun WithdrawScreen(player: Player) {
         onClick = {
             amount += 1
             if (amount > 64) amount = 64
-            broadcast(amount)
         }
     ) {
         Text("<gold><b>Increase Withdrawal".miniMsg(), modifier = Modifier.size(3, 2))
@@ -30,7 +28,6 @@ fun WithdrawScreen(player: Player) {
     Button(
         Modifier.at(4, 2),
         onClick = {
-            broadcast(amount)
             player.withdrawCoins(amount)
             player.updateBalance()
             player.closeInventory()
@@ -44,7 +41,6 @@ fun WithdrawScreen(player: Player) {
         onClick = {
             amount -= 1
             if (amount < 1) amount = 1
-            broadcast(amount)
         }
     ) {
         Text("<gold><b>Decrease Withdrawal".miniMsg(), modifier = Modifier.size(3, 1))
