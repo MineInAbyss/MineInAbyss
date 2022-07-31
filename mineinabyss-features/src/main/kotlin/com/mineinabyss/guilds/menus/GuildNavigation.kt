@@ -49,7 +49,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
 
     class GuildList (val pageNumber: Int): GuildScreen(title = "${Space.of(-12)}<white>:guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: String) :
-        GuildScreen("${Space.of(-12)}<white>${":guild_lookup_members${guildName.getGuildLevel()}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
+        GuildScreen("${Space.of(-12)}<white>${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
     // Forgot to add to pack so this is fine for now
     object InviteList : GuildScreen(title = "${Space.of(-12)}<white>:guild_join_requests_menu:", 5)

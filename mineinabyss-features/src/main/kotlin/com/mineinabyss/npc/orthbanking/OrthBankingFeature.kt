@@ -62,6 +62,11 @@ class OrthBankingFeature : AbyssFeature {
                                 return@action
                             }
 
+                            if (amount <= 0) {
+                                player.error("You can't deposit 0 coins.")
+                                return@action
+                            }
+
                             currItem.subtract(amount)
                             data.orthCoinsHeld += amount
                             if (data.showPlayerBalance) player.updateBalance()
@@ -80,8 +85,13 @@ class OrthBankingFeature : AbyssFeature {
                                 player.error("You can't withdraw 0 or less coins!")
                                 return@action
                             }
-                            if (amount > 64) amount = 64
 
+                            if (amount > data.orthCoinsHeld) {
+                                player.error("You don't have that many coins.")
+                                return@action
+                            }
+
+                            if (amount > 64) amount = 64
                             if (slot == -1) {
                                 player.error("You do not have enough space in your inventory to withdraw the coins.")
                                 return@action
