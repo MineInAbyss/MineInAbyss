@@ -48,7 +48,8 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
             player.error("Change it to 'Any' or 'Invite-only' mode to accept invites.")
             return@Button
         }
-        if (owner.getGuildMemberCount() >= guildLevel * 5 + 1) {
+        val ownerLevel = owner.getGuildLevel() ?: return@Button
+        if (owner.getGuildMemberCount() >= ownerLevel * 5) {
             player.error("This guild has reached its current member cap!")
             return@Button
         }

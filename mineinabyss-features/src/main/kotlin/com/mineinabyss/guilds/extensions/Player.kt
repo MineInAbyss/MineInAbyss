@@ -1,5 +1,7 @@
 package com.mineinabyss.guilds.extensions
 
+import com.mineinabyss.chatty.components.chattyData
+import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.entities.toPlayer
@@ -243,7 +245,7 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
         }
 
         val promoteMessage =
-            "You have been promoted to ${member.getGuildRank()} in <i>${player?.getGuildName()}"
+            "<aqua>You have been promoted to ${member.getGuildRank()} in <i>${player?.getGuildName()}"
 
         if (member.isOnline) member.player?.success(promoteMessage)
         else {
@@ -290,13 +292,17 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
             return@transaction false
         }
 
+        // Remove player from guild-chat. Offline members handled when they join
+        if (member.isOnline && member.player!!.chattyData.channelId == getGuildName().getGuildChatId()) {
+            member.player!!.chattyData.channelId = getDefaultChat().key
+        }
+
         Players.deleteWhere {
-            (Players.playerUUID eq member.uniqueId) and
-                    (Players.guildId eq guildID)
+            (Players.playerUUID eq member.uniqueId) and (Players.guildId eq guildID)
         }
 
         /* Message to actual kicked player online or offline */
-        val kickMessage = "You have been kicked from <i>${player?.getGuildName()}"
+        val kickMessage = "<red>You have been kicked from <i>${getGuildName()}"
         if (member.isOnline) member.player?.error(kickMessage)
         else {
             MessageQueue.insert {
@@ -331,6 +337,10 @@ fun Player.leaveGuild() {
         if (memberRank == GuildRanks.Owner) {
             player?.error("You have to promote another member to Owner before leaving your guild.")
             return@transaction
+        }
+
+        if (this@leaveGuild.chattyData.channelId == guildName.getGuildChatId()) {
+            this@leaveGuild.chattyData.channelId = getDefaultChat().key
         }
 
         Players.deleteWhere {

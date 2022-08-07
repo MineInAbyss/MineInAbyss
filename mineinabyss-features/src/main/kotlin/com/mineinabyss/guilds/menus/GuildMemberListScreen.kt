@@ -8,6 +8,7 @@ import com.mineinabyss.guilds.menus.JoinTypeIcon.invite
 import com.mineinabyss.guilds.menus.JoinTypeIcon.request
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
@@ -28,7 +29,7 @@ import org.bukkit.inventory.ItemStack
 @Composable
 fun GuildUIScope.GuildMemberListScreen() {
     ManageGuildMembersButton(Modifier.at(1, 1))
-    BackButton(Modifier.at(0, guildLevel + 1))
+    BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
 
     InviteToGuildButton(Modifier.at(7, 0))
     ManageGuildJoinRequestsButton(Modifier.at(8, 0))

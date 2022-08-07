@@ -7,7 +7,6 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.helpers.updateBalance
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.npc.orthbanking.depositCoins
 import org.bukkit.entity.Player
@@ -21,7 +20,6 @@ fun DepositScreen(player: Player) {
         onClick = {
             amount += 1
             if (amount > 64) amount = 64
-            broadcast(amount)
         }
     ) {
         Text("<gold><b>Increase Deposit".miniMsg(), modifier = Modifier.size(3, 2))
@@ -30,7 +28,6 @@ fun DepositScreen(player: Player) {
     Button(
         Modifier.at(4, 2),
         onClick = {
-            broadcast(amount)
             player.depositCoins(amount)
             player.updateBalance()
             player.closeInventory()
@@ -44,7 +41,6 @@ fun DepositScreen(player: Player) {
         onClick = {
             amount -= 1
             if (amount < 1) amount = 1
-            broadcast(amount)
         }
     ) {
         Text("<gold><b>Decrease Deposit".miniMsg(), modifier = Modifier.size(3, 1))

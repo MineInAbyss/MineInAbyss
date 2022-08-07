@@ -1,11 +1,15 @@
 package com.mineinabyss.guilds.extensions
 
+import com.mineinabyss.chatty.components.chattyData
+import com.mineinabyss.chatty.helpers.chattyConfig
+import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.helpers.heldLootyItem
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
+import com.mineinabyss.guilds.guildChannelId
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -81,7 +85,7 @@ fun Player.deleteGuild() {
         Players.select {
             (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId)
         }.forEach { row ->
-            val deleteGuildMessage = "The Guild you were in has been deleted by the Owner."
+            val deleteGuildMessage = "<red>The Guild you were in has been deleted by the Owner."
             val player = Bukkit.getPlayer(row[Players.playerUUID])
 
             player?.error(deleteGuildMessage) ?: MessageQueue.insert {
@@ -94,6 +98,15 @@ fun Player.deleteGuild() {
         val owner = Bukkit.getOfflinePlayer(getGuildOwner())
         if (owner.isOnline) (owner as Player).playerData.orthCoinsHeld += getGuildBalance()
         else playerData.orthCoinsHeld += getGuildBalance()
+
+        val guildChatId = getGuildChatId()
+        chattyConfig.channels.remove(guildChatId)
+
+        // Rest will be reset when they join
+        this@deleteGuild.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {it as Player
+            if (it.chattyData.channelId == guildChatId)
+                it.chattyData.channelId = getDefaultChat().key
+        }
 
         /* Delete join-requests & invites if the guild is deleted */
         GuildJoinQueue.deleteWhere {
@@ -114,6 +127,7 @@ fun Player.deleteGuild() {
     }
 }
 
+//TODO Make sure guild chatname is properly updated when guild name is changed
 fun Player.changeStoredGuildName(newGuildName: String) {
     transaction(AbyssContext.db) {
 
@@ -130,6 +144,12 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         if (guild != null) {
             error("There is already a guild registered with this name!")
             return@transaction
+        }
+
+        // Update the guildchat ID on online players, rest handled on join
+        this@changeStoredGuildName.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {it as Player
+            if (it.chattyData.channelId == getGuildName().getGuildChatId())
+                it.chattyData.channelId = newGuildName.getGuildChatId()
         }
 
         Guilds.update({ Guilds.id eq guildId }) {
@@ -324,7 +344,7 @@ fun Player.levelUpGuild() {
     success("You have leveled up your guild to level <b>${newLvl}</b>!")
     guildMembers.forEach { member ->
         if (member.isOnline) {
-            (member as Player).sendMessage(lvlUpMessage)
+            (member as Player).info(lvlUpMessage)
         } else {
             MessageQueue.insert {
                 it[content] = lvlUpMessage
@@ -371,4 +391,12 @@ private fun String.updateGuildBalance(amount: Int) {
             it[balance] = (bal + amount)
         }
     }
+}
+
+fun String.getGuildChatId() : String {
+    return "$this $guildChannelId"
+}
+
+fun Player.getGuildChatId() : String {
+    return "${getGuildName()} $guildChannelId"
 }
