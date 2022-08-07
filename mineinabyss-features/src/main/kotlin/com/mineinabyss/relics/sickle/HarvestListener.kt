@@ -7,7 +7,6 @@ import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.helpers.BlockUtil
 import com.mineinabyss.idofront.items.damage
 import com.mineinabyss.idofront.items.editItemMeta

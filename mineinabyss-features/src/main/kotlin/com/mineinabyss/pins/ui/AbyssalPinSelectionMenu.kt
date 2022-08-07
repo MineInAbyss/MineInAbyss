@@ -6,7 +6,6 @@ import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.canvases.Chest

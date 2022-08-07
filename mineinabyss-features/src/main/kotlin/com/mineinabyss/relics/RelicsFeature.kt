@@ -21,7 +21,7 @@ class RelicsFeature : AbyssFeature {
 
         geary {
             systems(
-                ShowDepthListener(),
+                ShowDepthSystem(),
                 StarCompassSystem(),
                 HarvestListener(),
             )

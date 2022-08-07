@@ -48,7 +48,7 @@ fun Player.updateBalance() {
         do {
             sendActionBar(currentBalance)
             delay(1.seconds)
-        } while ((playerData.orthCoinsHeld == orthCoinBalance) && (playerData.mittyTokensHeld == mittyTokenBalance) && playerData.showPlayerBalance)
+        } while (isOnline && (playerData.orthCoinsHeld == orthCoinBalance) && (playerData.mittyTokensHeld == mittyTokenBalance) && playerData.showPlayerBalance)
         return@launch
     }
 }
@@ -86,7 +86,6 @@ fun Player.bossbarCompass(loc: Location?, bar: BossBar) {
     val compassAngle = (((angleDir - angleLook + 360) % 360) / 22.5).toInt()
     bar.name(Component.text(barNameList[compassAngle]))
 
-    player.hideBossBar(bar)
     player.showBossBar(bar)
 }
 

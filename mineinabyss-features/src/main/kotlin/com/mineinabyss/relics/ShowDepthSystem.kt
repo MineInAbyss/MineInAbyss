@@ -4,13 +4,11 @@ import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.Handler
-import com.mineinabyss.geary.datatypes.family.MutableFamilyOperations.Companion.has
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.geary.systems.accessors.get
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -25,7 +23,7 @@ import kotlin.math.roundToInt
 @SerialName("mineinabyss:show_depth")
 class ShowDepth
 
-class ShowDepthListener : GearyListener() {
+class ShowDepthSystem : GearyListener() {
     private val TargetScope.player by get<Player>()
     private val SourceScope.depthMeter by get<DepthMeter>()
     private val EventScope.hasDepth by family { has<ShowDepth>() }
@@ -46,8 +44,7 @@ class ShowDepthListener : GearyListener() {
                     You suddenly become aware that you are in ${layer.name}<dark_aqua>.
                     """.trimIndent().miniMsg()
                 )
-            }
-            else {
+            } else {
                 val depth = getDepth(sectionXOffset, sectionYOffset, abyssStartingHeightInOrth, player.location)
                 player.info(
                     """

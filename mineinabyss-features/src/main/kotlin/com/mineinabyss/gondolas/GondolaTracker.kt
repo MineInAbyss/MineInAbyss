@@ -7,7 +7,7 @@ import com.mineinabyss.geary.systems.accessors.TargetScope
 import org.bukkit.entity.Player
 
 class GondolaTracker : GearyListener() {
-    val TargetScope.player by added<Player>()
+    val TargetScope.player by onSet<Player>()
 
     @Handler
     fun TargetScope.setOnLogin() {

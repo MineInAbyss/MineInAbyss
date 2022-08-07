@@ -8,7 +8,6 @@ import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.helpers.addPrefab
 import com.mineinabyss.geary.systems.TickingSystem
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.geary.systems.accessors.get
 
 class PinActivatorSystem : TickingSystem() {
     private val TargetScope.pins by get<ActivePins>()
@@ -19,7 +18,7 @@ class PinActivatorSystem : TickingSystem() {
         pins.loadedEntities -= inactive.keys
 
         activate.forEach { key ->
-            val prefab = key.toEntity() ?: return@forEach
+            val prefab = key.toEntityOrNull() ?: return@forEach
             val entity = entity {
                 addParent(entity)
                 addPrefab(prefab)

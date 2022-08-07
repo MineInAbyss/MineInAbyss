@@ -11,9 +11,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.looty.LootyFactory
-import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventorySlotContext
-import com.mineinabyss.looty.ecs.components.itemcontexts.useWithLooty
-import com.mineinabyss.looty.loadItem
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -84,9 +81,6 @@ class OrthBankingFeature : AbyssFeature {
                                 return@playerAction
                             }
                             val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
-                            orthCoin?.useWithLooty {
-                                PlayerInventorySlotContext(player, slot).loadItem(this)
-                            }
                             if (orthCoin == null) {
                                 player.error("Failed to create Orth Coin.")
                                 return@playerAction

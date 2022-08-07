@@ -14,8 +14,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class SoulSystem : GearyListener() {
-    private val TargetScope.soul by added<Soulbound>()
-    private val TargetScope.item by added<ItemStack>()
+    private val TargetScope.soul by onSet<Soulbound>()
+    private val TargetScope.item by onFirstSet<ItemStack>()
 
     @Handler
     fun TargetScope.updateItemLore() {

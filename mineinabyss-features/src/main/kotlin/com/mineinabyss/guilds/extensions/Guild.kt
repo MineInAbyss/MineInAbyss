@@ -11,9 +11,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.looty.LootyFactory
-import com.mineinabyss.looty.ecs.components.itemcontexts.PlayerInventorySlotContext
-import com.mineinabyss.looty.ecs.components.itemcontexts.useWithLooty
-import com.mineinabyss.looty.loadItem
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -280,9 +277,6 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
     }
 
     val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
-    orthCoin?.useWithLooty {
-        PlayerInventorySlotContext(this@withdrawCoinsFromGuild, slot).loadItem(this)
-    }
     if (orthCoin == null) {
         error("Could not create OrthCoin.")
         error("Cancelling withdrawal!")

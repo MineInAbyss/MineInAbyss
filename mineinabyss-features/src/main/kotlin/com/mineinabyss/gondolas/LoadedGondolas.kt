@@ -7,7 +7,7 @@ import com.mineinabyss.geary.systems.accessors.TargetScope
 import kotlin.collections.set
 
 object LoadedGondolas : GearyListener() {
-    val TargetScope.gondola by added<Gondola>()
+    val TargetScope.gondola by onSet<Gondola>()
 
     val loaded = mutableMapOf<String, Gondola>()
 
