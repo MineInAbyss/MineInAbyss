@@ -14,6 +14,7 @@ allprojects {
         //mavenLocal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.codemc.org/repository/maven-public/")
+        maven("https://mvn.lumine.io/repository/maven-public/") { metadataSources { artifact() } } // Model Engine
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
         maven("https://mvn.lumine.io/repository/maven-public/") // MCCosmetics
         maven("https://m2.dv8tion.net/releases") // DiscordSRV
@@ -34,7 +35,6 @@ allprojects {
         // Geary platform
         compileOnly(miaLibs.geary.papermc.core)
         compileOnly(miaLibs.geary.commons.papermc)
-        compileOnly(miaLibs.looty)
 
         // MineInAbyss platform
         compileOnly(libs.kotlin.stdlib)
@@ -56,8 +56,11 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
 
+        compileOnly(miaLibs.looty)
+        compileOnly(miaLibs.mobzy)
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
+        compileOnly(miaLibs.minecraft.plugin.modelengine)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
         compileOnly(miaLibs.minecraft.plugin.mccosmetics)

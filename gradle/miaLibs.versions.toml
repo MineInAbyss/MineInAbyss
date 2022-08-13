@@ -5,6 +5,7 @@ looty = "0.7.57"
 guiy="0.6.21"
 deeperworld="0.5.77"
 chatty="0.2.44"
+mobzy="0.17.78"
 
 [libraries]
 geary-papermc-core = { module = "com.mineinabyss:geary-papermc-core", version.ref = "geary" }
@@ -13,6 +14,7 @@ looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
+mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.1.2"
@@ -21,3 +23,4 @@ minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
 minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.1"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.25.1"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
+minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R2.5.0"

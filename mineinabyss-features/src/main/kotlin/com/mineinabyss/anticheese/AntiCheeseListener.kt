@@ -2,14 +2,17 @@ package com.mineinabyss.anticheese
 
 import com.destroystokyo.paper.MaterialTags
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
+import com.mineinabyss.mobzy.systems.systems.ModelEngineSystem.toModelEntity
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import dev.geco.gsit.api.event.PlayerSitEvent
 import dev.geco.gsit.api.event.PrePlayerSitEvent
+import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Material
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
@@ -29,6 +32,18 @@ import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.potion.PotionEffectType
 
 class AntiCheeseListener : Listener {
+
+    @EventHandler
+    fun EntityMoveEvent.onRidableMobAscend() {
+        val mount = entity.toModelEntity()?.mountHandler ?: return
+        if (entity.toGearyOrNull() == null) return
+
+        if (mount.hasDriver() && mount.driver is Player)
+            handleCurse((mount.driver as Player), from, to)
+        mount.passengers["mount"]?.passengers?.filterIsInstance<Player>()?.forEach {
+            handleCurse(it, from, to)
+        }
+    }
 
     @EventHandler
     fun BlockSpreadEvent.onSculkSpread() {
