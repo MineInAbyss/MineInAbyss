@@ -6,6 +6,7 @@ guiy="0.6.21"
 deeperworld="0.5.77"
 chatty="0.2.44"
 mobzy="0.17.78"
+bonehurtingjuice="1.4.12"
 
 [libraries]
 geary-papermc-core = { module = "com.mineinabyss:geary-papermc-core", version.ref = "geary" }
@@ -15,6 +16,7 @@ deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperwor
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
+bonehurtingjuice = { module = "com.mineinabyss:bonehurtingjuice", version.ref = "bonehurtingjuice" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.1.2"

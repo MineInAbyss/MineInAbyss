@@ -6,6 +6,7 @@ import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.plugin.isPluginEnabled
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mobzy.systems.systems.ModelEngineSystem.toModelEntity
 import dev.geco.gsit.api.GSitAPI
@@ -30,6 +31,8 @@ import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.potion.PotionEffectType
+import org.cultofclang.bonehurtingjuice.BoneHurtConfig
+import org.cultofclang.bonehurtingjuice.hurtBones
 
 class AntiCheeseListener : Listener {
 
@@ -42,6 +45,24 @@ class AntiCheeseListener : Listener {
             handleCurse((mount.driver as Player), from, to)
         mount.passengers["mount"]?.passengers?.filterIsInstance<Player>()?.forEach {
             handleCurse(it, from, to)
+        }
+    }
+
+    @EventHandler
+    fun EntityMoveEvent.onRidableMobEnterWater() {
+        val mount = entity.toModelEntity()?.mountHandler ?: return
+        if (entity.toGearyOrNull() == null) return
+        if (!isPluginEnabled("BoneHurtingJuice") || entity.fallDistance < BoneHurtConfig.data.minFallDist) return
+        if (from.block.isLiquid) return
+
+        if (mount.hasDriver() && mount.driver is Player) {
+            val driver = mount.driver as Player
+            driver.fallDistance = entity.fallDistance
+            driver.hurtBones(entity.fallDistance)
+        }
+        mount.passengers["mount"]?.passengers?.filterIsInstance<Player>()?.forEach {
+            it.fallDistance = entity.fallDistance
+            it.hurtBones(entity.fallDistance)
         }
     }
 
