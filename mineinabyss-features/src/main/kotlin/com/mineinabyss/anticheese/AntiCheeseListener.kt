@@ -9,6 +9,7 @@ import com.mineinabyss.mineinabyss.core.layer
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.api.event.PlayerGetUpSitEvent
 import dev.geco.gsit.api.event.PlayerSitEvent
+import dev.geco.gsit.api.event.PrePlayerSitEvent
 import org.bukkit.Material
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
@@ -99,18 +100,18 @@ class GSitListener : Listener {
     // Cancels pistons if a player is riding it via a GSit Seat
     @EventHandler
     fun BlockPistonExtendEvent.seatMovedByPiston() {
-        if (GSitAPI.getSeats(blocks).isEmpty()) return
-        else isCancelled = true
+        if (GSitAPI.getSeats(blocks).isNotEmpty()) isCancelled = true
     }
 
     @EventHandler
-    fun PlayerSitEvent.handleCurseOnSitting() {
-        handleCurse(player, seat.location.toBlockLocation(), player.location)
+    fun PrePlayerSitEvent.onSitMidair() {
+        if (player.fallDistance >= 4.0) isCancelled = true
     }
 
     @EventHandler
-    fun PlayerGetUpSitEvent.handleCurseOnSitting() {
-        handleCurse(player, player.location, seat.location.toBlockLocation())
-    }
+    fun PlayerSitEvent.handleCurseOnSitting() = handleCurse(player, seat.location.toBlockLocation(), player.location)
+
+    @EventHandler
+    fun PlayerGetUpSitEvent.handleCurseOnSitting() = handleCurse(player, player.location, seat.location.toBlockLocation())
 }
 
