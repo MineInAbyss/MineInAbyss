@@ -11,7 +11,7 @@ import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.TickingSystem
+import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.helpers.bossbarCompass
@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 import kotlin.time.Duration.Companion.seconds
 
-class StarCompassSystem : TickingSystem(interval = 0.1.seconds) {
+class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
     private val TargetScope.starCompass by get<StarCompass>()
     private val TargetScope.item by get<ItemStack>()
 
