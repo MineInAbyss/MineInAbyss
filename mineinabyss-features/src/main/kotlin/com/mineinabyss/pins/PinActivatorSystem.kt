@@ -6,10 +6,10 @@ import com.mineinabyss.geary.helpers.addParent
 import com.mineinabyss.geary.helpers.entity
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.helpers.addPrefab
-import com.mineinabyss.geary.systems.TickingSystem
+import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.TargetScope
 
-class PinActivatorSystem : TickingSystem() {
+class PinActivatorSystem : RepeatingSystem() {
     private val TargetScope.pins by get<ActivePins>()
 
     override fun TargetScope.tick() {
