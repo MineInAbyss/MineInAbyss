@@ -10,7 +10,7 @@ import com.mineinabyss.looty.ecs.queries.LootyTypeQuery.key
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
-import com.mineinabyss.npc.shopkeeping.menu.ShopMenu
+import com.mineinabyss.npc.shopkeeping.menu.ShopMainMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,7 +29,7 @@ class ShopKeepingFeature : AbyssFeature {
                     }
                     playerAction {
                         val shopKeeper = PrefabKey.of(shopKey).toEntityOrNull()?.get<ShopKeeper>() ?: return@playerAction
-                        guiy { ShopMenu(player, shopKeeper) }
+                        guiy { ShopMainMenu(player, shopKeeper) }
                     }
                 }
             }
