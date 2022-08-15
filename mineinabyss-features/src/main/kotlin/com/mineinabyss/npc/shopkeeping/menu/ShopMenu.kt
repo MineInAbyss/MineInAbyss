@@ -13,6 +13,7 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.TitleItem
+import com.mineinabyss.helpers.createOrthCoin
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.entity.Player
@@ -30,15 +31,16 @@ fun GuiyOwner.ShopMenu(player: Player, shopKeeper: ShopKeeper) {
     }
 }
 
+@Composable
 fun PlayerBalance(player: Player, modifier: Modifier) {
     val amount = player.playerData.orthCoinsHeld
     Item(TitleItem.of("<#FFBB1C>${amount} <b>Orth Coin${if (amount != 1) "s" else ""}".miniMsg()), modifier)
 }
 
+@Composable
 fun ShopKeeperTrades(player: Player, shopKeeper: ShopKeeper, modifier: Modifier) {
     Grid(modifier.size(4, 5)) {
-        shopKeeper.trades.forEach { (price, item) ->
-            val cost = price.amount ?: return@forEach
+        shopKeeper.trades.forEach { (item, cost) ->
             val slot = player.inventory.firstEmpty()
             Button(
                 enabled = player.playerData.orthCoinsHeld >= cost && slot != -1,
@@ -47,7 +49,9 @@ fun ShopKeeperTrades(player: Player, shopKeeper: ShopKeeper, modifier: Modifier)
                     player.inventory.setItem(slot, item.toItemStack())
                 }
             ) {
-                Item(price.toItemStack())
+                val coin = createOrthCoin() ?: return@Button
+                coin.amount = cost
+                Item(coin)
                 Spacer(width = 2)
                 Item(item.toItemStack())
             }

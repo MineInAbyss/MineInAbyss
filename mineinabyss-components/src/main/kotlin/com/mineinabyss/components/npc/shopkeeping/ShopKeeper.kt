@@ -1,7 +1,6 @@
 package com.mineinabyss.components.npc.shopkeeping
 
 
-import com.mineinabyss.idofront.serialization.SerializableItemStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,5 +8,5 @@ import kotlinx.serialization.Serializable
 @SerialName("mineinabyss:shopkeeper")
 class ShopKeeper(
     val name: String = "",
-    val trades: Map<SerializableItemStack, SerializableItemStack> = emptyMap()
+    val trades: List<@Serializable(with = ShopTradeSerializer::class) ShopTrade> = emptyList()
 )
