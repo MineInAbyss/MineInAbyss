@@ -38,8 +38,8 @@ class AntiCheeseListener : Listener {
 
     @EventHandler
     fun EntityMoveEvent.onRidableMobAscend() {
-        val mount = entity.toModelEntity()?.mountHandler ?: return
         if (entity.toGearyOrNull() == null) return
+        val mount = entity.toModelEntity()?.mountHandler ?: return
 
         if (mount.hasDriver() && mount.driver is Player)
             handleCurse((mount.driver as Player), from, to)
@@ -50,10 +50,10 @@ class AntiCheeseListener : Listener {
 
     @EventHandler
     fun EntityMoveEvent.onRidableMobEnterWater() {
-        val mount = entity.toModelEntity()?.mountHandler ?: return
         if (entity.toGearyOrNull() == null) return
         if (!isPluginEnabled("BoneHurtingJuice") || entity.fallDistance < BoneHurtConfig.data.minFallDist) return
         if (from.block.isLiquid) return
+        val mount = entity.toModelEntity()?.mountHandler ?: return
 
         if (mount.hasDriver() && mount.driver is Player) {
             val driver = mount.driver as Player
