@@ -8,30 +8,29 @@ import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.TitleItem
-import com.mineinabyss.helpers.createMittyToken
-import com.mineinabyss.helpers.createOrthCoin
-import com.mineinabyss.helpers.getFirstSimilarItem
 import com.mineinabyss.helpers.ui.composables.Button
+import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.npc.shopkeeping.adjustItemStackAmountFromCost
+import com.mineinabyss.npc.shopkeeping.getShopTradeCoin
+import com.mineinabyss.npc.shopkeeping.getShopTradeCost
 import org.bukkit.entity.Player
 
 @Composable
 fun GuiyOwner.ShopMenu(player: Player, shopKeeper: ShopKeeper) {
-    val shopKeeperName = shopKeeper.name.miniMsg()
-    val shopMenu = shopKeeper.menu.miniMsg()
-
     Chest(setOf(player),
-        shopMenu.append(shopKeeperName),
-        Modifier.height(6),
+        shopKeeper.menu.miniMsg().append(shopKeeper.name.miniMsg()),
+        Modifier.height(MAX_CHEST_HEIGHT),
         onClose = { player.closeInventory() }) {
-        PlayerBalance(player, Modifier.at(8, 0))
-        ShopKeeperTrades(player, shopKeeper, Modifier.at(0, 1))
+        //PlayerBalance(player, Modifier.at(8, 0))
+        ShopKeeperTrades(player, shopKeeper, Modifier.at(3, 0))
     }
 }
 
@@ -43,28 +42,25 @@ fun PlayerBalance(player: Player, modifier: Modifier) {
 
 @Composable
 fun ShopKeeperTrades(player: Player, shopKeeper: ShopKeeper, modifier: Modifier) {
-    Grid(modifier.size(4, 5)) {
+    Grid(modifier.size(5, 6)) {
+        val data = player.playerData
         shopKeeper.trades.forEach { (item, currency, currencyType, cost) ->
-            val data = player.playerData
-            val slot = player.inventory.firstEmpty()
-            val balance = if (currencyType == ShopCurrency.ORTH_COIN) data.orthCoinsHeld else data.mittyTokensHeld
-            val coin =
-                when (currencyType) {
-                    ShopCurrency.ORTH_COIN -> createOrthCoin()
-                    ShopCurrency.MITTY_TOKEN -> createMittyToken()
-                    ShopCurrency.ITEM -> currency?.toItemStack()
-                } ?: return@forEach
+            val currencyStack =
+                currency?.toItemStack() ?: if (currencyType == ShopCurrency.ITEM) return@forEach else null
+            val coin = getShopTradeCoin(currencyType, currencyStack) ?: return@forEach
             coin.amount = cost
             Button(
-                enabled = balance >= cost && slot != -1,
                 onClick = {
+                    if (player.getShopTradeCost(currencyType, currencyStack) < cost || player.inventory.firstEmpty() == -1)
+                        return@Button
                     when (currencyType) {
                         ShopCurrency.ORTH_COIN -> data.orthCoinsHeld -= cost
                         ShopCurrency.MITTY_TOKEN -> data.mittyTokensHeld -= cost
-                        ShopCurrency.ITEM -> player.getFirstSimilarItem(currency?.toItemStack())?.amount?.minus(cost) ?: return@Button
+                        ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost) ?: return@Button
                     }
-                    player.inventory.setItem(slot, item.toItemStack())
-                }
+                    player.updateBalance()
+                    player.inventory.addItem(item.toItemStack())
+                },
             ) {
                 //TODO Alter how disabled trades are displayed
                 Item(coin)
