@@ -1,17 +1,36 @@
 package com.mineinabyss.npc.shopkeeping
 
 import com.mineinabyss.components.npc.shopkeeping.ShopCurrency
+import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.prefabs.configuration.components.Prefab
+import com.mineinabyss.geary.systems.accessors.TargetScope
+import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.helpers.createMittyToken
 import com.mineinabyss.helpers.createOrthCoin
+import com.mineinabyss.mobzy.ecs.components.initialization.MobzyType
+import com.mineinabyss.mobzy.injection.MobzyTypesQuery
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-fun getShopTradeCoin(type: ShopCurrency, stack: ItemStack?): ItemStack? {
+object ShopKeeperQuery : GearyQuery() {
+    val TargetScope.key by MobzyTypesQuery.get<PrefabKey>()
+    val TargetScope.isShopkeeper by family {
+        has<MobzyType>()
+        has<Prefab>()
+        has<ShopKeeper>()
+    }
+
+    fun getKeys(): List<PrefabKey> = ShopKeeperQuery.run { map { it.key } }
+}
+
+fun getShopTradeCoin(type: ShopCurrency, stack: ItemStack?, cost: Int): ItemStack? {
     return when (type) {
-        ShopCurrency.ORTH_COIN -> createOrthCoin()
-        ShopCurrency.MITTY_TOKEN -> createMittyToken()
-        ShopCurrency.ITEM -> stack
+        ShopCurrency.ORTH_COIN -> createOrthCoin()?.asQuantity(cost)
+        ShopCurrency.MITTY_TOKEN -> createMittyToken()?.asQuantity(cost)
+        ShopCurrency.ITEM -> stack?.asQuantity(cost)
     }
 }
 

@@ -45,10 +45,10 @@ fun ShopKeeperTrades(player: Player, shopKeeper: ShopKeeper, modifier: Modifier)
     Grid(modifier.size(5, 6)) {
         val data = player.playerData
         shopKeeper.trades.forEach { (item, currency, currencyType, cost) ->
-            val currencyStack =
-                currency?.toItemStack() ?: if (currencyType == ShopCurrency.ITEM) return@forEach else null
-            val coin = getShopTradeCoin(currencyType, currencyStack) ?: return@forEach
-            coin.amount = cost
+            val tradeItem = item.toItemStack()
+            val currencyStack = currency?.toItemStack() ?: if (currencyType == ShopCurrency.ITEM) return@forEach else null
+            val coin = getShopTradeCoin(currencyType, currencyStack, cost) ?: return@forEach
+
             Button(
                 onClick = {
                     if (player.getShopTradeCost(currencyType, currencyStack) < cost || player.inventory.firstEmpty() == -1)
@@ -59,13 +59,13 @@ fun ShopKeeperTrades(player: Player, shopKeeper: ShopKeeper, modifier: Modifier)
                         ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost) ?: return@Button
                     }
                     player.updateBalance()
-                    player.inventory.addItem(item.toItemStack())
+                    player.inventory.addItem(tradeItem)
                 },
             ) {
                 //TODO Alter how disabled trades are displayed
                 Item(coin)
                 Spacer(width = 1)
-                Item(item.toItemStack())
+                Item(tradeItem)
             }
         }
     }
