@@ -19,6 +19,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.util.*
 
 
@@ -84,6 +85,8 @@ fun Player.getGroups(): List<String> {
     return luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
+
+fun Player.getFirstSimilarItem(item: ItemStack?) = inventory.contents?.firstOrNull { i -> i?.isSimilar(item) ?: false }
 
 object MountUtils {
     /** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*/
