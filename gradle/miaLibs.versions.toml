@@ -1,11 +1,11 @@
 [versions]
-geary = "0.18.105"
-gearyaddons = "0.6.39"
-looty = "0.7.57"
-guiy="0.6.21"
-deeperworld="0.5.77"
-chatty="0.2.44"
-mobzy="0.17.78"
+geary = "0.19.108"
+gearyaddons = "0.7.41"
+looty = "0.8.59"
+guiy="0.7.22"
+deeperworld="0.6.79"
+chatty="0.3.50"
+mobzy="0.18.79"
 bonehurtingjuice="1.4.12"
 
 [libraries]
@@ -20,7 +20,7 @@ bonehurtingjuice = { module = "com.mineinabyss:bonehurtingjuice", version.ref = 
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.1.2"
-minecraft-plugin-protocolburrito = "com.mineinabyss:protocolburrito:0.4.33"
+minecraft-plugin-protocolburrito = "com.mineinabyss:protocolburrito:0.5.34"
 minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
 minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.1"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.25.1"
