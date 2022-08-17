@@ -32,7 +32,6 @@ fun GuiyOwner.PvpPrompt(player: Player) {
 
 @Composable
 fun EnablePvp(player: Player, modifier: Modifier) {
-    val data = player.playerData
     Item(
         TitleItem.of(
             "<dark_green><b>Enable PvP".miniMsg(),
@@ -40,8 +39,8 @@ fun EnablePvp(player: Player, modifier: Modifier) {
             "<green>other players in the Abyss.".miniMsg()
         ),
         modifier.size(3, 2).clickable {
-            data.pvpStatus = true
-            data.pvpUndecided = false
+            player.playerData.pvpStatus = true
+            player.playerData.pvpUndecided = false
             player.success("PvP has been enabled!")
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
             player.closeInventory()
@@ -51,7 +50,6 @@ fun EnablePvp(player: Player, modifier: Modifier) {
 
 @Composable
 fun DisablePvp(player: Player, modifier: Modifier) {
-    val data = player.playerData
     Item(
         TitleItem.of(
             "<dark_red><b>Disable PvP".miniMsg(),
@@ -59,8 +57,8 @@ fun DisablePvp(player: Player, modifier: Modifier) {
             "<red>other players in the Abyss.".miniMsg()
         ),
         modifier.size(3, 2).clickable {
-            data.pvpStatus = false
-            data.pvpUndecided = false
+            player.playerData.pvpStatus = false
+            player.playerData.pvpUndecided = false
             player.error("PvP has been disabled!")
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 0.1f)
             player.closeInventory()
@@ -72,20 +70,15 @@ fun DisablePvp(player: Player, modifier: Modifier) {
 fun TogglePvpPrompt(player: Player, modifier: Modifier) {
     val data = player.playerData
     var isEnabled by remember { mutableStateOf(data.showPvpPrompt) }
-    val item = if (isEnabled) enabled else disabled
+
     Button(
         modifier = modifier,
         onClick = {
             data.showPvpPrompt = !data.showPvpPrompt
             isEnabled = data.showPvpPrompt
-            player.success(
-                "PvP-prompt has been ${
-                    if (data.showPvpPrompt) "<b>enabled"
-                    else "<b>disabled"
-                }."
-            )
+            player.success("PvP-prompt has been ${if (data.showPvpPrompt) "<b>enabled" else "<b>disabled"}.")
         }
-    ) { Item(item) }
+    ) { Item(if (isEnabled) enabled else disabled) }
 }
 
 object ToggleIcon {
@@ -105,10 +98,12 @@ object ToggleIcon {
         ItemStack(Material.PAPER).editItemMeta {
             setCustomModelData(3)
             displayName("<blue><b>Toggle PvP Prompt".miniMsg())
-            lore(listOf(
-                "<green>Enable <dark_aqua>this prompt from showing".miniMsg(),
-                "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
-                "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
-            ))
+            lore(
+                listOf(
+                    "<green>Enable <dark_aqua>this prompt from showing".miniMsg(),
+                    "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
+                    "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
+                )
+            )
         }
 }

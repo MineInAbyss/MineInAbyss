@@ -34,7 +34,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 
 
-class DisplayLockerListener(val feature: DisplayLockerFeature) : Listener {
+class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listener {
     @EventHandler
     fun HangingPlaceEvent.onPlaceItemFrame() {
         val frame = entity as? ItemFrame ?: return

@@ -18,7 +18,7 @@ class FrostAspectListener : Listener {
         val totalFreezeTicks = 5 * item.getEnchantmentLevel(CustomEnchants.FROST_ASPECT)
         var freezeTicks = 0
 
-        if (item.containsEnchantment(CustomEnchants.FROST_ASPECT)) {
+        if (CustomEnchants.FROST_ASPECT in item.enchantments) {
             entity.freezeTicks = entity.maxFreezeTicks
             entity.lockFreezeTicks(true)
 

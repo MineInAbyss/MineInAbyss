@@ -2,10 +2,10 @@ package com.mineinabyss.curse.effects
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.curse.AscensionEffect
+import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import kotlin.time.Duration
 
@@ -21,7 +21,7 @@ sealed class AbstractAscensionEffect : AscensionEffect {
                 applyEffect(player)
                 delay(duration)
             }
-            cleanUp(Bukkit.getPlayer(player.uniqueId) ?: player) //get new player reference if player relogged
+            cleanUp(player.uniqueId.toPlayer() ?: player) //get new player reference if player relogged
         }
     }
 

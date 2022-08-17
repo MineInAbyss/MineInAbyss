@@ -14,22 +14,14 @@ import org.bukkit.event.block.BlockBreakEvent
 class MagnetismListener : Listener {
     @EventHandler
     fun BlockBreakEvent.onBlockBreak() {
-
-        val item = player.inventory.itemInMainHand
-
-        if (item.containsEnchantment(MAGNETISM)) {
-
-            val loc = block.location
-
+        if (MAGNETISM in player.inventory.itemInMainHand.enchantments) {
             mineInAbyss.launch {
                 delay(1.ticks)
 
-                val entities = player.world.getNearbyEntities(loc, 4.0, 4.0, 4.0)
-
-                for (entity in entities) {
+                player.world.getNearbyEntities(block.location, 4.0, 4.0, 4.0).forEach { entity ->
                     if (entity is Item) {
                         val remaining = player.inventory.addItem(entity.itemStack)[0]
-                        if(remaining == null) entity.remove()
+                        if (remaining == null) entity.remove()
                         else entity.itemStack = remaining
                     }
                 }

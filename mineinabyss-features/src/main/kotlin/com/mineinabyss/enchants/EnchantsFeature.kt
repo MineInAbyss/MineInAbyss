@@ -48,36 +48,37 @@ class EnchantsFeature : AbyssFeature {
                         val player = sender as Player
                         val parsedEnchant =
                             CustomEnchants.enchantmentList.firstOrNull {
-                                it.key.toString() == availableEnchantment.lowercase()
+                                it.key.toString().lowercase() == availableEnchantment.lowercase()
                             } ?: (command.stopCommand(""))
 
-                        val levelRange =
-                            (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
+                        val levelRange = (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
+                        val parsedKey = parsedEnchant.key.key
 
                         if (enchantmentLevel == 0) {
-
                             player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
-                            sender.success("Removed <b>${parsedEnchant.name}</b> from this item.")
-                        }
-                        if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
-                            if (levelRange.first == levelRange.last) sender.success("Applied <b>${parsedEnchant.name}</b> to this item.")
-                            else sender.success("Applied <b>${parsedEnchant.name} $enchantmentLevel</b> to this item.")
+                            sender.success("Removed <b>${parsedKey}</b> from this item.")
+                        } else if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
+                            if (levelRange.first == levelRange.last)
+                                sender.success("Applied <b>${parsedKey}</b> to this item.")
+                            else
+                                sender.success("Applied <b>${parsedKey} $enchantmentLevel</b> to this item.")
+
                             player.inventory.itemInMainHand.addCustomEnchant(
                                 parsedEnchant as EnchantmentWrapper,
                                 enchantmentLevel
                             )
                         }
-                        if (enchantmentLevel > levelRange.last) command.stopCommand("Level exceeds this enchantments max level.")
+
+                        if (enchantmentLevel > levelRange.last)
+                            command.stopCommand("Level exceeds this enchantments max level.")
                     }
                 }
             }
 
-            val enchants  = CustomEnchants.enchantmentList
+            val enchants = CustomEnchants.enchantmentList
             tabCompletion {
                 when (args.size) {
-                    1 -> listOf(
-                        "enchant"
-                    ).filter { it.startsWith(args[0]) }
+                    1 -> listOf("enchant").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
                             "enchant" -> enchants.map { it.key.toString() }
@@ -87,12 +88,11 @@ class EnchantsFeature : AbyssFeature {
                     3 -> {
                         when (args[0]) {
                             "enchant" ->
-                            ((enchants.find { it.key.toString() == args[1] }?.startLevel)?.rangeTo
-                            ((enchants.find { it.key.toString() == args[1] }!!.maxLevel)))?.map { it.toString() }
+                                ((enchants.find { it.key.toString() == args[1] }?.startLevel)?.rangeTo
+                                    ((enchants.find { it.key.toString() == args[1] }!!.maxLevel)))?.map { it.toString() }
 
                             else -> null
                         }
-
                     }
                     else -> null
                 }

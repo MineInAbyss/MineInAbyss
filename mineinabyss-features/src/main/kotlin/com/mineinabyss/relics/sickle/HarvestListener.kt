@@ -26,16 +26,13 @@ class HarvestListener : GearyListener() {
 
         var totalHarvested = 0
         // Harvest surroundings
-        for (relativePos in BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[target.sickle.radius]) {
-            val b = BlockUtil.relative(block, relativePos)
-            if (harvestPlant(b, player)) {
-                item.editItemMeta {
-                    damage += 1
-                }
+        BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[target.sickle.radius].forEach { relativePos ->
+            if (harvestPlant(BlockUtil.relative(block, relativePos), player)) {
+                item.editItemMeta { damage += 1 }
                 if (item.itemMeta.damage >= item.type.maxDurability) {
                     item.subtract()
                     player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
-                    break // stop loop
+                    return@forEach
                 }
                 ++totalHarvested
             }
