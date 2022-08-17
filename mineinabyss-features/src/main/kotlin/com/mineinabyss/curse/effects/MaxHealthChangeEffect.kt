@@ -34,7 +34,7 @@ data class MaxHealthChangeEffect constructor(
     override fun applyEffect(player: Player) {
         val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 0.0
         //if more health than minHealth, or enough health to safely remove addMaxHealth
-        if (maxHealth > minHealth ?: abs(addMaxHealth)) {
+        if (maxHealth > (minHealth ?: abs(addMaxHealth))) {
             val newMod = AttributeModifier(CURSE_MAX_HEALTH, addMaxHealth, AttributeModifier.Operation.ADD_NUMBER)
             modifier = newMod
             activeEffects.add(newMod)

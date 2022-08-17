@@ -57,7 +57,7 @@ class ShowDepthSystem : GearyListener() {
         } else player.info("<i><dark_aqua>The compass wiggles slightly but does not otherwise respond.")
     }
 
-    // TODO memoize total depth of each layer
+    // TODO memorize total depth of each layer
     // TODO move into an API elsewhere
     /**
      * Calculates the depth of the player in the abyss, in minecraft blocks.

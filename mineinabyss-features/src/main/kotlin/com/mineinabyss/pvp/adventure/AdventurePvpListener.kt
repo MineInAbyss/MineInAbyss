@@ -11,15 +11,7 @@ import org.bukkit.event.Listener
 class AdventurePvpListener : Listener {
     @EventHandler
     fun PlayerDescendEvent.promptPvpSelect() {
-        val data = player.playerData
-
-        if (fromSection == MIAConfig.data.hubSection && data.showPvpPrompt) guiy { PvpPrompt(player) }
+        if (!player.playerData.showPvpPrompt || fromSection != MIAConfig.data.hubSection) return
+        guiy { PvpPrompt(player) }
     }
-
-//    @EventHandler
-//    fun PlayerAscendEvent.checkMessageToggle() {
-//        val data = player.playerData
-//        // If player hasn't toggled message off, set them as undecided
-//        if (toSection == MIAConfig.data.hubSection && data.showPvpPrompt) data.pvpUndecided = true
-//    }
 }

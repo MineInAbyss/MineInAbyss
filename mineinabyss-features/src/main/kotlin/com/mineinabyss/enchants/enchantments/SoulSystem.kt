@@ -19,25 +19,14 @@ class SoulSystem : GearyListener() {
 
     @Handler
     fun TargetScope.updateItemLore() {
-        //TODO generalize for all enchants
         entity.parent?.with { player: Player ->
             val ownerName = soul.owner.toPlayer()?.name ?: "No owner"
-            if (soul.owner != player.uniqueId && item.containsEnchantment(CustomEnchants.SOULBOUND)) {
+            if (soul.owner != player.uniqueId && CustomEnchants.SOULBOUND in item.enchantments)
                 item.removeEnchantment(CustomEnchants.SOULBOUND)
-            }
-            if (soul.owner == player.uniqueId && !item.containsEnchantment(CustomEnchants.SOULBOUND)) {
-                item.addCustomEnchant(
-                    CustomEnchants.SOULBOUND,
-                    1,
-                    "to $ownerName"
-                )
-            }
+            else if (soul.owner == player.uniqueId && CustomEnchants.SOULBOUND !in item.enchantments)
+                item.addCustomEnchant(CustomEnchants.SOULBOUND, 1, "to $ownerName")
 
-            item.updateEnchantmentLore(
-                CustomEnchants.SOULBOUND,
-                1,
-                "to $ownerName"
-            )
+            item.updateEnchantmentLore(CustomEnchants.SOULBOUND, 1, "to $ownerName")
         }
     }
 }

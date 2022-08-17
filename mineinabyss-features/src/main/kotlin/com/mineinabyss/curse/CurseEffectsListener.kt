@@ -11,11 +11,8 @@ class CurseEffectsListener : Listener {
     fun PlayerQuitEvent.fixMaxHealthEffectOnLeave() {
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.run {
             modifiers.filter {
-                it.name == MaxHealthChangeEffect.CURSE_MAX_HEALTH
-                        && !MaxHealthChangeEffect.activeEffects.contains(it)
-            }.forEach {
-                removeModifier(it)
-            }
+                it.name == MaxHealthChangeEffect.CURSE_MAX_HEALTH && it !in MaxHealthChangeEffect.activeEffects
+            }.forEach(::removeModifier)
         }
     }
 }

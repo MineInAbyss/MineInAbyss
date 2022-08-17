@@ -30,7 +30,7 @@ class MiscListener : Listener {
         if (entity.potionMeta.basePotionData.type.effectType != PotionEffectType.INVISIBILITY) return
         hitEntity?.location?.getNearbyEntitiesByType(ItemFrame::class.java, 1.0)?.forEach { frame ->
             val lockable = frame.toGeary().get<LockDisplayItem>()
-            if (lockable?.lockState == true && lockable.allowedAccess.contains(player.uniqueId)) return@forEach
+            if (lockable?.lockState == true && player.uniqueId !in lockable.allowedAccess) return@forEach
             frame.isVisible = false
         }
     }
@@ -47,14 +47,14 @@ class MiscListener : Listener {
         inventory.maximumRepairCost = 10000
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun PlayerInteractEvent.onInteractPrivatedLectern() {
         val block = clickedBlock ?: return
         if (rightClicked && block.type == Material.LECTERN && BlockLockerAPIv2.isProtected(block))
             player.openInventory((block.state as Lectern).inventory)
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun PlayerTakeLecternBookEvent.onTakeBookPrivatedLectern() {
         if (!BlockLockerAPIv2.isAllowed(player, lectern.block, true))
             isCancelled = true

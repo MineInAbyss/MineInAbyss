@@ -10,8 +10,7 @@ import org.bukkit.event.Listener
 class SurvivalPvpListener : Listener {
     @EventHandler
     fun PlayerDescendEvent.onEnterPvPLayer() {
-        val data = player.playerData
-        if (toSection.layer?.hasPvpDefault == true && !data.pvpStatus) {
+        if (toSection.layer?.hasPvpDefault == true && !player.playerData.pvpStatus) {
             player.error("PVP is always enabled below this point.")
         }
     }
