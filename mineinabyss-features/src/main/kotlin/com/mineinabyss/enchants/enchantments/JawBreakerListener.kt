@@ -14,10 +14,10 @@ class JawBreakerListener : Listener {
     fun EntityDamageByEntityEvent.onSplitjawHit() {
         val player = damager as? Player ?: return
         val item = player.inventory.itemInMainHand
-        val jawBreaker = CustomEnchants.JAW_BREAKER
-
         entity.toGearyOrNull()?.get<Splitjaw>() ?: return
-        if (item.containsEnchantment(jawBreaker)) damage += item.getEnchantmentLevel(jawBreaker) * 2
+
+        if (CustomEnchants.JAW_BREAKER in item.enchantments)
+            damage += item.getEnchantmentLevel(CustomEnchants.JAW_BREAKER) * 2
 
     }
 }

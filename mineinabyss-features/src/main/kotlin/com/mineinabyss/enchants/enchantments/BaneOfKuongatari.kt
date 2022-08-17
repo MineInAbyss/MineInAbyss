@@ -14,11 +14,10 @@ class BaneOfKuongatariListener : Listener {
     fun EntityDamageByEntityEvent.onInsectHit() {
         val player = damager as? Player ?: return
         val item = player.inventory.itemInMainHand
-        val baneOfKuon = CustomEnchants.BANE_OF_KUONGATARI
-
         entity.toGearyOrNull()?.get<Insect>() ?: return
 
         // Ideally this would use getDamageIncrease function
-        if (item.containsEnchantment(baneOfKuon)) damage += item.getEnchantmentLevel(baneOfKuon) * 2
+        if (CustomEnchants.BANE_OF_KUONGATARI in item.enchantments)
+            damage += item.getEnchantmentLevel(CustomEnchants.BANE_OF_KUONGATARI) * 2
     }
 }

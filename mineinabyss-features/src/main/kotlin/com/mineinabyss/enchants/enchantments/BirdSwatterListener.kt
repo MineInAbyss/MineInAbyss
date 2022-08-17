@@ -14,11 +14,10 @@ class BirdSwatterListener : Listener {
     fun EntityDamageByEntityEvent.onBirdHit() {
         val player = damager as? Player ?: return
         val item = player.inventory.itemInMainHand
-        val birdSwatter = CustomEnchants.BIRD_SWATTER
-
         entity.toGearyOrNull()?.get<Bird>() ?: return
 
         // Ideally this would use getDamageIncrease function
-        if (item.containsEnchantment(birdSwatter)) damage += item.getEnchantmentLevel(birdSwatter) * 2
+        if (CustomEnchants.BIRD_SWATTER in item.enchantments)
+            damage += item.getEnchantmentLevel(CustomEnchants.BIRD_SWATTER) * 2
     }
 }

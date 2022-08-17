@@ -4,7 +4,7 @@ gearyaddons = "0.7.41"
 looty = "0.8.59"
 guiy="0.7.22"
 deeperworld="0.6.79"
-chatty="0.3.50"
+chatty="0.3.51"
 mobzy="0.18.79"
 bonehurtingjuice="1.4.12"
 
@@ -19,10 +19,10 @@ mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 bonehurtingjuice = { module = "com.mineinabyss:bonehurtingjuice", version.ref = "bonehurtingjuice" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
-minecraft-plugin-gsit = "com.gecolay:gsit:1.1.2"
+minecraft-plugin-gsit = "com.gecolay:gsit:1.2.2"
 minecraft-plugin-protocolburrito = "com.mineinabyss:protocolburrito:0.5.34"
 minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
-minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.1"
+minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.2"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.25.1"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R2.5.0"

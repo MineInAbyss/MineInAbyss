@@ -10,9 +10,9 @@ import com.mineinabyss.idofront.plugin.isPluginEnabled
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mobzy.systems.systems.ModelEngineSystem.toModelEntity
 import dev.geco.gsit.api.GSitAPI
-import dev.geco.gsit.api.event.PlayerGetUpSitEvent
-import dev.geco.gsit.api.event.PlayerSitEvent
-import dev.geco.gsit.api.event.PrePlayerSitEvent
+import dev.geco.gsit.api.event.EntityGetUpSitEvent
+import dev.geco.gsit.api.event.EntitySitEvent
+import dev.geco.gsit.api.event.PreEntitySitEvent
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.Material
 import org.bukkit.block.Dispenser
@@ -35,18 +35,6 @@ import org.cultofclang.bonehurtingjuice.BoneHurtConfig
 import org.cultofclang.bonehurtingjuice.hurtBones
 
 class AntiCheeseListener : Listener {
-
-    @EventHandler
-    fun EntityMoveEvent.onRidableMobAscend() {
-        if (entity.toGearyOrNull() == null) return
-        val mount = entity.toModelEntity()?.mountHandler ?: return
-
-        if (mount.hasDriver() && mount.driver is Player)
-            handleCurse((mount.driver as Player), from, to)
-        mount.passengers["mount"]?.passengers?.filterIsInstance<Player>()?.forEach {
-            handleCurse(it, from, to)
-        }
-    }
 
     @EventHandler
     fun EntityMoveEvent.onRidableMobEnterWater() {
@@ -140,14 +128,20 @@ class GSitListener : Listener {
     }
 
     @EventHandler
-    fun PrePlayerSitEvent.onSitMidair() {
-        if (player.fallDistance >= 4.0) isCancelled = true
+    fun PreEntitySitEvent.onSitMidair() {
+        if ((entity as? Player ?: return).fallDistance >= 4.0) isCancelled = true
     }
 
     @EventHandler
-    fun PlayerSitEvent.handleCurseOnSitting() = handleCurse(player, seat.location.toBlockLocation(), player.location)
+    fun EntitySitEvent.handleCurseOnSitting() {
+        val player = (entity as? Player ?: return)
+        handleCurse(player, seat.location.toBlockLocation(), player.location)
+    }
 
     @EventHandler
-    fun PlayerGetUpSitEvent.handleCurseOnSitting() = handleCurse(player, player.location, seat.location.toBlockLocation())
+    fun EntityGetUpSitEvent.handleCurseOnSitting() {
+        val player = (entity as? Player ?: return)
+        handleCurse(player, player.location, seat.location.toBlockLocation())
+    }
 }
 
