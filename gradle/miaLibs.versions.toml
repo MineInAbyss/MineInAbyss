@@ -1,13 +1,16 @@
 [versions]
-geary = "0.19.108"
-gearyaddons = "0.7.41"
-looty = "0.8.59"
-guiy="0.7.22"
-deeperworld="0.6.79"
-chatty="0.3.51"
-mobzy="0.18.79"
+geary = "0.19.109"
+gearyaddons = "0.7.43"
+looty = "0.8.61"
+guiy="0.7.23"
+deeperworld="0.6.80"
+chatty="0.3.53"
+mobzy="0.18.81"
+protocolburrito = "0.5.35"
+
 
 [libraries]
+protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
 geary-papermc-core = { module = "com.mineinabyss:geary-papermc-core", version.ref = "geary" }
 geary-commons-papermc = { module = "com.mineinabyss:geary-commons-papermc", version.ref = "gearyaddons" }
 looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
@@ -18,7 +21,6 @@ mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.2.2"
-minecraft-plugin-protocolburrito = "com.mineinabyss:protocolburrito:0.5.34"
 minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
 minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.2"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.25.1"
