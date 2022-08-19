@@ -18,12 +18,15 @@ import com.mineinabyss.helpers.*
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.plugin.isPluginEnabled
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
@@ -133,10 +136,12 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 }
 
 @Composable
-fun CosmeticHat(player: Player) = player.getCosmeticHat().itemStack
+fun CosmeticHat(player: Player) =
+    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
 
 @Composable
-fun CosmeticBackpack(player: Player) = player.getCosmeticBackpack().itemStack
+fun CosmeticBackpack(player: Player) =
+    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
 
 @Composable
 fun OrthCoinBalance(player: Player) {
