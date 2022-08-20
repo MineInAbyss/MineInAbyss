@@ -2,7 +2,6 @@ package com.mineinabyss.misc
 
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Material
 import org.bukkit.block.Lectern
@@ -47,14 +46,20 @@ class MiscListener : Listener {
         inventory.maximumRepairCost = 10000
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun PlayerInteractEvent.onInteractPrivatedLectern() {
         val block = clickedBlock ?: return
-        if (rightClicked && block.type == Material.LECTERN && BlockLockerAPIv2.isProtected(block))
-            player.openInventory((block.state as Lectern).inventory)
+        val state = block.state as? Lectern ?: return
+        if (!BlockLockerAPIv2.isProtected(block)) return
+
+        if (item?.type == Material.WRITABLE_BOOK || item?.type == Material.WRITTEN_BOOK) {
+            if (BlockLockerAPIv2.isAllowed(player, block, true)) return
+            else if (state.inventory.isEmpty) player.openBook(item ?: return)
+        } else player.openInventory(state.inventory)
+        isCancelled = true // Prevent "denied" message
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun PlayerTakeLecternBookEvent.onTakeBookPrivatedLectern() {
         if (!BlockLockerAPIv2.isAllowed(player, lectern.block, true))
             isCancelled = true
