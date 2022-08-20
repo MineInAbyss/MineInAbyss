@@ -2,6 +2,7 @@ package com.mineinabyss.misc
 
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Material
 import org.bukkit.block.Lectern
@@ -50,12 +51,12 @@ class MiscListener : Listener {
     fun PlayerInteractEvent.onInteractPrivatedLectern() {
         val block = clickedBlock ?: return
         val state = block.state as? Lectern ?: return
-        if (!BlockLockerAPIv2.isProtected(block)) return
+        if (!rightClicked || !BlockLockerAPIv2.isProtected(block)) return
 
         if (item?.type == Material.WRITABLE_BOOK || item?.type == Material.WRITTEN_BOOK) {
             if (BlockLockerAPIv2.isAllowed(player, block, true)) return
             else if (state.inventory.isEmpty) player.openBook(item ?: return)
-        } else player.openInventory(state.inventory)
+        } else if (!state.inventory.isEmpty) player.openInventory(state.inventory)
         isCancelled = true // Prevent "denied" message
     }
 
