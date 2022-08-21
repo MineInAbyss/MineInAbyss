@@ -1,5 +1,6 @@
 package com.mineinabyss.mineinabyss.core
 
+import com.mineinabyss.chatty.chatty
 import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
@@ -19,6 +20,8 @@ interface AbyssContext {
         get() = mineInAbyss.server.pluginManager.isPluginEnabled("chatty")
     val isGSitLoaded: Boolean
         get() = mineInAbyss.server.pluginManager.isPluginEnabled("GSit")
+    val isPlaceholderApiLoaded: Boolean
+        get() = chatty.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val econ: Economy?
 
     val addonScope: GearyAddon

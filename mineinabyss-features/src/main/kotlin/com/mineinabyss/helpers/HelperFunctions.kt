@@ -1,15 +1,13 @@
 package com.mineinabyss.helpers
 
-import com.github.shynixn.mccoroutine.bukkit.launch
+import com.ehhthan.happyhud.api.HudHolder
 import com.mineinabyss.components.playerData
-import com.mineinabyss.idofront.font.Space
+import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
-import com.mineinabyss.mineinabyss.core.mineInAbyss
-import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
-import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
@@ -19,7 +17,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.atan2
-import kotlin.time.Duration.Companion.seconds
 
 
 data class ItemDrop(
@@ -30,39 +27,25 @@ data class ItemDrop(
 
 val luckPerms = LuckPermsProvider.get()
 
-fun Player.updateBalance() {
-    val orthCoinBalance = playerData.orthCoinsHeld
-    val mittyTokenBalance = playerData.mittyTokensHeld
-    val font = Key.key("orthbanking")
-    val orthCoinComponent = Component.text("${orthCoinBalance}:orthcoin:").font(font)
-    val mittyTokenComponent = Component.text("${mittyTokenBalance}:mittytoken:").font(font)
+fun Player.toggleHud(toggle: Boolean? = null) {
+    if (toggle == null) playerData.showPlayerBalance = !playerData.showPlayerBalance
+    else playerData.showPlayerBalance = toggle
 
-    val currentBalance: Component =
-        if (playerData.mittyTokensHeld > 0)
-            Component.text(Space.of(128)).append(orthCoinComponent).append(mittyTokenComponent)
-        else Component.text(Space.of(160)).append(orthCoinComponent)
-
-    if (playerData.orthCoinsHeld < 0) playerData.orthCoinsHeld = 0
-
-    mineInAbyss.launch {
-        do {
-            sendActionBar(currentBalance)
-            delay(1.seconds)
-        } while (isOnline && (playerData.orthCoinsHeld == orthCoinBalance) && (playerData.mittyTokensHeld == mittyTokenBalance) && playerData.showPlayerBalance)
-        return@launch
-    }
+    if (playerData.showPlayerBalance && !HudHolder.has(this))
+        HudHolder.holders().add(HudHolder.get(this))
+    else if (!playerData.showPlayerBalance && HudHolder.has(this))
+        HudHolder.holders().remove(HudHolder.get(this))
 }
 
 fun Player.bossbarCompass(loc: Location?, bar: BossBar) {
-    val player = player ?: return
-    if (loc == null || loc.world != player.world) {
+    if (loc == null || loc.world != world) {
         bar.name(Component.text(":arrow_null:"))
         return
     }
 
-    val dir = loc.subtract(player.location).toVector()
+    val dir = loc.subtract(location).toVector()
     val angleDir = (atan2(dir.z, dir.x) / 2 / Math.PI * 360 + 180) % 360
-    val angleLook = (atan2(player.location.direction.z, player.location.direction.x) / 2 / Math.PI * 360 + 180) % 360
+    val angleLook = (atan2(location.direction.z, location.direction.x) / 2 / Math.PI * 360 + 180) % 360
 
     val barNameList = listOf(
         ":arrow_n:",
@@ -86,7 +69,7 @@ fun Player.bossbarCompass(loc: Location?, bar: BossBar) {
     val compassAngle = (((angleDir - angleLook + 360) % 360) / 22.5).toInt()
     bar.name(Component.text(barNameList[compassAngle]))
 
-    player.showBossBar(bar)
+    showBossBar(bar)
 }
 
 private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
@@ -120,6 +103,9 @@ fun handleCurse(player: Player, from: Location, to: Location) {
         }
     }
 }
+
+fun createOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
+fun createMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
 
 fun Player.getLinkedDiscordAccount(): String? {
     return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull()

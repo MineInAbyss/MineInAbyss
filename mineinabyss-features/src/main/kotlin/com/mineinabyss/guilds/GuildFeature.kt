@@ -139,17 +139,19 @@ class GuildFeature(
                     ).filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "guild" -> listOf("balance", "chat", "menu")
+                            "guild" -> listOf("balance", "chat", "menu").filter { it.startsWith(args[1]) }
                             else -> null
                         }
                     }
                     3 -> {
-                        when (args[1]) {
-                            "balance" -> listOf("view", "deposit", "withdraw")
-                            "chat" -> emptyList()
-                            "menu" -> emptyList()
-                            else -> null
-                        }
+                        if (args[0] == "guild") {
+                            when (args[1]) {
+                                "balance" -> listOf("view", "deposit", "withdraw").filter { it.startsWith(args[2]) }
+                                "chat" -> emptyList()
+                                "menu" -> emptyList()
+                                else -> null
+                            }
+                        } else null
                     }
                     else -> null
                 }
