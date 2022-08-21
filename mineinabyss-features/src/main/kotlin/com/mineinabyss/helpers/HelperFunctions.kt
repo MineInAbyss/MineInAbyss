@@ -31,9 +31,10 @@ fun Player.toggleHud(toggle: Boolean? = null) {
     if (toggle == null) playerData.showPlayerBalance = !playerData.showPlayerBalance
     else playerData.showPlayerBalance = toggle
 
-    if (playerData.showPlayerBalance && !HudHolder.has(this))
-        HudHolder.holders().add(HudHolder.get(this))
-    else if (!playerData.showPlayerBalance && HudHolder.has(this))
+    //TODO Fix this whenever a method is exposed to add a new HudHolder
+    /*if (playerData.showPlayerBalance && !HudHolder.has(this))
+        HudHolder.holders().add(this as HudHolder)
+    else */if (!playerData.showPlayerBalance && HudHolder.has(this))
         HudHolder.holders().remove(HudHolder.get(this))
 }
 
