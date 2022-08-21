@@ -45,6 +45,8 @@ fun Player.mineinabyssPlaceholders() : Map<String, String> {
         "starcompass_needle" to toGeary().get<PlayerCompassBar>()?.compassBar?.name()?.serialize().toString(),
         "temperature" to location.block.temperature.times(10).roundToInt().toString(),
         "humidity" to location.block.humidity.times(10).roundToInt().toString(),
+        "time" to world.time.toString(),
+        "fulltime" to world.fullTime.toString(),
         //"point_of_interest" to location.getPointOfInterest().toString(),
     )
 }
