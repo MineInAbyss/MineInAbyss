@@ -29,7 +29,7 @@ class HarvestListener : GearyListener() {
         BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[target.sickle.radius].forEach { relativePos ->
             if (harvestPlant(BlockUtil.relative(block, relativePos), player)) {
                 item.editItemMeta { damage += 1 }
-                if (item.itemMeta.damage >= item.type.maxDurability) {
+                if (item.hasItemMeta() && item.itemMeta.damage >= item.type.maxDurability) {
                     item.subtract()
                     player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
                     return@forEach
