@@ -30,10 +30,10 @@ class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
         val playerBar = player.toGeary().getOrSetPersisting { PlayerCompassBar() }
-        val sectionCenter = player.location.section?.region?.center
+        val center = player.location.section?.region?.center
 
-        if (sectionCenter != null) starCompass.compassLocation =
-            Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
+        if (center != null)
+            starCompass.compassLocation = Location(player.world, center.x.toDouble(), 0.0, center.z.toDouble())
         else starCompass.compassLocation = null
 
         // Let player toggle between having a bossbar-compass or item compass
@@ -61,8 +61,8 @@ class RemoveStarCompassBar : GearyListener() {
     @Handler
     fun TargetScope.removeBar() {
         val parent = entity.parent ?: return
-        val player = parent.get<Player>() ?: return
         val playerBar = parent.get<PlayerCompassBar>() ?: return
+        val player = parent.get<Player>() ?: return
 
         player.hideBossBar(playerBar.compassBar)
         parent.remove<PlayerCompassBar>()
