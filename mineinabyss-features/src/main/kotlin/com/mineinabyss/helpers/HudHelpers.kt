@@ -13,16 +13,14 @@ import kotlin.math.atan2
 val happyHUD: HappyHUD = HappyHUD.getInstance()
 val Player.hudHolder: HudHolder get() = HudHolder.get(this)
 
-fun Player.toggleHud(toggle: Boolean? = null) {
-    val layout = happyHUD.layouts().get("orthbanking_layout")
-
+fun Player.toggleHud(layoutId: String, toggle: Boolean? = null) {
+    val layout = happyHUD.layouts().get(layoutId) ?: return
     if (toggle == null) playerData.showPlayerBalance = !playerData.showPlayerBalance
     else playerData.showPlayerBalance = toggle
 
-    if (playerData.showPlayerBalance) {
+    if (!playerData.showPlayerBalance) {
         hudHolder.removeLayout(layout)
-    }
-    else if (!playerData.showPlayerBalance) {
+    } else if (playerData.showPlayerBalance) {
         hudHolder.addLayout(layout)
     }
 }

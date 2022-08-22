@@ -14,17 +14,17 @@ import org.bukkit.event.player.PlayerMoveEvent
 class OrthBankingListener : Listener {
 
     @EventHandler
-    fun PlayerJoinEvent.showBalance() = player.toggleHud(player.playerData.showPlayerBalance)
+    fun PlayerJoinEvent.showBalance() = player.toggleHud("orthbanking", player.playerData.showPlayerBalance)
 
     @EventHandler
     fun PlayerMoveEvent.onEnterWater() {
         if (!hasChangedBlock()) return
         if (player.isInWaterOrBubbleColumn && player.playerData.showPlayerBalance) {
-            player.toggleHud(false)
+            player.toggleHud("orthbanking", false)
             player.sendActionBar(Component.empty())
         }
         else if (!player.isInWaterOrBubbleColumn && !player.playerData.showPlayerBalance)
-            player.toggleHud(true)
+            player.toggleHud("orthbanking", true)
     }
 
     @EventHandler

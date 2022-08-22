@@ -1,6 +1,7 @@
 package com.mineinabyss.relics
 
 import com.mineinabyss.components.helpers.HideBossBarCompass
+import com.mineinabyss.components.helpers.HideDepthMeterHud
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.registerEvents
@@ -34,11 +35,18 @@ class RelicsFeature : AbyssFeature {
                     "star_compass"(desc = "Commands related to the Star Compass") {
                         "toggle" {
                             playerAction {
-                                val player = sender as Player
-                                val geary = player.toGeary()
-
+                                val geary = (sender as Player).toGeary()
                                 if (geary.has<HideBossBarCompass>()) geary.remove<HideBossBarCompass>()
                                 else geary.setPersisting(HideBossBarCompass())
+                            }
+                        }
+                    }
+                    "depth_meter"(desc = "Commands related to the Depth-Meter") {
+                        "show" {
+                            playerAction {
+                                val geary = (sender as Player).toGeary()
+                                if (geary.has<HideDepthMeterHud>()) geary.remove<HideDepthMeterHud>()
+                                else geary.setPersisting(HideDepthMeterHud())
                             }
                         }
                     }

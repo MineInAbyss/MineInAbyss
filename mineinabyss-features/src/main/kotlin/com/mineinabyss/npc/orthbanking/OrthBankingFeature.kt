@@ -33,7 +33,7 @@ class OrthBankingFeature : AbyssFeature {
                     "balance"(desc = "Toggles whether or not the balance should be shown.") {
                         ensureSenderIsPlayer()
                         action {
-                            (sender as Player).toggleHud()
+                            (sender as Player).toggleHud("orthbanking")
                         }
                     }
                     "deposit"(desc = "Dev command until Guiy can take items") {

@@ -19,11 +19,15 @@ import com.mineinabyss.idofront.items.editItemMeta
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 import kotlin.time.Duration.Companion.seconds
 
-class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
+class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds), Listener {
     private val TargetScope.starCompass by get<StarCompass>()
     private val TargetScope.item by get<ItemStack>()
 
@@ -49,6 +53,22 @@ class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
             item.type = Material.PAPER
             player.bossbarCompass(starCompass.compassLocation, playerBar.compassBar)
         }
+    }
+
+    @EventHandler
+    fun PlayerDropItemEvent.onDropStarCompass() {
+        if (!itemDrop.toGeary().has(StarCompass::class)) return
+        val playerBar = player.toGeary().get<PlayerCompassBar>() ?: return
+        player.hideBossBar(playerBar.compassBar)
+        player.toGeary().remove<PlayerCompassBar>()
+    }
+
+    @EventHandler
+    fun PlayerAttemptPickupItemEvent.onPickUpStarCompass() {
+        if (!item.toGeary().has(StarCompass::class)) return
+        val playerBar = player.toGeary().get<PlayerCompassBar>() ?: return
+        player.hideBossBar(playerBar.compassBar)
+        player.toGeary().remove<PlayerCompassBar>()
     }
 }
 
