@@ -6,7 +6,7 @@ import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.idofront.messaging.serialize
 import com.mineinabyss.mineinabyss.core.layer
-import com.mineinabyss.relics.getDepth
+import com.mineinabyss.relics.depthmeter.getDepth
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt

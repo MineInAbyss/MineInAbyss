@@ -1,4 +1,4 @@
-package com.mineinabyss.relics
+package com.mineinabyss.relics.depthmeter
 
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter

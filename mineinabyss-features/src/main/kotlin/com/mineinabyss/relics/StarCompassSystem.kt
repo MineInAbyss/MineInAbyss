@@ -12,15 +12,35 @@ import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
+import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.helpers.bossbarCompass
 import com.mineinabyss.idofront.items.editItemMeta
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 import kotlin.time.Duration.Companion.seconds
+
+@Serializable
+@SerialName("mineinabyss:toggle_starcompass_hud")
+class ToggleDepthHud
+
+class ToggleStarCompassHudSystem : GearyListener() {
+    private val TargetScope.player by get<Player>()
+    private val SourceScope.starCompass by get<StarCompass>()
+    private val EventScope.hasStarCompass by family { has<ToggleDepthHud>() }
+
+    @Handler
+    fun TargetScope.toggleDepth(source: SourceScope) {
+        if (player.toGeary().has<HideBossBarCompass>())
+            player.toGeary().remove<HideBossBarCompass>()
+        else player.toGeary().setPersisting(HideBossBarCompass())
+    }
+}
 
 class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
     private val TargetScope.starCompass by get<StarCompass>()
