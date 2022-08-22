@@ -34,7 +34,7 @@ class CurseAscensionListener : Listener {
     @EventHandler
     fun VehicleEnterEvent.handleCurseOnVehicleEnter() {
         val player = entered as? Player ?: return
-        handleCurse(player, from = player.location, to = vehicle.location)
+        handleCurse(player, player.location, vehicle.location)
     }
 
     @EventHandler
