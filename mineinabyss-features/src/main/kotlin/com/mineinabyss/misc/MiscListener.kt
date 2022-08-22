@@ -16,6 +16,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
+import org.bukkit.event.player.PlayerEggThrowEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
@@ -64,5 +65,10 @@ class MiscListener : Listener {
     fun PlayerTakeLecternBookEvent.onTakeBookPrivatedLectern() {
         if (!BlockLockerAPIv2.isAllowed(player, lectern.block, true))
             isCancelled = true
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun PlayerEggThrowEvent.onEggThrow() {
+        isHatching = false
     }
 }
