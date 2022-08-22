@@ -1,12 +1,12 @@
 [versions]
-geary = "0.19.112"
-gearyaddons = "0.7.44"
-looty = "0.8.65"
-guiy="0.7.24"
-deeperworld="0.6.81"
+geary = "0.19.113"
+gearyaddons = "0.7.45"
+looty = "0.8.66"
+guiy="0.7.25"
+deeperworld="0.6.82"
 chatty="0.3.53"
-mobzy="0.18.83"
-protocolburrito = "0.5.36"
+mobzy="0.18.84"
+protocolburrito = "0.5.37"
 
 
 [libraries]
@@ -20,11 +20,11 @@ chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
-minecraft-plugin-gsit = "com.gecolay:gsit:1.2.2"
+minecraft-plugin-gsit = "com.gecolay:gsit:1.2.4"
 minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
 minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.2"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.25.1"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R2.5.0"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.2"
-minecraft-plugin-happyhud = "com.ehhtan:happyhud:0.0.8-SNAPSHOT"
+minecraft-plugin-happyhud = "com.ehhtan:happyhud:0.1.1-SNAPSHOT"
