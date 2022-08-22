@@ -13,6 +13,7 @@ import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -23,9 +24,11 @@ import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("orth_banking")
-class OrthBankingFeature : AbyssFeature {
+class OrthBankingFeature(
+    val balanceHudId: String = "balance"
+) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        //registerEvents(OrthBankingListener())
+        registerEvents(OrthBankingListener(this@OrthBankingFeature))
 
         commands {
             mineinabyss {
@@ -33,7 +36,7 @@ class OrthBankingFeature : AbyssFeature {
                     "balance"(desc = "Toggles whether or not the balance should be shown.") {
                         ensureSenderIsPlayer()
                         action {
-                            (sender as Player).toggleHud("orthbanking")
+                            (sender as Player).toggleHud(balanceHudId)
                         }
                     }
                     "deposit"(desc = "Dev command until Guiy can take items") {

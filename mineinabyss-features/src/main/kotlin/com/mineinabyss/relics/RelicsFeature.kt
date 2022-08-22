@@ -9,6 +9,9 @@ import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.geary
+import com.mineinabyss.relics.depthmeter.DepthHudSystem
+import com.mineinabyss.relics.depthmeter.RemoveDepthMeterHud
+import com.mineinabyss.relics.depthmeter.ToggleDepthHudSystem
 import com.mineinabyss.relics.sickle.HarvestListener
 import com.mineinabyss.relics.sickle.SickleListener
 import kotlinx.serialization.SerialName
@@ -17,14 +20,20 @@ import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("relics")
-class RelicsFeature : AbyssFeature {
+class RelicsFeature(
+    val depthHudId: String = "depth"
+) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 
         geary {
             systems(
+                RemoveStarCompassBar(),
                 ShowDepthSystem(),
+                DepthHudSystem(this@RelicsFeature),
+                RemoveDepthMeterHud(this@RelicsFeature),
+                ToggleDepthHudSystem(this@RelicsFeature),
                 StarCompassSystem(),
-                HarvestListener(),
+                HarvestListener()
             )
         }
         registerEvents(SickleListener())
@@ -42,7 +51,7 @@ class RelicsFeature : AbyssFeature {
                         }
                     }
                     "depth_meter"(desc = "Commands related to the Depth-Meter") {
-                        "show" {
+                        "toggle" {
                             playerAction {
                                 val geary = (sender as Player).toGeary()
                                 if (geary.has<HideDepthMeterHud>()) geary.remove<HideDepthMeterHud>()
@@ -59,12 +68,12 @@ class RelicsFeature : AbyssFeature {
                     ).filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "relics" -> listOf("star_compass")
+                            "relics" -> listOf("star_compass", "depth_meter")
                             else -> listOf()
                         }
                     }
                     3 -> when (args[1]) {
-                        "star_compass" -> listOf("toggle")
+                        "star_compass", "depth_meter" -> listOf("toggle")
                         else -> listOf()
                     }
                     else -> listOf()

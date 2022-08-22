@@ -4,7 +4,6 @@ import com.mineinabyss.components.helpers.HideBossBarCompass
 import com.mineinabyss.components.helpers.PlayerCompassBar
 import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.annotations.AutoScan
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.components.events.EntityRemoved
 import com.mineinabyss.geary.datatypes.family.family
@@ -19,15 +18,11 @@ import com.mineinabyss.idofront.items.editItemMeta
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent
-import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 import kotlin.time.Duration.Companion.seconds
 
-class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds), Listener {
+class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
     private val TargetScope.starCompass by get<StarCompass>()
     private val TargetScope.item by get<ItemStack>()
 
@@ -54,26 +49,8 @@ class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds), Listener {
             player.bossbarCompass(starCompass.compassLocation, playerBar.compassBar)
         }
     }
-
-    @EventHandler
-    fun PlayerDropItemEvent.onDropStarCompass() {
-        if (!itemDrop.toGeary().has(StarCompass::class)) return
-        val playerBar = player.toGeary().get<PlayerCompassBar>() ?: return
-        player.hideBossBar(playerBar.compassBar)
-        player.toGeary().remove<PlayerCompassBar>()
-    }
-
-    @EventHandler
-    fun PlayerAttemptPickupItemEvent.onPickUpStarCompass() {
-        if (!item.toGeary().has(StarCompass::class)) return
-        val playerBar = player.toGeary().get<PlayerCompassBar>() ?: return
-        player.hideBossBar(playerBar.compassBar)
-        player.toGeary().remove<PlayerCompassBar>()
-    }
 }
 
-//TODO fix when component removal events get implemented
-@AutoScan
 class RemoveStarCompassBar : GearyListener() {
     private val TargetScope.starCompass by get<StarCompass>()
     private val EventScope.removed by family { has<EntityRemoved>() }
