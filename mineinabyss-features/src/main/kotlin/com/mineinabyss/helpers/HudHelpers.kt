@@ -1,5 +1,6 @@
 package com.mineinabyss.helpers
 
+import com.ehhthan.happyhud.HappyHUD
 import com.ehhthan.happyhud.api.HudHolder
 import com.mineinabyss.components.playerData
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -9,15 +10,21 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import kotlin.math.atan2
 
+val happyHUD: HappyHUD = HappyHUD.getInstance()
+val Player.hudHolder: HudHolder get() = HudHolder.get(this)
+
 fun Player.toggleHud(toggle: Boolean? = null) {
+    val layout = happyHUD.layouts().get("orthbanking_layout")
+
     if (toggle == null) playerData.showPlayerBalance = !playerData.showPlayerBalance
     else playerData.showPlayerBalance = toggle
 
-    //TODO Fix this whenever a method is exposed to add a new HudHolder
-    /*if (playerData.showPlayerBalance && !HudHolder.has(this))
-        HudHolder.holders().add(this as HudHolder)
-    else */if (!playerData.showPlayerBalance && HudHolder.has(this))
-        HudHolder.holders().remove(HudHolder.get(this))
+    if (playerData.showPlayerBalance) {
+        hudHolder.removeLayout(layout)
+    }
+    else if (!playerData.showPlayerBalance) {
+        hudHolder.addLayout(layout)
+    }
 }
 
 fun Player.bossbarCompass(loc: Location?, bar: BossBar) {

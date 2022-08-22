@@ -40,6 +40,7 @@ class GuildListener(private val feature: GuildFeature) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun AsyncChatEvent.onGuildChat() {
+        if (!AbyssContext.isChattyLoaded) return
         val channelId = player.chattyData.channelId
 
         if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chattyConfig.channels.keys) {
@@ -74,6 +75,7 @@ class GuildListener(private val feature: GuildFeature) : Listener {
                 }
                 MessageQueue.deleteWhere { MessageQueue.playerUUID eq player.uniqueId }
             }
+            if (!AbyssContext.isChattyLoaded) return@withContext
             if (!player.hasGuild() && player.chattyData.channelId.endsWith(guildChannelId)) {
                 player.chattyData.channelId = getDefaultChat().key
             }

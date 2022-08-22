@@ -107,6 +107,11 @@ class GuildFeature(
                         playerAction {
                             val player = sender as? Player ?: return@playerAction
 
+                            if (!AbyssContext.isChattyLoaded) {
+                                player.error("Chatty is not loaded.")
+                                return@playerAction
+                            }
+
                             if (player.hasGuild()) {
                                 val name = player.getGuildName()
                                 chattyConfig.channels.putIfAbsent("$name $guildChannelId", this@GuildFeature.guildChattyChannel)
