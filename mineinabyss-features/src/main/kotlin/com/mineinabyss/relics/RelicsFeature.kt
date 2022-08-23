@@ -16,7 +16,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("relics")
 class RelicsFeature(
-    val depthHudId: String = "depth"
+    val depthHudId: String = "depth",
+    val layerHudId: String = "layer"
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 

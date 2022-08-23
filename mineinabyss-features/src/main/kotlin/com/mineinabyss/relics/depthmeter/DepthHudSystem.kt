@@ -13,6 +13,7 @@ import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.helpers.toggleHud
+import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.relics.RelicsFeature
 import kotlinx.serialization.SerialName
@@ -42,12 +43,16 @@ class ToggleDepthHudSystem(val feature: RelicsFeature) : GearyListener() {
     }
 }
 
-class DepthHudSystem(private val feature: RelicsFeature) : RepeatingSystem(1.ticks) {
+class DepthHudSystem(private val feature: RelicsFeature) : RepeatingSystem(2.ticks) {
     private val TargetScope.depthMeter by get<DepthMeter>()
 
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
-        player.toggleHud(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
+
+        if (player.isInHub()) player.toggleHud(feature.depthHudId, false)
+        else player.toggleHud(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
+
+        player.toggleHud(feature.layerHudId, player.toGeary().has<ShowDepthMeterHud>())
     }
 }
 

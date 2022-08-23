@@ -1,7 +1,7 @@
 package com.mineinabyss.relics
 
-import com.mineinabyss.components.helpers.HideBossBarCompass
 import com.mineinabyss.components.helpers.PlayerCompassBar
+import com.mineinabyss.components.helpers.ShowBossBarCompass
 import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.Handler
@@ -16,6 +16,7 @@ import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.helpers.bossbarCompass
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
@@ -23,7 +24,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
-import kotlin.time.Duration.Companion.seconds
 
 @Serializable
 @SerialName("mineinabyss:toggle_starcompass_hud")
@@ -36,13 +36,13 @@ class ToggleStarCompassHudSystem : GearyListener() {
 
     @Handler
     fun TargetScope.toggleDepth(source: SourceScope) {
-        if (player.toGeary().has<HideBossBarCompass>())
-            player.toGeary().remove<HideBossBarCompass>()
-        else player.toGeary().setPersisting(HideBossBarCompass())
+        if (player.toGeary().has<ShowBossBarCompass>())
+            player.toGeary().remove<ShowBossBarCompass>()
+        else player.toGeary().setPersisting(ShowBossBarCompass())
     }
 }
 
-class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
+class StarCompassSystem : RepeatingSystem(interval = 2.ticks) {
     private val TargetScope.starCompass by get<StarCompass>()
     private val TargetScope.item by get<ItemStack>()
 
@@ -56,7 +56,10 @@ class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
         else starCompass.compassLocation = null
 
         // Let player toggle between having a bossbar-compass or item compass
-        if (player.toGeary().has<HideBossBarCompass>()) {
+        if (player.toGeary().has<ShowBossBarCompass>()) {
+            item.type = Material.PAPER
+            player.bossbarCompass(starCompass.compassLocation, playerBar.compassBar)
+        } else {
             item.type = Material.COMPASS
             item.editItemMeta {
                 this as CompassMeta
@@ -64,9 +67,6 @@ class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
                 isLodestoneTracked = false
             }
             player.hideBossBar(playerBar.compassBar)
-        } else {
-            item.type = Material.PAPER
-            player.bossbarCompass(starCompass.compassLocation, playerBar.compassBar)
         }
     }
 }
