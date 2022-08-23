@@ -4,5 +4,5 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("mineinabyss:hide_depthmeter_hud")
-class HideDepthMeterHud
+@SerialName("mineinabyss:show_depthmeter_hud")
+class ShowDepthMeterHud

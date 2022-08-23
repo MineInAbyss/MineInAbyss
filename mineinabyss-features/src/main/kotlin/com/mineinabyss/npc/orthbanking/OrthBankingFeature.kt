@@ -36,7 +36,9 @@ class OrthBankingFeature(
                     "balance"(desc = "Toggles whether or not the balance should be shown.") {
                         ensureSenderIsPlayer()
                         action {
-                            (sender as Player).toggleHud(balanceHudId)
+                            val player = sender as Player
+                            player.playerData.showPlayerBalance = !player.playerData.showPlayerBalance
+                            (sender as Player).toggleHud(balanceHudId, player.playerData.showPlayerBalance)
                         }
                     }
                     "deposit"(desc = "Dev command until Guiy can take items") {

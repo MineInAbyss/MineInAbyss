@@ -1,6 +1,6 @@
 package com.mineinabyss.relics.depthmeter
 
-import com.mineinabyss.components.helpers.HideDepthMeterHud
+import com.mineinabyss.components.helpers.ShowDepthMeterHud
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.components.events.EntityRemoved
@@ -30,9 +30,9 @@ class ToggleDepthHudSystem(val feature: RelicsFeature) : GearyListener() {
 
     @Handler
     fun TargetScope.toggleDepth(source: SourceScope) {
-        if (player.toGeary().has<HideDepthMeterHud>())
-            player.toGeary().remove<HideDepthMeterHud>()
-        else player.toGeary().setPersisting(HideDepthMeterHud())
+        if (player.toGeary().has<ShowDepthMeterHud>())
+            player.toGeary().remove<ShowDepthMeterHud>()
+        else player.toGeary().setPersisting(ShowDepthMeterHud())
     }
 }
 
@@ -41,7 +41,7 @@ class DepthHudSystem(private val feature: RelicsFeature) : RepeatingSystem(1.tic
 
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
-        player.toggleHud(feature.depthHudId, !player.toGeary().has<HideDepthMeterHud>())
+        player.toggleHud(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
     }
 }
 

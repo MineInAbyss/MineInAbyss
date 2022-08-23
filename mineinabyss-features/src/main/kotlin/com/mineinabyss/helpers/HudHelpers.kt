@@ -2,7 +2,6 @@ package com.mineinabyss.helpers
 
 import com.ehhthan.happyhud.HappyHUD
 import com.ehhthan.happyhud.api.HudHolder
-import com.mineinabyss.components.playerData
 import com.mineinabyss.idofront.messaging.miniMsg
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
@@ -13,16 +12,11 @@ import kotlin.math.atan2
 val happyHUD: HappyHUD = HappyHUD.getInstance()
 val Player.hudHolder: HudHolder get() = HudHolder.get(this)
 
-fun Player.toggleHud(layoutId: String, toggle: Boolean? = null) {
+fun Player.toggleHud(layoutId: String, toggle: Boolean) {
     val layout = happyHUD.layouts().get(layoutId) ?: return
-    if (toggle == null) playerData.showPlayerBalance = !playerData.showPlayerBalance
-    else playerData.showPlayerBalance = toggle
 
-    if (!playerData.showPlayerBalance) {
-        hudHolder.removeLayout(layout)
-    } else if (playerData.showPlayerBalance) {
-        hudHolder.addLayout(layout)
-    }
+    if (toggle) hudHolder.addLayout(layout)
+    else hudHolder.removeLayout(layout)
 }
 
 fun Player.bossbarCompass(loc: Location?, bar: BossBar) {

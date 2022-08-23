@@ -1,6 +1,6 @@
 package com.mineinabyss.relics.depthmeter
 
-import com.mineinabyss.components.helpers.HideDepthMeterHud
+import com.mineinabyss.components.helpers.ShowDepthMeterHud
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.deeperworld.world.section.section
@@ -34,7 +34,7 @@ class ShowDepthSystem : GearyListener() {
     fun TargetScope.showDepth(source: SourceScope) {
         val section = player.location.section
         val layer: Layer? = section?.layer
-        if (!player.toGeary().has<HideDepthMeterHud>()) return
+        if (player.toGeary().has<ShowDepthMeterHud>()) return
         if (layer?.name != null) {
             player.info(
                 """
