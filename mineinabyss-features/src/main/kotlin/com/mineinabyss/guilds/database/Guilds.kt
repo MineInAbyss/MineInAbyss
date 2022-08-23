@@ -12,7 +12,7 @@ object Guilds : Table() {
 }
 
 enum class GuildRanks {
-    Owner, Captain, Steward, Member
+    OWNER, CAPTAIN, STEWARD, MEMBER
 }
 
 enum class GuildJoinType {

@@ -25,7 +25,7 @@ fun GuildUIScope.GuildMemberOptionsScreen(member: OfflinePlayer) {
 @Composable
 fun GuildUIScope.PromoteGuildMemberButton(member: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
-    enabled = (player.getGuildRank() == GuildRanks.Owner || player.getGuildRank() == GuildRanks.Captain),
+    enabled = (player.getGuildRank() == GuildRanks.OWNER || player.getGuildRank() == GuildRanks.CAPTAIN),
     onClick = {
         player.promotePlayerInGuild(member)
         nav.back()

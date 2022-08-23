@@ -64,7 +64,7 @@ fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
         Players.insert {
             it[playerUUID] = uniqueId
             it[guildId] = rowID
-            it[guildRank] = GuildRanks.Owner
+            it[guildRank] = GuildRanks.OWNER
         }
     }
 }
@@ -76,7 +76,7 @@ fun Player.deleteGuild() {
             Players.playerUUID eq uniqueId
         }.firstOrNull()?.get(Players.guildId) ?: return@transaction
 
-        if (getGuildRank() != GuildRanks.Owner) {
+        if (getGuildRank() != GuildRanks.OWNER) {
             this@deleteGuild.error("Only the Owner can disband the guild.")
             return@transaction
         }

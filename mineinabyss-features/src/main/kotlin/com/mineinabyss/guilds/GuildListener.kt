@@ -94,6 +94,6 @@ class GuildContainerSystem : GroupSystem() {
         val guild = player.hasGuild()
         if (!guild) return false
 
-        return player.getGuildRank() == GuildRanks.Owner
+        return player.getGuildRank() == GuildRanks.OWNER
     }
 }
