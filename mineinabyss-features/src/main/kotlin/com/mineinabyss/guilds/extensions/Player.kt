@@ -58,7 +58,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
         Players.insert {
             it[playerUUID] = member.uniqueId
             it[guildId] = id
-            it[guildRank] = GuildRanks.MEMBER
+            it[guildRank] = GuildRank.MEMBER
         }
         player?.success("${member.name} joined your Guild!")
 
@@ -193,7 +193,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
         }
 
         val owner = Players.select {
-            (Players.guildId eq id) and (Players.guildRank eq GuildRanks.OWNER)
+            (Players.guildId eq id) and (Players.guildRank eq GuildRank.OWNER)
         }.single()[Players.playerUUID]
 
 
@@ -225,16 +225,16 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
 
     transaction(AbyssContext.db) {
         val newRank = when (member.getGuildRank()) {
-            GuildRanks.OWNER -> {
+            GuildRank.OWNER -> {
                 player?.error("You cannot be promoted to a higher rank!")
                 return@transaction
             }
-            GuildRanks.CAPTAIN -> {
+            GuildRank.CAPTAIN -> {
                 player?.error("You cannot be promoted to Owner, as there is already one.")
                 return@transaction
             }
-            GuildRanks.STEWARD -> GuildRanks.CAPTAIN
-            GuildRanks.MEMBER -> GuildRanks.STEWARD
+            GuildRank.STEWARD -> GuildRank.CAPTAIN
+            GuildRank.MEMBER -> GuildRank.STEWARD
             else -> return@transaction
         }
 
@@ -257,6 +257,37 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
 
         /* Message owner */
         this@promotePlayerInGuild.player?.success("You have promoted ${member.name} to <i>${member.getGuildRank()}")
+
+        return@transaction
+    }
+}
+
+fun OfflinePlayer.setGuildRank(member: OfflinePlayer, rank: GuildRank) {
+    transaction(AbyssContext.db) {
+        if (member.isGuildOwner()) {
+            player?.error("You cannot change the rank of the guild owner.")
+            return@transaction
+        }
+
+        /* Send message if online, otherwise queue it */
+        //playerRow[Players.guildRank]
+        Players.update({ Players.playerUUID eq member.uniqueId }) {
+            it[guildRank] = rank
+        }
+
+        val promoteMessage =
+            "<aqua>Your guild rank in <i>${player?.getGuildName()}</i> has been set to <i>${rank.name}</i>"
+
+        if (member.isOnline) member.player?.success(promoteMessage)
+        else {
+            MessageQueue.insert {
+                it[content] = promoteMessage
+                it[playerUUID] = member.uniqueId
+            }
+        }
+
+        /* Message owner */
+        this@setGuildRank.player?.success("${member.name}'s rank has been changed to <i>${rank}")
 
         return@transaction
     }
@@ -334,7 +365,7 @@ fun Player.leaveGuild() {
         val owner = guildName.getOwnerFromGuildName()
 
         /* Deletes player-entry if player has a guild */
-        if (memberRank == GuildRanks.OWNER) {
+        if (memberRank == GuildRank.OWNER) {
             player?.error("You have to promote another member to Owner before leaving your guild.")
             return@transaction
         }
@@ -354,7 +385,7 @@ fun Player.leaveGuild() {
 
 }
 
-fun OfflinePlayer.getGuildRank(): GuildRanks? {
+fun OfflinePlayer.getGuildRank(): GuildRank? {
     return transaction(AbyssContext.db) {
         val rank = Players.select {
             Players.playerUUID eq uniqueId
@@ -397,7 +428,7 @@ fun OfflinePlayer.getGuildOwner() : UUID {
         }.single()[Guilds.id]
 
         val guildOwner = Players.select {
-            (Players.guildId eq guildId) and (Players.guildRank eq GuildRanks.OWNER)
+            (Players.guildId eq guildId) and (Players.guildRank eq GuildRank.OWNER)
         }.single()[Players.playerUUID]
         return@transaction guildOwner
     }
@@ -414,7 +445,7 @@ fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
         }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction player?.uniqueId!!
 
         return@transaction Players.select {
-            (Players.guildId eq guilds) and (Players.guildRank eq GuildRanks.OWNER)
+            (Players.guildId eq guilds) and (Players.guildRank eq GuildRank.OWNER)
         }.single()[Players.playerUUID]
     }
 }
@@ -598,5 +629,5 @@ fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
 
 fun OfflinePlayer.isCaptainOrAbove(): Boolean {
     val rank = getGuildRank() ?: false
-    return rank == GuildRanks.CAPTAIN || rank == GuildRanks.OWNER
+    return rank == GuildRank.CAPTAIN || rank == GuildRank.OWNER
 }

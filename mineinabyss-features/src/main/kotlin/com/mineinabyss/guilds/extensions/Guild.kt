@@ -64,7 +64,7 @@ fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
         Players.insert {
             it[playerUUID] = uniqueId
             it[guildId] = rowID
-            it[guildRank] = GuildRanks.OWNER
+            it[guildRank] = GuildRank.OWNER
         }
     }
 }
@@ -76,7 +76,7 @@ fun Player.deleteGuild() {
             Players.playerUUID eq uniqueId
         }.firstOrNull()?.get(Players.guildId) ?: return@transaction
 
-        if (getGuildRank() != GuildRanks.OWNER) {
+        if (getGuildRank() != GuildRank.OWNER) {
             this@deleteGuild.error("Only the Owner can disband the guild.")
             return@transaction
         }
@@ -202,7 +202,7 @@ fun Player.changeGuildJoinType() {
     }
 }
 
-fun Player.getGuildMembers(): List<Pair<GuildRanks, OfflinePlayer>> {
+fun Player.getGuildMembers(): List<Pair<GuildRank, OfflinePlayer>> {
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
@@ -218,11 +218,11 @@ fun Player.getGuildMembers(): List<Pair<GuildRanks, OfflinePlayer>> {
     }
 }
 
-fun String.getGuildMembers(): List<Pair<GuildRanks, OfflinePlayer>> {
+fun String.getGuildMembers(): List<Pair<GuildRank, OfflinePlayer>> {
     return transaction(AbyssContext.db) {
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildMembers.lowercase()
-        }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList<Pair<GuildRanks, OfflinePlayer>>()
+        }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList<Pair<GuildRank, OfflinePlayer>>()
 
         Players.select {
             (Players.guildId eq guild)

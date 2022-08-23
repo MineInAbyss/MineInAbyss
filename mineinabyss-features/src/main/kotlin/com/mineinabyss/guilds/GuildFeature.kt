@@ -8,10 +8,12 @@ import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.guilds.database.GuildRank
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
+import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
@@ -133,6 +135,24 @@ class GuildFeature(
                                 sender.success("You are ${if (player.has<SpyOnGuildChat>()) "spying" else "no longer spying"} on other guild chats!")
                             }
                         }
+                        "setGuildMemberRank" {
+                            val player by stringArg()
+                            val rank by optionArg(GuildRank.values().map { it.name })
+                            action {
+                                val member = Bukkit.getOfflinePlayer(player)
+                                val newRank = GuildRank.valueOf(rank)
+
+                                if (!member.hasGuild())
+                                    sender.error("<b>${player}</b> does not have a guild.")
+                                else if (member.getGuildRank() == newRank)
+                                    sender.error("<b>${player}</b> is already a <i>$rank.")
+                                else {
+                                    member.getGuildName().getOwnerFromGuildName().setGuildRank(member, newRank)
+                                    sender.success("Set <b>${player}</b> to <i>$rank.")
+                                }
+
+                            }
+                        }
                         val guild by stringArg()
                         "addGuildMember" {
                             val player by stringArg()
@@ -235,6 +255,7 @@ class GuildFeature(
                                 "spy",
                                 "addGuildMember",
                                 "removeGuildMember",
+                                "setGuildMemberRank",
                                 "clearJoinRequests",
                                 "clearGuildInvites",
                                 "guildBalance"
@@ -247,9 +268,10 @@ class GuildFeature(
                     4 -> {
                         when (args[2]) {
                             "guildBalance" -> listOf("set", "add", "take").filter { it.startsWith(args[3]) }
+                            "setGuildMemberRank" ->
+                                Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[3]) }
                             "clearJoinRequests", "clearGuildInvites", "addGuildMember", "removeGuildMember" ->
                                 getAllGuildNames().filter { it.startsWith(args[3]) }
-
                             else -> null
                         }
                     }
