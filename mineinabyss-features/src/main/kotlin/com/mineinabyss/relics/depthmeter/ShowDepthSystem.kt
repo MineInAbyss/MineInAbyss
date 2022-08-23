@@ -1,10 +1,12 @@
 package com.mineinabyss.relics.depthmeter
 
+import com.mineinabyss.components.helpers.HideDepthMeterHud
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
@@ -32,24 +34,15 @@ class ShowDepthSystem : GearyListener() {
     fun TargetScope.showDepth(source: SourceScope) {
         val section = player.location.section
         val layer: Layer? = section?.layer
-
+        if (!player.toGeary().has<HideDepthMeterHud>()) return
         if (layer?.name != null) {
-            if (player.isInHub()) {
-                player.info(
-                    """
+            player.info(
+                """
                     <dark_aqua><i>The needle spins.</i>
-                    You suddenly become aware that you are in ${layer.name}<dark_aqua>.
-                    """.trimIndent().miniMsg()
-                )
-            } else {
-                player.info(
-                    """
-                    <dark_aqua><i>The needle spins.</i>
-                    You suddenly become aware that you are in the
-                    ${layer.name}<dark_aqua> and <aqua>${pluralizeMeters(player.getDepth())}</aqua> deep into the <green>Abyss</green>.
-                    """.trimIndent().miniMsg()
-                )
-            }
+                    You suddenly become aware that you are in """.trimIndent().miniMsg().append(
+                    (if (player.isInHub()) "${layer.name}<dark_aqua>.".trimIndent()
+                    else "${layer.name}<dark_aqua> and <aqua>${pluralizeMeters(player.getDepth())}</aqua> deep into the <green>Abyss</green>.").trimIndent().miniMsg())
+            )
         } else player.info("<i><dark_aqua>The compass wiggles slightly but does not otherwise respond.")
     }
 }
@@ -87,10 +80,10 @@ private fun pluralizeMeters(count: Int): String {
 
 fun Location.getDepth(depthMeter: DepthMeter = DepthMeter()): Int {
     return calculateDepth(
-        sectionXOffset = depthMeter.sectionXOffset,
-        sectionYOffset = depthMeter.sectionYOffset,
-        abyssStartingHeightInOrth = depthMeter.abyssStartingHeightInOrth,
-        location = this
+        depthMeter.sectionXOffset,
+        depthMeter.sectionYOffset,
+        depthMeter.abyssStartingHeightInOrth,
+        this
     )
 }
 
