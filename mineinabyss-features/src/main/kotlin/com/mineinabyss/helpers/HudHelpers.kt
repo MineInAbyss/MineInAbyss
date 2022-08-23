@@ -10,14 +10,14 @@ import org.bukkit.entity.Player
 import kotlin.math.atan2
 
 val happyHUD: HappyHUD = HappyHUD.getInstance()
-val Player.hudHolder: HudHolder get() = HudHolder.get(this)
+val Player.hudHolder: HudHolder? get() = if (HudHolder.has(player)) HudHolder.get(this) else null
 
 fun Player.toggleHud(layoutId: String, toggle: Boolean) {
-    if (!isPluginEnabled("HappyHUD") || !hudHolder.player().isOnline) return
+    if (!isPluginEnabled("HappyHUD") || hudHolder == null) return
     val layout = happyHUD.layouts().get(layoutId) ?: return
 
-    if (toggle) hudHolder.addLayout(layout)
-    else hudHolder.removeLayout(layout)
+    if (toggle) hudHolder!!.addLayout(layout)
+    else hudHolder!!.removeLayout(layout)
 }
 
 fun Player.getCompassAngleUnicode() : String {
@@ -45,7 +45,7 @@ private val barUnicodeList = listOf(
     "",
     "",
     "",
-    "",
+    "",
     "",
     "",
     "",
