@@ -40,6 +40,7 @@ fun Player.mineinabyssPlaceholders() : Map<String, String> {
         "orthbanking_coins" to playerData.orthCoinsHeld.toString(),
         "orthbanking_tokens" to playerData.mittyTokensHeld.toString(),
         "layer" to (location.layer?.name ?: "").toString(),
+        "whistle" to getLayerWhistleForHud(),
         "section" to (location.section?.name ?: "Unmanaged Section").toString(),
         "depth" to getDepth().toString(),
         "starcompass_needle" to toGeary().get<PlayerCompassBar>()?.compassBar?.name()?.serialize().toString(),

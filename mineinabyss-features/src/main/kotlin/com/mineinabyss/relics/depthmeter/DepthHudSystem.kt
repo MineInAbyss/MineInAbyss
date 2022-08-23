@@ -17,6 +17,7 @@ import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.relics.RelicsFeature
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 
 @Serializable
@@ -30,9 +31,14 @@ class ToggleDepthHudSystem(val feature: RelicsFeature) : GearyListener() {
 
     @Handler
     fun TargetScope.toggleDepth(source: SourceScope) {
-        if (player.toGeary().has<ShowDepthMeterHud>())
+        if (player.toGeary().has<ShowDepthMeterHud>()) {
             player.toGeary().remove<ShowDepthMeterHud>()
-        else player.toGeary().setPersisting(ShowDepthMeterHud())
+            player.inventory.itemInMainHand.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+        }
+        else {
+            player.toGeary().setPersisting(ShowDepthMeterHud())
+            player.inventory.itemInMainHand.removeEnchantment(Enchantment.ARROW_INFINITE)
+        }
     }
 }
 

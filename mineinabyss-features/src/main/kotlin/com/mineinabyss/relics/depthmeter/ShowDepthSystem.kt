@@ -69,13 +69,13 @@ fun calculateDepth(
     //number of sections under Orth. If in Orth, this should be 0
     val numSectionsDeep = (location.x / sectionXOffset).roundToInt()
 
-    return (location.y - abyssStartingHeightInOrth - (numSectionsDeep * sectionYOffset)).toInt()
+    return -(location.y - abyssStartingHeightInOrth - (numSectionsDeep * sectionYOffset)).toInt()
 }
 
 private fun pluralizeMeters(count: Int): String {
     val prefix = if (count == 1) "one " else ""
     val suffix = if (count == 1) " block" else " blocks"
-    return "$prefix${-count}$suffix"
+    return "$prefix${count}$suffix"
 }
 
 fun Location.getDepth(depthMeter: DepthMeter = DepthMeter()): Int {

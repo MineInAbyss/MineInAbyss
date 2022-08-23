@@ -3,6 +3,7 @@ package com.mineinabyss.helpers
 import com.ehhthan.happyhud.HappyHUD
 import com.ehhthan.happyhud.api.HudHolder
 import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.plugin.isPluginEnabled
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
@@ -13,6 +14,7 @@ val happyHUD: HappyHUD = HappyHUD.getInstance()
 val Player.hudHolder: HudHolder get() = HudHolder.get(this)
 
 fun Player.toggleHud(layoutId: String, toggle: Boolean) {
+    if (!isPluginEnabled("HappyHUD")) return
     val layout = happyHUD.layouts().get(layoutId) ?: return
 
     if (toggle) hudHolder.addLayout(layout)

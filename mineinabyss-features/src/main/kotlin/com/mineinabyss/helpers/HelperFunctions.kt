@@ -2,10 +2,12 @@ package com.mineinabyss.helpers
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
@@ -22,6 +24,20 @@ data class ItemDrop(
 )
 
 val luckPerms = LuckPermsProvider.get()
+
+// Unicodes for whistles, also used for HappyHUD but through custom font file
+fun Player.getLayerWhistleForHud() : String {
+    val layer = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
+    return when {
+        layer.startsWith("orth") -> "\uEBAF"
+        layer.startsWith("edge") -> "\uEBB0"
+        layer.startsWith("forest") -> "\uEBB1"
+        layer.startsWith("great") -> "\uEBB2"
+        layer.startsWith("goblet") -> "\uEBB2"
+        layer.startsWith("sea") -> "\uEBB3"
+        else -> ""
+    }
+}
 
 private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
 fun handleCurse(player: Player, from: Location, to: Location) {
