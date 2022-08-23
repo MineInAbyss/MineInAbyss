@@ -1,7 +1,7 @@
 package com.mineinabyss.relics.depthmeter
 
-import com.mineinabyss.components.helpers.ShowDepthMeterHud
 import com.mineinabyss.components.relics.DepthMeter
+import com.mineinabyss.components.relics.ShowDepthMeterHud
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.components.events.EntityRemoved
 import com.mineinabyss.geary.datatypes.family.family
@@ -20,25 +20,29 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 
 @Serializable
 @SerialName("mineinabyss:toggle_depth_hud")
 class ToggleDepthHud
 
-class ToggleDepthHudSystem(val feature: RelicsFeature) : GearyListener() {
+class ToggleDepthHudSystem : GearyListener() {
     private val TargetScope.player by get<Player>()
     private val SourceScope.depthMeter by get<DepthMeter>()
     private val EventScope.hasDepth by family { has<ToggleDepthHud>() }
 
     @Handler
     fun TargetScope.toggleDepth(source: SourceScope) {
+        val item = player.inventory.itemInMainHand
         if (player.toGeary().has<ShowDepthMeterHud>()) {
             player.toGeary().remove<ShowDepthMeterHud>()
-            player.inventory.itemInMainHand.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+            item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+            item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
         }
         else {
             player.toGeary().setPersisting(ShowDepthMeterHud())
-            player.inventory.itemInMainHand.removeEnchantment(Enchantment.ARROW_INFINITE)
+            item.removeEnchantment(Enchantment.ARROW_INFINITE)
+            item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
         }
     }
 }
@@ -64,5 +68,6 @@ class RemoveDepthMeterHud(private val feature: RelicsFeature) : GearyListener() 
     fun TargetScope.removeBar() {
         val player = entity.parent?.get<Player>() ?: return
         player.toggleHud(feature.depthHudId, false)
+        player.toggleHud(feature.layerHudId, false)
     }
 }

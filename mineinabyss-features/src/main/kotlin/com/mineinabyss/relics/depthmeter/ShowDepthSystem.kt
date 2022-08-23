@@ -1,8 +1,8 @@
 package com.mineinabyss.relics.depthmeter
 
-import com.mineinabyss.components.helpers.ShowDepthMeterHud
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.relics.DepthMeter
+import com.mineinabyss.components.relics.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.datatypes.family.family

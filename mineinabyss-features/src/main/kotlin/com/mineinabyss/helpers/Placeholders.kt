@@ -1,10 +1,7 @@
 package com.mineinabyss.helpers
 
-import com.mineinabyss.components.helpers.PlayerCompassBar
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.idofront.messaging.serialize
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.relics.depthmeter.getDepth
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
@@ -43,7 +40,7 @@ fun Player.mineinabyssPlaceholders() : Map<String, String> {
         "whistle" to getLayerWhistleForHud(),
         "section" to (location.section?.name ?: "Unmanaged Section").toString(),
         "depth" to getDepth().toString(),
-        "starcompass_needle" to toGeary().get<PlayerCompassBar>()?.compassBar?.name()?.serialize().toString(),
+        "starcompass" to getCompassAngleUnicode(),
         "temperature" to location.block.temperature.times(10).roundToInt().toString(),
         "humidity" to location.block.humidity.times(10).roundToInt().toString(),
         "time" to world.time.toString(),

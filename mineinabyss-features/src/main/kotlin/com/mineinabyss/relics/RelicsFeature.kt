@@ -17,19 +17,20 @@ import kotlinx.serialization.Serializable
 @SerialName("relics")
 class RelicsFeature(
     val depthHudId: String = "depth",
-    val layerHudId: String = "layer"
+    val layerHudId: String = "layer",
+    val starcompassHudId: String = "starcompass"
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 
         geary {
             systems(
-                RemoveStarCompassBar(),
                 ShowDepthSystem(),
+                ToggleDepthHudSystem(),
                 DepthHudSystem(this@RelicsFeature),
                 RemoveDepthMeterHud(this@RelicsFeature),
-                ToggleDepthHudSystem(this@RelicsFeature),
-                StarCompassSystem(),
                 ToggleStarCompassHudSystem(),
+                StarCompassSystem(this@RelicsFeature),
+                RemoveStarCompassBar(this@RelicsFeature),
                 HarvestListener()
             )
         }

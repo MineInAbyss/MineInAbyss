@@ -2,10 +2,9 @@ package com.mineinabyss.helpers
 
 import com.ehhthan.happyhud.HappyHUD
 import com.ehhthan.happyhud.api.HudHolder
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.deeperworld.world.section.Section
+import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.idofront.plugin.isPluginEnabled
-import net.kyori.adventure.bossbar.BossBar
-import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import kotlin.math.atan2
@@ -14,44 +13,44 @@ val happyHUD: HappyHUD = HappyHUD.getInstance()
 val Player.hudHolder: HudHolder get() = HudHolder.get(this)
 
 fun Player.toggleHud(layoutId: String, toggle: Boolean) {
-    if (!isPluginEnabled("HappyHUD")) return
+    if (!isPluginEnabled("HappyHUD") || !hudHolder.player().isOnline) return
     val layout = happyHUD.layouts().get(layoutId) ?: return
 
     if (toggle) hudHolder.addLayout(layout)
     else hudHolder.removeLayout(layout)
 }
 
-fun Player.bossbarCompass(loc: Location?, bar: BossBar) {
-    bar.name(getCompassAngle(loc))
-    showBossBar(bar)
-}
-
-private fun Player.getCompassAngle(loc: Location?) : Component {
-    if (loc == null || world != loc.world)
-        return Component.text(":arrow_null:")
+fun Player.getCompassAngleUnicode() : String {
+    val loc = location.section?.getSectionCenter() ?: return ""
+    if (world != loc.world) return ""
 
     val dir = loc.subtract(location).toVector()
     val angleDir = (atan2(dir.z, dir.x) / 2 / Math.PI * 360 + 180) % 360
     val angleLook = (atan2(location.direction.z, location.direction.x) / 2 / Math.PI * 360 + 180) % 360
 
-    return barNameList[(((angleDir - angleLook + 360) % 360) / 22.5).toInt()].miniMsg()
+    return barUnicodeList[(((angleDir - angleLook + 360) % 360) / 22.5).toInt()]
 }
 
-private val barNameList = listOf(
-    ":arrow_n:",
-    ":arrow_nne:",
-    ":arrow_ne:",
-    ":arrow_ene:",
-    ":arrow_e:",
-    ":arrow_ese:",
-    ":arrow_se:",
-    ":arrow_sse:",
-    ":arrow_s:",
-    ":arrow_ssw:",
-    ":arrow_sw:",
-    ":arrow_wsw:",
-    ":arrow_w:",
-    ":arrow_wnw:",
-    ":arrow_nw:",
-    ":arrow_nnw:",
+fun Section.getSectionCenter() : Location {
+    val center = region.center
+    return Location(world, center.x.toDouble(), 0.0, center.z.toDouble())
+}
+
+private val barUnicodeList = listOf(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
 )
