@@ -103,7 +103,8 @@ fun Player.deleteGuild() {
         chattyConfig.channels.remove(guildChatId)
 
         // Rest will be reset when they join
-        this@deleteGuild.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {it as Player
+        this@deleteGuild.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {
+            it as Player
             if (it.chattyData.channelId == guildChatId)
                 it.chattyData.channelId = getDefaultChat().key
         }
@@ -147,7 +148,8 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         }
 
         // Update the guildchat ID on online players, rest handled on join
-        this@changeStoredGuildName.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {it as Player
+        this@changeStoredGuildName.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {
+            it as Player
             if (it.chattyData.channelId == getGuildName().getGuildChatId())
                 it.chattyData.channelId = newGuildName.getGuildChatId()
         }
@@ -203,7 +205,7 @@ fun Player.changeGuildJoinType() {
 fun Player.getGuildMembers(): List<Pair<GuildRanks, OfflinePlayer>> {
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {
-            Players.playerUUID eq player!!.uniqueId
+            Players.playerUUID eq uniqueId
         }.single()
 
         val guildId = playerRow[Players.guildId]
@@ -237,9 +239,41 @@ fun getAllGuilds(): List<Triple<String, GuildJoinType, Int>> {
     }
 }
 
+fun getAllGuildNames(): List<String> {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.selectAll().map { row -> row[Guilds.name] }
+    }
+}
+
+fun String.getGuildId() : Int {
+    return transaction(AbyssContext.db) {
+        return@transaction Guilds.select {
+            Guilds.name.lowerCase() eq this@getGuildId.lowercase()
+        }.first()[Guilds.id]
+    }
+}
+
+fun String.clearGuildJoinRequests() {
+    transaction(AbyssContext.db) {
+        GuildJoinQueue.deleteWhere {
+            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
+        }
+    }
+}
+
+fun String.clearGuildInvites() {
+    transaction(AbyssContext.db) {
+        GuildJoinQueue.deleteWhere {
+            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.Invite)
+        }
+    }
+}
+
 fun displayGuildList(queryName: String? = null): List<Triple<String, GuildJoinType, Int>> {
     val guilds = getAllGuilds()
-    val comparator = compareBy<Triple<String, GuildJoinType, Int>> { it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first }
+    val comparator = compareBy<Triple<String, GuildJoinType, Int>> {
+        it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first
+    }
     return if (queryName == null)
         guilds.sortedWith(comparator)
     else guilds.filter { it.first.startsWith(queryName) }.sortedWith(comparator)
@@ -393,10 +427,10 @@ private fun String.updateGuildBalance(amount: Int) {
     }
 }
 
-fun String.getGuildChatId() : String {
+fun String.getGuildChatId(): String {
     return "$this $guildChannelId"
 }
 
-fun Player.getGuildChatId() : String {
+fun Player.getGuildChatId(): String {
     return "${getGuildName()} $guildChannelId"
 }

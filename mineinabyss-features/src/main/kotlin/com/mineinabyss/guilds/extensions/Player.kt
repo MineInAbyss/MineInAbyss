@@ -456,9 +456,17 @@ fun OfflinePlayer.getGuildBalance(): Int {
 
 fun String.getGuildBalance(): Int {
     return transaction(AbyssContext.db) {
-        return@transaction Guilds.select {
+        Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildBalance.lowercase()
-        }.singleOrNull()?.get(Guilds.balance) ?: return@transaction 0
+        }.firstOrNull()?.get(Guilds.balance) ?: return@transaction 0
+    }
+}
+
+fun String.setGuildBalance(newBalance: Int) {
+    transaction(AbyssContext.db) {
+        Guilds.update({Guilds.name.lowerCase() eq this@setGuildBalance.lowercase()}) {
+           it[balance] = newBalance
+        }
     }
 }
 
