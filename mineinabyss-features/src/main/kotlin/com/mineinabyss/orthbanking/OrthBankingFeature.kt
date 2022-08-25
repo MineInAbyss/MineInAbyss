@@ -1,4 +1,4 @@
-package com.mineinabyss.npc.orthbanking
+package com.mineinabyss.orthbanking
 
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
