@@ -1,6 +1,7 @@
 package com.mineinabyss.helpers
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.looty.LootyFactory
@@ -69,6 +70,11 @@ fun handleCurse(player: Player, from: Location, to: Location) {
             }
         }
     }
+}
+
+fun Section.getSectionCenter() : Location {
+    val center = region.center
+    return Location(world, center.x.toDouble(), 0.0, center.z.toDouble())
 }
 
 fun createOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
