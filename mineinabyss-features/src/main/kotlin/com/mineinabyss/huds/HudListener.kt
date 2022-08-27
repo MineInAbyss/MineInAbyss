@@ -51,10 +51,14 @@ class HudListener(private val feature: HudFeature) : Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun PlayerAscendEvent.toggleHudOnAscend() = player.handleLayerHud(fromSection, toSection)
+    fun PlayerAscendEvent.toggleHudOnAscend() {
+        player.handleLayerHud(fromSection, toSection)
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun PlayerDescendEvent.toggleHudOnDescend() = player.handleLayerHud(fromSection, toSection)
+    fun PlayerDescendEvent.toggleHudOnDescend() {
+        player.handleLayerHud(fromSection, toSection)
+    }
 
     // Handle displaying the layer name in the hud
     private fun Player.handleLayerHud(fromSection: Section, toSection: Section) {
@@ -108,11 +112,13 @@ class HudListener(private val feature: HudFeature) : Listener {
     fun EntityMountEvent.onMount() {
         val player = entity as? Player ?: return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
-        player.toggleHud(feature.mountedLayout, true)
+        player.toggleHud(feature.mountedLayout, player.isValidGamemode())
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun EntityDismountEvent.onDismount() = (entity as? Player)?.toggleHud(feature.mountedLayout, false)
+    fun EntityDismountEvent.onDismount() {
+        (entity as? Player)?.toggleHud(feature.mountedLayout, false)
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntitySitEvent.onSit() {
@@ -129,9 +135,9 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler
     fun PlayerUpdateAttributeEvent.onMaxHealthChange() {
         // TODO Implement multiple and scaling health hud for this below
-        /*if (attribute != Attribute.GENERIC_MAX_HEALTH) return
+        if (attribute != Attribute.GENERIC_MAX_HEALTH) return
         val maxHealth = (player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 20.0)
-        player.toggleHud(feature.extraHealthLayout, (player.health < maxHealth))*/
+        player.toggleHud(feature.absorptionLayout, (player.health < maxHealth) && player.isValidGamemode())
     }
 
     private val playerFrozenMap = mutableSetOf<Player>()
@@ -140,7 +146,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityInsideBlockEvent.onPowderSnow() {
         val player = entity as? Player ?: return
-        if (block.type != Material.POWDER_SNOW || player.gameMode == GameMode.CREATIVE) return
+        if (block.type != Material.POWDER_SNOW || !player.isValidGamemode()) return
         if (!player.isFrozen || player in playerFrozenMap) return
 
         mineInAbyss.launch(mineInAbyss.asyncDispatcher) {
@@ -174,12 +180,14 @@ class HudListener(private val feature: HudFeature) : Listener {
     }
 
     private fun Player.handleEffectOverlays(effect: PotionEffectType, toggle: Boolean) {
+        if (!this.isValidGamemode()) return
         when (effect) {
-            //TODO Might need to send levels here aswell due to it scaling with effect level
-            PotionEffectType.ABSORPTION -> toggleHud(feature.extraHealthLayout, toggle)
+            PotionEffectType.ABSORPTION -> toggleHud(feature.absorptionLayout, toggle)
             PotionEffectType.HUNGER ->  toggleHud(feature.hungerLayout, toggle)
             PotionEffectType.WITHER -> toggleHud(feature.bleedingLayout, toggle)
             PotionEffectType.POISON -> toggleHud(feature.poisonLayout, toggle)
         }
     }
+
+    private fun Player.isValidGamemode() = gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE
 }

@@ -24,7 +24,7 @@ class HudFeature(
     val armorLayout: String = "armor",
     val airLayout: String = "air",
 
-    val extraHealthLayout: String = "extra-hearts",
+    val absorptionLayout: String = "absorption",
     val witherLayout: String = "wither",
     val bleedingLayout: String = "bleeding",
     val poisonLayout: String = "poison",
