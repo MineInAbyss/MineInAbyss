@@ -72,6 +72,7 @@ class HudListener(private val feature: HudFeature) : Listener {
             feature.gobletsLayout,
             feature.seaLayout
         )
+
         layerLayouts.forEach { toggleHud(it, false) } //Clear Layer Hud
         when {
             toName.startsWith("orth") -> layerLayouts.removeAll { it != feature.orthLayout }
@@ -125,19 +126,6 @@ class HudListener(private val feature: HudFeature) : Listener {
         val player = entity as? Player ?: return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
         player.toggleHud(feature.mountedLayout, false)
-    }
-
-    // TODO Make placeholder for this or something?
-//    @EventHandler
-//    fun EntityDamageEvent.onMountDamaged() {
-//    }
-
-    @EventHandler
-    fun PlayerUpdateAttributeEvent.onMaxHealthChange() {
-        // TODO Implement multiple and scaling health hud for this below
-        if (attribute != Attribute.GENERIC_MAX_HEALTH) return
-        val maxHealth = (player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 20.0)
-        player.toggleHud(feature.absorptionLayout, (player.health < maxHealth) && player.isValidGamemode())
     }
 
     private val playerFrozenMap = mutableSetOf<Player>()
