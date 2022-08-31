@@ -8,6 +8,7 @@ import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildScreen
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.layout.Column
@@ -33,12 +34,20 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
+    var profileBackground by remember { mutableStateOf(player.playerData.playerProfileBackground) }
     val titleComponent =
-        Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon" else ""}${if (!hideArmorIcons) "_armor_hidden:" else "_armor_visible:"}${Space.of(-178)}")
+        Component.text(
+            "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon" else ""}${if (!hideArmorIcons) "_armor_hidden:" else "_armor_visible:"}${
+                Space.of(
+                    -178
+                )
+            }"
+        )
     val rankComponent = Component.text("${Space.of(-42)}${DisplayRanks(player)}")
+    val backgroundComponent = profileBackground.miniMsg()
 
     Chest(setOf(viewer),
-        titleComponent.append(titleName).append(rankComponent),
+        titleComponent.append(titleName).append(profileBackground.miniMsg()).append(rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
@@ -64,6 +73,29 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
             LeggingsSlot(player, hideArmorIcons)
             BootsSlot(player, hideArmorIcons)
         }
+
+        BackgroundButton {
+            if (!isPluginEnabled("BondrewdLikesHisEmotes")) return@BackgroundButton
+            val allowedBackgrounds =
+                bondrewd.emotes.filter { it.font == "playerprofile" && it.value.startsWith("player_profile_background_") }
+                    .map { it.value }
+            profileBackground.split("_").last().let {
+                profileBackground =
+                    if (it !in allowedBackgrounds) "player_profile_background_1"
+                    else "player_profile_background_${allowedBackgrounds.indexOf(it) + 1}"
+            }
+        }
+    }
+}
+
+@Composable
+fun BackgroundButton(changeBackground: () -> Unit = {}) {
+    Button(onClick = changeBackground, modifier = Modifier.at(4, MAX_CHEST_HEIGHT - 1)) {
+        Text(
+            "<b><#a0764b>Change displayed profile background".miniMsg(),
+            "<#ecae6e>Hides your armor from other".miniMsg(),
+            "<#ecae6e>players viewing your profile".miniMsg()
+        )
     }
 }
 
@@ -126,11 +158,11 @@ fun BootsSlot(player: Player, hideArmorIcons: Boolean) =
 
 @Composable
 fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
-    Button(onClick = toggleArmor, modifier = Modifier.at(7,3)) {
+    Button(onClick = toggleArmor, modifier = Modifier.at(7, 3)) {
         Text(
-            "<b><dark_purple>Toggle armor visibility".miniMsg(),
-            "<light_purple>Hides your armor from other".miniMsg(),
-            "<light_purple>players viewing your profile".miniMsg()
+            "<b><#5b3d4a>Toggle armor visibility".miniMsg(),
+            "<#a77088>Hides your armor from other".miniMsg(),
+            "<#a77088>players viewing your profile".miniMsg()
         )
     }
 }

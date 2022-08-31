@@ -22,6 +22,7 @@ class PlayerData(
     var orthCoinsHeld: Int = 0,
     var mittyTokensHeld: Int = 0,
     var showPlayerBalance: Boolean = true,
+    var playerProfileBackground: String = "player_profile_background_1",
     var displayProfileArmor: Boolean = true,
     //var guildChatStatus: Boolean = false,
     var recentInteractEntity: @Serializable(with = UUIDSerializer::class) UUID? = null

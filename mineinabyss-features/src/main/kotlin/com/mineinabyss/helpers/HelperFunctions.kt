@@ -7,6 +7,7 @@ import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
+import io.github.bananapuncher714.bondrewd.likes.his.emotes.BondrewdLikesHisEmotes
 import kotlinx.coroutines.delay
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
@@ -29,6 +30,7 @@ data class ItemDrop(
 )
 
 val luckPerms = LuckPermsProvider.get()
+val bondrewd = BondrewdLikesHisEmotes.getPlugin(BondrewdLikesHisEmotes::class.java)
 
 fun Player.updateBalance() {
     val orthCoinBalance = playerData.orthCoinsHeld
