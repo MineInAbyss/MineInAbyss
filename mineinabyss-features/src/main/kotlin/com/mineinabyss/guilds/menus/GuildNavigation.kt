@@ -40,9 +40,6 @@ sealed class GuildScreen(var title: String, val height: Int) {
 
     object GuildInfo : GuildScreen("${Space.of(-12)}<white>:guild_member_menu:", 6)
 
-    class CurrentGuild(val guildLevel: Int) :
-        GuildScreen("${Space.of(-12)}${Space.of(1)}<white>:current_guild_menu_${guildLevel}:", minOf(guildLevel + 3, MAX_CHEST_HEIGHT))
-
     object Leave : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
     object Disband : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
     object Owner : GuildScreen("${Space.of(-12)}<white>:guild_owner_menu:", 6)
@@ -93,7 +90,6 @@ fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature, openedFromHQ:
                     GuildInfo -> GuildInfoScreen()
                     Owner -> GuildOwnerScreen()
                     Leave -> GuildLeaveScreen()
-                    is CurrentGuild -> CurrentGuildScreen()
                     is GuildList -> GuildLookupListScreen(screen.pageNumber)
                     is GuildLookupMembers -> GuildLookupMembersScreen(screen.guildName)
                     InviteList -> GuildInviteListScreen()
