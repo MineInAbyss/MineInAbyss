@@ -1,11 +1,11 @@
 [versions]
 geary = "0.20.114"
 gearyaddons = "0.7.46"
-looty = "0.8.68"
-guiy="0.7.26"
-deeperworld="0.6.84"
-chatty="0.3.57"
-mobzy="0.18.85"
+looty = "0.8.69"
+guiy = "0.7.26"
+deeperworld = "0.6.84"
+chatty = "0.3.57"
+mobzy = "0.19.85"
 protocolburrito = "0.5.38"
 
 
