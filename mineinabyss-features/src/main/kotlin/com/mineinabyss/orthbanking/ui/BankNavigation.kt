@@ -1,4 +1,4 @@
-package com.mineinabyss.npc.orthbanking.ui
+package com.mineinabyss.orthbanking.ui
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.PlayerData

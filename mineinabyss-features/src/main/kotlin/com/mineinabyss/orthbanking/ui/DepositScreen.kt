@@ -1,4 +1,4 @@
-package com.mineinabyss.npc.orthbanking.ui
+package com.mineinabyss.orthbanking.ui
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -7,7 +7,7 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.miniMsg
-import com.mineinabyss.npc.orthbanking.depositCoins
+import com.mineinabyss.orthbanking.depositCoins
 import org.bukkit.entity.Player
 
 @Composable

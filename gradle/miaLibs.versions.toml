@@ -1,12 +1,12 @@
 [versions]
-geary = "0.19.113"
-gearyaddons = "0.7.45"
-looty = "0.8.67"
-guiy="0.7.25"
-deeperworld="0.6.82"
-chatty="0.3.53"
-mobzy="0.18.84"
-protocolburrito = "0.5.37"
+geary = "0.20.114"
+gearyaddons = "0.7.46"
+looty = "0.8.69"
+guiy = "0.7.26"
+deeperworld = "0.6.84"
+chatty = "0.3.58"
+mobzy = "0.19.85"
+protocolburrito = "0.5.38"
 
 
 [libraries]

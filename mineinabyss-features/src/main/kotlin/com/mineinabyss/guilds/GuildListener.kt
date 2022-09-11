@@ -7,7 +7,7 @@ import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
-import com.mineinabyss.guilds.database.GuildRanks
+import com.mineinabyss.guilds.database.GuildRank
 import com.mineinabyss.guilds.extensions.getGuildChatId
 import com.mineinabyss.guilds.extensions.getGuildName
 import com.mineinabyss.guilds.extensions.getGuildRank
@@ -96,6 +96,6 @@ class GuildContainerSystem : GroupSystem() {
         val guild = player.hasGuild()
         if (!guild) return false
 
-        return player.getGuildRank() == GuildRanks.Owner
+        return player.getGuildRank() == GuildRank.OWNER
     }
 }
