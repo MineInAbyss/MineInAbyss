@@ -49,13 +49,13 @@ class CurseAscensionListener : Listener {
     @EventHandler
     fun EntityMoveEvent.onRidableModelEngineAscend() {
         if (!isPluginEnabled("ModelEngine") || !isPluginEnabled("Mobzy")) return
-        val mount = entity.toModelEntity()?.mountHandler ?: return
+        val mount = entity.toModelEntity()?.mountManager ?: return
         if (entity.toGearyOrNull() == null) return
 
-        if (mount.hasDriver() && mount.driver is Player)
+        if (mount.driver != null && mount.driver is Player)
             handleCurse((mount.driver as Player), from, to)
-        mount.passengers["mount"]?.passengers?.filterIsInstance<Player>()?.forEach {
-            handleCurse(it, from, to)
+        mount.passengers.keys.filterIsInstance<Player>().forEach { passenger ->
+            handleCurse(passenger, from, to)
         }
     }
 
