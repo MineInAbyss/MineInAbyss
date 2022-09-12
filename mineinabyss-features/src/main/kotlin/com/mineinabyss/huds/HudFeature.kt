@@ -15,7 +15,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("happyhud")
+@SerialName("custom_hud")
 class HudFeature(
     val healthElement: String = "health",
     val foodElement: String = "food",

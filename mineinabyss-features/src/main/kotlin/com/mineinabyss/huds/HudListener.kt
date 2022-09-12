@@ -12,6 +12,7 @@ import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.happyHUD
 import com.mineinabyss.helpers.toggleHud
+import com.mineinabyss.helpers.toggleHuds
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.layer
@@ -40,8 +41,8 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun PlayerJoinEvent.onJoin() {
         when (player.gameMode) {
-            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHud(happyHUD.layouts().default.key, false)
-            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHud(happyHUD.layouts().default.key, true)
+            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHud(happyHUD.layouts().defaults.first().key, false)
+            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHud(happyHUD.layouts().defaults.first().key, true)
         }
 
         // Toggle armor and air if they are set to always show
@@ -75,12 +76,12 @@ class HudListener(private val feature: HudFeature) : Listener {
 
         layerLayouts.forEach { toggleHud(it, false) } //Clear Layer Hud
         when {
-            toName.startsWith("orth") -> layerLayouts.removeAll { it != feature.orthLayout }
-            toName.startsWith("edge") -> layerLayouts.removeAll { it != feature.edgeLayout }
-            toName.startsWith("forest") -> layerLayouts.removeAll { it != feature.forestLayout }
-            toName.startsWith("great") -> layerLayouts.removeAll { it != feature.greatFaultLayout }
-            toName.startsWith("goblets") -> layerLayouts.removeAll { it != feature.gobletsLayout }
-            toName.startsWith("sea") -> layerLayouts.removeAll { it != feature.seaLayout }
+            "orth" in toName -> layerLayouts.removeAll { it != feature.orthLayout }
+            "edge" in toName -> layerLayouts.removeAll { it != feature.edgeLayout }
+            "forest" in toName -> layerLayouts.removeAll { it != feature.forestLayout }
+            "great" in toName -> layerLayouts.removeAll { it != feature.greatFaultLayout }
+            "goblets" in toName -> layerLayouts.removeAll { it != feature.gobletsLayout }
+            "sea" in toName -> layerLayouts.removeAll { it != feature.seaLayout }
         }
         toggleHud(layerLayouts.firstOrNull() ?: return, true)
     }
@@ -89,8 +90,8 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun PlayerGameModeChangeEvent.onChangeGameMode() {
         when (newGameMode) {
-            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHud(happyHUD.layouts().default.key, false)
-            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHud(happyHUD.layouts().default.key, true)
+            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, false)
+            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, true)
         }
     }
 

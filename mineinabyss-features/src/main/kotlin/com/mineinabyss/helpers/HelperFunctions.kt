@@ -30,12 +30,12 @@ val luckPerms = LuckPermsProvider.get()
 fun Player.getLayerWhistleForHud() : String {
     val layer = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
     return when {
-        layer.startsWith("orth") -> "\uEBAF"
-        layer.startsWith("edge") -> "\uEBB0"
-        layer.startsWith("forest") -> "\uEBB1"
-        layer.startsWith("great") -> "\uEBB2"
-        layer.startsWith("goblet") -> "\uEBB2"
-        layer.startsWith("sea") -> "\uEBB3"
+        "orth" in layer -> "\uEBAF"
+        "edge" in layer -> "\uEBB0"
+        "forest" in layer -> "\uEBB1"
+        "great" in layer -> "\uEBB2"
+        "goblets" in layer -> "\uEBB2"
+        "sea" in layer -> "\uEBB3"
         else -> ""
     }
 }
