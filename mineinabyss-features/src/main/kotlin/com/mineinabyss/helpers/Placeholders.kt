@@ -5,6 +5,8 @@ import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.relics.depthmeter.getDepth
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import org.bukkit.attribute.Attribute
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import kotlin.math.atan2
 import kotlin.math.roundToInt
@@ -33,19 +35,25 @@ class Placeholders : PlaceholderExpansion() {
     }
 
     private fun Player.mineinabyssPlaceholders() : Map<String, String> {
+        val mount = (player?.vehicle as? LivingEntity)
         return mapOf(
             "orthbanking_coins" to playerData.orthCoinsHeld.toString(),
             "orthbanking_tokens" to playerData.mittyTokensHeld.toString(),
+
             "layer" to (location.layer?.name ?: "").toString(),
             "whistle" to getLayerWhistleForHud(),
             "section" to (location.section?.name ?: "Unmanaged Section").toString(),
             "depth" to getDepth().toString(),
             "starcompass" to getCompassAngleUnicode(),
+
             "temperature" to location.block.temperature.times(10).roundToInt().toString(),
             "humidity" to location.block.humidity.times(10).roundToInt().toString(),
             "time" to world.time.toString(),
             "fulltime" to world.fullTime.toString(),
-            //"point_of_interest" to location.getPointOfInterest().toString(),
+
+            "mount_health" to mount?.health.toString(),
+            "mount_health_rounded" to mount?.health?.roundToInt().toString(),
+            "mount_health_max" to mount?.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value.toString()
         )
     }
 

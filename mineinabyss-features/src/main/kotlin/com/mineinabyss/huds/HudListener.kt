@@ -41,8 +41,8 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun PlayerJoinEvent.onJoin() {
         when (player.gameMode) {
-            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHud(happyHUD.layouts().defaults.first().key, false)
-            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHud(happyHUD.layouts().defaults.first().key, true)
+            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, false)
+            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, true)
         }
 
         // Toggle armor and air if they are set to always show
