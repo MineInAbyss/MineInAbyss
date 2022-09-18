@@ -4,6 +4,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.relics.depthmeter.getDepth
+import com.ticxo.modelengine.api.ModelEngineAPI
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
@@ -34,8 +35,9 @@ class Placeholders : PlaceholderExpansion() {
         return identifier
     }
 
-    private fun Player.mineinabyssPlaceholders() : Map<String, String> {
-        val mount = (player?.vehicle as? LivingEntity)
+    private fun Player.mineinabyssPlaceholders(): Map<String, String> {
+        val mount = vehicle as? LivingEntity ?: (ModelEngineAPI.getMountManager()
+            ?.getMountedPair(uniqueId)?.base?.uniqueId?.let { world.getEntity(it) } as? LivingEntity)
         return mapOf(
             "orthbanking_coins" to playerData.orthCoinsHeld.toString(),
             "orthbanking_tokens" to playerData.mittyTokensHeld.toString(),
@@ -57,7 +59,7 @@ class Placeholders : PlaceholderExpansion() {
         )
     }
 
-    private fun Player.getCompassAngleUnicode() : String {
+    private fun Player.getCompassAngleUnicode(): String {
         val loc = location.section?.getSectionCenter() ?: return ""
         if (world != loc.world) return ""
 

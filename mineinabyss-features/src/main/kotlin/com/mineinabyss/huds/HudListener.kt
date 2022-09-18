@@ -17,6 +17,8 @@ import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.ticxo.modelengine.api.events.ModelDismountEvent
+import com.ticxo.modelengine.api.events.ModelMountEvent
 import dev.geco.gsit.api.event.EntitySitEvent
 import io.papermc.paper.event.entity.EntityInsideBlockEvent
 import kotlinx.coroutines.delay
@@ -90,8 +92,15 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun PlayerGameModeChangeEvent.onChangeGameMode() {
         when (newGameMode) {
-            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, false)
-            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, true)
+            GameMode.CREATIVE, GameMode.SPECTATOR -> {
+                player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, false)
+                player.toggleHud(feature.armorLayout, false)
+            }
+            GameMode.SURVIVAL, GameMode.ADVENTURE -> {
+                player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, true)
+                if (player.displayArmorHud())
+                    player.toggleHud(feature.armorLayout, true)
+            }
         }
     }
 
@@ -107,14 +116,29 @@ class HudListener(private val feature: HudFeature) : Listener {
     fun PlayerUpdateAttributeEvent.onArmorChange() {
         if (attribute != Attribute.GENERIC_ARMOR) return
         if (player.toGeary().has<AlwaysShowArmorHud>()) return
-        player.toggleHud(feature.armorLayout, (player.inventory.armorContents?.firstNotNullOfOrNull { it } != null))
+        player.toggleHud(feature.armorLayout, (player.displayArmorHud()))
+    }
+
+    private fun Player.displayArmorHud() : Boolean {
+        val attribute = getAttribute(Attribute.GENERIC_ARMOR) ?: return false
+        return attribute.value > attribute.baseValue && isValidGamemode()
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun ModelMountEvent.onMountModelEngine() {
+        (passenger as? Player)?.toggleHud(feature.mountedLayout, true)
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun ModelDismountEvent.onDismountModelEngine() {
+        (passenger as? Player)?.toggleHud(feature.mountedLayout, false)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityMountEvent.onMount() {
         val player = entity as? Player ?: return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
-        player.toggleHud(feature.mountedLayout, player.isValidGamemode())
+        player.toggleHud(feature.mountedLayout, true)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
