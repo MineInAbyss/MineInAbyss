@@ -36,8 +36,8 @@ class Placeholders : PlaceholderExpansion() {
     }
 
     private fun Player.mineinabyssPlaceholders(): Map<String, String> {
-        val mount = vehicle as? LivingEntity ?: (ModelEngineAPI.getMountManager()
-            ?.getMountedPair(uniqueId)?.base?.uniqueId?.let { world.getEntity(it) } as? LivingEntity)
+        val mount = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
+
         return mapOf(
             "orthbanking_coins" to playerData.orthCoinsHeld.toString(),
             "orthbanking_tokens" to playerData.mittyTokensHeld.toString(),
