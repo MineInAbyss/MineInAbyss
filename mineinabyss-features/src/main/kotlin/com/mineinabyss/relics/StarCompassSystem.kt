@@ -10,13 +10,11 @@ import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
@@ -28,7 +26,7 @@ import org.bukkit.inventory.meta.CompassMeta
 @SerialName("mineinabyss:toggle_starcompass_hud")
 class ToggleDepthHud
 
-class ToggleStarCompassHudSystem : GearyListener() {
+class ToggleStarCompassHudSystem(private val feature: RelicsFeature) : GearyListener() {
     private val TargetScope.player by get<Player>()
     private val SourceScope.starCompass by get<StarCompass>()
     private val EventScope.hasStarCompass by family { has<ToggleDepthHud>() }
@@ -36,30 +34,24 @@ class ToggleStarCompassHudSystem : GearyListener() {
     @Handler
     fun TargetScope.toggleDepth(source: SourceScope) {
         val item = player.inventory.itemInMainHand
-        if (player.toGeary().has<ShowStarCompassHud>()) {
-            item.type = Material.COMPASS
-            item.editItemMeta {
-                this as CompassMeta
-                lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.centerLocation
-                isLodestoneTracked = false
-                itemFlags.add(ItemFlag.HIDE_ENCHANTS)
+        player.toGeary {
+            if (has<ShowStarCompassHud>()) {
+                item.type = Material.COMPASS
+                item.editItemMeta {
+                    this as CompassMeta
+                    lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.centerLocation
+                    isLodestoneTracked = false
+                    itemFlags.add(ItemFlag.HIDE_ENCHANTS)
+                }
+                remove<ShowStarCompassHud>()
             }
-            player.toGeary().remove<ShowStarCompassHud>()
+            else {
+                item.type = Material.PAPER
+                item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+                setPersisting(ShowStarCompassHud(player.location.section))
+            }
+            player.changeHudState(feature.starcompassHudId, has<ShowStarCompassHud>())
         }
-        else {
-            item.type = Material.PAPER
-            item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
-            player.toGeary().setPersisting(ShowStarCompassHud(player.location.section))
-        }
-    }
-}
-
-class StarCompassSystem(private val feature: RelicsFeature) : RepeatingSystem(interval = 2.ticks) {
-    private val TargetScope.starCompass by get<StarCompass>()
-
-    override fun TargetScope.tick() {
-        val player = entity.parent?.get<Player>() ?: return
-        player.changeHudState(feature.starcompassHudId, player.toGeary().has<ShowStarCompassHud>())
     }
 }
 

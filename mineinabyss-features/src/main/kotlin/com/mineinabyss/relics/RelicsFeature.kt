@@ -28,8 +28,7 @@ class RelicsFeature(
                 ToggleDepthHudSystem(),
                 DepthHudSystem(this@RelicsFeature),
                 RemoveDepthMeterHud(this@RelicsFeature),
-                ToggleStarCompassHudSystem(),
-                StarCompassSystem(this@RelicsFeature),
+                ToggleStarCompassHudSystem(this@RelicsFeature),
                 RemoveStarCompassBar(this@RelicsFeature),
                 HarvestListener()
             )
