@@ -5,4 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("mineinabyss:always_show_air_hud")
-class AlwaysShowAirHud
+sealed class AlwaysShowAirHud

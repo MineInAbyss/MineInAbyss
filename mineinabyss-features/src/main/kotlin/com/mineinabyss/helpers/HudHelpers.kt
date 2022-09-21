@@ -10,13 +10,13 @@ val happyHUD: HappyHUD by lazy { Bukkit.getPluginManager().getPlugin("HappyHUD")
 val Player.hudHolder: HudHolder get() = HudHolder.get(this)
 val Player.isHudHolder: Boolean get() = HudHolder.has(this)
 
-fun Player.toggleHuds(layoutIds: List<String>, toggle: Boolean) = layoutIds.forEach { toggleHud(it, toggle) }
+fun Player.changeHudStates(layoutIds: List<String>, state: Boolean) = layoutIds.forEach { changeHudState(it, state) }
 
-fun Player.toggleHud(layoutId: String, toggle: Boolean) {
+fun Player.changeHudState(layoutId: String, state: Boolean) {
     if (!isPluginEnabled("HappyHUD") || !this.isHudHolder) return
     val layout = happyHUD.layouts().get(layoutId) ?: return
 
-    if (toggle) hudHolder.addLayout(layout)
+    if (state) hudHolder.addLayout(layout)
     else hudHolder.removeLayout(layout)
     hudHolder.updateAll()
     hudHolder.send()

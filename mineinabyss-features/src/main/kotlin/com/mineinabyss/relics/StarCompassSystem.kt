@@ -2,6 +2,7 @@ package com.mineinabyss.relics
 
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.components.relics.StarCompass
+import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.components.events.EntityRemoved
@@ -13,8 +14,7 @@ import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.helpers.getSectionCenter
-import com.mineinabyss.helpers.toggleHud
+import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
@@ -40,7 +40,7 @@ class ToggleStarCompassHudSystem : GearyListener() {
             item.type = Material.COMPASS
             item.editItemMeta {
                 this as CompassMeta
-                lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.getSectionCenter()
+                lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.centerLocation
                 isLodestoneTracked = false
                 itemFlags.add(ItemFlag.HIDE_ENCHANTS)
             }
@@ -59,7 +59,7 @@ class StarCompassSystem(private val feature: RelicsFeature) : RepeatingSystem(in
 
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
-        player.toggleHud(feature.starcompassHudId, player.toGeary().has<ShowStarCompassHud>())
+        player.changeHudState(feature.starcompassHudId, player.toGeary().has<ShowStarCompassHud>())
     }
 }
 
@@ -72,7 +72,7 @@ class RemoveStarCompassBar(private val feature: RelicsFeature) : GearyListener()
         val parent = entity.parent ?: return
         val player = parent.get<Player>() ?: return
 
-        player.toggleHud(feature.starcompassHudId, false)
+        player.changeHudState(feature.starcompassHudId, false)
         parent.remove<ShowStarCompassHud>()
     }
 }

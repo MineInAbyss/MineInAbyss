@@ -3,7 +3,7 @@ package com.mineinabyss.huds
 import com.mineinabyss.components.huds.AlwaysShowAirHud
 import com.mineinabyss.components.huds.AlwaysShowArmorHud
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.helpers.toggleHud
+import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.isPluginEnabled
@@ -43,7 +43,6 @@ class HudFeature(
     override fun MineInAbyssPlugin.enableFeature() {
         if (!isPluginEnabled("HappyHUD")) {
             logger.warning("HappyHUD is not enabled. HappyHud will not work.")
-            disableFeature()
             return
         }
 
@@ -58,8 +57,8 @@ class HudFeature(
                                 player.toGeary {
                                     if (has<AlwaysShowAirHud>())
                                         remove<AlwaysShowAirHud>()
-                                    else set(AlwaysShowAirHud())
-                                    player.toggleHud(airLayout, has<AlwaysShowAirHud>())
+                                    else add<AlwaysShowAirHud>()
+                                    player.changeHudState(airLayout, has<AlwaysShowAirHud>())
                                     player.success("Air Bar was toggled ${if (has<AlwaysShowAirHud>()) "on" else "off"}")
                                 }
                             }
@@ -71,8 +70,8 @@ class HudFeature(
                                 player.toGeary {
                                     if (has<AlwaysShowArmorHud>())
                                         remove<AlwaysShowArmorHud>()
-                                    else setPersisting(AlwaysShowArmorHud())
-                                    player.toggleHud(armorLayout, has<AlwaysShowArmorHud>())
+                                    else add<AlwaysShowArmorHud>()
+                                    player.changeHudState(armorLayout, has<AlwaysShowArmorHud>())
                                     player.success("Armor Bar was toggled ${if (has<AlwaysShowArmorHud>()) "on" else "off"}")
                                 }
                             }

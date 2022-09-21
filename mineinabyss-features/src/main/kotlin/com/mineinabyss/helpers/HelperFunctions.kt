@@ -1,19 +1,20 @@
 package com.mineinabyss.helpers
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
+import com.ticxo.modelengine.api.ModelEngineAPI
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -72,13 +73,8 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Section.getSectionCenter() : Location {
-    val center = region.center
-    return Location(world, center.x.toDouble(), 0.0, center.z.toDouble())
-}
-
-fun createOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
-fun createMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
+val Player.mount: LivingEntity?
+    get() = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
 
 fun Player.getLinkedDiscordAccount(): String? {
     return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull()
@@ -87,5 +83,10 @@ fun Player.getLinkedDiscordAccount(): String? {
 fun Player.getGroups(): List<String> {
     return luckPerms.userManager.getUser(player?.uniqueId!!)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
+}
+
+class CreationFunctions {
+    fun newOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
+    fun newMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 

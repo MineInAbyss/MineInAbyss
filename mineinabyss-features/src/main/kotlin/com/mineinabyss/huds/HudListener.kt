@@ -3,18 +3,17 @@ package com.mineinabyss.huds
 import com.ehhthan.happyhud.api.event.PlayerUpdateAttributeEvent
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.chatty.helpers.toPlainText
 import com.mineinabyss.components.huds.AlwaysShowAirHud
 import com.mineinabyss.components.huds.AlwaysShowArmorHud
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.helpers.changeHudState
+import com.mineinabyss.helpers.changeHudStates
 import com.mineinabyss.helpers.happyHUD
-import com.mineinabyss.helpers.toggleHud
-import com.mineinabyss.helpers.toggleHuds
-import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.time.ticks
+import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.ticxo.modelengine.api.events.ModelDismountEvent
@@ -43,14 +42,14 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun PlayerJoinEvent.onJoin() {
         when (player.gameMode) {
-            GameMode.CREATIVE, GameMode.SPECTATOR -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, false)
-            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, true)
+            GameMode.CREATIVE, GameMode.SPECTATOR -> player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, false)
+            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
         }
 
         // Toggle armor and air if they are set to always show
         // TODO Make these components persist on players
-        player.toggleHud(feature.airLayout, player.toGeary().has<AlwaysShowAirHud>())
-        player.toggleHud(feature.armorLayout, player.toGeary().has<AlwaysShowArmorHud>())
+        player.changeHudState(feature.airLayout, player.toGeary().has<AlwaysShowAirHud>())
+        player.changeHudState(feature.armorLayout, player.toGeary().has<AlwaysShowArmorHud>())
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -63,29 +62,21 @@ class HudListener(private val feature: HudFeature) : Listener {
         player.handleLayerHud(fromSection, toSection)
     }
 
+    private val layerLayouts = listOf(
+        feature.orthLayout,
+        feature.edgeLayout,
+        feature.forestLayout,
+        feature.greatFaultLayout,
+        feature.gobletsLayout,
+        feature.seaLayout
+    )
+
     // Handle displaying the layer name in the hud
     private fun Player.handleLayerHud(fromSection: Section, toSection: Section) {
         if (fromSection.layer == toSection.layer) return
-        val toName = toSection.layer?.name?.lowercase()?.miniMsg()?.toPlainText() ?: return
-        val layerLayouts = mutableListOf(
-            feature.orthLayout,
-            feature.edgeLayout,
-            feature.forestLayout,
-            feature.greatFaultLayout,
-            feature.gobletsLayout,
-            feature.seaLayout
-        )
-
-        layerLayouts.forEach { toggleHud(it, false) } //Clear Layer Hud
-        when {
-            "orth" in toName -> layerLayouts.removeAll { it != feature.orthLayout }
-            "edge" in toName -> layerLayouts.removeAll { it != feature.edgeLayout }
-            "forest" in toName -> layerLayouts.removeAll { it != feature.forestLayout }
-            "great" in toName -> layerLayouts.removeAll { it != feature.greatFaultLayout }
-            "goblets" in toName -> layerLayouts.removeAll { it != feature.gobletsLayout }
-            "sea" in toName -> layerLayouts.removeAll { it != feature.seaLayout }
-        }
-        toggleHud(layerLayouts.firstOrNull() ?: return, true)
+        changeHudStates(layerLayouts, false) //Clear Layer Hud
+        val layout = MIAConfig.data.layers.firstOrNull { it == toSection.layer }?.name ?: return
+        changeHudState(layout, true)
     }
 
     // Remove all default meters when in creative or spectator
@@ -93,13 +84,13 @@ class HudListener(private val feature: HudFeature) : Listener {
     fun PlayerGameModeChangeEvent.onChangeGameMode() {
         when (newGameMode) {
             GameMode.CREATIVE, GameMode.SPECTATOR -> {
-                player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, false)
-                player.toggleHud(feature.armorLayout, false)
+                player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, false)
+                player.changeHudState(feature.armorLayout, false)
             }
             GameMode.SURVIVAL, GameMode.ADVENTURE -> {
-                player.toggleHuds(happyHUD.layouts().defaults.map { it.key }, true)
+                player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
                 if (player.displayArmorHud())
-                    player.toggleHud(feature.armorLayout, true)
+                    player.changeHudState(feature.armorLayout, true)
             }
         }
     }
@@ -109,14 +100,14 @@ class HudListener(private val feature: HudFeature) : Listener {
         val player = entity as? Player ?: return
         if (player.toGeary().has<AlwaysShowAirHud>()) return
         // Because it is ticks, offset it abit to register when it is max
-        player.toggleHud(feature.airLayout, player.remainingAir < player.maximumAir - 4)
+        player.changeHudState(feature.airLayout, player.remainingAir < player.maximumAir - 4)
     }
 
     @EventHandler
     fun PlayerUpdateAttributeEvent.onArmorChange() {
         if (attribute != Attribute.GENERIC_ARMOR) return
         if (player.toGeary().has<AlwaysShowArmorHud>()) return
-        player.toggleHud(feature.armorLayout, (player.displayArmorHud()))
+        player.changeHudState(feature.armorLayout, (player.displayArmorHud()))
     }
 
     private fun Player.displayArmorHud() : Boolean {
@@ -126,31 +117,31 @@ class HudListener(private val feature: HudFeature) : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun ModelMountEvent.onMountModelEngine() {
-        (passenger as? Player)?.toggleHud(feature.mountedLayout, true)
+        (passenger as? Player)?.changeHudState(feature.mountedLayout, true)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun ModelDismountEvent.onDismountModelEngine() {
-        (passenger as? Player)?.toggleHud(feature.mountedLayout, false)
+        (passenger as? Player)?.changeHudState(feature.mountedLayout, false)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityMountEvent.onMount() {
         val player = entity as? Player ?: return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
-        player.toggleHud(feature.mountedLayout, true)
+        player.changeHudState(feature.mountedLayout, true)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityDismountEvent.onDismount() {
-        (entity as? Player)?.toggleHud(feature.mountedLayout, false)
+        (entity as? Player)?.changeHudState(feature.mountedLayout, false)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntitySitEvent.onSit() {
         val player = entity as? Player ?: return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
-        player.toggleHud(feature.mountedLayout, false)
+        player.changeHudState(feature.mountedLayout, false)
     }
 
     private val playerFrozenMap = mutableSetOf<Player>()
@@ -164,11 +155,11 @@ class HudListener(private val feature: HudFeature) : Listener {
 
         mineInAbyss.launch(mineInAbyss.asyncDispatcher) {
             playerFrozenMap += player
-            player.toggleHud(feature.freezingLayout, true)
+            player.changeHudState(feature.freezingLayout, true)
             do {
                 delay(4.ticks)
             } while (player.freezeTicks > 0)
-            player.toggleHud(feature.freezingLayout, false)
+            player.changeHudState(feature.freezingLayout, false)
             playerFrozenMap -= player
         }
     }
@@ -195,10 +186,10 @@ class HudListener(private val feature: HudFeature) : Listener {
     private fun Player.handleEffectOverlays(effect: PotionEffectType, toggle: Boolean) {
         if (!this.isValidGamemode()) return
         when (effect) {
-            PotionEffectType.ABSORPTION -> toggleHud(feature.absorptionLayout, toggle)
-            PotionEffectType.HUNGER ->  toggleHud(feature.hungerLayout, toggle)
-            PotionEffectType.WITHER -> toggleHud(feature.bleedingLayout, toggle)
-            PotionEffectType.POISON -> toggleHud(feature.poisonLayout, toggle)
+            PotionEffectType.ABSORPTION -> changeHudState(feature.absorptionLayout, toggle)
+            PotionEffectType.HUNGER ->  changeHudState(feature.hungerLayout, toggle)
+            PotionEffectType.WITHER -> changeHudState(feature.bleedingLayout, toggle)
+            PotionEffectType.POISON -> changeHudState(feature.poisonLayout, toggle)
         }
     }
 

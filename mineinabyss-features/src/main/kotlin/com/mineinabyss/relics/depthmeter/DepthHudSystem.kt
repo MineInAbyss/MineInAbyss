@@ -12,7 +12,7 @@ import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.helpers.toggleHud
+import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.relics.RelicsFeature
@@ -53,10 +53,10 @@ class DepthHudSystem(private val feature: RelicsFeature) : RepeatingSystem(2.tic
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
 
-        if (player.isInHub()) player.toggleHud(feature.depthHudId, false)
-        else player.toggleHud(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
+        if (player.isInHub()) player.changeHudState(feature.depthHudId, false)
+        else player.changeHudState(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
 
-        player.toggleHud(feature.layerHudId, player.toGeary().has<ShowDepthMeterHud>())
+        player.changeHudState(feature.layerHudId, player.toGeary().has<ShowDepthMeterHud>())
     }
 }
 
@@ -67,7 +67,7 @@ class RemoveDepthMeterHud(private val feature: RelicsFeature) : GearyListener() 
     @Handler
     fun TargetScope.removeBar() {
         val player = entity.parent?.get<Player>() ?: return
-        player.toggleHud(feature.depthHudId, false)
-        player.toggleHud(feature.layerHudId, false)
+        player.changeHudState(feature.depthHudId, false)
+        player.changeHudState(feature.layerHudId, false)
     }
 }
