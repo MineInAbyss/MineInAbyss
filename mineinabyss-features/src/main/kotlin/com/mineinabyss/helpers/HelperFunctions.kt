@@ -77,7 +77,7 @@ val Player.mount: LivingEntity?
     get() = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
 
 fun Player.getLinkedDiscordAccount(): String? {
-    return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull()
+    return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull() ?: null
 }
 
 fun Player.getGroups(): List<String> {
@@ -85,7 +85,7 @@ fun Player.getGroups(): List<String> {
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
 
-class CreationFunctions {
+object BalanceFactory {
     fun newOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
     fun newMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
 }
