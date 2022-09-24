@@ -63,6 +63,9 @@ class Placeholders : PlaceholderExpansion() {
 
     // Don't alter this list unless you know what you're doing
     private val barUnicodeList = listOf(
+        "\uEBB7",
+        "\uEBB6",
+        "\uEBB5",
         "\uEBB4",
         "\uEBB3",
         "\uEBB2",
@@ -72,9 +75,6 @@ class Placeholders : PlaceholderExpansion() {
         "\uEBBE",
         "\uEBBD",
         "\uEBBC",
-        "\uEBB7",
-        "\uEBB6",
-        "\uEBB5",
         "\uEBBB",
         "\uEBBA",
         "\uEBB9",

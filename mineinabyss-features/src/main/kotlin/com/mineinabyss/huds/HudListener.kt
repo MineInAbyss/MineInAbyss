@@ -12,6 +12,7 @@ import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.helpers.changeHudStates
 import com.mineinabyss.helpers.happyHUD
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.layer
@@ -75,7 +76,8 @@ class HudListener(private val feature: HudFeature) : Listener {
     private fun Player.handleLayerHud(fromSection: Section, toSection: Section) {
         if (fromSection.layer == toSection.layer) return
         changeHudStates(layerLayouts, false) //Clear Layer Hud
-        val layout = MIAConfig.data.layers.firstOrNull { it == toSection.layer }?.name ?: return
+        val layout = MIAConfig.data.layers.firstOrNull { it == toSection.layer && it.name in layerLayouts }?.name ?: return
+        layout.broadcastVal("layout: ")
         changeHudState(layout, true)
     }
 
