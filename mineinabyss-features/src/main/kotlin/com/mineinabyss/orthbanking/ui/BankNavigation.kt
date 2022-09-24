@@ -9,7 +9,6 @@ import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.guiy.navigation.rememberNavigation
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.miniMsg
 import org.bukkit.entity.Player
@@ -25,10 +24,7 @@ fun GuiyOwner.BankMenu(player: Player) {
     val nav = rememberNavigation<BankScreen> { BankScreen.Default }
     nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
         Chest(setOf(player), screen.title, Modifier.height(screen.height),
-            onClose = {
-                player.updateBalance()
-                nav.back()
-            }) {
+            onClose = { nav.back() }) {
             when (screen) {
                 BankScreen.Default -> {
                     val data = player.playerData

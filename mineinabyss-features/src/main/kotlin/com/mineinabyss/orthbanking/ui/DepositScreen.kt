@@ -6,7 +6,6 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.orthbanking.depositCoins
 import org.bukkit.entity.Player
@@ -29,7 +28,6 @@ fun DepositScreen(player: Player) {
         Modifier.at(4, 2),
         onClick = {
             player.depositCoins(amount)
-            player.updateBalance()
             player.closeInventory()
         }
     ) {

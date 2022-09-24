@@ -9,6 +9,7 @@ import com.mineinabyss.guilds.database.GuildJoinQueue
 import com.mineinabyss.guilds.database.Guilds
 import com.mineinabyss.guilds.database.Players
 import com.mineinabyss.helpers.MessageQueue
+import com.mineinabyss.helpers.Placeholders
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.platforms.IdofrontPlatforms
@@ -91,5 +92,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             registerService<MIAConfig>(config)
             registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
         }
+
+        if (AbyssContext.isPlaceholderApiLoaded)
+            Placeholders().register()
     }
 }

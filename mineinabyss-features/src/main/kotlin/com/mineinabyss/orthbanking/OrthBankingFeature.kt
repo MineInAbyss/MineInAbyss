@@ -1,16 +1,18 @@
 package com.mineinabyss.orthbanking
 
+import com.mineinabyss.components.npc.orthbanking.MittyToken
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.helpers.updateBalance
+import com.mineinabyss.helpers.CoinFactory
+import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.commands.arguments.intArg
+import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
+import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -21,9 +23,11 @@ import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("orth_banking")
-class OrthBankingFeature : AbyssFeature {
+class OrthBankingFeature(
+    val balanceHudId: String = "balance"
+) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(OrthBankingListener())
+        registerEvents(OrthBankingListener(this@OrthBankingFeature))
 
         commands {
             mineinabyss {
@@ -32,9 +36,8 @@ class OrthBankingFeature : AbyssFeature {
                         ensureSenderIsPlayer()
                         action {
                             val player = sender as Player
-                            val data = player.playerData
-                            data.showPlayerBalance = !data.showPlayerBalance
-                            if (data.showPlayerBalance) player.updateBalance()
+                            player.playerData.showPlayerBalance = !player.playerData.showPlayerBalance
+                            (sender as Player).changeHudState(balanceHudId, player.playerData.showPlayerBalance)
                         }
                     }
                     "deposit"(desc = "Dev command until Guiy can take items") {
@@ -42,80 +45,92 @@ class OrthBankingFeature : AbyssFeature {
                         ensureSenderIsPlayer()
                         action {
                             val player = sender as Player
-                            val data = player.playerData
                             val currItem = player.inventory.itemInMainHand
+                            val gearyItem = currItem.toGearyOrNull(player)
+                            val isOrthCoin = currItem.isSimilar(CoinFactory.newOrthCoin())
+                            val currency =
+                                if (isOrthCoin) "coins" else "tokens"
 
                             if (!player.isInHub()) {
                                 player.error("You must be in Orth to make a deposit.")
                                 return@action
                             }
-                            if (currItem.toGearyOrNull(player)?.has<OrthCoin>() != true) {
-                                player.error("You must be holding an Orth Coin to deposit.")
-                                return@action
-                            }
 
-                            if (amount > player.inventory.itemInMainHand.amount) {
-                                player.error("You don't have that many coins.")
+                            if (gearyItem?.has<OrthCoin>() != true && gearyItem?.has<MittyToken>() != true) {
+                                player.error("You must be holding an Orth Coin or a Mitty Token to deposit.")
                                 return@action
                             }
 
                             if (amount <= 0) {
-                                player.error("You can't deposit 0 coins.")
+                                player.error("You can't deposit 0 $currency.")
+                                return@action
+                            }
+
+                            if (amount > currItem.amount) {
+                                player.error("You don't have that many $currency.")
                                 return@action
                             }
 
                             currItem.subtract(amount)
-                            data.orthCoinsHeld += amount
-                            if (data.showPlayerBalance) player.updateBalance()
+                            if (isOrthCoin) player.playerData.orthCoinsHeld += amount
+                            else player.playerData.mittyTokensHeld += amount
                         }
                     }
                     "withdraw"(desc = "Dev command until Guiy can take items") {
+                        val type by optionArg(listOf("orthcoin", "mittytoken")) { default = "orthcoin" }
                         var amount by intArg { default = 1 }
-                        ensureSenderIsPlayer()
-                        action {
-                            val player = sender as Player
-                            val data = player.playerData
+                        playerAction {
+                            val player = sender as? Player ?: return@playerAction
                             val slot = player.inventory.firstEmpty()
+                            val isOrthCoin = type == "orthcoin"
+                            val item = (if (isOrthCoin) CoinFactory.newOrthCoin() else CoinFactory.newMittyToken())
+                            val currency =
+                                if (isOrthCoin) "coins" else if (type != "mitytoken") "tokens" else return@playerAction
+                            val heldAmount =
+                                if (isOrthCoin) player.playerData.orthCoinsHeld else player.playerData.mittyTokensHeld
 
-                            if (!player.isInHub()) return@action
-                            if (amount <= 0) {
-                                player.error("You can't withdraw 0 or less coins!")
-                                return@action
+                            if (!player.isInHub()) {
+                                player.error("You must be in Orth to make a withdraw.")
+                                return@playerAction
                             }
 
-                            if (amount > data.orthCoinsHeld) {
-                                player.error("You don't have that many coins.")
-                                return@action
+                            if (amount <= 0) {
+                                player.error("You can't withdraw 0 or less $currency!")
+                                return@playerAction
+                            }
+
+                            if (amount > heldAmount) {
+                                player.error("You don't have that many $currency.")
+                                return@playerAction
                             }
 
                             if (amount > 64) amount = 64
+
                             if (slot == -1) {
-                                player.error("You do not have enough space in your inventory to withdraw the coins.")
-                                return@action
-                            }
-                            val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
-                            if (orthCoin == null) {
-                                player.error("Failed to create Orth Coin.")
-                                return@action
+                                player.error("You do not have enough space in your inventory to withdraw the $currency.")
+                                return@playerAction
                             }
 
-                            if (data.orthCoinsHeld > 0) data.orthCoinsHeld -= amount
-                            if (data.showPlayerBalance) player.updateBalance()
-                            player.inventory.addItem(orthCoin.asQuantity(amount))
-                            player.success("You withdrew $amount Orth Coins from your balance.")
+                            if (item == null) {
+                                player.error("Failed to create $currency.")
+                                return@playerAction
+                            }
+
+                            if (isOrthCoin) player.playerData.orthCoinsHeld -= amount
+                            else player.playerData.mittyTokensHeld -= amount
+
+                            player.inventory.addItem(item.asQuantity(amount))
+                            player.success("You withdrew $amount $currency from your balance.")
                         }
                     }
                 }
             }
             tabCompletion {
                 when (args.size) {
-                    1 -> listOf(
-                        "bank"
-                    ).filter { it.startsWith(args[0]) }
-
+                    1 -> listOf("bank").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "bank" -> listOf("withdraw", "deposit", "balance")
+                            "bank" -> listOf("withdraw", "deposit", "balance").filter { it.startsWith(args[1]) }
                             else -> null
                         }
                     }

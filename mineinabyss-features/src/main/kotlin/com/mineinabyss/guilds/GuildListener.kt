@@ -38,25 +38,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class GuildListener(private val feature: GuildFeature) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun AsyncChatEvent.onGuildChat() {
-        val channelId = player.chattyData.channelId
 
-        if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chattyConfig.channels.keys) {
-            player.chattyData.channelId = getDefaultChat().key
-            return
-        }
-        if (player.chattyData.channelId != player.getGuildChatId()) return
-
-        viewers().clear()
-        viewers().addAll(Bukkit.getOnlinePlayers().filter {
-            it.getGuildName() == player.getGuildName() && it != player
-        })
-        viewers().forEach {
-            RendererExtension().render(player, player.displayName(), message(), it)
-        }
-        viewers().clear()
-    }
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
@@ -74,11 +56,6 @@ class GuildListener(private val feature: GuildFeature) : Listener {
                 }
                 MessageQueue.deleteWhere { MessageQueue.playerUUID eq player.uniqueId }
             }
-            if (!player.hasGuild() && player.chattyData.channelId.endsWith(guildChannelId)) {
-                player.chattyData.channelId = getDefaultChat().key
-            }
-            if (player.hasGuild() && player.chattyData.channelId.endsWith(guildChannelId))
-                player.chattyData.channelId = player.getGuildChatId()
         }
     }
 }
@@ -95,5 +72,37 @@ class GuildContainerSystem : GroupSystem() {
         if (!guild) return false
 
         return player.getGuildRank() == GuildRank.OWNER
+    }
+}
+
+class ChattyGuildListener : Listener {
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun AsyncChatEvent.onGuildChat() {
+        val channelId = player.chattyData.channelId
+
+        if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chattyConfig.channels.keys) {
+            player.chattyData.channelId = getDefaultChat().key
+            return
+        }
+        if (player.chattyData.channelId != player.getGuildChatId()) return
+
+        viewers().clear()
+        viewers().addAll(Bukkit.getOnlinePlayers().filter {
+            it.getGuildName() == player.getGuildName() && it != player
+        })
+
+        if (!chattyConfig.chat.enableChatSigning) {
+            viewers().forEach { a -> RendererExtension().render(player, player.displayName(), message(), a) }
+            viewers().clear()
+        }
+    }
+
+    @EventHandler
+    fun PlayerJoinEvent.onJoin() {
+        if (player.chattyData.channelId.endsWith(guildChannelId)) {
+            player.chattyData.channelId =
+                player.getGuildChatId().takeIf { it.isNotBlank() } ?: getDefaultChat().key
+        }
     }
 }

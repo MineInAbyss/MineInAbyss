@@ -19,6 +19,7 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -62,6 +63,7 @@ class GuildFeature(
             getAllGuilds().forEach {
                 chattyConfig.channels.putIfAbsent("${it.first} $guildChannelId", this@GuildFeature.guildChattyChannel)
             }
+            registerEvents(ChattyGuildListener())
         }
 
         commands {
@@ -110,6 +112,11 @@ class GuildFeature(
                     "chat"(desc = "Toggle guild chat") {
                         playerAction {
                             val player = sender as? Player ?: return@playerAction
+
+                            if (!AbyssContext.isChattyLoaded) {
+                                player.error("Chatty is not loaded.")
+                                return@playerAction
+                            }
 
                             if (player.hasGuild()) {
                                 val name = player.getGuildName()
@@ -296,7 +303,6 @@ class GuildFeature(
                             else -> null
                         }
                     }
-
                     else -> null
                 }
             }

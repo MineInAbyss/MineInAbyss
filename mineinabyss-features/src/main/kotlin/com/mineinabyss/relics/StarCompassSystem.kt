@@ -1,60 +1,61 @@
 package com.mineinabyss.relics
 
-import com.mineinabyss.components.helpers.HideBossBarCompass
-import com.mineinabyss.components.helpers.PlayerCompassBar
+import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.components.relics.StarCompass
+import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.geary.annotations.AutoScan
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.components.events.EntityRemoved
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
+import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.helpers.bossbarCompass
+import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.items.editItemMeta
-import org.bukkit.Location
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.CompassMeta
-import kotlin.time.Duration.Companion.seconds
 
-class StarCompassSystem : RepeatingSystem(interval = 0.1.seconds) {
-    private val TargetScope.starCompass by get<StarCompass>()
-    private val TargetScope.item by get<ItemStack>()
+@Serializable
+@SerialName("mineinabyss:toggle_starcompass_hud")
+class ToggleDepthHud
 
-    override fun TargetScope.tick() {
-        val player = entity.parent?.get<Player>() ?: return
-        val playerBar = player.toGeary().getOrSetPersisting { PlayerCompassBar() }
-        val sectionCenter = player.location.section?.region?.center
+class ToggleStarCompassHudSystem(private val feature: RelicsFeature) : GearyListener() {
+    private val TargetScope.player by get<Player>()
+    private val SourceScope.starCompass by get<StarCompass>()
+    private val EventScope.hasStarCompass by family { has<ToggleDepthHud>() }
 
-        if (sectionCenter != null) starCompass.compassLocation =
-            Location(player.world, sectionCenter.x.toDouble(), 0.0, sectionCenter.z.toDouble())
-        else starCompass.compassLocation = null
-
-        // Let player toggle between having a bossbar-compass or item compass
-        if (player.toGeary().has<HideBossBarCompass>()) {
-            item.type = Material.COMPASS
-            item.editItemMeta {
-                this as CompassMeta
-                lodestone = starCompass.compassLocation
-                isLodestoneTracked = false
+    @Handler
+    fun TargetScope.toggleDepth(source: SourceScope) {
+        val item = player.inventory.itemInMainHand
+        player.toGeary {
+            if (has<ShowStarCompassHud>()) {
+                item.type = Material.COMPASS
+                item.editItemMeta {
+                    this as CompassMeta
+                    lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.centerLocation
+                    isLodestoneTracked = false
+                    itemFlags.add(ItemFlag.HIDE_ENCHANTS)
+                }
+                remove<ShowStarCompassHud>()
             }
-            player.hideBossBar(playerBar.compassBar)
-        } else {
-            item.type = Material.PAPER
-            player.bossbarCompass(starCompass.compassLocation, playerBar.compassBar)
+            else {
+                item.type = Material.PAPER
+                item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+                setPersisting(ShowStarCompassHud(player.location.section))
+            }
+            player.changeHudState(feature.starcompassHudId, has<ShowStarCompassHud>())
         }
     }
 }
 
-//TODO fix when component removal events get implemented
-@AutoScan
-class RemoveStarCompassBar : GearyListener() {
+class RemoveStarCompassBar(private val feature: RelicsFeature) : GearyListener() {
     private val TargetScope.starCompass by get<StarCompass>()
     private val EventScope.removed by family { has<EntityRemoved>() }
 
@@ -62,9 +63,8 @@ class RemoveStarCompassBar : GearyListener() {
     fun TargetScope.removeBar() {
         val parent = entity.parent ?: return
         val player = parent.get<Player>() ?: return
-        val playerBar = parent.get<PlayerCompassBar>() ?: return
 
-        player.hideBossBar(playerBar.compassBar)
-        parent.remove<PlayerCompassBar>()
+        player.changeHudState(feature.starcompassHudId, false)
+        parent.remove<ShowStarCompassHud>()
     }
 }

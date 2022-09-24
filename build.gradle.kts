@@ -19,6 +19,7 @@ allprojects {
         maven("https://mvn.lumine.io/repository/maven-public/") // MCCosmetics
         maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
         maven("https://jitpack.io")
     }
 
@@ -67,6 +68,8 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
         compileOnly(miaLibs.minecraft.plugin.discordsrv)
         compileOnly(miaLibs.minecraft.plugin.luckperms)
+        compileOnly(miaLibs.minecraft.plugin.placeholderapi)
+        compileOnly(miaLibs.minecraft.plugin.happyhud)
     }
 }
 
