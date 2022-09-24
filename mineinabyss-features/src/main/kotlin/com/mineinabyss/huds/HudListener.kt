@@ -102,6 +102,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler
     fun InventoryClickEvent.onSwap() {
         val player = whoClicked as? Player ?: return
+        if (slot != 40) return // Offhand slot
         when (player.inventory.itemInOffHand.type) {
             Material.AIR -> {
                 player.changeHudState(feature.balanceEmptyOffhandLayout, false)
