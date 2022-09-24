@@ -73,19 +73,22 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-val Player.mount: LivingEntity?
-    get() = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
-
 fun Player.getLinkedDiscordAccount(): String? {
-    return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(player?.uniqueId))?.name }.getOrNull() ?: null
+    return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name }.getOrNull() ?: null
 }
 
 fun Player.getGroups(): List<String> {
-    return luckPerms.userManager.getUser(player?.uniqueId!!)?.getNodes(NodeType.INHERITANCE)?.stream()
+    return luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 }
 
-object BalanceFactory {
+object MountUtils {
+    /** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*/
+    val Player.mount: LivingEntity?
+        get() = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
+}
+
+object CoinFactory {
     fun newOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
     fun newMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
 }

@@ -3,6 +3,7 @@ package com.mineinabyss.helpers
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.helpers.MountUtils.mount
 import com.mineinabyss.mineinabyss.core.layer
 import com.mineinabyss.relics.depthmeter.getDepth
 import me.clip.placeholderapi.expansion.PlaceholderExpansion

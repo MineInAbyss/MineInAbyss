@@ -2,7 +2,7 @@ package com.mineinabyss.patreons
 
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.helpers.BalanceFactory
+import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -26,7 +26,7 @@ import java.util.*
 @Serializable
 @SerialName("patreon")
 class PatreonFeature(
-    private val token: SerializableItemStack? = BalanceFactory.newMittyToken()?.toSerializable()
+    private val token: SerializableItemStack? = CoinFactory.newMittyToken()?.toSerializable()
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 

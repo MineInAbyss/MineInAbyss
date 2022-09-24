@@ -3,7 +3,7 @@ package com.mineinabyss.orthbanking
 import com.mineinabyss.components.npc.orthbanking.MittyToken
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
-import com.mineinabyss.helpers.BalanceFactory
+import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.commands.arguments.intArg
@@ -47,7 +47,7 @@ class OrthBankingFeature(
                             val player = sender as Player
                             val currItem = player.inventory.itemInMainHand
                             val gearyItem = currItem.toGearyOrNull(player)
-                            val isOrthCoin = currItem.isSimilar(BalanceFactory.newOrthCoin())
+                            val isOrthCoin = currItem.isSimilar(CoinFactory.newOrthCoin())
                             val currency =
                                 if (isOrthCoin) "coins" else "tokens"
 
@@ -83,7 +83,7 @@ class OrthBankingFeature(
                             val player = sender as? Player ?: return@playerAction
                             val slot = player.inventory.firstEmpty()
                             val isOrthCoin = type == "orthcoin"
-                            val item = (if (isOrthCoin) BalanceFactory.newOrthCoin() else BalanceFactory.newMittyToken())
+                            val item = (if (isOrthCoin) CoinFactory.newOrthCoin() else CoinFactory.newMittyToken())
                             val currency =
                                 if (isOrthCoin) "coins" else if (type != "mitytoken") "tokens" else return@playerAction
                             val heldAmount =
