@@ -32,8 +32,10 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityAirChangeEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.potion.PotionEffectType
 import org.spigotmc.event.entity.EntityDismountEvent
 import org.spigotmc.event.entity.EntityMountEvent
@@ -93,6 +95,35 @@ class HudListener(private val feature: HudFeature) : Listener {
                 player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
                 if (player.displayArmorHud())
                     player.changeHudState(feature.armorLayout, true)
+            }
+        }
+    }
+
+    @EventHandler
+    fun InventoryClickEvent.onSwap() {
+        val player = whoClicked as? Player ?: return
+        when (player.inventory.itemInOffHand.type) {
+            Material.AIR -> {
+                player.changeHudState(feature.balanceEmptyOffhandLayout, false)
+                player.changeHudState(feature.balanceOffhandLayout, true)
+            }
+            else -> {
+                player.changeHudState(feature.balanceOffhandLayout, false)
+                player.changeHudState(feature.balanceEmptyOffhandLayout, true)
+            }
+        }
+    }
+
+    @EventHandler
+    fun PlayerSwapHandItemsEvent.onSwap() {
+        when (player.inventory.itemInOffHand.type) {
+            Material.AIR -> {
+                player.changeHudState(feature.balanceEmptyOffhandLayout, false)
+                player.changeHudState(feature.balanceOffhandLayout, true)
+            }
+            else -> {
+                player.changeHudState(feature.balanceOffhandLayout, false)
+                player.changeHudState(feature.balanceEmptyOffhandLayout, true)
             }
         }
     }

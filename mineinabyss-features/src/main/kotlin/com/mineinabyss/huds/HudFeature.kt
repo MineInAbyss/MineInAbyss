@@ -31,6 +31,8 @@ class HudFeature(
     val freezingLayout: String = "freezing",
 
     val mountedLayout: String = "mounted",
+    val balanceEmptyOffhandLayout: String = "balance_empty_offhand",
+    val balanceOffhandLayout: String = "balance_offhand",
 
     val orthLayout: String = "orth",
     val edgeLayout: String = "edge_of_the_abyss",
