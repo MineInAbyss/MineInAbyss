@@ -9,8 +9,8 @@ import com.mineinabyss.geary.papermc.helpers.heldLootyItem
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.guilds.guildChannelId
+import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.MessageQueue
-import com.mineinabyss.helpers.createOrthCoin
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
@@ -329,7 +329,7 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
         return
     }
 
-    val orthCoin = createOrthCoin()
+    val orthCoin = CoinFactory.orthCoin
     if (orthCoin == null) {
         error("Could not create OrthCoin.")
         error("Cancelling withdrawal!")

@@ -4,9 +4,6 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.looty.LootyFactory
-import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
@@ -31,8 +28,9 @@ data class ItemDrop(
 val luckPerms = LuckPermsProvider.get()
 
 // Unicodes for whistles, also used for HappyHUD but through custom font file
-fun Player.getLayerWhistleForHud() : String {
-    val layer = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
+fun Player.getLayerWhistleForHud(): String {
+    val layer =
+        PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
     return when {
         "orth" in layer -> "\uEBAF"
         "edge" in layer -> "\uEBB0"
@@ -76,16 +74,15 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Player.getLinkedDiscordAccount(): String? {
-    return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name }.getOrNull() ?: null
-}
+val Player.linkedDiscordAccount
+    get() = runCatching {
+        discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
+    }.getOrNull()
 
-fun Player.getGroups(): List<String> {
-    return luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
+val Player.luckpermGroups
+    get() = luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
-}
 
-fun Player.getFirstSimilarItem(item: ItemStack?) = inventory.contents?.firstOrNull { i -> i?.isSimilar(item) ?: false }
 object MountUtils {
     /** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*/
     val Player.mount: LivingEntity?
@@ -93,7 +90,7 @@ object MountUtils {
 }
 
 object CoinFactory {
-    fun newOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
-    fun newMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
+    val orthCoin get() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
+    val mittyToken get() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 

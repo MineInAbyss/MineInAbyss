@@ -47,7 +47,7 @@ class OrthBankingFeature(
                             val player = sender as Player
                             val currItem = player.inventory.itemInMainHand
                             val gearyItem = currItem.toGearyOrNull(player)
-                            val isOrthCoin = currItem.isSimilar(CoinFactory.newOrthCoin())
+                            val isOrthCoin = currItem.isSimilar(CoinFactory.orthCoin)
                             val currency =
                                 if (isOrthCoin) "coins" else "tokens"
 
@@ -83,7 +83,7 @@ class OrthBankingFeature(
                             val player = sender as? Player ?: return@playerAction
                             val slot = player.inventory.firstEmpty()
                             val isOrthCoin = type == "orthcoin"
-                            val item = (if (isOrthCoin) CoinFactory.newOrthCoin() else CoinFactory.newMittyToken())
+                            val item = (if (isOrthCoin) CoinFactory.orthCoin else CoinFactory.mittyToken)
                             val currency =
                                 if (isOrthCoin) "coins" else if (type != "mitytoken") "tokens" else return@playerAction
                             val heldAmount =

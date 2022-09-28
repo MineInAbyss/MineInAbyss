@@ -13,10 +13,8 @@ import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
-import com.mineinabyss.helpers.createMittyToken
-import com.mineinabyss.helpers.createOrthCoin
+import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.helpers.updateBalance
 import com.mineinabyss.mobzy.ecs.components.initialization.MobzyType
 import com.mineinabyss.mobzy.injection.MobzyTypesQuery
 import kotlinx.serialization.Serializable
@@ -36,8 +34,8 @@ object ShopKeeperQuery : GearyQuery() {
 
 fun getShopTradeCoin(type: ShopCurrency, stack: ItemStack?, cost: Int): ItemStack? {
     return when (type) {
-        ShopCurrency.ORTH_COIN -> createOrthCoin()?.asQuantity(cost)
-        ShopCurrency.MITTY_TOKEN -> createMittyToken()?.asQuantity(cost)
+        ShopCurrency.ORTH_COIN -> CoinFactory.orthCoin?.asQuantity(cost)
+        ShopCurrency.MITTY_TOKEN -> CoinFactory.mittyToken?.asQuantity(cost)
         ShopCurrency.ITEM -> stack?.asQuantity(cost)
     }
 }
@@ -90,7 +88,6 @@ fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrade
                     ShopCurrency.MITTY_TOKEN -> data.mittyTokensHeld -= cost
                     ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost) ?: return@Button
                 }
-                player.updateBalance()
                 player.inventory.addItem(tradeItem)
             },
         ) {

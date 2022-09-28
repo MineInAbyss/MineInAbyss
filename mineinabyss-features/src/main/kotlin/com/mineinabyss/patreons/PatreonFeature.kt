@@ -26,7 +26,7 @@ import java.util.*
 @Serializable
 @SerialName("patreon")
 class PatreonFeature(
-    private val token: SerializableItemStack? = CoinFactory.newMittyToken()?.toSerializable()
+    private val token: SerializableItemStack? = CoinFactory.mittyToken?.toSerializable()
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 
