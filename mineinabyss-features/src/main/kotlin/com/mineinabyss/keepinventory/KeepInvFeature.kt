@@ -5,7 +5,7 @@ import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -19,7 +19,7 @@ class KeepInvFeature(
     val KeepInvInVoid: Boolean = true
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(KeepInvListener(this@KeepInvFeature))
+        listeners(KeepInvListener(this@KeepInvFeature))
 
         commands {
             mineinabyss {

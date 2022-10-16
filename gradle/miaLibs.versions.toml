@@ -1,12 +1,12 @@
 [versions]
-geary = "0.20.115"
-gearyaddons = "0.7.46"
-looty = "0.8.69"
+geary = "0.21.2"
+gearyaddons = "0.9.0.50"
+looty = "0.9.1"
 guiy = "0.7.26"
-deeperworld = "0.6.85"
-chatty = "0.3.63"
-mobzy = "0.19.88"
-protocolburrito = "0.5.38"
+deeperworld = "0.7.0"
+chatty = "0.4.1"
+mobzy = "0.20.1"
+protocolburrito = "0.6.3"
 
 
 [libraries]
@@ -20,7 +20,7 @@ chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
-minecraft-plugin-gsit = "com.gecolay:gsit:1.2.4"
+minecraft-plugin-gsit = "com.gecolay:gsit:1.2.7"
 minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
 minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.2"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.0"

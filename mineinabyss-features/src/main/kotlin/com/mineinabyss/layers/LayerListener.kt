@@ -5,7 +5,7 @@ import com.mineinabyss.deeperworld.event.PlayerChangeSectionEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.services.PlayerManager
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.layer
 import net.kyori.adventure.title.Title
 import org.bukkit.event.EventHandler

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import de.erethon.headlib.HeadLib
 import net.kyori.adventure.text.Component
 import org.bukkit.Material

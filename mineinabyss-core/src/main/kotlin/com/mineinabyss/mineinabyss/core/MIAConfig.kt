@@ -2,7 +2,7 @@ package com.mineinabyss.mineinabyss.core
 
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.deeperworld.services.WorldManager
-import com.mineinabyss.idofront.plugin.getService
+import com.mineinabyss.idofront.plugin.Services
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -12,7 +12,7 @@ import kotlin.reflect.full.createInstance
 interface MIAConfig {
     val data: Data
 
-    companion object : MIAConfig by getService()
+    companion object : MIAConfig by Services.get()
 
     /**
      * @param layers A list of all the layers and sections composing them to be registered.

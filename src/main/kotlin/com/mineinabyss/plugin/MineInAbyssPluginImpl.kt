@@ -3,6 +3,7 @@ package com.mineinabyss.plugin
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.geary.addon.autoscan
+import com.mineinabyss.geary.papermc.GearyPlugin
 import com.mineinabyss.geary.papermc.dsl.gearyAddon
 import com.mineinabyss.geary.papermc.store.PrefabNamespaceMigrations
 import com.mineinabyss.guilds.database.GuildJoinQueue
@@ -12,10 +13,8 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Placeholders
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
-import com.mineinabyss.idofront.platforms.IdofrontPlatforms
-import com.mineinabyss.idofront.plugin.getServiceOrNull
-import com.mineinabyss.idofront.plugin.isPluginEnabled
-import com.mineinabyss.idofront.plugin.registerService
+import com.mineinabyss.idofront.platforms.Platforms
+import com.mineinabyss.idofront.plugin.*
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssWorldManager
@@ -33,14 +32,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     override fun onLoad() {
-        IdofrontPlatforms.load(this, "mineinabyss")
+        Platforms.load(this, "mineinabyss")
     }
 
     override fun onEnable() {
         saveDefaultConfig()
 
         var addon: GearyAddon? = null
-        if (isPluginEnabled("Geary")) {
+        if (Plugins.get<GearyPlugin>().isEnabled) {
             PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
             gearyAddon {
                 addon = this
@@ -51,8 +50,8 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         }
 
         //TODO use Koin
-        registerService<AbyssContext>(object : AbyssContext {
-            override val econ = getServiceOrNull<Economy>("Vault")
+        service<AbyssContext>(object : AbyssContext {
+            override val econ = Services.getOrNull<Economy>()
             override val addonScope: GearyAddon
                 get() = addon ?: error("Feature tried accessing Geary but it wasn't loaded")
             override val miaSubcommands = mutableListOf<Command.() -> Unit>()
@@ -87,10 +86,10 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         launch {
             delay(1.ticks)
 
-            val config = MIAConfigImpl()
+            val config = MineInAbyssConfig()
             config.load()
-            registerService<MIAConfig>(config)
-            registerService<AbyssWorldManager>(AbyssWorldManagerImpl())
+            service<MIAConfig>(config)
+            service<AbyssWorldManager>(AbyssWorldManagerImpl())
         }
 
         if (AbyssContext.isPlaceholderApiLoaded)

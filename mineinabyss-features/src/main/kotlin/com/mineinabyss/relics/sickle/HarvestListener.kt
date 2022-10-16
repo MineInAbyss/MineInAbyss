@@ -8,11 +8,11 @@ import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.helpers.BlockUtil
-import com.mineinabyss.idofront.items.damage
 import com.mineinabyss.idofront.items.editItemMeta
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
+import org.bukkit.inventory.meta.Damageable
 
 class HarvestListener : GearyListener() {
     val SourceScope.player by get<Player>()
@@ -28,8 +28,8 @@ class HarvestListener : GearyListener() {
         // Harvest surroundings
         BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[target.sickle.radius].forEach { relativePos ->
             if (harvestPlant(BlockUtil.relative(block, relativePos), player)) {
-                item.editItemMeta { damage += 1 }
-                if (item.hasItemMeta() && item.itemMeta.damage >= item.type.maxDurability) {
+                item.editItemMeta { if (this !is Damageable) return@forEach; damage += 1 }
+                if (item.hasItemMeta() && (item.itemMeta as Damageable).damage >= item.type.maxDurability) {
                     item.subtract()
                     player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
                     return@forEach

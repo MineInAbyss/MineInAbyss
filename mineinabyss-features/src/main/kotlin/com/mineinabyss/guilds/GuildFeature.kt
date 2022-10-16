@@ -19,7 +19,7 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -63,7 +63,7 @@ class GuildFeature(
             getAllGuilds().forEach {
                 chattyConfig.channels.putIfAbsent("${it.first} $guildChannelId", this@GuildFeature.guildChattyChannel)
             }
-            registerEvents(ChattyGuildListener())
+            listeners(ChattyGuildListener())
         }
 
         commands {

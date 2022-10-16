@@ -16,11 +16,11 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.reflections.Reflections
 
-class MIAConfigImpl : IdofrontConfig<MIAConfig.Data>(
+class MineInAbyssConfig : IdofrontConfig<MIAConfig.Data>(
     mineInAbyss, MIAConfig.Data.serializer(),
     format = Yaml(
         // We autoscan in our Feature classes so need to use Geary's module.
-        serializersModule = Reflections("com.mineinabyss", MIAConfigImpl::class.java.classLoader)
+        serializersModule = Reflections("com.mineinabyss", MineInAbyssConfig::class.java.classLoader)
             .getSubTypesOf(AbyssFeature::class.java)
             .map { it.kotlin }
             .polymorphicSerializer() + SerializersModule {

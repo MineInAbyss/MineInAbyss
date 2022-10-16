@@ -4,7 +4,7 @@ import com.mineinabyss.chatty.chatty
 import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
-import com.mineinabyss.idofront.plugin.getService
+import com.mineinabyss.idofront.plugin.Services
 import github.scarsz.discordsrv.DiscordSRV
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
@@ -15,7 +15,7 @@ val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 
 interface AbyssContext {
-    companion object : AbyssContext by getService()
+    companion object : AbyssContext by Services.get()
     val isChattyLoaded: Boolean
         get() = mineInAbyss.server.pluginManager.isPluginEnabled("chatty")
     val isGSitLoaded: Boolean

@@ -3,6 +3,7 @@ plugins {
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.copyjar")
     id("com.mineinabyss.conventions.publication")
+    id("com.mineinabyss.conventions.autoversion")
     kotlin("jvm") apply false
 }
 
@@ -28,7 +29,7 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(libs.idofront.core)
+        implementation(libs.bundles.idofront.core)
         implementation(libs.idofront.autoscan) {
             exclude("org.reflections")
         }

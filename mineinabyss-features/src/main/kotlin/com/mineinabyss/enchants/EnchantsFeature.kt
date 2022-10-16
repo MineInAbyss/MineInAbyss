@@ -6,7 +6,7 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -21,7 +21,7 @@ class EnchantsFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         CustomEnchants.register()
 
-        registerEvents(
+        listeners(
             SoulBoundListener(),
             FrostAspectListener(),
             BirdSwatterListener(),

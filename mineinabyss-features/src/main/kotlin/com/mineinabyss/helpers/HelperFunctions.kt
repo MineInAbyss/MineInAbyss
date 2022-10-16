@@ -2,7 +2,7 @@ package com.mineinabyss.helpers
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld

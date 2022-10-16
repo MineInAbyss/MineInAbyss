@@ -17,7 +17,7 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.MessageQueue.content
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import io.papermc.paper.event.player.AsyncChatEvent
@@ -92,8 +92,8 @@ class ChattyGuildListener : Listener {
             it.getGuildName() == player.getGuildName() && it != player
         })
 
-        if (!chattyConfig.chat.enableChatSigning) {
-            viewers().forEach { a -> RendererExtension().render(player, player.displayName(), message(), a) }
+        if (chattyConfig.chat.disableChatSigning) {
+            viewers().forEach { a -> RendererExtension.render(player, player.displayName(), message(), a) }
             viewers().clear()
         }
     }

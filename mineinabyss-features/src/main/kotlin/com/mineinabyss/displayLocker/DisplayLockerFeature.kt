@@ -10,7 +10,7 @@ import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -25,7 +25,7 @@ class DisplayLockerFeature(
     val bypassPermission: String = "mineinabyss.lockdisplay.bypass",
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(DisplayLockerListener(this@DisplayLockerFeature))
+        listeners(DisplayLockerListener(this@DisplayLockerFeature))
 
         commands {
             mineinabyss {

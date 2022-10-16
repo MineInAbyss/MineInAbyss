@@ -4,10 +4,10 @@ import com.mineinabyss.components.huds.AlwaysShowAirHud
 import com.mineinabyss.components.huds.AlwaysShowArmorHud
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.changeHudState
+import com.mineinabyss.helpers.happyHUD
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.isPluginEnabled
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -43,12 +43,12 @@ class HudFeature(
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        if (!isPluginEnabled("HappyHUD")) {
+        if (!happyHUD.isEnabled) {
             logger.warning("HappyHUD is not enabled. HappyHud will not work.")
             return
         }
 
-        registerEvents(HudListener(this@HudFeature))
+        listeners(HudListener(this@HudFeature))
 
         commands {
             mineinabyss {

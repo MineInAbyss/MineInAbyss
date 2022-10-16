@@ -17,8 +17,7 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.helpers.*
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.idofront.messaging.miniMsg
-import com.mineinabyss.idofront.plugin.isPluginEnabled
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -137,11 +136,11 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 
 @Composable
 fun CosmeticHat(player: Player) =
-    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
+    if (hmcCosmetics.isEnabled) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
 
 @Composable
 fun CosmeticBackpack(player: Player) =
-    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
+    if (hmcCosmetics.isEnabled) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
 
 @Composable
 fun OrthCoinBalance(player: Player) {

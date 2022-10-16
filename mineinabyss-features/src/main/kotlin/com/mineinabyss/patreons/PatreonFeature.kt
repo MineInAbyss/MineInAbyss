@@ -33,7 +33,7 @@ class PatreonFeature(
         geary {
             systems()
         }
-        //registerEvents(PatreonListener())
+        //listeners(PatreonListener())
 
         commands {
             mineinabyss {

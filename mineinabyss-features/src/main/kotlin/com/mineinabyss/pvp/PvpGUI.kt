@@ -11,8 +11,8 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.pvp.ToggleIcon.disabled
 import com.mineinabyss.pvp.ToggleIcon.enabled
 import org.bukkit.Material
