@@ -13,12 +13,14 @@ import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Placeholders
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
+import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.platforms.Platforms
-import com.mineinabyss.idofront.plugin.*
+import com.mineinabyss.idofront.plugin.Plugins
+import com.mineinabyss.idofront.plugin.Services
+import com.mineinabyss.idofront.plugin.service
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssWorldManager
-import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.coroutines.delay
 import net.milkbowl.vault.economy.Economy
@@ -36,7 +38,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     }
 
     override fun onEnable() {
-        saveDefaultConfig()
+        config = config("config") { fromPluginPath(loadDefault = true)}
 
         var addon: GearyAddon? = null
         if (Plugins.get<GearyPlugin>().isEnabled) {
@@ -85,10 +87,6 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
 
         launch {
             delay(1.ticks)
-
-            val config = MineInAbyssConfig()
-            config.load()
-            service<MIAConfig>(config)
             service<AbyssWorldManager>(AbyssWorldManagerImpl())
         }
 

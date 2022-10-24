@@ -3,10 +3,13 @@ package com.mineinabyss.mineinabyss.core
 import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.CommandHolder
+import com.mineinabyss.idofront.config.IdofrontConfig
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 
 abstract class MineInAbyssPlugin : JavaPlugin() {
+    lateinit var config: IdofrontConfig<MIAConfig>
+
     fun CommandHolder.mineinabyss(run: Command.() -> Unit) {
         AbyssContext.miaSubcommands += run
     }

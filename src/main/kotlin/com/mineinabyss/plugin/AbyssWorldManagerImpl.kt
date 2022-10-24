@@ -4,7 +4,7 @@ import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.mineinabyss.core.AbyssWorldManager
-import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.miaConfig
 import org.bukkit.World
 
 /**
@@ -13,7 +13,7 @@ import org.bukkit.World
  * @property abyssWorlds A list of worlds that are part of the abyss
  */
 class AbyssWorldManagerImpl : AbyssWorldManager {
-    private var _layers: List<Layer> = MIAConfig.data.layers
+    private var _layers: List<Layer> = miaConfig.layers
     override val layers = _layers.associateBy { it.key }
     private val abyssWorlds = mutableSetOf<World>()
 

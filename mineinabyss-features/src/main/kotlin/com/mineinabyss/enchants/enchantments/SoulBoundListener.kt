@@ -6,7 +6,7 @@ import com.mineinabyss.geary.papermc.components.Soulbound
 import com.mineinabyss.geary.papermc.store.encodeComponentsTo
 import com.mineinabyss.looty.tracking.toGearyFromUUIDOrNull
 import com.mineinabyss.looty.tracking.toGearyOrNull
-import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.miaConfig
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -15,7 +15,7 @@ import org.bukkit.event.entity.PlayerDeathEvent
 class SoulBoundListener : Listener {
     @EventHandler
     fun PlayerAscendEvent.soulbindItems() {
-        if (toSection != MIAConfig.data.hubSection) return
+        if (toSection != miaConfig.hubSection) return
         player.inventory.contents?.filterNotNull()?.forEach {
             val item = it.toGearyFromUUIDOrNull() ?: return
             item.get<Orthbound>() ?: return@forEach
