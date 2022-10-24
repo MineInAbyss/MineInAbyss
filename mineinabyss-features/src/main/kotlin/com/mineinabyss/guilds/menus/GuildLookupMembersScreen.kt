@@ -33,7 +33,7 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
 @Composable
 fun GuildUIScope.GuildMembersButton(modifier: Modifier, guildName: String) {
     Grid(modifier.size(5, guildLevel)) {
-        guildName.getGuildMembers().sortedWith(compareBy { it.first; it.second.name }).forEach { (rank, member) ->
+        guildName.getGuildMembers().sortedWith(compareBy { it.rank; it.player.name }).forEach { (rank, member) ->
             Button {
                 Item(
                     member.head(

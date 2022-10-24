@@ -39,7 +39,7 @@ fun GuildUIScope.GuildMemberListScreen() {
 @Composable
 fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
     Grid(modifier.size(5, guildLevel)) {
-        player.getGuildMembers().sortedWith(compareBy { it.first; it.second.name }).forEach { (rank, member) ->
+        player.getGuildMembers().sortedWith(compareBy { it.rank; it.player.name }).forEach { (rank, member) ->
             Button(onClick = {
                 if (member != player && player.isCaptainOrAbove()) {
                     nav.open(GuildScreen.MemberOptions(member))
@@ -103,12 +103,12 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
         }
     ) { enabled ->
         if (enabled) Text(
-            "<dark_green><b>Manage Guild Join Requests".miniMsg(),
+            "<dark_green><b>Manage Guild GuildJoin Requests".miniMsg(),
             "<yellow><i>There ${if (plural) "are" else "is"} currently <gold><b>$requestAmount ".miniMsg(),
             "<yellow><i>join-request${if (plural) "s" else ""} for your guild.".miniMsg()
         )
         else Text(
-            "<dark_green><b><st>Manage Guild Join Requests".miniMsg(),
+            "<dark_green><b><st>Manage Guild GuildJoin Requests".miniMsg(),
             "<red><i>There are currently no ".miniMsg(),
             "<red><i>join-requests for your guild.".miniMsg()
         )
@@ -136,19 +136,19 @@ private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
 private object JoinTypeIcon {
     val any = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(4)
-        displayName("<dark_green><b>Toggle Guild Join Type".miniMsg())
+        displayName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> Any".miniMsg()))
     }
 
     val invite = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(5)
-        displayName("<dark_green><b>Toggle Guild Join Type".miniMsg())
+        displayName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> Invite".miniMsg()))
     }
 
     val request = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(6)
-        displayName("<dark_green><b>Toggle Guild Join Type".miniMsg())
+        displayName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> Request".miniMsg()))
     }
 }

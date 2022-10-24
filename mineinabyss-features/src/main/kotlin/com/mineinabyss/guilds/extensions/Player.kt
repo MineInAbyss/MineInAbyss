@@ -99,7 +99,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
         //val owner = (invitedMember as Player).getGuildOwnerFromInvite().toPlayer()
         if (player?.hasGuildRequest() == true) {
             player?.error("This player has already requested to join your guild!")
-            player?.error("Navigate to the <b>Manage Join Request</b> menu to respond.")
+            player?.error("Navigate to the <b>Manage GuildJoin Request</b> menu to respond.")
             return@transaction
         }
 

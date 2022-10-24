@@ -1,7 +1,6 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.*
-import com.mineinabyss.guilds.database.GuildJoinType
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
@@ -45,10 +44,10 @@ fun GuildUIScope.GuildLookupListScreen(pageNumber: Int) {
 }
 
 private val defaultList = displayGuildList().chunked(20)
-private var queriedList: List<List<Triple<String, GuildJoinType, Int>>>? = null
+private var queriedList: List<List<GuildJoin>>? = null
 
 @Composable
-fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: List<Triple<String, GuildJoinType, Int>>) {
+fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: List<GuildJoin>) {
     queriedList = null
     Grid(modifier.size(5, 5)) {
         guildPageList.forEach { (guildName, joinType, guildLevel) ->
@@ -137,7 +136,7 @@ fun PreviousPageButton(modifier: Modifier = Modifier, pageNum: Int, onClick: () 
 fun NextPageButton(
     modifier: Modifier,
     pageNum: Int,
-    queriedGuildList: List<List<Triple<String, GuildJoinType, Int>>>,
+    queriedGuildList: List<List<GuildJoin>>,
     onClick: () -> Unit
 ) {
     Button(

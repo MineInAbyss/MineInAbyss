@@ -70,6 +70,4 @@ fun GuildUIScope.DenyAllInvitesButton(modifier: Modifier) = Button(
     Text("<red>Decline All Invites".miniMsg())
 }
 
-//TODO Repeat this instead of using pairs everywhere
-private class Invite(val memberCount: Int, val guildIds: Int) {
-}
+private class Invite(val memberCount: Int, val guildIds: Int)

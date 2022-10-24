@@ -61,7 +61,7 @@ class GuildFeature(
 
         if (AbyssContext.isChattyLoaded) {
             getAllGuilds().forEach {
-                chattyConfig.channels.putIfAbsent("${it.first} $guildChannelId", this@GuildFeature.guildChattyChannel)
+                chattyConfig.channels.putIfAbsent("${it.guildName} $guildChannelId", this@GuildFeature.guildChattyChannel)
             }
             registerEvents(ChattyGuildListener())
         }

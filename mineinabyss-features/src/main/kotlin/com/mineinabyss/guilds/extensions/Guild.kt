@@ -103,7 +103,7 @@ fun Player.deleteGuild() {
         chattyConfig.channels.remove(guildChatId)
 
         // Rest will be reset when they join
-        this@deleteGuild.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {
+        this@deleteGuild.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {
             it as Player
             if (it.chattyData.channelId == guildChatId)
                 it.chattyData.channelId = getDefaultChat().key
@@ -148,7 +148,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         }
 
         // Update the guildchat ID on online players, rest handled on join
-        this@changeStoredGuildName.getGuildMembers().map { it.second }.filter { it.isOnline }.forEach {
+        this@changeStoredGuildName.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {
             it as Player
             if (it.chattyData.channelId == getGuildName().getGuildChatId())
                 it.chattyData.channelId = newGuildName.getGuildChatId()
@@ -202,7 +202,7 @@ fun Player.changeGuildJoinType() {
     }
 }
 
-fun Player.getGuildMembers(): List<Pair<GuildRank, OfflinePlayer>> {
+fun Player.getGuildMembers(): List<GuildMember> {
     return transaction(AbyssContext.db) {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
@@ -213,29 +213,29 @@ fun Player.getGuildMembers(): List<Pair<GuildRank, OfflinePlayer>> {
         Players.select {
             (Players.guildId eq guildId)
         }.map { row ->
-            Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
     }
 }
 
-fun String.getGuildMembers(): List<Pair<GuildRank, OfflinePlayer>> {
+fun String.getGuildMembers(): List<GuildMember> {
     return transaction(AbyssContext.db) {
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildMembers.lowercase()
-        }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList<Pair<GuildRank, OfflinePlayer>>()
+        }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList()
 
         Players.select {
             (Players.guildId eq guild)
         }.map { row ->
-            Pair(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
         }
     }
 }
 
-fun getAllGuilds(): List<Triple<String, GuildJoinType, Int>> {
+fun getAllGuilds(): List<GuildJoin> {
     return transaction(AbyssContext.db) {
         return@transaction Guilds.selectAll()
-            .map { row -> Triple(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
+            .map { row -> GuildJoin(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
     }
 }
 
@@ -269,14 +269,14 @@ fun String.clearGuildInvites() {
     }
 }
 
-fun displayGuildList(queryName: String? = null): List<Triple<String, GuildJoinType, Int>> {
+fun displayGuildList(queryName: String? = null): List<GuildJoin> {
     val guilds = getAllGuilds()
-    val comparator = compareBy<Triple<String, GuildJoinType, Int>> {
-        it.third; it.first.getOwnerFromGuildName().getGuildMemberCount(); it.second; it.first
+    val comparator = compareBy<GuildJoin> {
+        it.guildLevel; it.guildName.getOwnerFromGuildName().getGuildMemberCount(); it.joinType; it.guildName
     }
     return if (queryName == null)
         guilds.sortedWith(comparator)
-    else guilds.filter { it.first.startsWith(queryName) }.sortedWith(comparator)
+    else guilds.filter { it.guildName.startsWith(queryName) }.sortedWith(comparator)
 }
 
 fun String.getOwnerFromGuildName(): OfflinePlayer {
@@ -360,7 +360,7 @@ fun String.canLevelUpGuild(): Boolean {
 fun Player.levelUpGuild() {
     val guildName = getGuildName()
     val cost = guildName.getGuildLevelUpCost() ?: return
-    val guildMembers = getGuildMembers().filter { it.second.uniqueId != uniqueId }.map { it.second }
+    val guildMembers = getGuildMembers().filter { it.player.uniqueId != uniqueId }.map { it.player }
     updateGuildBalance(-cost)
     transaction(AbyssContext.db) {
         val lvl = Guilds.select {
@@ -434,3 +434,5 @@ fun String.getGuildChatId(): String {
 fun Player.getGuildChatId(): String {
     return "${getGuildName()} $guildChannelId"
 }
+data class GuildJoin(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int)
+data class GuildMember(val rank: GuildRank, val player: OfflinePlayer)

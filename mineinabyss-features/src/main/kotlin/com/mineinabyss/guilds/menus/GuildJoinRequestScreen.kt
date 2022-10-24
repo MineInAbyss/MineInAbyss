@@ -47,7 +47,7 @@ fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: Offline
     },
     modifier = modifier
 ) {
-    Text("<green>Accept Join-Request".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<green>Accept GuildJoin-Request".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -70,7 +70,7 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
             nav.back()
     }
 ) {
-    Text("<red>Decline Join-Request".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<red>Decline GuildJoin-Request".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
@@ -82,5 +82,5 @@ fun GuildUIScope.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
         nav.back()
     }
 ) {
-    Text("<red>Decline All Join-Request".miniMsg())
+    Text("<red>Decline All GuildJoin-Request".miniMsg())
 }
