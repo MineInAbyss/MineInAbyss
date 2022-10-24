@@ -58,7 +58,7 @@ fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
             it[name] = guildName
             it[balance] = 0
             it[level] = 1
-            it[joinType] = GuildJoinType.Any
+            it[joinType] = GuildJoinType.ANY
         } get Guilds.id
 
         Players.insert {
@@ -191,9 +191,9 @@ fun Player.changeGuildJoinType() {
         }.single()[Guilds.joinType]
 
         val newType = when (type) {
-            GuildJoinType.Any -> GuildJoinType.Request
-            GuildJoinType.Invite -> GuildJoinType.Any
-            GuildJoinType.Request -> GuildJoinType.Invite
+            GuildJoinType.ANY -> GuildJoinType.REQUEST
+            GuildJoinType.INVITE -> GuildJoinType.ANY
+            GuildJoinType.REQUEST -> GuildJoinType.INVITE
         }
 
         Guilds.update({ Guilds.id eq guildId }) {
@@ -256,7 +256,7 @@ fun String.getGuildId() : Int {
 fun String.clearGuildJoinRequests() {
     transaction(AbyssContext.db) {
         GuildJoinQueue.deleteWhere {
-            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
+            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST)
         }
     }
 }
@@ -264,7 +264,7 @@ fun String.clearGuildJoinRequests() {
 fun String.clearGuildInvites() {
     transaction(AbyssContext.db) {
         GuildJoinQueue.deleteWhere {
-            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.Invite)
+            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.INVITE)
         }
     }
 }

@@ -43,9 +43,9 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
             player.error("This guild does not exist anymore!")
             return@Button
         }
-        if (owner.getGuildJoinType() == GuildJoinType.Request) {
-            player.error("This guild is in 'Request-only' mode.")
-            player.error("Change it to 'Any' or 'Invite-only' mode to accept invites.")
+        if (owner.getGuildJoinType() == GuildJoinType.REQUEST) {
+            player.error("This guild is in 'REQUEST-only' mode.")
+            player.error("Change it to 'ANY' or 'INVITE-only' mode to accept invites.")
             return@Button
         }
         val ownerLevel = owner.getGuildLevel() ?: return@Button
@@ -55,22 +55,22 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
         }
 
         owner.addMemberToGuild(player)
-        player.removeGuildQueueEntries(GuildJoinType.Request)
+        player.removeGuildQueueEntries(GuildJoinType.REQUEST)
         nav.back()
     },
     modifier = modifier
 ) {
-    Text("<green>Accept Invite".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<green>Accept INVITE".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
 fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
     onClick = {
-        player.removeGuildQueueEntries(GuildJoinType.Invite)
+        player.removeGuildQueueEntries(GuildJoinType.INVITE)
         if (owner.hasGuild())
             player.info("<gold><b>❌ <yellow>You denied the invite from <gold><i>${owner.getGuildName()}")
         nav.back()
     }
 ) {
-    Text("<red>Decline Invite".miniMsg(), modifier = modifier.size(3, 3))
+    Text("<red>Decline INVITE".miniMsg(), modifier = modifier.size(3, 3))
 }

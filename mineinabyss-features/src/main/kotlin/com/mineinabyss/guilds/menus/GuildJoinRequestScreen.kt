@@ -33,28 +33,28 @@ fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier 
 @Composable
 fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     onClick = {
-        if (player.getGuildJoinType() == GuildJoinType.Invite) {
-            player.error("Your guild is in 'Invite-only' mode.")
-            player.error("Change it to 'Any' or 'Request-only' mode to accept requests.")
+        if (player.getGuildJoinType() == GuildJoinType.INVITE) {
+            player.error("Your guild is in 'INVITE-only' mode.")
+            player.error("Change it to 'ANY' or 'REQUEST-only' mode to accept requests.")
             return@Button
         }
         player.addMemberToGuild(newMember)
-        newMember.removeGuildQueueEntries(GuildJoinType.Request)
+        newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
         if (player.getGuildMemberCount() < guildLevel * 5 + 1) {
-            newMember.removeGuildQueueEntries(GuildJoinType.Request)
+            newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
         }
         nav.back()
     },
     modifier = modifier
 ) {
-    Text("<green>Accept GuildJoin-Request".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<green>Accept GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
 fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     modifier = modifier,
     onClick = {
-        newMember.removeGuildQueueEntries(GuildJoinType.Request)
+        newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
         player.info("<yellow><b>❌ <yellow>You denied the join-request from ${newMember.name}")
         val requestDeniedMessage =
             "<red>Your request to join <i>${player.getGuildName()} has been denied!"
@@ -70,17 +70,17 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
             nav.back()
     }
 ) {
-    Text("<red>Decline GuildJoin-Request".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<red>Decline GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
 fun GuildUIScope.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
-        player.removeGuildQueueEntries(GuildJoinType.Request, true)
+        player.removeGuildQueueEntries(GuildJoinType.REQUEST, true)
         player.info("<yellow><b>❌ <yellow>You denied all join-requests for your guild!")
         nav.back()
     }
 ) {
-    Text("<red>Decline All GuildJoin-Request".miniMsg())
+    Text("<red>Decline All GuildJoin-REQUEST".miniMsg())
 }

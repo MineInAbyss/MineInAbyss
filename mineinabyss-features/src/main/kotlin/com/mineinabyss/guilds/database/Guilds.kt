@@ -16,5 +16,5 @@ enum class GuildRank {
 }
 
 enum class GuildJoinType {
-    Any, Request, Invite
+    ANY, REQUEST, INVITE
 }

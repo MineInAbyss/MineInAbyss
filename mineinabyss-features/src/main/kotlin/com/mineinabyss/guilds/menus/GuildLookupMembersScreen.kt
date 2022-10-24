@@ -49,22 +49,22 @@ fun GuildUIScope.GuildMembersButton(modifier: Modifier, guildName: String) {
 
 @Composable
 fun GuildUIScope.RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, guildName: String) {
-    val inviteOnly = owner.getGuildJoinType() == GuildJoinType.Invite
+    val inviteOnly = owner.getGuildJoinType() == GuildJoinType.INVITE
     Button(modifier = modifier, onClick = {
         if (!inviteOnly && !player.hasGuild())
             player.requestToJoin(guildName)
     }) {
         if (!inviteOnly && !player.hasGuild()) {
-            Text("<green>Request to join <dark_green><i>$guildName".miniMsg())
+            Text("<green>REQUEST to join <dark_green><i>$guildName".miniMsg())
         }
         else if (inviteOnly) {
-            Text("<red><st>Request to join <i>$guildName".miniMsg(),
+            Text("<red><st>REQUEST to join <i>$guildName".miniMsg(),
                 "<dark_red><i>This guild can currently only".miniMsg(),
                 "<dark_red><i>be joined by invites.".miniMsg()
             )
         }
         else if (player.hasGuild()) {
-            Text("<red><st>Request to join <i>$guildName".miniMsg(),
+            Text("<red><st>REQUEST to join <i>$guildName".miniMsg(),
                 "<dark_red><i>You have to leave your Guild".miniMsg(),
                 "<dark_red><i>before requesting to join another.".miniMsg()
             )

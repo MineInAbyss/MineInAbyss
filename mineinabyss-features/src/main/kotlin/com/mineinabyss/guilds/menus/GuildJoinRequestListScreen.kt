@@ -38,7 +38,7 @@ fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
             }.first()[Players.guildId]
 
             GuildJoinQueue.select {
-                (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
+                (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST)
             }.map { row -> row[GuildJoinQueue.playerUUID] }
         }
     }

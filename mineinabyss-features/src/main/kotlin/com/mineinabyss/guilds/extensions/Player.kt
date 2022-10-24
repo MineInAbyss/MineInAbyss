@@ -99,7 +99,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
         //val owner = (invitedMember as Player).getGuildOwnerFromInvite().toPlayer()
         if (player?.hasGuildRequest() == true) {
             player?.error("This player has already requested to join your guild!")
-            player?.error("Navigate to the <b>Manage GuildJoin Request</b> menu to respond.")
+            player?.error("Navigate to the <b>Manage GuildJoin REQUEST</b> menu to respond.")
             return@transaction
         }
 
@@ -114,7 +114,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
         GuildJoinQueue.insert {
             it[playerUUID] = invitedMember.uniqueId
             it[guildId] = guild
-            it[joinType] = GuildJoinType.Invite
+            it[joinType] = GuildJoinType.INVITE
         }
 
         /* Adds invitedPlayer into the guild of the player. */
@@ -167,7 +167,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
         }
 
         /* Check if guild is in invite-only mode */
-        if (guild[Guilds.joinType] == GuildJoinType.Invite) {
+        if (guild[Guilds.joinType] == GuildJoinType.INVITE) {
             player.error("<gold>$guildName <yellow>is invite-only.")
             return@transaction
         }
@@ -189,7 +189,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
         GuildJoinQueue.insert {
             it[playerUUID] = player.uniqueId
             it[guildId] = id
-            it[joinType] = GuildJoinType.Request
+            it[joinType] = GuildJoinType.REQUEST
         }
 
         val owner = Players.select {
@@ -441,7 +441,7 @@ fun OfflinePlayer.isGuildOwner() : Boolean {
 fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
     return transaction(AbyssContext.db) {
         val guilds = GuildJoinQueue.select {
-            (GuildJoinQueue.playerUUID eq player!!.uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.Invite)
+            (GuildJoinQueue.playerUUID eq player!!.uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.INVITE)
         }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction player?.uniqueId!!
 
         return@transaction Players.select {
@@ -520,7 +520,7 @@ fun OfflinePlayer.getGuildMemberCount(): Int {
 fun OfflinePlayer.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
     return transaction(AbyssContext.db) {
         val joinQueueId = GuildJoinQueue.select {
-            (GuildJoinQueue.playerUUID eq uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.Invite)
+            (GuildJoinQueue.playerUUID eq uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.INVITE)
         }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction false
 
         val ownerId = Players.select {
@@ -538,7 +538,7 @@ fun OfflinePlayer.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
 fun OfflinePlayer.hasGuildInvites(): Boolean {
     return transaction(AbyssContext.db) {
         return@transaction GuildJoinQueue.select {
-            (GuildJoinQueue.joinType eq GuildJoinType.Invite) and (GuildJoinQueue.playerUUID eq uniqueId)
+            (GuildJoinQueue.joinType eq GuildJoinType.INVITE) and (GuildJoinQueue.playerUUID eq uniqueId)
         }.toList().isNotEmpty()
     }
 }
@@ -550,7 +550,7 @@ fun OfflinePlayer.hasGuildRequests(): Boolean {
         }.single()[Players.guildId]
 
         return@transaction GuildJoinQueue.select {
-            (GuildJoinQueue.joinType eq GuildJoinType.Request) and (GuildJoinQueue.guildId eq player)
+            (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) and (GuildJoinQueue.guildId eq player)
         }.toList().isNotEmpty()
     }
 }
@@ -562,7 +562,7 @@ fun OfflinePlayer.hasGuildRequest(): Boolean {
         }.single()[Players.guildId]
 
         val joinQueueId = GuildJoinQueue.select {
-            (GuildJoinQueue.guildId eq player) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
+            (GuildJoinQueue.guildId eq player) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST)
         }.firstOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction false
 
         val hasRequest = Guilds.select {
@@ -581,7 +581,7 @@ fun  OfflinePlayer.getNumberOfGuildRequests() : Int {
         }.single()[Players.guildId]
 
         GuildJoinQueue.select {
-            (GuildJoinQueue.guildId eq playerGuild) and (GuildJoinQueue.joinType eq GuildJoinType.Request)
+            (GuildJoinQueue.guildId eq playerGuild) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST)
         }.map { row -> row[GuildJoinQueue.guildId] }.forEach { _ ->
             requestCount++
         }

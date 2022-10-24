@@ -37,7 +37,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
     val memberCount = owner.getGuildMemberCount()
     val invites = transaction(AbyssContext.db) {
         GuildJoinQueue.select {
-            (GuildJoinQueue.joinType eq GuildJoinType.Invite) and
+            (GuildJoinQueue.joinType eq GuildJoinType.INVITE) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)
         }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
 
@@ -61,7 +61,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
 @Composable
 fun GuildUIScope.DenyAllInvitesButton(modifier: Modifier) = Button(
     onClick = {
-        player.removeGuildQueueEntries(GuildJoinType.Invite, true)
+        player.removeGuildQueueEntries(GuildJoinType.INVITE, true)
         nav.open(GuildScreen.MemberList(guildLevel, player))
         player.info("<gold><b>❌<yellow>You denied all invites!")
     },
