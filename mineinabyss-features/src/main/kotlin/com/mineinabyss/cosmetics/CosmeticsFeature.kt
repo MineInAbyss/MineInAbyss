@@ -1,5 +1,7 @@
 package com.mineinabyss.cosmetics
 
+import com.hibiscusmc.hmccosmetics.gui.Menus
+import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
 import com.mineinabyss.helpers.mcCosmetics
 import com.mineinabyss.helpers.playGesture
@@ -13,7 +15,6 @@ import com.mineinabyss.mineinabyss.core.commands
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 
 @Serializable
@@ -27,10 +28,10 @@ class CosmeticsFeature : AbyssFeature {
             mineinabyss {
                 "cosmetic" {
                     "menu" {
+                        val menu by stringArg()
                         playerAction {
-                            if (hmcCosmetics.isEnabled) hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
-                            if (mineInAbyss.server.pluginManager.isPluginEnabled("HMCCosmetics"))
-                                hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
+                            if (hmcCosmetics.isEnabled)
+                                Menus.getMenu(menu).openMenu(player.cosmeticUser)
                         }
                     }
                     "gesture" {

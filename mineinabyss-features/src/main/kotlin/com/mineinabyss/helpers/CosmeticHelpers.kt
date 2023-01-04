@@ -1,12 +1,10 @@
 package com.mineinabyss.helpers
 
-import com.mineinabyss.components.cosmetics.Cosmetics
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers
 import de.skyslycer.hmcwraps.IHMCWraps
-import io.github.fisher2911.hmccosmetics.HMCCosmetics
-import io.github.fisher2911.hmccosmetics.api.CosmeticItem
-import io.github.fisher2911.hmccosmetics.api.HMCCosmeticsAPI
-import io.github.fisher2911.hmccosmetics.gui.ArmorItem
 import io.lumine.cosmetics.MCCosmeticsPlugin
 import io.lumine.cosmetics.managers.gestures.CustomPlayerModel
 import io.lumine.cosmetics.managers.gestures.QuitMethod
@@ -14,24 +12,16 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("MCCosmetics") as MCCosmeticsPlugin }
-val hmcCosmetics: HMCCosmetics by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmetics }
+val hmcCosmetics: HMCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmeticsPlugin }
 val hmcWraps: IHMCWraps by lazy { Bukkit.getPluginManager().getPlugin("HMCWraps") as IHMCWraps }
 
-fun Player.playGesture(gestureName: String) {
-    toGeary { setPersisting(Cosmetics(gesture = gestureName)) }
-    CustomPlayerModel(player, QuitMethod.SNEAK) { }.playAnimation(gestureName)
-}
+fun Player.playGesture(gestureName: String) = CustomPlayerModel(player, QuitMethod.SNEAK) { }.playAnimation(gestureName)
+fun Player.getCosmeticBackpack() = this.cosmeticUser?.getCosmetic(CosmeticSlot.BACKPACK)
+fun Player.equipCosmeticBackPack(backpack: String) = this.cosmeticUser?.addPlayerCosmetic(Cosmetics.getCosmetic(backpack))
+fun Player.unequipCosmeticBackpack() = this.cosmeticUser?.removeCosmeticSlot(CosmeticSlot.BACKPACK)
 
-fun Player.getCosmeticBackpack(): CosmeticItem =
-    HMCCosmeticsAPI.getUserCurrentItem(uniqueId, ArmorItem.Type.BACKPACK)
-fun Player.equipCosmeticBackPack(backpack: String) =
-    HMCCosmeticsAPI.setCosmeticItem(uniqueId, HMCCosmeticsAPI.getCosmeticFromId(backpack))
-fun Player.unequipCosmeticBackpack() =
-    HMCCosmeticsAPI.setCosmeticItem(uniqueId, CosmeticItem(ArmorItem.empty(ArmorItem.Type.BACKPACK)))
+fun Player.getCosmeticHat() = this.cosmeticUser?.getCosmetic(CosmeticSlot.HELMET)
+fun Player.equipCosmeticHat(hat: String) = this.cosmeticUser?.addPlayerCosmetic(Cosmetics.getCosmetic(hat))
+fun Player.unequipCosmeticHat() = this.cosmeticUser?.removeCosmeticSlot(CosmeticSlot.HELMET)
 
-fun Player.getCosmeticHat(): CosmeticItem =
-    HMCCosmeticsAPI.getUserCurrentItem(uniqueId, ArmorItem.Type.HAT)
-fun Player.equipCosmeticHat(hat: String) =
-    HMCCosmeticsAPI.setCosmeticItem(uniqueId, HMCCosmeticsAPI.getCosmeticFromId(hat))
-fun Player.unequipCosmeticHat() =
-    HMCCosmeticsAPI.setCosmeticItem(uniqueId, CosmeticItem(ArmorItem.empty(ArmorItem.Type.HAT)))
+internal val Player.cosmeticUser get() = CosmeticUsers.getUser(this)
