@@ -2,6 +2,7 @@ package com.mineinabyss.helpers
 
 import com.mineinabyss.components.cosmetics.Cosmetics
 import com.mineinabyss.geary.papermc.access.toGeary
+import de.skyslycer.hmcwraps.IHMCWraps
 import io.github.fisher2911.hmccosmetics.HMCCosmetics
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem
 import io.github.fisher2911.hmccosmetics.api.HMCCosmeticsAPI
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player
 
 val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("MCCosmetics") as MCCosmeticsPlugin }
 val hmcCosmetics: HMCCosmetics by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmetics }
+val hmcWraps: IHMCWraps by lazy { Bukkit.getPluginManager().getPlugin("HMCWraps") as IHMCWraps }
 
 fun Player.playGesture(gestureName: String) {
     toGeary { setPersisting(Cosmetics(gesture = gestureName)) }

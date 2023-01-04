@@ -20,11 +20,13 @@ chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
-minecraft-plugin-gsit = "com.gecolay:gsit:1.2.4"
+minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.3.1"
 minecraft-plugin-mccosmetics = "io.lumine:MCCosmetics-Dist:1.0.0-SNAPSHOT"
-minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:1.11.2"
+minecraft-plugin-hmccosmetics = "com.hibiscus:hmccosmetics:remapped"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.2"
 minecraft-plugin-happyhud = "com.ehhtan:HappyHUD:0.3.0-SNAPSHOT"
 minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R3.0.0"
+minecraft-plugin-hmcwraps = "de.skyslycer.hmcwraps:api:1.0.0"
+minecraft-plugin-shopkeepers = "com.nisovin.shopkeepers:ShopkeepersAPI:2.16.3"

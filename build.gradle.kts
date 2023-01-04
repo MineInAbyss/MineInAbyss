@@ -20,6 +20,8 @@ allprojects {
         maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
+        maven("https://repo.skyslycer.de/releases/") // HMCWraps
+        maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
     }
 
@@ -70,6 +72,8 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.luckperms)
         compileOnly(miaLibs.minecraft.plugin.placeholderapi)
         compileOnly(miaLibs.minecraft.plugin.happyhud)
+        compileOnly(miaLibs.minecraft.plugin.hmcwraps)
+        compileOnly(miaLibs.minecraft.plugin.shopkeepers)
     }
 }
 
