@@ -1,7 +1,7 @@
 package com.mineinabyss.huds
 
 import com.mineinabyss.components.huds.AlwaysShowAirHud
-import com.mineinabyss.components.huds.AlwaysShowArmorHud
+import com.mineinabyss.components.huds.ReturnVanillaHud
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -13,17 +13,16 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.Bukkit
 
 @Serializable
 @SerialName("custom_hud")
 class HudFeature(
-    val healthElement: String = "health",
-    val foodElement: String = "food",
-    val hungerLayout: String = "hunger",
-    val expElement: String = "exp",
-    val armorLayout: String = "armor",
-    val airLayout: String = "air",
+    val vanillaHudLayout: String = "vanillaLayout",
+    val vanillaPackName: String = "survivalpack",
+    val hudPackName: String = "survivalpack_happyhud",
 
+    val hungerLayout: String = "hunger",
     val absorptionLayout: String = "absorption",
     val witherLayout: String = "wither",
     val bleedingLayout: String = "bleeding",
@@ -53,29 +52,26 @@ class HudFeature(
         commands {
             mineinabyss {
                 "hud" {
-                    "air_bar" {
-                        "toggleAlwaysOn" {
-                            playerAction {
-                                player.toGeary {
-                                    if (has<AlwaysShowAirHud>())
-                                        remove<AlwaysShowAirHud>()
-                                    else add<AlwaysShowAirHud>()
-                                    player.changeHudState(airLayout, has<AlwaysShowAirHud>())
-                                    player.success("Air Bar was toggled ${if (has<AlwaysShowAirHud>()) "on" else "off"}")
+                    "toggleCustomHud" {
+                        //TODO Check if /resetpack is needed first
+                        //TODO Check if theres api over using commands
+                        playerAction {
+                            player.toGeary {
+
+                                if (has<ReturnVanillaHud>()) {
+                                    remove<ReturnVanillaHud>()
+                                    //remove<AlwaysShowAirHud>()
+                                    //remove<AlwaysShowArmorHud>()
+                                    player.performCommand("/usepack $hudPackName ${player.name}")
+                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"/usepack $hudPackName ${player.name}")
+
+                                } else {
+                                    add<ReturnVanillaHud>()
+                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"/usepack $vanillaPackName ${player.name}")
                                 }
-                            }
-                        }
-                    }
-                    "armor_bar" {
-                        "toggleAlwaysOn" {
-                            playerAction {
-                                player.toGeary {
-                                    if (has<AlwaysShowArmorHud>())
-                                        remove<AlwaysShowArmorHud>()
-                                    else add<AlwaysShowArmorHud>()
-                                    player.changeHudState(armorLayout, has<AlwaysShowArmorHud>())
-                                    player.success("Armor Bar was toggled ${if (has<AlwaysShowArmorHud>()) "on" else "off"}")
-                                }
+
+                                player.changeHudState(vanillaHudLayout, has<AlwaysShowAirHud>())
+                                player.success("Toggled custom hud of vanilla elements ${if (has<AlwaysShowAirHud>()) "on" else "off"}")
                             }
                         }
                     }
@@ -86,13 +82,9 @@ class HudFeature(
                     1 -> listOf("hud").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "hud" -> listOf("air_bar", "armor_bar").filter { it.startsWith(args[1]) }
+                            "hud" -> listOf("toggleCustomHud").filter { it.startsWith(args[1]) }
                             else -> null
                         }
-                    }
-                    3 -> when (args[1]) {
-                        "air_bar","armor_bar" -> listOf("toggleAlwaysOn").filter { it.startsWith(args[2]) }
-                        else -> null
                     }
 
                     else -> null

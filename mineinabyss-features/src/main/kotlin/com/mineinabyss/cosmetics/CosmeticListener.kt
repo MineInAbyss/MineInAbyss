@@ -1,7 +1,5 @@
 package com.mineinabyss.cosmetics
 
-import com.hibiscusmc.hmccosmetics.api.PlayerShowCosmeticEvent
-import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
 import com.mineinabyss.components.players.Backpack
@@ -23,11 +21,11 @@ import org.bukkit.inventory.meta.BlockStateMeta
 class CosmeticListener : Listener {
 
     // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
-    @EventHandler
+    /*@EventHandler
     fun PlayerShowCosmeticEvent.onEquipBackpack() {
         if (user.player.toGeary().has<Backpack>()) return
         user.player.toGeary().setPersisting(CosmeticComponent(cosmeticBackpack = user.getCosmetic(CosmeticSlot.BACKPACK).id))
-    }
+    }*/
 
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
