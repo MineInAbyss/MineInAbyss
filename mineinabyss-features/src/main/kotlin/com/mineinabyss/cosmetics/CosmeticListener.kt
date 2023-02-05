@@ -1,5 +1,8 @@
 package com.mineinabyss.cosmetics
 
+import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticEquipEvent
+import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticRemoveEvent
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
 import com.mineinabyss.components.players.Backpack
@@ -21,11 +24,20 @@ import org.bukkit.inventory.meta.BlockStateMeta
 class CosmeticListener : Listener {
 
     // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
-    /*@EventHandler
-    fun PlayerShowCosmeticEvent.onEquipBackpack() {
-        if (user.player.toGeary().has<Backpack>()) return
-        user.player.toGeary().setPersisting(CosmeticComponent(cosmeticBackpack = user.getCosmetic(CosmeticSlot.BACKPACK).id))
-    }*/
+    @EventHandler
+    fun PlayerCosmeticEquipEvent.onEquipBackpack() {
+        user.player.toGeary().setPersisting(
+            CosmeticComponent(
+                user.player.cosmeticComponent.gesture,
+                user.getCosmetic(CosmeticSlot.BACKPACK).id
+            )
+        )
+    }
+
+    @EventHandler
+    fun PlayerCosmeticRemoveEvent.onRemoveBackpack() {
+
+    }
 
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
@@ -47,7 +59,7 @@ class CosmeticListener : Listener {
             item.subtract()
 
             // Use default color backpack or custom one if specified so by the component
-            player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, "default_$type"))
+            //player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, "default_$type"))
             player.equipCosmeticBackPack(player.cosmeticComponent.cosmeticBackpack)
         }
 
@@ -79,10 +91,8 @@ class CosmeticListener : Listener {
             val type = if (i.startsWith("shulker")) "yellow" else i.replace("_shulker_box", "")
 
             // Unequip the backpack from the player
-            player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, "default_$type"))
+            //player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, "default_$type"))
             player.unequipCosmeticBackpack()
-            player.toGeary().get(Backpack::class)?.backpackContent?.clear()
-            player.toGeary().remove(Backpack::class)
         }
     }
 }

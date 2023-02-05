@@ -92,8 +92,8 @@ class ChattyGuildListener : Listener {
             it.getGuildName() == player.getGuildName() && it != player
         })
 
-        if (!chattyConfig.chat.enableChatSigning) {
-            viewers().forEach { a -> RendererExtension().render(player, player.displayName(), message(), a) }
+        if (chattyConfig.chat.disableChatSigning) {
+            viewers().forEach { a -> RendererExtension.render(player, player.displayName(), message(), a) }
             viewers().clear()
         }
     }

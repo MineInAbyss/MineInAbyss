@@ -16,10 +16,10 @@ allprojects {
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://mvn.lumine.io/repository/maven-public/") { metadataSources { artifact() } } // Model Engine
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
-        maven("https://mvn.lumine.io/repository/maven-public/") // MCCosmetics
         maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
+        maven("https://repo.hibiscusmc.com/releases") // HMCCosmetics
         maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
@@ -66,7 +66,6 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.modelengine)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
-        compileOnly(miaLibs.minecraft.plugin.mccosmetics)
         compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
         compileOnly(miaLibs.minecraft.plugin.discordsrv)
         compileOnly(miaLibs.minecraft.plugin.luckperms)
