@@ -1,9 +1,9 @@
 package com.mineinabyss.cosmetics
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
-import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.isPluginEnabled
 import com.mineinabyss.idofront.plugin.registerEvents
@@ -15,19 +15,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature : AbyssFeature {
+class CosmeticsFeature(
+    private val defaultMenu: String = "defaultmenu"
+) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         if (!isPluginEnabled("HMCCosmetics")) return
+        HMCCosmeticsPlugin.setup()
         registerEvents(CosmeticListener())
         commands {
             mineinabyss {
                 "cosmetic" {
                     "menu" {
-                        val menu by stringArg()
                         playerAction {
                             if (hmcCosmetics.isEnabled)
-                                Menus.getMenu(menu).openMenu(player.cosmeticUser)
+                                Menus.getMenu(defaultMenu).openMenu(player.cosmeticUser)
                         }
                     }
                     "gesture" {

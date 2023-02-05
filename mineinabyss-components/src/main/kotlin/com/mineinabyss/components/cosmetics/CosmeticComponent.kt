@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 @SerialName("mineinabyss:cosmetics")
 data class CosmeticComponent(
     val gesture: String = "",
-    val cosmeticBackpack: String = ""
+    val cosmeticBackpack: String = "backpack"
 )
 
 val Player.cosmeticComponent get() = toGeary().getOrSetPersisting { CosmeticComponent() }

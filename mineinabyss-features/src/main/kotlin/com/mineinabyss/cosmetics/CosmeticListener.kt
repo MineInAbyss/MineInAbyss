@@ -1,42 +1,25 @@
 package com.mineinabyss.cosmetics
 
 import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticEquipEvent
-import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticRemoveEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
-import com.mineinabyss.components.players.Backpack
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.helpers.equipCosmeticBackPack
 import com.mineinabyss.helpers.getCosmeticBackpack
-import com.mineinabyss.helpers.unequipCosmeticBackpack
 import com.mineinabyss.idofront.entities.rightClicked
-import com.mineinabyss.idofront.serialization.toSerializable
 import org.bukkit.Material
-import org.bukkit.block.ShulkerBox
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.BlockStateMeta
 
 class CosmeticListener : Listener {
 
     // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
     @EventHandler
     fun PlayerCosmeticEquipEvent.onEquipBackpack() {
-        user.player.toGeary().setPersisting(
-            CosmeticComponent(
-                user.player.cosmeticComponent.gesture,
-                user.getCosmetic(CosmeticSlot.BACKPACK).id
-            )
-        )
-    }
-
-    @EventHandler
-    fun PlayerCosmeticRemoveEvent.onRemoveBackpack() {
-
+        val backpack = user.getCosmetic(CosmeticSlot.BACKPACK) ?: return
+        user.player.toGeary().setPersisting(CosmeticComponent(user.player.cosmeticComponent.gesture, backpack.id))
     }
 
     @EventHandler
@@ -44,7 +27,8 @@ class CosmeticListener : Listener {
         if (hand != EquipmentSlot.HAND || !player.isSneaking || !rightClicked) return
         // Put backpack on and store backpack-inv
         val backpackType = player.getCosmeticBackpack()?.item?.type ?: Material.AIR
-        if (backpackType == Material.AIR) {
+        //TODO Fix this handling with backpack ids etc
+        /*if (backpackType == Material.AIR) {
             // Get the color of the players backpack, or non-colored, from the material
             val item = player.inventory.itemInMainHand
             val i = item.type.toString().lowercase()
@@ -87,6 +71,6 @@ class CosmeticListener : Listener {
             }
             // Unequip the backpack from the player
             player.unequipCosmeticBackpack()
-        }
+        }*/
     }
 }
