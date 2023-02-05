@@ -3,8 +3,6 @@ package com.mineinabyss.cosmetics
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
-import com.mineinabyss.helpers.mcCosmetics
-import com.mineinabyss.helpers.playGesture
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.isPluginEnabled
@@ -12,10 +10,8 @@ import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
-import com.mineinabyss.mineinabyss.core.mineInAbyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("cosmetics")
@@ -35,37 +31,23 @@ class CosmeticsFeature : AbyssFeature {
                         }
                     }
                     "gesture" {
-                        val gesture by stringArg()
+                        //TODO Wait until HMCCosmetics gets gestures
+                        /*val gesture by stringArg()
                         playerAction {
                             if (!isPluginEnabled("MCCosmetics")) return@playerAction
                             (sender as Player).playGesture(gesture)
                             if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics"))
                                 (sender as Player).playGesture(gesture)
-                        }
+                        }*/
                     }
                 }
             }
             tabCompletion {
-                val emotes: MutableList<String> = ArrayList()
-
-                if (isPluginEnabled("MCCosmetics")) {
-                    for (gesture in mcCosmetics.gestureManager.allCosmetics) {
-                        if ((sender as Player).hasPermission(gesture.permission))
-                            emotes.add(gesture.key)
-                    }
-                }
-
                 when (args.size) {
                     1 -> listOf("cosmetic").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "cosmetic" -> listOf("menu", "gesture").filter { it.startsWith(args[1]) }
-                            else -> listOf()
-                        }
-                    }
-                    3 -> {
-                        when (args[1]) {
-                            "gesture" -> emotes.filter { it.startsWith(args[2]) }
+                            "cosmetic" -> listOf("menu").filter { it.startsWith(args[1]) }
                             else -> listOf()
                         }
                     }

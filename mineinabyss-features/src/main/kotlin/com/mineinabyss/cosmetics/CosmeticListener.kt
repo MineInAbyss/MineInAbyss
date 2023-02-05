@@ -59,7 +59,6 @@ class CosmeticListener : Listener {
             item.subtract()
 
             // Use default color backpack or custom one if specified so by the component
-            //player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, "default_$type"))
             player.equipCosmeticBackPack(player.cosmeticComponent.cosmeticBackpack)
         }
 
@@ -86,12 +85,7 @@ class CosmeticListener : Listener {
                 inv.firstEmpty() != -1 -> inv.addItem(item)
                 else -> return
             }
-
-            val i = item.type.toString().lowercase()
-            val type = if (i.startsWith("shulker")) "yellow" else i.replace("_shulker_box", "")
-
             // Unequip the backpack from the player
-            //player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, "default_$type"))
             player.unequipCosmeticBackpack()
         }
     }
