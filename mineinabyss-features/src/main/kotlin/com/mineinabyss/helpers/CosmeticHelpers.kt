@@ -4,12 +4,10 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers
-import de.skyslycer.hmcwraps.IHMCWraps
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 val hmcCosmetics: HMCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmeticsPlugin }
-val hmcWraps: IHMCWraps by lazy { Bukkit.getPluginManager().getPlugin("HMCWraps") as IHMCWraps }
 
 fun Player.getCosmeticBackpack() = this.cosmeticUser?.getCosmetic(CosmeticSlot.BACKPACK)
 fun Player.equipCosmeticBackPack(backpack: String) = this.cosmeticUser?.addPlayerCosmetic(Cosmetics.getCosmetic(backpack))
