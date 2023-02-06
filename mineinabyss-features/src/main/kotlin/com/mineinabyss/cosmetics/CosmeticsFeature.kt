@@ -1,6 +1,8 @@
 package com.mineinabyss.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
+import com.hibiscusmc.hmccosmetics.config.Settings
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
@@ -15,9 +17,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature(
-    private val defaultMenu: String = "defaultmenu"
-) : AbyssFeature {
+class CosmeticsFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         if (!isPluginEnabled("HMCCosmetics")) return
@@ -26,21 +26,29 @@ class CosmeticsFeature(
         commands {
             mineinabyss {
                 "cosmetic" {
+                    "wardrobe" {
+                        playerAction {
+                            val viewerLoc = WardrobeSettings.getViewerLocation()
+                            val wardrobeLoc = WardrobeSettings.getWardrobeLocation()
+                            val leaveLoc = WardrobeSettings.getLeaveLocation()
+
+                            WardrobeSettings.setViewerLocation(player.location.add(5.0, 0.0, 0.0))
+                            WardrobeSettings.setWardrobeLocation(player.location)
+                            WardrobeSettings.setLeaveLocation(player.location.apply { this.yaw = -this.yaw })
+                            WardrobeSettings.isApplyCosmeticsOnClose()
+
+                            player.cosmeticUser?.enterWardrobe()
+                            //Reset back to the config ones
+                            WardrobeSettings.setLeaveLocation(leaveLoc)
+                            WardrobeSettings.setViewerLocation(viewerLoc)
+                            WardrobeSettings.setWardrobeLocation(wardrobeLoc)
+                        }
+                    }
                     "menu" {
                         playerAction {
                             if (hmcCosmetics.isEnabled)
-                                Menus.getMenu(defaultMenu).openMenu(player.cosmeticUser)
+                                Menus.getMenu(Settings.getDefaultMenu()).openMenu(player.cosmeticUser)
                         }
-                    }
-                    "gesture" {
-                        //TODO Wait until HMCCosmetics gets gestures
-                        /*val gesture by stringArg()
-                        playerAction {
-                            if (!isPluginEnabled("MCCosmetics")) return@playerAction
-                            (sender as Player).playGesture(gesture)
-                            if (mineInAbyss.server.pluginManager.isPluginEnabled("MCCosmetics"))
-                                (sender as Player).playGesture(gesture)
-                        }*/
                     }
                 }
             }
@@ -49,7 +57,7 @@ class CosmeticsFeature(
                     1 -> listOf("cosmetic").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "cosmetic" -> listOf("menu").filter { it.startsWith(args[1]) }
+                            "cosmetic" -> listOf("menu", "wardrobe").filter { it.startsWith(args[1]) }
                             else -> listOf()
                         }
                     }
