@@ -18,6 +18,6 @@ fun Player.changeHudState(layoutId: String, state: Boolean) {
 
     if (state) hudHolder.addLayout(layout)
     else hudHolder.removeLayout(layout)
-    hudHolder.updateAll()
+    hudHolder.reloadLayouts()
     hudHolder.send()
 }
