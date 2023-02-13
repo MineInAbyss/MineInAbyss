@@ -4,6 +4,7 @@ import com.mineinabyss.components.moderation.HelperInfo
 import com.mineinabyss.components.moderation.OldLocSerializer
 import com.mineinabyss.components.moderation.helperMode
 import com.mineinabyss.components.moderation.isInHelperMode
+import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -17,7 +18,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.luckperms.api.node.Node
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
@@ -57,10 +57,7 @@ class HelperFeature : AbyssFeature {
             ?.map { it?.toSerializable() ?: SerializableItemStack() } ?: emptyList()))
         gameMode = GameMode.SPECTATOR
         inventory.clear()
-        luckPerms.userManager.getUser(this.uniqueId)?.let {
-            helperPerms.forEach { node -> it.data().add(node) }
-            luckPerms.userManager.saveUser(it)
-        }
+        this.playerData.isAffectedByCurse = false
         success("Entering Helper-Mode")
     }
 
@@ -69,22 +66,9 @@ class HelperFeature : AbyssFeature {
         gameMode = helperMode!!.oldGameMode
         inventory.clear()
         inventory.contents = helperMode!!.inventory.map { it.toItemStack() }.toTypedArray()
-        luckPerms.userManager.getUser(this.uniqueId)?.let {
-            helperPerms.forEach { node -> it.data().remove(node) }
-            luckPerms.userManager.saveUser(it)
-        }
+        this.playerData.isAffectedByCurse = true
         teleport(helperMode!!.oldLocation.toLocation())
         toGeary().remove<HelperInfo>()
         error("Exited Helper-Mode")
     }
-
-    private val helperPerms: Set<Node>
-        get() =
-            setOf(
-                Node.builder("essentials.teleport").build(),
-                Node.builder("coreprotect.inspect").build(),
-                Node.builder("coreprotect.lookup").build(),
-                Node.builder("coreprotect.rollback").build(),
-                Node.builder("coreprotect.restore").build(),
-            )
 }
