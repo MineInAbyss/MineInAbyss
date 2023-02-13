@@ -28,8 +28,9 @@ data class ItemDrop(
 val luckPerms = LuckPermsProvider.get()
 
 // Unicodes for whistles, also used for HappyHUD but through custom font file
-fun Player.getLayerWhistleForHud() : String {
-    val layer = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
+fun Player.getLayerWhistleForHud(): String {
+    val layer =
+        PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
     return when {
         "orth" in layer -> "\uEBAF"
         "edge" in layer -> "\uEBB0"
@@ -73,14 +74,14 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-fun Player.getLinkedDiscordAccount(): String? {
-    return runCatching { discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name }.getOrNull() ?: null
-}
+val Player.linkedDiscordAccount
+    get() = runCatching {
+        discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
+    }.getOrNull()
 
-fun Player.getGroups(): List<String> {
-    return luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
+val Player.luckpermGroups
+    get() = luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
-}
 
 object MountUtils {
     /** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*/
@@ -89,7 +90,7 @@ object MountUtils {
 }
 
 object CoinFactory {
-    fun newOrthCoin() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
-    fun newMittyToken() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
+    val orthCoin get() = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss", "orthcoin"))
+    val mittyToken get() = LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 

@@ -6,15 +6,14 @@ import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.helpers.heldLootyItem
-import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.guilds.guildChannelId
+import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -330,7 +329,7 @@ fun Player.withdrawCoinsFromGuild(amount: Int) {
         return
     }
 
-    val orthCoin = LootyFactory.createFromPrefab(PrefabKey.Companion.of("mineinabyss:orthcoin"))
+    val orthCoin = CoinFactory.orthCoin
     if (orthCoin == null) {
         error("Could not create OrthCoin.")
         error("Cancelling withdrawal!")

@@ -173,7 +173,7 @@ fun GuildButton(player: Player, viewer: Player) {
 
 @Composable
 fun DiscordButton(player: Player) {
-    val linked = player.getLinkedDiscordAccount()
+    val linked = player.linkedDiscordAccount
 
     if (linked == null) {
         Item(
@@ -187,10 +187,10 @@ fun DiscordButton(player: Player) {
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    var group = player.getGroups().filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull()
-    val patreon = player.getGroups().firstOrNull { it.contains("patreon") || it.contains("supporter") }
+    var group = player.luckpermGroups.filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull()
+    val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it }
     group = if (group != null) "${Space.of(34)}:player_profile_rank_$group:" else Space.of(34)
-    if (patreon?.isNotEmpty() == true) group += ":${Space.of(-6)}:player_profile_rank_$patreon:"
+    if (!patreon.isNullOrBlank()) group += ":${Space.of(-6)}:player_profile_rank_$patreon:"
 
     return group
 }

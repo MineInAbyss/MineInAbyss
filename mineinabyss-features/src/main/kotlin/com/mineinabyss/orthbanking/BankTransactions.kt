@@ -2,10 +2,9 @@ package com.mineinabyss.orthbanking
 
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.looty.LootyFactory
 import com.mineinabyss.looty.tracking.toGearyOrNull
 import org.bukkit.entity.Player
 
@@ -56,8 +55,7 @@ fun Player.withdrawCoins(amount: Int) {
         return
     }
 
-    val item =
-        LootyFactory.createFromPrefab(PrefabKey.of("mineinabyss:orthcoin")) ?: kotlin.error("No orth coin prefab found")
+    val item = CoinFactory.orthCoin ?: kotlin.error("No orth coin prefab found")
     for (i in 1..amount) {
         inventory.addItem(item)
         data.orthCoinsHeld -= 1

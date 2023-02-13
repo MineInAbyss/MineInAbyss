@@ -73,54 +73,6 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: L
             }
         }
     }
-
-    // Moved out of separate functions due to remember not working with separate functions
-//    Button(
-//        enabled = pageNum > 0,
-//        modifier = modifier.at(3, 5),
-//        onClick = {
-//            pageNum--
-//            guildPageList = queriedGuildList[pageNum]
-//            nav.reset()
-//            nav.open(GuildScreen.GuildList(pageNum))
-//        }
-//    ) { Text("<yellow><b>Previous".miniMsg()) }
-//
-//    Button(
-//        enabled = pageNum < (queriedGuildList.size - 1),
-//        modifier = modifier.at(5, 5),
-//        onClick = {
-//            pageNum++
-//            guildPageList = queriedGuildList[pageNum]
-//            nav.reset()
-//            nav.open(GuildScreen.GuildList(pageNum))
-//        }
-//    ) { Text("<yellow><b>Next".miniMsg()) }
-
-//    Button(
-//        modifier = modifier.at(7, 5),
-//        onClick = {
-//            nav.open(
-//                UniversalScreens.Anvil(
-//                    AnvilGUI.Builder()
-//                        .title("${Space.of(-64)}${Space.of(1)}:guild_search_menu:")
-//                        .itemLeft(TitleItem.of("Guild Name"))
-//                        .plugin(guiyPlugin)
-//                        .onClose { nav.back() }
-//                        .onComplete { player, guildName: String ->
-//                            val guilds = displayGuildList(guildName)
-//                            if (guilds.isEmpty()) player.error("No guild found with that name")
-//                            else queriedList = guilds.chunked(20)
-//
-//                            pageNum = 0
-//                            guildPageList = queriedGuildList[pageNum]
-//                            nav.reset()
-//                            nav.open(GuildScreen.GuildList(pageNum))
-//                            AnvilGUI.Response.close()
-//                        }
-//                ))
-//        }
-//    ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
 }
 
 @Composable

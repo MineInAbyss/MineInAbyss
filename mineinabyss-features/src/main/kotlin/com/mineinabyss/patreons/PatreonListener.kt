@@ -2,7 +2,7 @@ package com.mineinabyss.patreons
 
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.helpers.getGroups
+import com.mineinabyss.helpers.luckpermGroups
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -13,7 +13,7 @@ class PatreonListener : Listener {
 
     @EventHandler
     fun PlayerJoinEvent.addPatreonComponent() {
-        val isPatreon = (player.getGroups().contains("patreon") || player.getGroups().contains("patreonplus"))
+        val isPatreon = (player.luckpermGroups.contains("patreon") || player.luckpermGroups.contains("patreonplus"))
         val gearyPlayer = player.toGeary()
 
         // Remove perks from old patreons
@@ -22,7 +22,7 @@ class PatreonListener : Listener {
             gearyPlayer.remove<Patreon>()
         } else {
             val patreon = gearyPlayer.getOrSetPersisting { Patreon() }
-            if (player.getGroups().any { it == "patreonplus" }) patreon.tier = 2
+            if (player.luckpermGroups.any { it == "patreonplus" }) patreon.tier = 2
         }
     }
 }
