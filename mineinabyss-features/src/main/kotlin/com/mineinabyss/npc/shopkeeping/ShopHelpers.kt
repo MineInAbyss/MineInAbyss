@@ -1,10 +1,7 @@
 package com.mineinabyss.npc.shopkeeping
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.components.npc.shopkeeping.ShopCurrency
-import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
-import com.mineinabyss.components.npc.shopkeeping.ShopTrade
-import com.mineinabyss.components.npc.shopkeeping.ShopTradeSerializer
+import com.mineinabyss.components.npc.shopkeeping.*
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.prefabs.PrefabKey
@@ -14,10 +11,13 @@ import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.helpers.CoinFactory
+import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.helpers.ui.composables.Button
+import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mobzy.ecs.components.initialization.MobzyType
 import com.mineinabyss.mobzy.injection.MobzyTypesQuery
 import kotlinx.serialization.Serializable
+import net.luckperms.api.node.Node
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -74,21 +74,34 @@ fun Player.adjustItemStackAmountFromCost(item: ItemStack?, c: Int) : ItemStack? 
 @Composable
 fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrades(player: Player) {
     val data = player.playerData
-    this.forEach { (item, currency, currencyType, cost) ->
+    this.forEach { (item, currency, currencyType, cost, tradeAction) ->
         val tradeItem = item.toItemStack()
         val currencyStack = currency?.toItemStack() ?: if (currencyType == ShopCurrency.ITEM) return@forEach else null
         val coin = getShopTradeCoin(currencyType, currencyStack, cost) ?: return@forEach
 
         Button(
             onClick = {
-                if (player.getShopTradeCost(currencyType, currencyStack) < cost || player.inventory.firstEmpty() == -1)
-                    return@Button
+                if (player.getShopTradeCost(currencyType, currencyStack) < cost) return@Button
+
+                when (tradeAction.action) {
+                    TradeAction.GIVE_ITEM -> {
+                        if (player.inventory.firstEmpty() == -1) return@Button
+                        player.inventory.addItem(tradeItem)
+                    }
+                    TradeAction.PLAYER_COMMAND -> player.performCommand(tradeAction.getValue(player))
+                    TradeAction.CONSOLE_COMMAND -> mineInAbyss.server.dispatchCommand(mineInAbyss.server.consoleSender, tradeAction.getValue(player))
+                    TradeAction.GRANT_PERMISSION -> {
+                        val permission = tradeAction.getValue()
+                        if (player.hasPermission(permission)) return@Button
+                        luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(Node.builder(permission).build())
+                    }
+                }
+
                 when (currencyType) {
                     ShopCurrency.ORTH_COIN -> data.orthCoinsHeld -= cost
                     ShopCurrency.MITTY_TOKEN -> data.mittyTokensHeld -= cost
                     ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost) ?: return@Button
                 }
-                player.inventory.addItem(tradeItem)
             },
         ) {
             //TODO Alter how disabled trades are displayed
