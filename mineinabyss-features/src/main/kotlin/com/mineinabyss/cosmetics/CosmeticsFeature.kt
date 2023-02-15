@@ -1,7 +1,6 @@
 package com.mineinabyss.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
-import com.hibiscusmc.hmccosmetics.config.WardrobeSettings
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
@@ -20,6 +19,7 @@ import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 
 @Serializable
@@ -43,7 +43,13 @@ class CosmeticsFeature : AbyssFeature {
                                     val location = Location(player.world, x.toDouble(), y.toDouble(), z.toDouble())
                                     player.toGeary {
                                         val wardrobe = this.get<PersonalWardrobe>()
-                                        this.setPersisting(PersonalWardrobe(location, wardrobe?.wardrobeLocation, wardrobe?.leaveLocation))
+                                        this.setPersisting(
+                                            PersonalWardrobe(
+                                                location,
+                                                wardrobe?.wardrobeLocation,
+                                                wardrobe?.leaveLocation
+                                            )
+                                        )
                                     }
                                 }
                             }
@@ -55,7 +61,13 @@ class CosmeticsFeature : AbyssFeature {
                                     val location = Location(player.world, x.toDouble(), y.toDouble(), z.toDouble())
                                     player.toGeary {
                                         val wardrobe = this.get<PersonalWardrobe>()
-                                        this.setPersisting(PersonalWardrobe(wardrobe?.viewerLocation, wardrobe?.wardrobeLocation, location))
+                                        this.setPersisting(
+                                            PersonalWardrobe(
+                                                wardrobe?.viewerLocation,
+                                                wardrobe?.wardrobeLocation,
+                                                location
+                                            )
+                                        )
                                     }
                                 }
                             }
@@ -67,27 +79,46 @@ class CosmeticsFeature : AbyssFeature {
                                     val location = Location(player.world, x.toDouble(), y.toDouble(), z.toDouble())
                                     player.toGeary {
                                         val wardrobe = this.get<PersonalWardrobe>()
-                                        this.setPersisting(PersonalWardrobe(wardrobe?.viewerLocation, location, wardrobe?.leaveLocation))
+                                        this.setPersisting(
+                                            PersonalWardrobe(
+                                                wardrobe?.viewerLocation,
+                                                location,
+                                                wardrobe?.leaveLocation
+                                            )
+                                        )
                                     }
                                 }
                             }
                         }
                         "open" {
                             playerAction {
-                                val viewerLoc = WardrobeSettings.getViewerLocation()
-                                val wardrobeLoc = WardrobeSettings.getWardrobeLocation()
-                                val leaveLoc = WardrobeSettings.getLeaveLocation()
+                                player.toGeary().get<PersonalWardrobe>()?.let {
+                                    player.cosmeticUser?.enterWardrobe(
+                                        true,
+                                        it.leaveLocation, it.viewerLocation, it.wardrobeLocation
+                                    )
+                                } ?: player.cosmeticUser?.enterWardrobe(
+                                    true,
+                                    player.location.clone(),
+                                    player.location.clone().apply {
+                                        when (player.facing) {
+                                            BlockFace.NORTH -> yaw = 180f
+                                            BlockFace.SOUTH -> yaw = 0f
+                                            BlockFace.WEST -> yaw = 90f
+                                            BlockFace.EAST -> yaw = 270f
+                                            else -> {}
+                                        }
+                                    },
+                                    player.location.clone().apply {
+                                        when {
+                                            player.facing.name.startsWith("NORTH") -> z -= 5
+                                            player.facing.name.startsWith("SOUTH") -> z += 5
+                                            player.facing.name.startsWith("WEST") -> x -= 5
+                                            player.facing.name.startsWith("EAST") -> x += 5
+                                        }
+                                        pitch = 0f
+                                    })
 
-                                WardrobeSettings.setViewerLocation(player.location.add(5.0, 0.0, 0.0))
-                                WardrobeSettings.setWardrobeLocation(player.location)
-                                WardrobeSettings.setLeaveLocation(player.location.apply { this.yaw = -this.yaw })
-                                WardrobeSettings.isApplyCosmeticsOnClose()
-
-                                player.cosmeticUser?.enterWardrobe()
-                                //Reset back to the config ones
-                                WardrobeSettings.setLeaveLocation(leaveLoc)
-                                WardrobeSettings.setViewerLocation(viewerLoc)
-                                WardrobeSettings.setWardrobeLocation(wardrobeLoc)
                             }
                         }
                     }
@@ -116,6 +147,7 @@ class CosmeticsFeature : AbyssFeature {
                             else -> listOf()
                         }
                     }
+
                     3 -> {
                         when (args[1]) {
                             "wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
@@ -123,30 +155,35 @@ class CosmeticsFeature : AbyssFeature {
                             else -> listOf()
                         }
                     }
+
                     4 -> {
                         when (args[2]) {
                             "personal" -> listOf("leave", "wardrobe", "viewer").filter { it.startsWith(args[2]) }
                             else -> listOf()
                         }
                     }
+
                     5 -> {
                         when (args[2]) {
                             "personal" -> listOf((sender as? Player)?.location?.x.toString())
                             else -> listOf()
                         }
                     }
+
                     6 -> {
                         when (args[2]) {
                             "personal" -> listOf((sender as? Player)?.location?.y.toString())
                             else -> listOf()
                         }
                     }
+
                     7 -> {
                         when (args[2]) {
                             "personal" -> listOf((sender as? Player)?.location?.z.toString())
                             else -> listOf()
                         }
                     }
+
                     else -> listOf()
                 }
             }
