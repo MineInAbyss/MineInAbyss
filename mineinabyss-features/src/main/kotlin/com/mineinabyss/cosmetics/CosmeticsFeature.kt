@@ -10,6 +10,7 @@ import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.isPluginEnabled
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -45,6 +46,7 @@ class CosmeticsFeature : AbyssFeature {
                                             )
                                         )
                                     }
+                                    player.success("Set viewer-location for Personal Wardrobe")
                                 }
                             }
                             "leave" {
@@ -59,6 +61,7 @@ class CosmeticsFeature : AbyssFeature {
                                             )
                                         )
                                     }
+                                    player.success("Set leave-location for Personal Wardrobe")
                                 }
                             }
                             "npc" {
@@ -73,6 +76,7 @@ class CosmeticsFeature : AbyssFeature {
                                             )
                                         )
                                     }
+                                    player.success("Set location of NPC for Personal Wardrobe")
                                 }
                             }
                         }
