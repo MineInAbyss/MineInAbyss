@@ -7,6 +7,6 @@ import org.bukkit.Location
 @Serializable
 data class PersonalWardrobe(
     val viewerLocation: @Serializable(with = LocationSerializer::class) Location? = null,
-    val wardrobeLocation: @Serializable(with = LocationSerializer::class) Location? = null,
+    val npcLocation: @Serializable(with = LocationSerializer::class) Location? = null,
     val leaveLocation: @Serializable(with = LocationSerializer::class) Location? = null
 )

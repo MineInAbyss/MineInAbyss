@@ -8,7 +8,6 @@ import com.mineinabyss.components.cosmetics.PersonalWardrobe
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
-import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.isPluginEnabled
@@ -18,9 +17,7 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.Location
 import org.bukkit.block.BlockFace
-import org.bukkit.entity.Player
 
 @Serializable
 @SerialName("cosmetics")
@@ -35,18 +32,15 @@ class CosmeticsFeature : AbyssFeature {
                 "cosmetics" {
                     "wardrobe" {
                         "personal" {
+                            //TODO Add distance checks for difference between existing, non-null locations, and set locations
                             "viewer" {
-                                val x by intArg { name = "X" }
-                                val y by intArg { name = "Y" }
-                                val z by intArg { name = "Z" }
                                 playerAction {
-                                    val location = Location(player.world, x.toDouble(), y.toDouble(), z.toDouble())
                                     player.toGeary {
                                         val wardrobe = this.get<PersonalWardrobe>()
                                         this.setPersisting(
                                             PersonalWardrobe(
-                                                location,
-                                                wardrobe?.wardrobeLocation,
+                                                player.location,
+                                                wardrobe?.npcLocation,
                                                 wardrobe?.leaveLocation
                                             )
                                         )
@@ -54,35 +48,27 @@ class CosmeticsFeature : AbyssFeature {
                                 }
                             }
                             "leave" {
-                                val x by intArg { name = "X" }
-                                val y by intArg { name = "Y" }
-                                val z by intArg { name = "Z" }
                                 playerAction {
-                                    val location = Location(player.world, x.toDouble(), y.toDouble(), z.toDouble())
                                     player.toGeary {
                                         val wardrobe = this.get<PersonalWardrobe>()
                                         this.setPersisting(
                                             PersonalWardrobe(
                                                 wardrobe?.viewerLocation,
-                                                wardrobe?.wardrobeLocation,
-                                                location
+                                                wardrobe?.npcLocation,
+                                                player.location
                                             )
                                         )
                                     }
                                 }
                             }
-                            "wardrobe" {
-                                val x by intArg { name = "Y" }
-                                val y by intArg { name = "Y" }
-                                val z by intArg { name = "Z" }
+                            "npc" {
                                 playerAction {
-                                    val location = Location(player.world, x.toDouble(), y.toDouble(), z.toDouble())
                                     player.toGeary {
                                         val wardrobe = this.get<PersonalWardrobe>()
                                         this.setPersisting(
                                             PersonalWardrobe(
                                                 wardrobe?.viewerLocation,
-                                                location,
+                                                player.location,
                                                 wardrobe?.leaveLocation
                                             )
                                         )
@@ -94,11 +80,13 @@ class CosmeticsFeature : AbyssFeature {
                             playerAction {
                                 player.toGeary().get<PersonalWardrobe>()?.let {
                                     player.cosmeticUser?.enterWardrobe(
-                                        true,
-                                        it.leaveLocation, it.viewerLocation, it.wardrobeLocation
+                                        false,
+                                        player.location,
+                                        it.viewerLocation,
+                                        it.npcLocation
                                     )
                                 } ?: player.cosmeticUser?.enterWardrobe(
-                                    true,
+                                    false,
                                     player.location.clone(),
                                     player.location.clone().apply {
                                         when (player.facing) {
@@ -158,28 +146,7 @@ class CosmeticsFeature : AbyssFeature {
 
                     4 -> {
                         when (args[2]) {
-                            "personal" -> listOf("leave", "wardrobe", "viewer").filter { it.startsWith(args[2]) }
-                            else -> listOf()
-                        }
-                    }
-
-                    5 -> {
-                        when (args[2]) {
-                            "personal" -> listOf((sender as? Player)?.location?.x.toString())
-                            else -> listOf()
-                        }
-                    }
-
-                    6 -> {
-                        when (args[2]) {
-                            "personal" -> listOf((sender as? Player)?.location?.y.toString())
-                            else -> listOf()
-                        }
-                    }
-
-                    7 -> {
-                        when (args[2]) {
-                            "personal" -> listOf((sender as? Player)?.location?.z.toString())
+                            "personal" -> listOf("leave", "npc", "viewer").filter { it.startsWith(args[3]) }
                             else -> listOf()
                         }
                     }
