@@ -36,7 +36,8 @@ val guildChannel =
         discordsrv = false,
         isDefaultChannel = false,
         isStaffChannel = false,
-        format = ":survival:%chatty_shift_-4%%chatty_shift_-4%:guildchat: %chatty_player_displayname%:<gold> ",
+        format = ":survival:<shift:-8>:guildchat: <chatty_nickname>: ",
+        _messageColor = "gold",
         channelRadius = 0,
         channelAliases = emptyList()
     )
