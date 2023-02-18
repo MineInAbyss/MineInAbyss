@@ -34,33 +34,33 @@ import org.bukkit.entity.Player
 sealed class GuildScreen(var title: String, val height: Int) {
     class Default(player: Player) :
         GuildScreen(
-            title = "${Space.of(-14)}<white>${decideMainMenu(player)}",
+            title = "${Space.of(-9)}${decideMainMenu(player)}",
             height = 4
         )
 
-    object GuildInfo : GuildScreen("${Space.of(-12)}<white>:guild_member_menu:", 6)
+    object GuildInfo : GuildScreen("${Space.of(-9)}:guild_member_menu:", 6)
 
-    object Leave : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
-    object Disband : GuildScreen("${Space.of(-12)}<white>:guild_disband_or_leave_menu:", 5)
-    object Owner : GuildScreen("${Space.of(-12)}<white>:guild_owner_menu:", 6)
+    object Leave : GuildScreen("${Space.of(-9)}:guild_disband_or_leave_menu:", 5)
+    object Disband : GuildScreen("${Space.of(-9)}:guild_disband_or_leave_menu:", 5)
+    object Owner : GuildScreen("${Space.of(-9)}:guild_owner_menu:", 6)
 
-    class GuildList (val pageNumber: Int): GuildScreen(title = "${Space.of(-12)}<white>:guild_list_menu:", 6)
+    class GuildList (val pageNumber: Int): GuildScreen("${Space.of(-9)}:guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: String) :
-        GuildScreen("${Space.of(-12)}<white>${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
+        GuildScreen("${Space.of(-9)}${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
     // Forgot to add to pack so this is fine for now
-    object InviteList : GuildScreen(title = "${Space.of(-12)}<white>:guild_join_requests_menu:", 5)
-    class Invite(val owner: OfflinePlayer) : GuildScreen(title = "${Space.of(-12)}<white>:handle_guild_invites:", 5)
+    object InviteList : GuildScreen("${Space.of(-9)}:guild_join_requests_menu:", 5)
+    class Invite(val owner: OfflinePlayer) : GuildScreen("${Space.of(-9)}:handle_guild_invites:", 5)
 
-    object JoinRequestList : GuildScreen(title = "${Space.of(-12)}<white>:guild_join_requests_menu:", 5)
+    object JoinRequestList : GuildScreen("${Space.of(-9)}:guild_join_requests_menu:", 5)
     class JoinRequest(val from: OfflinePlayer) :
-        GuildScreen("${Space.of(-12)}<white>:handle_guild_join_requests:", 5)
+        GuildScreen("${Space.of(-9)}:handle_guild_join_requests:", 5)
 
     class MemberOptions(val member: OfflinePlayer) :
-        GuildScreen("${Space.of(-12)}<white>:guild_member_action_menu:", 5)
+        GuildScreen("${Space.of(-9)}:guild_member_action_menu:", 5)
 
     class MemberList(val guildLevel: Int, player: Player) :
-        GuildScreen("${Space.of(-12)}<white>${decideMemberMenu(player)}", minOf(guildLevel + 2, MAX_CHEST_HEIGHT))
+        GuildScreen("${Space.of(-9)}${decideMemberMenu(player)}", minOf(guildLevel + 2, MAX_CHEST_HEIGHT))
 }
 
 typealias GuildNav = Navigator<GuildScreen>
@@ -71,7 +71,11 @@ class GuildUIScope(
     val feature: GuildFeature
 ) {
     //TODO cache more than just guild level here
-    val guildLevel = player.getGuildLevel() ?: 0
+    val guildName get() = player.getGuildName()
+    val guildLevel get() = player.getGuildLevel() ?: 0
+    val guildOwner get() = player.getGuildOwner().toPlayer()
+    val memberCount get() = player.getGuildMemberCount()
+    val guildBalance get() = player.getGuildBalance()
     val nav = GuildNav { Default(player) }
 }
 
@@ -173,7 +177,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
             }
             nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
-                    .title("${Space.of(-64)}:guild_name_menu:")
+                    .title("${Space.of(-61)}:guild_name_menu:")
                     .itemLeft(guildRenamePaper)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }

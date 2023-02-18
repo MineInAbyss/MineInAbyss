@@ -1,7 +1,6 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.guilds.extensions.getGuildName
 import com.mineinabyss.guilds.extensions.leaveGuild
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.layout.Row
@@ -29,7 +28,7 @@ fun GuildUIScope.LeaveButton(modifier: Modifier = Modifier) = Button(
         player.closeInventory()
     }) {
     Text(
-        "<green><b>Leave <dark_green><i>${player.getGuildName()}".miniMsg(),
+        "<green><b>Leave <dark_green><i>${guildName}".miniMsg(),
         modifier = Modifier.size(3, 3)
     )
 }
@@ -40,7 +39,7 @@ fun GuildUIScope.DontLeaveButton(modifier: Modifier = Modifier) = Button(
     onClick = { nav.back() }
 ) {
     Text(
-        "<red><b>Don't Leave <dark_red><i>${player.getGuildName()}".miniMsg(),
+        "<red><b>Don't Leave <dark_red><i>${guildName}".miniMsg(),
         modifier = Modifier.size(3, 3)
     )
 }

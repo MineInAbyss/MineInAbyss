@@ -55,7 +55,7 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 
 @Composable
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
-    val renameItem = TitleItem.of(player.getGuildName())
+    val renameItem = TitleItem.of(guildName)
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,
@@ -77,11 +77,11 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     ) {
         Text(
             "<gold><b>Change Guild Name".miniMsg(),
-            "<yellow><b>Guild Name:</b> <yellow><i>${player.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Name:</b> <yellow><i>${guildName}".miniMsg(),
             "<yellow><b>Guild Owner:</b> <yellow><i>${player.name}".miniMsg(),
-            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
-            "<yellow><b>Guild Balance:</b> <yellow><i>${player.getGuildBalance()}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${memberCount}".miniMsg(),
+            "<yellow><b>Guild Balance:</b> <yellow><i>${guildBalance}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }
