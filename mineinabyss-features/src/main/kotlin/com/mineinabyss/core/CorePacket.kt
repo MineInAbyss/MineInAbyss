@@ -1,4 +1,4 @@
-package com.mineinabyss.misc
+package com.mineinabyss.core
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority
@@ -10,7 +10,7 @@ import com.mineinabyss.mineinabyss.core.mineInAbyss
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.BlockInventoryHolder
 
-class MiscPackets : PacketAdapter(
+class CorePacket : PacketAdapter(
     mineInAbyss, ListenerPriority.LOWEST, PacketType.Play.Server.OPEN_WINDOW
 ) {
     //Override the normal
@@ -24,6 +24,6 @@ class MiscPackets : PacketAdapter(
             //Shift text back 9 pixels, add the custom inv texture,
             //shift it back by the width of the texture - 9,
             //add the original lang text back
-            WrappedChatComponent.fromText("${Space.of(-9)}:vanilla_chest_${3}:${Space.of(-167)}${event.player.openInventory.title}"))
+            WrappedChatComponent.fromText("${Space.of(-8)}:vanilla_chest_${type.size / 9}:${Space.of(-167)}${event.player.openInventory.title}"))
     }
 }
