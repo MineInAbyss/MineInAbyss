@@ -15,15 +15,18 @@ class CorePacket : PacketAdapter(
 ) {
     //Override the normal
     override fun onPacketSending(event: PacketEvent) {
-        val type = event.player.openInventory.topInventory
-        if (type.type != InventoryType.CHEST || type.holder !is BlockInventoryHolder) return
+        val inventory = event.player.openInventory.topInventory
+        if (inventory.holder !is BlockInventoryHolder/* && inventory.holder == event.player*/) return
 
         event.packet.chatComponents.write(
             0,
-            //TODO Count inventory rows and +1
-            //Shift text back 9 pixels, add the custom inv texture,
-            //shift it back by the width of the texture - 9,
-            //add the original lang text back
-            WrappedChatComponent.fromText("${Space.of(-8)}:vanilla_chest_${type.size / 9}:${Space.of(-167)}${event.player.openInventory.title}"))
+            WrappedChatComponent.fromText(
+                when (inventory.type) {
+                    InventoryType.CHEST -> "${Space.of(-8)}:vanilla_chest_${inventory.size / 9}:${Space.of(-167)}${event.player.openInventory.title}"
+                    //InventoryType.ANVIL -> "${Space.of(-61)}:vanilla_anvil:${Space.of(-105)}${event.player.openInventory.title}"
+                    else -> return
+                }
+            )
+        )
     }
 }
