@@ -1,76 +1,63 @@
 package com.mineinabyss.cosmetics
 
+import com.destroystokyo.paper.MaterialTags
 import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticEquipEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
+import com.mineinabyss.components.cosmetics.BackpackStorage
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
 import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.helpers.getCosmeticBackpack
+import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.helpers.equipCosmeticBackPack
+import com.mineinabyss.helpers.unequipCosmeticBackpack
 import com.mineinabyss.idofront.entities.rightClicked
-import org.bukkit.Material
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 
-class CosmeticListener : Listener {
+class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
 
     // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
     @EventHandler
     fun PlayerCosmeticEquipEvent.onEquipBackpack() {
         val backpack = user.getCosmetic(CosmeticSlot.BACKPACK) ?: return
-        user.player.toGeary().setPersisting(CosmeticComponent(user.player.cosmeticComponent.gesture, backpack.id))
+        user.player.toGearyOrNull()
+            ?.setPersisting(CosmeticComponent(user.player.cosmeticComponent.gesture, backpack.id))
+        if (!user.player.toGeary().has<BackpackStorage>()) isCancelled = true
+        //TODO Send message to player informing them that they arent "wearing" a backpack thus no cosmetic?
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     fun PlayerInteractEvent.equipBackpack() {
         if (hand != EquipmentSlot.HAND || !player.isSneaking || !rightClicked) return
-        // Put backpack on and store backpack-inv
-        val backpackType = player.getCosmeticBackpack()?.item?.type ?: Material.AIR
-        //TODO Fix this handling with backpack ids etc
-        /*if (backpackType == Material.AIR) {
-            // Get the color of the players backpack, or non-colored, from the material
-            val item = player.inventory.itemInMainHand
-            val i = item.type.toString().lowercase()
-            val type = if (i.startsWith("shulker")) "yellow" else i.replace("_shulker_box", "")
-            val meta = (item.itemMeta as? BlockStateMeta)?.blockState as? ShulkerBox ?: return
-            val backpack = player.toGeary().getOrSetPersisting { Backpack() }
+        if (useInteractedBlock() != Event.Result.DENY || useItemInHand() == Event.Result.DENY) return
+        val itemInHand = player.inventory.itemInMainHand
 
-            isCancelled = true
-            meta.inventory.filterNotNull().forEach {
-                backpack.backpackContent.add(it.toSerializable())
-            }
-            item.subtract()
-
-            // Use default color backpack or custom one if specified so by the component
-            player.equipCosmeticBackPack(player.cosmeticComponent.cosmeticBackpack)
-        }
-
-        // Remove backpack and refill backpack with inventory
-        else {
-            // Create a new itemstack of the cosmetic backpack
-            val inv = player.inventory
-            val item = ItemStack(backpackType)
-            val bsm = (item.itemMeta as? BlockStateMeta) ?: return
-            val box = bsm.blockState as? ShulkerBox ?: return
-            isCancelled = true
-
-            // Add all the items on the component back into the backpack
-            player.toGeary().get<Backpack>()?.backpackContent?.forEach {
-                box.inventory.addItem(it.toItemStack())
-            }
-
-            bsm.blockState = box
-            item.itemMeta = bsm
-
+        player.toGearyOrNull()?.let {
             when {
-                inv.itemInMainHand.type == Material.AIR -> inv.setItemInMainHand(item)
-                inv.itemInOffHand.type == Material.AIR -> inv.setItemInOffHand(item)
-                inv.firstEmpty() != -1 -> inv.addItem(item)
+                it.has<BackpackStorage>() && (itemInHand.type.isAir || player.inventory.firstEmpty() != -1) -> {
+                    val backpack = it.get<BackpackStorage>()!!.backpack
+                    player.inventory.addItem(backpack)
+                    it.remove<BackpackStorage>()
+                    player.unequipCosmeticBackpack()
+                }
+
+                !it.has<BackpackStorage>() && itemInHand.type in MaterialTags.SHULKER_BOXES.values -> {
+                    val backpackId = Cosmetics.getCosmetic(player.cosmeticComponent.cosmeticBackpack)?.id
+                    if (backpackId == null)
+                        it.setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, feature.defaultBackpack))
+
+                    it.setPersisting(BackpackStorage(itemInHand))
+                    player.equipCosmeticBackPack(backpackId ?: feature.defaultBackpack)
+                    player.inventory.setItemInMainHand(null)
+                }
+
                 else -> return
             }
-            // Unequip the backpack from the player
-            player.unequipCosmeticBackpack()
-        }*/
+        }
+
     }
 }

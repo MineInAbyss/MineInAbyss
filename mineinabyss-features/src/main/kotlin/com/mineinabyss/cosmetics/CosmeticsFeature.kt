@@ -22,12 +22,15 @@ import org.bukkit.block.BlockFace
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature : AbyssFeature {
+class CosmeticsFeature(val defaultBackpack: String = "backpack") : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        if (!isPluginEnabled("HMCCosmetics")) return
+        if (!isPluginEnabled("HMCCosmetics")) {
+            disableFeature()
+            return
+        }
         HMCCosmeticsPlugin.setup()
-        registerEvents(CosmeticListener())
+        registerEvents(CosmeticListener(this@CosmeticsFeature))
         commands {
             mineinabyss {
                 "cosmetics" {
