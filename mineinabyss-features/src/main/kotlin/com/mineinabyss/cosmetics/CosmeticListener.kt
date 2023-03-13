@@ -7,12 +7,11 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.mineinabyss.components.cosmetics.BackpackStorage
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
-import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
 import com.mineinabyss.helpers.equipCosmeticBackPack
 import com.mineinabyss.helpers.unequipCosmeticBackpack
 import com.mineinabyss.idofront.entities.rightClicked
-import org.bukkit.event.Event
+import com.mineinabyss.idofront.messaging.error
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
@@ -20,20 +19,23 @@ import org.bukkit.inventory.EquipmentSlot
 
 class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
 
-    // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
+    // Hide HMCCosmetics backpack equip if player isn't wearing a backpack
     @EventHandler
     fun PlayerCosmeticEquipEvent.onEquipBackpack() {
-        val backpack = user.getCosmetic(CosmeticSlot.BACKPACK) ?: return
-        user.player.toGearyOrNull()
-            ?.setPersisting(CosmeticComponent(user.player.cosmeticComponent.gesture, backpack.id))
-        if (!user.player.toGeary().has<BackpackStorage>()) isCancelled = true
+        if (cosmetic.slot != CosmeticSlot.BACKPACK) return
+        val geary = user.player.toGearyOrNull() ?: return
+        geary.setPersisting(CosmeticComponent(user.player.cosmeticComponent.gesture, cosmetic.id))
+        if (!geary.has<BackpackStorage>()) {
+            user.player.error("Equip a backpack (Shift + Right Click) to show the cosmetic")
+            //user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN)
+            isCancelled = true
+        }
         //TODO Send message to player informing them that they arent "wearing" a backpack thus no cosmetic?
     }
 
     @EventHandler(ignoreCancelled = true)
     fun PlayerInteractEvent.equipBackpack() {
         if (hand != EquipmentSlot.HAND || !player.isSneaking || !rightClicked) return
-        if (useInteractedBlock() != Event.Result.DENY || useItemInHand() == Event.Result.DENY) return
         val itemInHand = player.inventory.itemInMainHand
 
         player.toGearyOrNull()?.let {
