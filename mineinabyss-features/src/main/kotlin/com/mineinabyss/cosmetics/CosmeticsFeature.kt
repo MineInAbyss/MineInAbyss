@@ -22,7 +22,7 @@ import org.bukkit.block.BlockFace
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature(val defaultBackpack: String = "backpack") : AbyssFeature {
+class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         if (!isPluginEnabled("HMCCosmetics")) {
@@ -30,7 +30,12 @@ class CosmeticsFeature(val defaultBackpack: String = "backpack") : AbyssFeature 
             return
         }
         HMCCosmeticsPlugin.setup()
-        registerEvents(CosmeticListener(this@CosmeticsFeature))
+
+        // Makes backpacks equip/unequipable via player interaction
+        // Make sure everything works before enabling it
+        if (equipBackpacks)
+            registerEvents(CosmeticListener(this@CosmeticsFeature))
+
         commands {
             mineinabyss {
                 "cosmetics" {
