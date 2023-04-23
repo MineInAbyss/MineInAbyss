@@ -13,11 +13,13 @@ import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.helpers.ui.composables.Button
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.mineinabyss.mobzy.ecs.components.initialization.MobzyType
 import com.mineinabyss.mobzy.injection.MobzyTypesQuery
 import kotlinx.serialization.Serializable
 import net.luckperms.api.node.Node
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -40,7 +42,7 @@ fun getShopTradeCoin(type: ShopCurrency, stack: ItemStack?, cost: Int): ItemStac
     }
 }
 
-fun Player.getShopTradeCost(currencyType: ShopCurrency, currencyStack: ItemStack?) : Int {
+fun Player.getShopTradeCost(currencyType: ShopCurrency, currencyStack: ItemStack?): Int {
     return when (currencyType) {
         ShopCurrency.ORTH_COIN -> playerData.orthCoinsHeld
         ShopCurrency.MITTY_TOKEN -> playerData.mittyTokensHeld
@@ -51,7 +53,7 @@ fun Player.getShopTradeCost(currencyType: ShopCurrency, currencyStack: ItemStack
 fun Player.getFirstSimilarItem(item: ItemStack?) = inventory.contents?.firstOrNull { i -> i?.isSimilar(item) ?: false }
 fun Player.getSimilarItems(item: ItemStack?) = inventory.contents?.filter { i -> i != null && i.isSimilar(item) }
 fun Player.getSimilarItemAmount(item: ItemStack?) = getSimilarItems(item)?.sumOf { it?.amount ?: 0 } ?: 0
-fun Player.adjustItemStackAmountFromCost(item: ItemStack?, c: Int) : ItemStack? {
+fun Player.adjustItemStackAmountFromCost(item: ItemStack?, c: Int): ItemStack? {
     var cost = c
     if (item == null || getSimilarItemAmount(item) < c) return null
     this.getSimilarItems(item)?.forEach { stack ->
@@ -81,19 +83,52 @@ fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrade
 
         Button(
             onClick = {
-                if (player.getShopTradeCost(currencyType, currencyStack) < cost) return@Button
+                if (player.getShopTradeCost(currencyType, currencyStack) < cost) {
+                    player.error("You don't have enough ${currencyType.name.lowercase()}'s!")
+                    player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+                    return@Button
+                }
+
+                when (currencyType) {
+                    ShopCurrency.ORTH_COIN -> data.orthCoinsHeld -= cost
+                    ShopCurrency.MITTY_TOKEN -> data.mittyTokensHeld -= cost
+                    ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost)
+                }
 
                 when (tradeAction.action) {
                     TradeAction.GIVE_ITEM -> {
-                        if (player.inventory.firstEmpty() == -1) return@Button
-                        player.inventory.addItem(tradeItem)
+                        if (player.inventory.firstEmpty() != -1) {
+                            player.inventory.addItem(tradeItem)
+                            player.playSound(player, Sound.ENTITY_VILLAGER_CELEBRATE, 1f, 1f)
+                        } else {
+                            player.error("Your inventory is full!")
+                            player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+                        }
                     }
-                    TradeAction.PLAYER_COMMAND -> player.performCommand(tradeAction.getValue(player))
-                    TradeAction.CONSOLE_COMMAND -> mineInAbyss.server.dispatchCommand(mineInAbyss.server.consoleSender, tradeAction.getValue(player))
+
+                    TradeAction.PLAYER_COMMAND -> {
+                        if (player.performCommand(tradeAction.getValue(player))) {
+                            player.playSound(player, Sound.ENTITY_VILLAGER_CELEBRATE, 1f, 1f)
+                        } else {
+                            player.error("Failed to execute command!")
+                        }
+                    }
+
+                    TradeAction.CONSOLE_COMMAND -> mineInAbyss.server.dispatchCommand(
+                        mineInAbyss.server.consoleSender,
+                        tradeAction.getValue(player)
+                    )
+
                     TradeAction.GRANT_PERMISSION -> {
                         val permission = tradeAction.getValue()
-                        if (player.hasPermission(permission)) return@Button
-                        luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(Node.builder(permission).build())
+                        if (!player.hasPermission(permission)) {
+                            luckPerms.userManager.getUser(player.uniqueId)?.data()
+                                ?.add(Node.builder(permission).build())
+                            player.playSound(player, Sound.ENTITY_VILLAGER_CELEBRATE, 1f, 1f)
+                        } else {
+                            player.error("You already have this permission!")
+                            player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+                        }
                     }
                 }
 
