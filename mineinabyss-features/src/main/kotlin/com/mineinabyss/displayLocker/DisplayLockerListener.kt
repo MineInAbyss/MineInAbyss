@@ -13,16 +13,15 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.ItemFrame
-import org.bukkit.entity.Player
-import org.bukkit.entity.Projectile
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPistonRetractEvent
+import org.bukkit.event.entity.EntityDamageByBlockEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.hanging.HangingBreakByEntityEvent
 import org.bukkit.event.hanging.HangingBreakEvent
@@ -106,10 +105,11 @@ class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listene
     @EventHandler
     fun ProjectileHitEvent.onBreakingItemFrame() {
         val frame = hitEntity?.lockedDisplay ?: return
-        val attacker = entity.shooter as? Player ?: return
+        val attacker = entity.shooter ?: return
 
         if (!frame.lockState || hitEntity !is ItemFrame) return
-        if (attacker.uniqueId !in frame.allowedAccess && !attacker.hasPermission("mineinabyss.lockdisplay.bypass")) {
+        if (attacker !is Player) isCancelled = true
+        else if (attacker.uniqueId !in frame.allowedAccess && !attacker.hasPermission("mineinabyss.lockdisplay.bypass")) {
             attacker.error("You do not have access to interact with this ${hitEntity?.name}")
             isCancelled = true
         }
@@ -137,17 +137,27 @@ class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listene
     @EventHandler
     fun EntityDamageByEntityEvent.onBreakingArmorStand() {
         val armorStand = entity.lockedDisplay ?: return
+        if (!armorStand.lockState) return
         val attacker = when (damager) {
-            is Projectile -> (damager as Projectile).shooter as? Player ?: return
+            is Projectile -> (damager as Projectile).shooter.let { it as? Player ?: it as? Skeleton }
             is Player -> (damager as Player)
             else -> return
         }
 
-        if (!armorStand.lockState) return
-        if (attacker.uniqueId !in armorStand.allowedAccess && !attacker.hasPermission("mineinabyss.lockdisplay.bypass")) {
+        // Prevent non-players from breaking armor stands
+        if (attacker !is Player) isCancelled = true
+        else if (attacker.uniqueId !in armorStand.allowedAccess && !attacker.hasPermission("mineinabyss.lockdisplay.bypass")) {
             attacker.error("You do not have access to interact with this ${entity.name}")
             isCancelled = true
         }
+    }
+
+    @EventHandler
+    fun EntityDamageByBlockEvent.onBurningArmorStand() {
+        val armorStand = entity.lockedDisplay ?: return
+        if (!armorStand.lockState) return
+        if (cause != EntityDamageEvent.DamageCause.LAVA && cause != EntityDamageEvent.DamageCause.FIRE_TICK) return
+        isCancelled = true
     }
 
     @EventHandler
@@ -174,15 +184,11 @@ class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listene
             (blocks + block).map { it.location.add(direction.direction).block } + blocks.filter { it.type == Material.HONEY_BLOCK }
                 .map { it.location.add(BlockFace.UP.direction).block }
 
-        for (blockinblocks in blocksThePistonChanges) {
+        blocksThePistonChanges.forEach { blockinblocks ->
             // Get all armor stands in the blocks the piston changes
-            val armorStands = blockinblocks.location.getNearbyEntitiesByType(ArmorStand::class.java, 1.0)
-            for (armorStand in armorStands) {
-                // If any armorstand is locked, cancel the event
-                val gearyArmorStand = armorStand.lockedDisplay ?: return false
-                if (!gearyArmorStand.lockState) continue
-
-                return true
+            blockinblocks.location.getNearbyEntitiesByType(ArmorStand::class.java, 1.0).forEach forEachArmorStand@{
+                // If the armor stand is not locked, continue
+                if (it.lockedDisplay?.lockState == true) return true
             }
         }
         return false
@@ -190,15 +196,11 @@ class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listene
 
     @EventHandler
     fun BlockPistonExtendEvent.onPistonExtend() {
-        if (onPistonExtendRetract(block, direction, blocks)) {
-            isCancelled = true
-        }
+        if (onPistonExtendRetract(block, direction, blocks)) isCancelled = true
     }
 
     @EventHandler
     fun BlockPistonRetractEvent.onPistonRetract() {
-        if (onPistonExtendRetract(block, direction.oppositeFace, blocks)) {
-            isCancelled = true
-        }
+        if (onPistonExtendRetract(block, direction.oppositeFace, blocks)) isCancelled = true
     }
 }
