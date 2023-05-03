@@ -34,7 +34,7 @@ class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultB
         // Makes backpacks equip/unequipable via player interaction
         // Make sure everything works before enabling it
         if (equipBackpacks)
-            registerEvents(CosmeticListener(this@CosmeticsFeature))
+            registerEvents(CosmeticListener(this@CosmeticsFeature), VendorListener())
 
         commands {
             mineinabyss {
