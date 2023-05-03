@@ -6,9 +6,9 @@ import com.mineinabyss.geary.addon.autoscan
 import com.mineinabyss.geary.papermc.dsl.gearyAddon
 import com.mineinabyss.geary.papermc.store.PrefabNamespaceMigrations
 import com.mineinabyss.guilds.database.GuildJoinQueue
+import com.mineinabyss.guilds.database.GuildMessageQueue
 import com.mineinabyss.guilds.database.Guilds
 import com.mineinabyss.guilds.database.Players
-import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Placeholders
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
@@ -81,7 +81,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         transaction(AbyssContext.db) {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, MessageQueue)
+            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue)
         }
 
         launch {

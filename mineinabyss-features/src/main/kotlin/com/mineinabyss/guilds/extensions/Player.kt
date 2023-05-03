@@ -3,7 +3,6 @@ package com.mineinabyss.guilds.extensions
 import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.guilds.database.*
-import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.*
 import com.mineinabyss.mineinabyss.core.AbyssContext
@@ -65,7 +64,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
         val joinMessage = "<green>You have been accepted into ${player?.getGuildName()}"
         if (member.isOnline) member.player?.success(joinMessage)
         else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = joinMessage
                 it[playerUUID] = member.uniqueId
             }
@@ -122,7 +121,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
 
         if (invitedMember.isOnline) invitedMember.player?.success(inviteMessage)
         else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = inviteMessage
                 it[playerUUID] = invitedMember.uniqueId
             }
@@ -200,7 +199,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
         if (owner.toPlayer()?.isOnline == true) {
             owner.toPlayer()?.sendMessage(ownerMessage)
         } else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[this.content] = ownerMessage.serialize()
                 it[playerUUID] = owner
             }
@@ -211,7 +210,7 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
             player.success(requestMessage)
             return@transaction
         } else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = requestMessage
                 it[playerUUID] = uniqueId
             }
@@ -249,7 +248,7 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
 
         if (member.isOnline) member.player?.success(promoteMessage)
         else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = promoteMessage
                 it[playerUUID] = member.uniqueId
             }
@@ -280,7 +279,7 @@ fun OfflinePlayer.setGuildRank(member: OfflinePlayer, rank: GuildRank) {
 
         if (member.isOnline) member.player?.success(promoteMessage)
         else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = promoteMessage
                 it[playerUUID] = member.uniqueId
             }
@@ -336,7 +335,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         val kickMessage = "<red>You have been kicked from <i>${getGuildName()}"
         if (member.isOnline) member.player?.error(kickMessage)
         else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = kickMessage
                 it[playerUUID] = member.uniqueId
             }
@@ -380,7 +379,7 @@ fun Player.leaveGuild() {
         val leftMessage = "<i>${player?.name}</i> has left your guild!"
         player?.success("You have left <i>${guildName}")
         owner.player?.warn(leftMessage) ?:
-        MessageQueue.insert { it[content] = leftMessage; it[playerUUID] = owner.uniqueId }
+        GuildMessageQueue.insert { it[content] = leftMessage; it[playerUUID] = owner.uniqueId }
     }
 
 }

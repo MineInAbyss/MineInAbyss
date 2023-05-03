@@ -7,6 +7,8 @@ import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.guilds.database.GuildMessageQueue
+import com.mineinabyss.guilds.database.GuildMessageQueue.content
 import com.mineinabyss.guilds.database.GuildRank
 import com.mineinabyss.guilds.extensions.getGuildChatId
 import com.mineinabyss.guilds.extensions.getGuildName
@@ -14,8 +16,6 @@ import com.mineinabyss.guilds.extensions.getGuildRank
 import com.mineinabyss.guilds.extensions.hasGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.helpers.MessageQueue
-import com.mineinabyss.helpers.MessageQueue.content
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
@@ -51,10 +51,10 @@ class GuildListener(private val feature: GuildFeature) : Listener {
         delay(1.seconds)
         withContext(mineInAbyss.asyncDispatcher) {
             transaction(AbyssContext.db) {
-                MessageQueue.select { MessageQueue.playerUUID eq player.uniqueId }.forEach {
+                GuildMessageQueue.select { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.info(it[content].miniMsg())
                 }
-                MessageQueue.deleteWhere { MessageQueue.playerUUID eq player.uniqueId }
+                GuildMessageQueue.deleteWhere { GuildMessageQueue.playerUUID eq player.uniqueId }
             }
         }
     }

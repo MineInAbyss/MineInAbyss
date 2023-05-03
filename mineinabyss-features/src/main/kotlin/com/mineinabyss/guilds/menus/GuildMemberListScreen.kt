@@ -28,7 +28,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuildUIScope.GuildMemberListScreen() {
-    ManageGuildMembersButton(Modifier.at(1, 1))
+    ManageGuildMembersButton(Modifier.at(2, 1))
     BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
 
     InviteToGuildButton(Modifier.at(7, 0))
