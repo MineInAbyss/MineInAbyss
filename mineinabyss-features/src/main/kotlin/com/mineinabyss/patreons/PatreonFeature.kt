@@ -8,8 +8,8 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.serialization.SerializableItemStack
-import com.mineinabyss.idofront.serialization.toSerializable
+import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.serialization.ItemStackSerializer
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -20,20 +20,21 @@ import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.time.Month
 import java.util.*
 
 @Serializable
 @SerialName("patreon")
 class PatreonFeature(
-    private val token: SerializableItemStack? = CoinFactory.mittyToken?.toSerializable()
+    private val token: @Serializable(ItemStackSerializer::class) ItemStack? = CoinFactory.mittyToken
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 
         geary {
             systems()
         }
-        //registerEvents(PatreonListener())
+        registerEvents(PatreonListener())
 
         commands {
             mineinabyss {
@@ -48,7 +49,7 @@ class PatreonFeature(
                             }
 
                             val patreon = player.toGeary().get<Patreon>() ?: return@playerAction
-                            val month = Month.of(Date().month) + 1
+                            val month = Month.of(Calendar.getInstance().get(Calendar.MONTH) + 1)
 
                             if (patreon.kitUsedMonth == month) {
                                 player.error("You can only redeem this once a month.")
@@ -60,7 +61,6 @@ class PatreonFeature(
                                 return@playerAction
                             }
 
-                            val token = token.toItemStack()
                             token.amount = patreon.tier
                             player.inventory.addItem(token)
                             patreon.kitUsedMonth = month

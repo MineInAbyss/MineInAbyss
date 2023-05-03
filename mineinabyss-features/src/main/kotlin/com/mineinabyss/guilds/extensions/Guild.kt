@@ -10,7 +10,6 @@ import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.guilds.guildChannelId
 import com.mineinabyss.helpers.CoinFactory
-import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
@@ -87,7 +86,7 @@ fun Player.deleteGuild() {
             val deleteGuildMessage = "<red>The Guild you were in has been deleted by the Owner."
             val player = Bukkit.getPlayer(row[Players.playerUUID])
 
-            player?.error(deleteGuildMessage) ?: MessageQueue.insert {
+            player?.error(deleteGuildMessage) ?: GuildMessageQueue.insert {
                 it[content] = deleteGuildMessage
                 it[playerUUID] = row[Players.playerUUID]
             }
@@ -169,7 +168,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
             if (player != null) {
                 player.info(changedNameMessage)
             } else {
-                MessageQueue.insert {
+                GuildMessageQueue.insert {
                     it[content] = changedNameMessage
                     it[playerUUID] = row[Players.playerUUID]
                 }
@@ -379,7 +378,7 @@ fun Player.levelUpGuild() {
         if (member.isOnline) {
             (member as Player).info(lvlUpMessage)
         } else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = lvlUpMessage
                 it[playerUUID] = member.uniqueId
             }

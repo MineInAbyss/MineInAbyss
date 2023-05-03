@@ -2,12 +2,12 @@ package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guilds.database.GuildJoinType
+import com.mineinabyss.guilds.database.GuildMessageQueue
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.helpers.MessageQueue
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
@@ -60,7 +60,7 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
             "<red>Your request to join <i>${guildName} has been denied!"
         if (newMember.isOnline) newMember.player?.error(requestDeniedMessage)
         else {
-            MessageQueue.insert {
+            GuildMessageQueue.insert {
                 it[content] = requestDeniedMessage
                 it[playerUUID] = newMember.uniqueId
             }
