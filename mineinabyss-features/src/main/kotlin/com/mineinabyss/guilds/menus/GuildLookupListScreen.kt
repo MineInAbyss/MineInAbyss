@@ -54,7 +54,7 @@ fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: L
             val owner = guildName.getOwnerFromGuildName()
             Button(
                 onClick = {
-                    if (player.hasGuild() && player.getGuildName().lowercase() == guildName.lowercase())
+                    if (player.hasGuild() && player.getGuildName().equals(guildName, true))
                         nav.open(GuildScreen.MemberList(guildLevel, player))
                     else
                         nav.open(GuildScreen.GuildLookupMembers(guildName))
