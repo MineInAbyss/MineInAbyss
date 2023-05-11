@@ -379,9 +379,11 @@ fun Player.levelUpGuild() {
         if (member.isOnline) {
             (member as Player).info(lvlUpMessage)
         } else {
-            GuildMessageQueue.insert {
-                it[content] = lvlUpMessage
-                it[playerUUID] = member.uniqueId
+            transaction(AbyssContext.db) {
+                GuildMessageQueue.insert {
+                    it[content] = lvlUpMessage
+                    it[playerUUID] = member.uniqueId
+                }
             }
         }
     }
