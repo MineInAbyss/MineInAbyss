@@ -14,8 +14,10 @@ import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
@@ -60,9 +62,11 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
             "<red>Your request to join <i>${player.getGuildName()} has been denied!"
         if (newMember.isOnline) newMember.player?.error(requestDeniedMessage)
         else {
-            GuildMessageQueue.insert {
-                it[content] = requestDeniedMessage
-                it[playerUUID] = newMember.uniqueId
+            transaction(AbyssContext.db) {
+                GuildMessageQueue.insert {
+                    it[content] = requestDeniedMessage
+                    it[playerUUID] = newMember.uniqueId
+                }
             }
         }
         nav.back()
