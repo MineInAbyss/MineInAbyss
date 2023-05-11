@@ -23,7 +23,6 @@ import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -197,7 +196,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
 
 @Composable
 fun GuildUIScope.GuildInvitesButton() {
-    val guildOwner = player.getGuildOwnerFromInvite().toPlayer() ?: return
+    val guildOwner = player.getGuildOwnerFromInvite().toOfflinePlayer()
     Button(
         enabled = player.hasGuildInvite(guildOwner),
         onClick = { nav.open(InviteList) },
