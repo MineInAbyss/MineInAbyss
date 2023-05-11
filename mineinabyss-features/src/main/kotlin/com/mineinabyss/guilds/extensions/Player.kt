@@ -592,7 +592,7 @@ fun  OfflinePlayer.getNumberOfGuildRequests() : Int {
 fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAll: Boolean = false) {
     return transaction(AbyssContext.db) {
         val id = GuildJoinQueue.select {
-            GuildJoinQueue.playerUUID eq uniqueId
+            GuildJoinQueue.guildId eq getGuildName().getGuildId()
         }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction
 
         if (removeAll) {

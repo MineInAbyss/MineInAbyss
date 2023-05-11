@@ -15,10 +15,10 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
+import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -33,7 +33,7 @@ fun GuildUIScope.GuildInviteListScreen() {
 @Composable
 fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
-    val owner = player.getGuildOwnerFromInvite().toPlayer()!!
+    val owner = Bukkit.getOfflinePlayer(player.getGuildOwnerFromInvite())
     val memberCount = owner.getGuildMemberCount()
     val invites = transaction(AbyssContext.db) {
         GuildJoinQueue.select {
