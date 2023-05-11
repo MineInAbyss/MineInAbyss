@@ -71,7 +71,7 @@ class GuildUIScope(
     val feature: GuildFeature
 ) {
     //TODO cache more than just guild level here
-    val guildLevel = player.getGuildLevel() ?: 0
+    val guildLevel = player.getGuildLevel()
     val nav = GuildNav { Default(player) }
 }
 
@@ -246,7 +246,7 @@ object DecideMenus {
 
     //TODO Implement lists for guilds, making one able to have more than 5(25) members
     fun decideMemberMenu(player: Player): String {
-        val menuHeight = minOf(player.getGuildLevel() ?: 3, 4)
+        val menuHeight = minOf(player.getGuildLevel(), 4)
         return if (player.hasGuildRequests()) ":guild_member_management_menu_${menuHeight}_has_request:"
         else ":guild_member_management_menu_${menuHeight}_no_request:"
     }

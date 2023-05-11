@@ -40,7 +40,7 @@ fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: Offline
         }
         player.addMemberToGuild(newMember)
         newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
-        if (player.getGuildMemberCount() < guildLevel * 5 + 1) {
+        if (player.getGuildMemberCount() < guildLevel * 5) {
             newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
         }
         nav.back()
