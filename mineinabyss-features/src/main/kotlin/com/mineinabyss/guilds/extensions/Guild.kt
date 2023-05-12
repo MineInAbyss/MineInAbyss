@@ -270,11 +270,12 @@ fun String.clearGuildInvites() {
 fun displayGuildList(queryName: String? = null): List<GuildJoin> {
     val guilds = getAllGuilds()
     val comparator = compareBy<GuildJoin> {
-        it.guildLevel; it.guildName.getOwnerFromGuildName().getGuildMemberCount(); it.joinType; it.guildName
+        it.joinType; it.guildName; it.guildName.getGuildMembers().size; it.guildLevel
     }
-    return if (queryName == null)
-        guilds.sortedWith(comparator)
-    else guilds.filter { it.guildName.startsWith(queryName) }.sortedWith(comparator)
+    return when (queryName) {
+        null -> guilds
+        else -> guilds.filter { it.guildName.startsWith(queryName, true) }
+    }.sortedWith(comparator).sortedByDescending { it.guildName.getGuildMembers().size; it.guildLevel }
 }
 
 fun String.getOwnerFromGuildName(): OfflinePlayer {
@@ -378,9 +379,11 @@ fun Player.levelUpGuild() {
         if (member.isOnline) {
             (member as Player).info(lvlUpMessage)
         } else {
-            GuildMessageQueue.insert {
-                it[content] = lvlUpMessage
-                it[playerUUID] = member.uniqueId
+            transaction(AbyssContext.db) {
+                GuildMessageQueue.insert {
+                    it[content] = lvlUpMessage
+                    it[playerUUID] = member.uniqueId
+                }
             }
         }
     }

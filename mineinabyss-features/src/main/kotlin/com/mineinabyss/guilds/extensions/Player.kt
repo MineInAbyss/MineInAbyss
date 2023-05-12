@@ -13,6 +13,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
+fun UUID.toOfflinePlayer(): OfflinePlayer = Bukkit.getOfflinePlayer(this)
+
 fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
     transaction(AbyssContext.db) {
         val guild = Players.select {
@@ -449,11 +451,11 @@ fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
     }
 }
 
-fun OfflinePlayer.getGuildLevel(): Int? {
+fun OfflinePlayer.getGuildLevel(): Int {
     return transaction(AbyssContext.db) {
         val playerGuild = (Players.select {
             Players.playerUUID eq uniqueId
-        }.singleOrNull() ?: return@transaction null)[Players.guildId]
+        }.singleOrNull() ?: return@transaction 0)[Players.guildId]
 
         val guildLevel = Guilds.select {
             Guilds.id eq playerGuild
@@ -592,7 +594,7 @@ fun  OfflinePlayer.getNumberOfGuildRequests() : Int {
 fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAll: Boolean = false) {
     return transaction(AbyssContext.db) {
         val id = GuildJoinQueue.select {
-            GuildJoinQueue.playerUUID eq uniqueId
+            GuildJoinQueue.guildId eq getGuildName().getGuildId()
         }.singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction
 
         if (removeAll) {

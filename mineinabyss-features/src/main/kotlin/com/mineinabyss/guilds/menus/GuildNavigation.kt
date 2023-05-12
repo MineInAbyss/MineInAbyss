@@ -23,7 +23,6 @@ import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.miniMsg
@@ -72,8 +71,8 @@ class GuildUIScope(
 ) {
     //TODO cache more than just guild level here
     val guildName get() = player.getGuildName()
-    val guildLevel get() = player.getGuildLevel() ?: 0
-    val guildOwner get() = player.getGuildOwner().toPlayer()
+    val guildLevel get() = player.getGuildLevel()
+    val guildOwner get() = player.getGuildOwner().toOfflinePlayer()
     val memberCount get() = player.getGuildMemberCount()
     val guildBalance get() = player.getGuildBalance()
     val nav = GuildNav { Default(player) }
@@ -201,7 +200,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
 
 @Composable
 fun GuildUIScope.GuildInvitesButton() {
-    val guildOwner = player.getGuildOwnerFromInvite().toPlayer() ?: return
+    val guildOwner = player.getGuildOwnerFromInvite().toOfflinePlayer()
     Button(
         enabled = player.hasGuildInvite(guildOwner),
         onClick = { nav.open(InviteList) },
@@ -250,7 +249,7 @@ object DecideMenus {
 
     //TODO Implement lists for guilds, making one able to have more than 5(25) members
     fun decideMemberMenu(player: Player): String {
-        val menuHeight = minOf(player.getGuildLevel() ?: 3, 4)
+        val menuHeight = minOf(player.getGuildLevel(), 4)
         return if (player.hasGuildRequests()) ":guild_member_management_menu_${menuHeight}_has_request:"
         else ":guild_member_management_menu_${menuHeight}_no_request:"
     }

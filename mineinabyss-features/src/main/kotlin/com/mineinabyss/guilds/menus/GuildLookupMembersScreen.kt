@@ -18,9 +18,11 @@ import org.bukkit.OfflinePlayer
 @Composable
 fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
     val owner = guildName.getOwnerFromGuildName()
-    val height = minOf(owner.getGuildLevel()?.plus(2) ?: 3, MAX_CHEST_HEIGHT - 1)
+    val guildLevel = owner.getGuildLevel()
+    val height = minOf(guildLevel.plus(2), MAX_CHEST_HEIGHT - 1)
+
     GuildLabel(Modifier.at(4, 0), owner)
-    GuildMembersButton(Modifier.at(1, 1), guildName)
+    GuildMembersButton(Modifier.at(2, 1), guildName, guildLevel)
     BackButton(Modifier.at(0, height))
     RequestToJoinButton(Modifier.at(4, height), owner, guildName)
 }
@@ -31,9 +33,10 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
 }
 
 @Composable
-fun GuildUIScope.GuildMembersButton(modifier: Modifier, guildName: String) {
-    Grid(modifier.size(5, guildLevel)) {
-        guildName.getGuildMembers().sortedWith(compareBy { it.rank; it.player.name }).forEach { (rank, member) ->
+fun GuildMembersButton(modifier: Modifier, guildName: String, guildLevel: Int) {
+    val members = guildName.getGuildMembers().sortedWith(compareBy {  it.player.name; it.rank.ordinal })
+    Grid(modifier.size(5, guildLevel + 1)) {
+        members.forEach { (rank, member) ->
             Button {
                 Item(
                     member.head(
@@ -60,7 +63,7 @@ fun GuildUIScope.RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, g
         else if (inviteOnly) {
             Text("<red><st>REQUEST to join <i>$guildName".miniMsg(),
                 "<dark_red><i>This guild can currently only".miniMsg(),
-                "<dark_red><i>be joined by invites.".miniMsg()
+                "<dark_red><i>be joined via an invite.".miniMsg()
             )
         }
         else if (player.hasGuild()) {

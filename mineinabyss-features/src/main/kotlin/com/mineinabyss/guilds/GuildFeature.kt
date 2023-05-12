@@ -66,11 +66,14 @@ class GuildFeature(
             registerEvents(ChattyGuildListener())
         }
 
+        // Generate the guild-list
+        displayGuildList()
+
         commands {
             mineinabyss {
                 "guild"(desc = "Guild related commands") {
                     "balance"(desc = "Guild Balance related commands") {
-                        "view"(desc = "Viewe your guilds balance") {
+                        "view"(desc = "View your guilds balance") {
                             playerAction {
                                 val player = sender as Player
                                 if (!player.hasGuild()) {
