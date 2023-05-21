@@ -1,6 +1,6 @@
 package com.mineinabyss.patreons
 
-import com.mineinabyss.chatty.components.chattyData
+import com.mineinabyss.chatty.components.chattyNickname
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.helpers.luckpermGroups
@@ -27,6 +27,6 @@ class PatreonListener : Listener {
     private fun Player.removePatreonPerks() {
         toGeary().remove<Patreon>()
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "luckperms user $name meta clear prefix")
-        this.chattyData.displayName = null
+        this.chattyNickname = null
     }
 }

@@ -1,7 +1,7 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.mineinabyss.chatty.ChattyConfig.ChattyChannel
+import com.mineinabyss.chatty.ChattyConfig
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.swapChannelCommand
@@ -30,7 +30,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 val guildChannel =
-    ChattyChannel(
+    ChattyConfig.Data.ChattyChannel(
         channelType = ChannelType.PRIVATE,
         proxy = false,
         discordsrv = false,
@@ -46,7 +46,7 @@ const val guildChannelId: String = "Guild Chat"
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    private val guildChattyChannel: ChattyChannel = guildChannel,
+    private val guildChattyChannel: ChattyConfig.Data.ChattyChannel = guildChannel,
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {

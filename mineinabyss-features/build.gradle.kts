@@ -11,5 +11,5 @@ dependencies {
 
     compileOnly(miaLibs.guiy)
     compileOnly(miaLibs.chatty)
-//    compileOnly(libs.minecraft.headlib)
+    compileOnly(libs.minecraft.plugin.protocollib)
 }

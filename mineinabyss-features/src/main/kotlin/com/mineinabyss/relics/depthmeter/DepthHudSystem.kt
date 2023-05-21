@@ -52,7 +52,7 @@ class DepthHudSystem(private val feature: RelicsFeature) : RepeatingSystem(2.tic
 
     override fun TargetScope.tick() {
         val player = entity.parent?.get<Player>() ?: return
-
+        if (!player.isOnline) return
         if (player.isInHub()) player.changeHudState(feature.depthHudId, false)
         else player.changeHudState(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
 

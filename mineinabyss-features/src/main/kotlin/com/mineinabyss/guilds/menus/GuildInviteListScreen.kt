@@ -3,10 +3,7 @@ package com.mineinabyss.guilds.menus
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guilds.database.GuildJoinQueue
 import com.mineinabyss.guilds.database.GuildJoinType
-import com.mineinabyss.guilds.extensions.getGuildMemberCount
-import com.mineinabyss.guilds.extensions.getGuildName
-import com.mineinabyss.guilds.extensions.getGuildOwnerFromInvite
-import com.mineinabyss.guilds.extensions.removeGuildQueueEntries
+import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -33,7 +30,7 @@ fun GuildUIScope.GuildInviteListScreen() {
 @Composable
 fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
-    val owner = Bukkit.getOfflinePlayer(player.getGuildOwnerFromInvite())
+    val owner = player.getGuildOwnerFromInvite().toOfflinePlayer()
     val memberCount = owner.getGuildMemberCount()
     val invites = transaction(abyss.db) {
         GuildJoinQueue.select {

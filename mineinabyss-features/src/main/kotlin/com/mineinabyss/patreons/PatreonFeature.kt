@@ -1,13 +1,19 @@
 package com.mineinabyss.patreons
 
+import com.mineinabyss.components.cosmetics.CosmeticVoucher
 import com.mineinabyss.components.players.Patreon
+import com.mineinabyss.geary.papermc.tracking.entities.helpers.GearyItemPrefabQuery
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.items.itemTracking
+import com.mineinabyss.geary.papermc.tracking.items.toGeary
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.serialization.ItemStackSerializer
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -17,6 +23,7 @@ import kotlinx.serialization.Serializable
 import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.time.Month
@@ -141,6 +148,23 @@ class PatreonFeature(
                                     luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(c)
                                 }
                                 luckPerms.userManager.saveUser(luckPerms.userManager.getUser(player.uniqueId)!!)
+                            }
+                        }
+                    }
+                    "voucher"(desc = "Convert old cosmetic items to vouchers") {
+                        playerAction {
+                            val prefab = player.inventory.toGeary()?.itemInMainHand?.get<PrefabKey>() ?: return@playerAction
+                            val item = itemTracking.provider.serializePrefabToItemStack(prefab) ?: return@playerAction
+                            //TODO Cleanup this mess
+                            GearyItemPrefabQuery().firstOrNull { it.entity.get<CosmeticVoucher>()?.originalItem?.prefab == prefab.full }?.let {
+                                itemTracking.provider.serializePrefabToItemStack(it.entity.get<PrefabKey>()!!)?.let {  voucher ->
+                                    if (player.inventory.firstEmpty() != -1) {
+                                        player.inventory.itemInMainHand.subtract()
+                                        player.inventory.addItem(voucher)
+                                        player.success("Converted ${item.displayName()} to a ${voucher.displayName()}")
+                                        player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
+                                    }
+                                }
                             }
                         }
                     }

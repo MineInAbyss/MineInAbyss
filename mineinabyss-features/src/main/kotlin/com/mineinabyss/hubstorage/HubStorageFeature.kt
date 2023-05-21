@@ -17,7 +17,7 @@ class HubStorageFeature: AbyssFeature {
                 "storage"(desc = "Opens player storage") {
                     playerAction {
                         val player = sender as Player
-                        if (player.isInHub()) player.openHubStorage()
+                        if (player.isInHub() || player.hasPermission(this.command.permission + ".bypass")) player.openHubStorage()
                         else player.error("You are not in the hub area.")
                     }
                 }

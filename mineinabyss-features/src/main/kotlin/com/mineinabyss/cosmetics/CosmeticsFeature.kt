@@ -1,68 +1,160 @@
 package com.mineinabyss.cosmetics
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
+import com.hibiscusmc.hmccosmetics.gui.Menus
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
+import com.mineinabyss.components.cosmetics.PersonalWardrobe
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.helpers.cosmeticUser
 import com.mineinabyss.helpers.hmcCosmetics
-import com.mineinabyss.helpers.mcCosmetics
-import com.mineinabyss.helpers.playGesture
-import com.mineinabyss.idofront.commands.arguments.stringArg
+import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.entity.HumanEntity
-import org.bukkit.entity.Player
+import org.bukkit.block.BlockFace
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature : AbyssFeature {
+class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         if (!abyss.isHMCCosmeticsEnabled) return
-        listeners(CosmeticListener())
+        listeners(CosmeticListener(this@CosmeticsFeature))
+        HMCCosmeticsPlugin.setup()
+
+        // Makes backpacks equip/unequipable via player interaction
+        // Make sure everything works before enabling it
+        if (equipBackpacks)
+            listeners(CosmeticListener(this@CosmeticsFeature), VendorListener())
+
         commands {
             mineinabyss {
-                "cosmetic" {
-                    "menu" {
-                        playerAction {
-                            if (hmcCosmetics.isEnabled) hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
-                            if (abyss.isMCCosmeticsEnabled)
-                                hmcCosmetics.cosmeticsMenu.openDefault(sender as HumanEntity)
+                "cosmetics" {
+                    "wardrobe" {
+                        "personal" {
+                            //TODO Add distance checks for difference between existing, non-null locations, and set locations
+                            "viewer" {
+                                playerAction {
+                                    player.toGeary().let {
+                                        val wardrobe = it.get<PersonalWardrobe>()
+                                        it.setPersisting(
+                                            PersonalWardrobe(
+                                                player.location,
+                                                wardrobe?.npcLocation,
+                                                wardrobe?.leaveLocation
+                                            )
+                                        )
+                                    }
+                                    player.success("Set viewer-location for Personal Wardrobe")
+                                }
+                            }
+                            "leave" {
+                                playerAction {
+                                    player.toGeary().let {
+                                        val wardrobe = it.get<PersonalWardrobe>()
+                                        it.setPersisting(
+                                            PersonalWardrobe(
+                                                wardrobe?.viewerLocation,
+                                                wardrobe?.npcLocation,
+                                                player.location
+                                            )
+                                        )
+                                    }
+                                    player.success("Set leave-location for Personal Wardrobe")
+                                }
+                            }
+                            "npc" {
+                                playerAction {
+                                    player.toGeary().let {
+                                        val wardrobe = it.get<PersonalWardrobe>()
+                                        it.setPersisting(
+                                            PersonalWardrobe(
+                                                wardrobe?.viewerLocation,
+                                                player.location,
+                                                wardrobe?.leaveLocation
+                                            )
+                                        )
+                                    }
+                                    player.success("Set location of NPC for Personal Wardrobe")
+                                }
+                            }
+                        }
+                        "open" {
+                            playerAction {
+                                player.toGeary().get<PersonalWardrobe>()?.let {
+                                    player.cosmeticUser?.enterWardrobe(
+                                        false,
+                                        player.location,
+                                        it.viewerLocation,
+                                        it.npcLocation
+                                    )
+                                } ?: player.cosmeticUser?.enterWardrobe(
+                                    false,
+                                    player.location.clone(),
+                                    player.location.clone().apply {
+                                        when (player.facing) {
+                                            BlockFace.NORTH -> yaw = 180f
+                                            BlockFace.SOUTH -> yaw = 0f
+                                            BlockFace.WEST -> yaw = 90f
+                                            BlockFace.EAST -> yaw = 270f
+                                            else -> {}
+                                        }
+                                    },
+                                    player.location.clone().apply {
+                                        when {
+                                            player.facing.name.startsWith("NORTH") -> z -= 5
+                                            player.facing.name.startsWith("SOUTH") -> z += 5
+                                            player.facing.name.startsWith("WEST") -> x -= 5
+                                            player.facing.name.startsWith("EAST") -> x += 5
+                                        }
+                                        pitch = 0f
+                                    })
+
+                            }
                         }
                     }
-                    "gesture" {
-                        val gesture by stringArg()
+                    "menu" {
                         playerAction {
-                            if (!abyss.isMCCosmeticsEnabled) return@playerAction
-                            (sender as Player).playGesture(gesture)
-                            if (abyss.isMCCosmeticsEnabled)
-                                (sender as Player).playGesture(gesture)
+                            if (hmcCosmetics.isEnabled)
+                                Menus.getDefaultMenu().openMenu(player.cosmeticUser)
+                        }
+                    }
+                    "dye" {
+                        val cosmeticSlot by optionArg(CosmeticSlot.values().map { it.name })
+                        playerAction {
+                            player.cosmeticUser?.let {
+                                DyeMenu.openMenu(it, it.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot)))
+                            }
                         }
                     }
                 }
             }
             tabCompletion {
-                val emotes: MutableList<String> = ArrayList()
-
-                if (abyss.isMCCosmeticsEnabled) {
-                    for (gesture in mcCosmetics.gestureManager.allCosmetics) {
-                        if ((sender as Player).hasPermission(gesture.permission))
-                            emotes.add(gesture.key)
-                    }
-                }
-
                 when (args.size) {
-                    1 -> listOf("cosmetic").filter { it.startsWith(args[0]) }
+                    1 -> listOf("cosmetics").filter { it.startsWith(args[0]) }
                     2 -> {
                         when (args[0]) {
-                            "cosmetic" -> listOf("menu", "gesture").filter { it.startsWith(args[1]) }
+                            "cosmetics" -> listOf("menu", "wardrobe", "dye").filter { it.startsWith(args[1]) }
                             else -> listOf()
                         }
                     }
 
                     3 -> {
                         when (args[1]) {
-                            "gesture" -> emotes.filter { it.startsWith(args[2]) }
+                            "wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
+                            "dye" -> CosmeticSlot.values().map { it.name }.filter { it.uppercase().startsWith(args[2]) }
+                            else -> listOf()
+                        }
+                    }
+
+                    4 -> {
+                        when (args[2]) {
+                            "personal" -> listOf("leave", "npc", "viewer").filter { it.startsWith(args[3]) }
                             else -> listOf()
                         }
                     }

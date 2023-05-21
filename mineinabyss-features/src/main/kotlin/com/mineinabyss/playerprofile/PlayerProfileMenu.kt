@@ -143,11 +143,13 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 
 @Composable
 fun CosmeticHat(player: Player) =
-    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
+    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticHat()?.item  ?: ItemStack(Material.AIR)
+    else ItemStack(Material.AIR)
 
 @Composable
 fun CosmeticBackpack(player: Player) =
-    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
+    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticBackpack()?.item ?: ItemStack(Material.AIR)
+    else ItemStack(Material.AIR)
 
 @Composable
 fun OrthCoinBalance(player: Player) {
