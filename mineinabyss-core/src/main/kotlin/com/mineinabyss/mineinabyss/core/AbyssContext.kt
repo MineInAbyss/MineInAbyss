@@ -19,7 +19,6 @@ import org.jetbrains.exposed.sql.Database
 //val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin("MineInAbyss") as MineInAbyssPlugin }
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 val abyss by DI.observe<AbyssContext>()
-
 class AbyssContext(
     val plugin: MineInAbyssPlugin,
     val worldManager: AbyssWorldManager
@@ -29,6 +28,9 @@ class AbyssContext(
     val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
     val isMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("MCCosmetics")
+    val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
+    val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
+    val isHappyHudEnabled get() = plugin.server.pluginManager.isPluginEnabled("HappyHud")
 
     val econ: Economy? = Services.getOrNull<Economy>()
 

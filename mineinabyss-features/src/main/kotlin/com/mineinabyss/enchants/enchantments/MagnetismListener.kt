@@ -3,7 +3,7 @@ package com.mineinabyss.enchants.enchantments
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.enchants.CustomEnchants.MAGNETISM
 import com.mineinabyss.idofront.time.ticks
-import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.delay
 import org.bukkit.entity.Item
 import org.bukkit.event.EventHandler
@@ -15,7 +15,7 @@ class MagnetismListener : Listener {
     @EventHandler
     fun BlockBreakEvent.onBlockBreak() {
         if (MAGNETISM in player.inventory.itemInMainHand.enchantments) {
-            mineInAbyss.launch {
+            abyss.plugin.launch {
                 delay(1.ticks)
 
                 player.world.getNearbyEntities(block.location, 4.0, 4.0, 4.0).forEach { entity ->

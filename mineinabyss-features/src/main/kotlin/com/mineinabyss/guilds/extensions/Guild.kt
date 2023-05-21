@@ -5,7 +5,7 @@ import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.helpers.heldLootyItem
+import com.mineinabyss.geary.papermc.tracking.items.toGeary
 import com.mineinabyss.guilds.GuildFeature
 import com.mineinabyss.guilds.database.*
 import com.mineinabyss.guilds.guildChannelId
@@ -13,11 +13,12 @@ import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
@@ -41,7 +42,7 @@ fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
         }
     }
 
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
 
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq guildName.lowercase()
@@ -68,7 +69,7 @@ fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
 }
 
 fun Player.deleteGuild() {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         /* Find the owners guild */
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
@@ -114,7 +115,7 @@ fun Player.deleteGuild() {
 
         /* Remove guild entry from Guilds db thus removing all members */
         Guilds.deleteWhere {
-            Guilds.id eq guildId
+            id eq guildId
         }
 
         Players.deleteWhere {
@@ -128,7 +129,7 @@ fun Player.deleteGuild() {
 
 //TODO Make sure guild chatname is properly updated when guild name is changed
 fun Player.changeStoredGuildName(newGuildName: String) {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
 
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq newGuildName.lowercase()
@@ -179,7 +180,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
 }
 
 fun Player.changeGuildJoinType() {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
         }.single()[Players.guildId]
@@ -201,7 +202,7 @@ fun Player.changeGuildJoinType() {
 }
 
 fun Player.getGuildMembers(): List<GuildMember> {
-    return transaction(AbyssContext.db) {
+    return transaction(abyss.db) {
         val playerRow = Players.select {
             Players.playerUUID eq uniqueId
         }.single()
@@ -217,7 +218,7 @@ fun Player.getGuildMembers(): List<GuildMember> {
 }
 
 fun String.getGuildMembers(): List<GuildMember> {
-    return transaction(AbyssContext.db) {
+    return transaction(abyss.db) {
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildMembers.lowercase()
         }.singleOrNull()?.get(Guilds.id) ?: return@transaction emptyList()
@@ -231,20 +232,20 @@ fun String.getGuildMembers(): List<GuildMember> {
 }
 
 fun getAllGuilds(): List<GuildJoin> {
-    return transaction(AbyssContext.db) {
+    return transaction(abyss.db) {
         return@transaction Guilds.selectAll()
             .map { row -> GuildJoin(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
     }
 }
 
 fun getAllGuildNames(): List<String> {
-    return transaction(AbyssContext.db) {
+    return transaction(abyss.db) {
         return@transaction Guilds.selectAll().map { row -> row[Guilds.name] }
     }
 }
 
 fun String.getGuildId() : Int {
-    return transaction(AbyssContext.db) {
+    return transaction(abyss.db) {
         return@transaction Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildId.lowercase()
         }.first()[Guilds.id]
@@ -252,17 +253,17 @@ fun String.getGuildId() : Int {
 }
 
 fun String.clearGuildJoinRequests() {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         GuildJoinQueue.deleteWhere {
-            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST)
+            (guildId eq getGuildId()) and (joinType eq GuildJoinType.REQUEST)
         }
     }
 }
 
 fun String.clearGuildInvites() {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         GuildJoinQueue.deleteWhere {
-            (GuildJoinQueue.guildId eq getGuildId()) and (GuildJoinQueue.joinType eq GuildJoinType.INVITE)
+            (guildId eq getGuildId()) and (joinType eq GuildJoinType.INVITE)
         }
     }
 }
@@ -279,7 +280,7 @@ fun displayGuildList(queryName: String? = null): List<GuildJoin> {
 }
 
 fun String.getOwnerFromGuildName(): OfflinePlayer {
-    return transaction(AbyssContext.db) {
+    return transaction(abyss.db) {
         val guild = Guilds.select {
             Guilds.name eq this@getOwnerFromGuildName
         }.first()[Guilds.id]
@@ -297,7 +298,7 @@ fun Player.depositCoinsToGuild(amount: Int) {
         error("You must be in a guild to withdraw coins.")
         return
     }
-    if (heldLootyItem?.has<OrthCoin>() != true) {
+    if (inventory.toGeary()?.itemInMainHand?.has<OrthCoin>() != true) {
         error("You must be holding an Orth Coin to make a deposit.")
         return
     }
@@ -361,7 +362,7 @@ fun Player.levelUpGuild() {
     val cost = guildName.getGuildLevelUpCost() ?: return
     val guildMembers = getGuildMembers().filter { it.player.uniqueId != uniqueId }.map { it.player }
     updateGuildBalance(-cost)
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         val lvl = Guilds.select {
             Guilds.name.lowerCase() eq guildName.lowercase()
         }.firstOrNull()?.get(Guilds.level) ?: return@transaction 0
@@ -379,7 +380,7 @@ fun Player.levelUpGuild() {
         if (member.isOnline) {
             (member as Player).info(lvlUpMessage)
         } else {
-            transaction(AbyssContext.db) {
+            transaction(abyss.db) {
                 GuildMessageQueue.insert {
                     it[content] = lvlUpMessage
                     it[playerUUID] = member.uniqueId
@@ -401,7 +402,7 @@ fun String.getGuildLevelUpCost(): Int? {
 }
 
 private fun Player.updateGuildBalance(amount: Int) {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
         }.single()[Players.guildId]
@@ -417,7 +418,7 @@ private fun Player.updateGuildBalance(amount: Int) {
 }
 
 private fun String.updateGuildBalance(amount: Int) {
-    transaction(AbyssContext.db) {
+    transaction(abyss.db) {
         val bal = Guilds.select {
             Guilds.name eq this@updateGuildBalance
         }.single()[Guilds.balance]

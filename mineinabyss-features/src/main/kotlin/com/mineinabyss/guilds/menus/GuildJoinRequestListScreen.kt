@@ -15,7 +15,7 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.mineinabyss.core.abyss
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -31,7 +31,7 @@ fun GuildUIScope.GuildJoinRequestListScreen() {
 fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
-        transaction(AbyssContext.db) {
+        transaction(abyss.db) {
             val id = Players.select {
                 Players.playerUUID eq player.uniqueId
             }.first()[Players.guildId]

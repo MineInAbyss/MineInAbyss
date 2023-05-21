@@ -5,7 +5,6 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import de.erethon.headlib.HeadLib
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -42,8 +41,6 @@ fun OfflinePlayer?.head(
     isLarge: Boolean = false,
     isCenterOfInv: Boolean = false,
 ): ItemStack {
-    this ?: return HeadLib.WOODEN_QUESTION_MARK.toItemStack()
-
     return ItemStack(Material.PLAYER_HEAD).editItemMeta {
         if (this is SkullMeta) {
             displayName(title)

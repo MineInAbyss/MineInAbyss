@@ -56,6 +56,7 @@ allprojects {
 
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
+        compileOnly(miaLibs.mobzy)
         compileOnly(miaLibs.minecraft.plugin.modelengine)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)

@@ -6,7 +6,9 @@ import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.components.npc.shopkeeping.ShopTrade
 import com.mineinabyss.components.npc.shopkeeping.ShopTradeSerializer
 import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.datatypes.EntityType
 import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.papermc.tracking.entities.helpers.GearyMobPrefabQuery
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.configuration.components.Prefab
 import com.mineinabyss.geary.systems.accessors.TargetScope
@@ -15,16 +17,14 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.mobzy.ecs.components.initialization.MobzyType
-import com.mineinabyss.mobzy.injection.MobzyTypesQuery
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 object ShopKeeperQuery : GearyQuery() {
-    val TargetScope.key by MobzyTypesQuery.get<PrefabKey>()
+    val TargetScope.key by GearyMobPrefabQuery().get<PrefabKey>()
     val TargetScope.isShopkeeper by family {
-        has<MobzyType>()
+        has<EntityType>()
         has<Prefab>()
         has<ShopKeeper>()
     }

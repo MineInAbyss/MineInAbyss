@@ -2,32 +2,31 @@ package com.mineinabyss.orthbanking
 
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.papermc.tracking.items.toGeary
 import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.looty.tracking.toGearyOrNull
 import org.bukkit.entity.Player
 
 fun Player.depositCoins(amount: Int) {
     val player = player ?: return
     val data = player.playerData
 
-    player.inventory.contents?.forEach {
-        if (it == null) {
+    player.inventory.contents?.forEachIndexed { index, item ->
+        if (item == null) {
             player.success("Your Orth Coins have been deposited!")
             return
         }
-        val current = it.toGearyOrNull(player) ?: return@forEach
-        current.get<OrthCoin>() ?: return@forEach
+        player.inventory.toGeary()?.get(index)?.get<OrthCoin>() ?: return@forEachIndexed
 
-        if (it.amount < amount) {
+        if (item.amount < amount) {
             player.error("You don't have that many Orth Coins!")
             return
         }
 
         data.orthCoinsHeld += amount
-        it.subtract(amount)
-        return@forEach
+        item.subtract(amount)
+        return@forEachIndexed
     }
 }
 

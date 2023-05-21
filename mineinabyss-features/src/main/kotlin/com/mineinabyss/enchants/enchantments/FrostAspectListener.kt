@@ -2,7 +2,7 @@ package com.mineinabyss.enchants.enchantments
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.enchants.CustomEnchants
-import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.delay
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -22,7 +22,7 @@ class FrostAspectListener : Listener {
             entity.freezeTicks = entity.maxFreezeTicks
             entity.lockFreezeTicks(true)
 
-            mineInAbyss.launch {
+            abyss.plugin.launch {
                 do {
                     delay(1.seconds)
                     (entity as LivingEntity).damage(1.0)

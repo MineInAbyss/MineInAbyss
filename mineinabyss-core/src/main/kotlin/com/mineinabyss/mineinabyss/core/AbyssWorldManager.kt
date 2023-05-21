@@ -3,7 +3,6 @@ package com.mineinabyss.mineinabyss.core
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.deeperworld.world.section.Section
-import com.mineinabyss.idofront.plugin.getService
 import org.bukkit.World
 
 /**

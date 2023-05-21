@@ -4,10 +4,9 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -16,10 +15,7 @@ import org.bukkit.entity.Player
 @SerialName("curse")
 class CurseFeature: AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(
-            CurseAscensionListener(),
-            CurseEffectsListener()
-        )
+        listeners(CurseAscensionListener(), CurseEffectsListener())
 
         commands {
             mineinabyss {

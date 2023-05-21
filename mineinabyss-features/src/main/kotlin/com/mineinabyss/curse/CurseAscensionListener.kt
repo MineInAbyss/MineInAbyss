@@ -5,9 +5,8 @@ import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
-import com.mineinabyss.idofront.plugin.Plugins
-import com.mineinabyss.idofront.plugin.isPluginEnabled
-import com.mineinabyss.mobzy.systems.systems.ModelEngineSystem.toModelEntity
+import com.mineinabyss.mineinabyss.core.abyss
+import com.mineinabyss.mobzy.modelengine.toModelEntity
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -49,7 +48,7 @@ class CurseAscensionListener : Listener {
 
     @EventHandler
     fun EntityMoveEvent.onRidableModelEngineAscend() {
-        if (!isPluginEnabled("ModelEngine") || !isPluginEnabled("Mobzy")) return
+        if (!abyss.isModelEngineEnabled || !abyss.isMobzyEnabled) return
         val mount = entity.toModelEntity()?.mountManager ?: return
         if (entity.toGearyOrNull() == null) return
 

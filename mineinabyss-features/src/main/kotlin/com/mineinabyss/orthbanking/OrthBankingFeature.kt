@@ -3,6 +3,7 @@ package com.mineinabyss.orthbanking
 import com.mineinabyss.components.npc.orthbanking.MittyToken
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.papermc.tracking.items.toGeary
 import com.mineinabyss.helpers.CoinFactory
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.hubstorage.isInHub
@@ -12,11 +13,9 @@ import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.looty.tracking.toGearyOrNull
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -27,7 +26,7 @@ class OrthBankingFeature(
     val balanceHudId: String = "balance"
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(OrthBankingListener(this@OrthBankingFeature))
+        listeners(OrthBankingListener(this@OrthBankingFeature))
 
         commands {
             mineinabyss {
@@ -46,7 +45,7 @@ class OrthBankingFeature(
                         action {
                             val player = sender as Player
                             val currItem = player.inventory.itemInMainHand
-                            val gearyItem = currItem.toGearyOrNull(player)
+                            val gearyItem = player.inventory.toGeary()?.itemInMainHand
                             val isOrthCoin = currItem.isSimilar(CoinFactory.orthCoin)
                             val currency =
                                 if (isOrthCoin) "coins" else "tokens"

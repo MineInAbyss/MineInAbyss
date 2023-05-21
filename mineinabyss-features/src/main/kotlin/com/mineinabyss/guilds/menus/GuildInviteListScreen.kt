@@ -17,7 +17,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.Bukkit
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
@@ -35,7 +35,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val owner = Bukkit.getOfflinePlayer(player.getGuildOwnerFromInvite())
     val memberCount = owner.getGuildMemberCount()
-    val invites = transaction(AbyssContext.db) {
+    val invites = transaction(abyss.db) {
         GuildJoinQueue.select {
             (GuildJoinQueue.joinType eq GuildJoinType.INVITE) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)

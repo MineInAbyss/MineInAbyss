@@ -2,7 +2,7 @@ package com.mineinabyss.helpers
 
 import com.ehhthan.happyhud.HappyHUD
 import com.ehhthan.happyhud.api.HudHolder
-import com.mineinabyss.idofront.plugin.isPluginEnabled
+import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -13,7 +13,7 @@ val Player.isHudHolder: Boolean get() = HudHolder.has(this)
 fun Player.changeHudStates(layoutIds: List<String>, state: Boolean) = layoutIds.forEach { changeHudState(it, state) }
 
 fun Player.changeHudState(layoutId: String, state: Boolean) {
-    if (!isPluginEnabled("HappyHUD") || !this.isHudHolder) return
+    if (!abyss.isHappyHudEnabled || !this.isHudHolder) return
     val layout = happyHUD.layouts().get(layoutId) ?: return
 
     if (state) hudHolder.addLayout(layout)

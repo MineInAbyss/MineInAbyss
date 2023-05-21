@@ -6,9 +6,9 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.looty.ecs.queries.LootyTypeQuery.key
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
+import com.mineinabyss.npc.shopkeeping.ShopKeeperQuery.key
 import com.mineinabyss.npc.shopkeeping.menu.ShopMainMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -6,11 +6,10 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.isPluginEnabled
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
+import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -43,12 +42,12 @@ class HudFeature(
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        if (!isPluginEnabled("HappyHUD")) {
+        if (!abyss.isHappyHudEnabled) {
             logger.warning("HappyHUD is not enabled. HappyHud will not work.")
             return
         }
 
-        registerEvents(HudListener(this@HudFeature))
+        listeners(HudListener(this@HudFeature))
 
         commands {
             mineinabyss {
@@ -56,12 +55,12 @@ class HudFeature(
                     "air_bar" {
                         "toggleAlwaysOn" {
                             playerAction {
-                                player.toGeary {
-                                    if (has<AlwaysShowAirHud>())
-                                        remove<AlwaysShowAirHud>()
-                                    else add<AlwaysShowAirHud>()
-                                    player.changeHudState(airLayout, has<AlwaysShowAirHud>())
-                                    player.success("Air Bar was toggled ${if (has<AlwaysShowAirHud>()) "on" else "off"}")
+                                player.toGeary().let {
+                                    if (it.has<AlwaysShowAirHud>())
+                                        it.remove<AlwaysShowAirHud>()
+                                    else it.add<AlwaysShowAirHud>()
+                                    player.changeHudState(airLayout, it.has<AlwaysShowAirHud>())
+                                    player.success("Air Bar was toggled ${if (it.has<AlwaysShowAirHud>()) "on" else "off"}")
                                 }
                             }
                         }
@@ -69,12 +68,12 @@ class HudFeature(
                     "armor_bar" {
                         "toggleAlwaysOn" {
                             playerAction {
-                                player.toGeary {
-                                    if (has<AlwaysShowArmorHud>())
-                                        remove<AlwaysShowArmorHud>()
-                                    else add<AlwaysShowArmorHud>()
-                                    player.changeHudState(armorLayout, has<AlwaysShowArmorHud>())
-                                    player.success("Armor Bar was toggled ${if (has<AlwaysShowArmorHud>()) "on" else "off"}")
+                                player.toGeary().let {
+                                    if (it.has<AlwaysShowArmorHud>())
+                                        it.remove<AlwaysShowArmorHud>()
+                                    else it.add<AlwaysShowArmorHud>()
+                                    player.changeHudState(armorLayout, it.has<AlwaysShowArmorHud>())
+                                    player.success("Armor Bar was toggled ${if (it.has<AlwaysShowArmorHud>()) "on" else "off"}")
                                 }
                             }
                         }

@@ -4,7 +4,7 @@ import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.mineinabyss.core.AbyssWorldManager
-import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.World
 
 /**

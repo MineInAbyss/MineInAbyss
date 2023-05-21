@@ -3,6 +3,7 @@ gearyPaper = "0.24-SNAPSHOT"
 guiy = "0.7.26"
 deeperworld = "0.6.85"
 chatty = "0.3.64"
+mobzy = "0.21-SNAPSHOT"
 protocolburrito = "0.5.38"
 
 
@@ -12,6 +13,7 @@ geary-papermc = { module = "com.mineinabyss:geary-papermc", version.ref = "geary
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
+mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.2.4"

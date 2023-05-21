@@ -7,12 +7,8 @@ import org.bukkit.Location
 import org.bukkit.World
 
 
-val Location.layer: Layer?
-    get() {
-        return AbyssWorldManager.getLayerForSection(this.section ?: return null)
-    }
+val Location.layer: Layer? get() = this.section?.let { abyss.worldManager.getLayerForSection(it) }
 
-val Section.layer: Layer?
-    get() = AbyssWorldManager.getLayerForSection(this)
+val Section.layer: Layer? get() = abyss.worldManager.getLayerForSection(this)
 
-val World.isAbyssWorld: Boolean get() = AbyssWorldManager.isAbyssWorld(this)
+val World.isAbyssWorld: Boolean get() = abyss.worldManager.isAbyssWorld(this)

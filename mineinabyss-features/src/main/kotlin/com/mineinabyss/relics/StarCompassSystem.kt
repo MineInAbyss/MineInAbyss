@@ -34,8 +34,8 @@ class ToggleStarCompassHudSystem(private val feature: RelicsFeature) : GearyList
     @Handler
     fun TargetScope.toggleDepth(source: SourceScope) {
         val item = player.inventory.itemInMainHand
-        player.toGeary {
-            if (has<ShowStarCompassHud>()) {
+        player.toGeary().let {
+            if (it.has<ShowStarCompassHud>()) {
                 item.type = Material.COMPASS
                 item.editItemMeta {
                     this as CompassMeta
@@ -43,14 +43,14 @@ class ToggleStarCompassHudSystem(private val feature: RelicsFeature) : GearyList
                     isLodestoneTracked = false
                     itemFlags.add(ItemFlag.HIDE_ENCHANTS)
                 }
-                remove<ShowStarCompassHud>()
+                it.remove<ShowStarCompassHud>()
             }
             else {
                 item.type = Material.PAPER
                 item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
-                setPersisting(ShowStarCompassHud(player.location.section))
+                it.setPersisting(ShowStarCompassHud(player.location.section))
             }
-            player.changeHudState(feature.starcompassHudId, has<ShowStarCompassHud>())
+            player.changeHudState(feature.starcompassHudId, it.has<ShowStarCompassHud>())
         }
     }
 }
