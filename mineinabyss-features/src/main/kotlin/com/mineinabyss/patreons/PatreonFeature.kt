@@ -1,5 +1,6 @@
 package com.mineinabyss.patreons
 
+import com.mineinabyss.components.cosmetics.CosmeticVoucher
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.CoinFactory
@@ -8,8 +9,13 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
 import com.mineinabyss.idofront.serialization.ItemStackSerializer
+import com.mineinabyss.looty.ecs.components.LootyType
+import com.mineinabyss.looty.ecs.queries.LootyTypeQuery
+import com.mineinabyss.looty.ecs.queries.LootyTypeQuery.type
+import com.mineinabyss.looty.tracking.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
@@ -19,6 +25,7 @@ import kotlinx.serialization.Serializable
 import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.time.Month
@@ -139,6 +146,19 @@ class PatreonFeature(
                                     luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(c)
                                 }
                                 luckPerms.userManager.saveUser(luckPerms.userManager.getUser(player.uniqueId)!!)
+                            }
+                        }
+                    }
+                    "voucher"(desc = "Convert old cosmetic items to vouchers") {
+                        playerAction {
+                            val item = player.inventory.itemInMainHand.toGearyOrNull(player)?.get<LootyType>()?.item ?: return@playerAction
+                            LootyTypeQuery.firstOrNull { it.entity.get<CosmeticVoucher>()?.originalItem?.prefab == item.prefab }?.type?.item?.toItemStack()?.let { voucher ->
+                                if (player.inventory.firstEmpty() != -1) {
+                                    player.inventory.itemInMainHand.subtract()
+                                    player.inventory.addItem(voucher)
+                                    player.success("Converted ${item.displayName} to a ${voucher.displayName()}")
+                                    player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
+                                }
                             }
                         }
                     }

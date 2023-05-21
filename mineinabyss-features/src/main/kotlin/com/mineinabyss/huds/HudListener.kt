@@ -1,10 +1,8 @@
 package com.mineinabyss.huds
 
-import com.ehhthan.happyhud.api.event.PlayerUpdateAttributeEvent
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.components.huds.AlwaysShowAirHud
-import com.mineinabyss.components.huds.AlwaysShowArmorHud
+import com.mineinabyss.components.huds.ReturnVanillaHud
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.world.section.Section
@@ -12,7 +10,6 @@ import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.helpers.changeHudStates
 import com.mineinabyss.helpers.happyHUD
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.MIAConfig
 import com.mineinabyss.mineinabyss.core.layer
@@ -25,12 +22,10 @@ import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
 import org.bukkit.Material
-import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityAirChangeEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerGameModeChangeEvent
@@ -48,11 +43,6 @@ class HudListener(private val feature: HudFeature) : Listener {
             GameMode.CREATIVE, GameMode.SPECTATOR -> player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, false)
             GameMode.SURVIVAL, GameMode.ADVENTURE -> player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
         }
-
-        // Toggle armor and air if they are set to always show
-        // TODO Make these components persist on players
-        player.changeHudState(feature.airLayout, player.toGeary().has<AlwaysShowAirHud>())
-        player.changeHudState(feature.armorLayout, player.toGeary().has<AlwaysShowArmorHud>())
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -79,7 +69,6 @@ class HudListener(private val feature: HudFeature) : Listener {
         if (fromSection.layer == toSection.layer) return
         changeHudStates(layerLayouts, false) //Clear Layer Hud
         val layout = MIAConfig.data.layers.firstOrNull { it == toSection.layer && it.name in layerLayouts }?.name ?: return
-        layout.broadcastVal("layout: ")
         changeHudState(layout, true)
     }
 
@@ -89,12 +78,9 @@ class HudListener(private val feature: HudFeature) : Listener {
         when (newGameMode) {
             GameMode.CREATIVE, GameMode.SPECTATOR -> {
                 player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, false)
-                player.changeHudState(feature.armorLayout, false)
             }
             GameMode.SURVIVAL, GameMode.ADVENTURE -> {
                 player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
-                if (player.displayArmorHud())
-                    player.changeHudState(feature.armorLayout, true)
             }
         }
     }
@@ -103,55 +89,32 @@ class HudListener(private val feature: HudFeature) : Listener {
     fun InventoryClickEvent.onSwap() {
         val player = whoClicked as? Player ?: return
         if (slot != 40) return // Offhand slot
-        when (player.inventory.itemInOffHand.type) {
-            Material.AIR -> {
-                player.changeHudState(feature.balanceEmptyOffhandLayout, false)
-                player.changeHudState(feature.balanceOffhandLayout, true)
-            }
-            else -> {
-                player.changeHudState(feature.balanceOffhandLayout, false)
-                player.changeHudState(feature.balanceEmptyOffhandLayout, true)
-            }
-        }
+        player.swapBalanceHud()
     }
 
     @EventHandler
     fun PlayerSwapHandItemsEvent.onSwap() {
-        when (player.inventory.itemInOffHand.type) {
+        player.swapBalanceHud()
+    }
+
+    private fun Player.swapBalanceHud() {
+        when (inventory.itemInOffHand.type) {
             Material.AIR -> {
-                player.changeHudState(feature.balanceEmptyOffhandLayout, false)
-                player.changeHudState(feature.balanceOffhandLayout, true)
+                changeHudState(feature.balanceEmptyOffhandLayout, false)
+                changeHudState(feature.balanceOffhandLayout, true)
             }
             else -> {
-                player.changeHudState(feature.balanceOffhandLayout, false)
-                player.changeHudState(feature.balanceEmptyOffhandLayout, true)
+                changeHudState(feature.balanceOffhandLayout, false)
+                changeHudState(feature.balanceEmptyOffhandLayout, true)
             }
         }
     }
 
-    @EventHandler
-    fun EntityAirChangeEvent.onPlayerUnderwater() {
-        val player = entity as? Player ?: return
-        if (player.toGeary().has<AlwaysShowAirHud>()) return
-        // Because it is ticks, offset it abit to register when it is max
-        player.changeHudState(feature.airLayout, player.remainingAir < player.maximumAir - 4)
-    }
-
-    @EventHandler
-    fun PlayerUpdateAttributeEvent.onArmorChange() {
-        if (attribute != Attribute.GENERIC_ARMOR) return
-        if (player.toGeary().has<AlwaysShowArmorHud>()) return
-        player.changeHudState(feature.armorLayout, (player.displayArmorHud()))
-    }
-
-    private fun Player.displayArmorHud() : Boolean {
-        val attribute = getAttribute(Attribute.GENERIC_ARMOR) ?: return false
-        return attribute.value > attribute.baseValue && isValidGamemode()
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun ModelMountEvent.onMountModelEngine() {
-        (passenger as? Player)?.changeHudState(feature.mountedLayout, true)
+        val player = (passenger as? Player) ?: return
+        if (player.toGeary().has<ReturnVanillaHud>()) return
+        player.changeHudState(feature.mountedLayout, true)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -162,6 +125,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityMountEvent.onMount() {
         val player = entity as? Player ?: return
+        if (player.toGeary().has<ReturnVanillaHud>()) return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
         player.changeHudState(feature.mountedLayout, true)
     }
@@ -174,6 +138,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntitySitEvent.onSit() {
         val player = entity as? Player ?: return
+        if (player.toGeary().has<ReturnVanillaHud>()) return
         player.sendActionBar(Component.empty()) // Remove the server-sent mount action bar
         player.changeHudState(feature.mountedLayout, false)
     }
@@ -184,6 +149,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityInsideBlockEvent.onPowderSnow() {
         val player = entity as? Player ?: return
+        if (player.toGeary().has<ReturnVanillaHud>()) return
         if (block.type != Material.POWDER_SNOW || !player.isValidGamemode()) return
         if (!player.isFrozen || player in playerFrozenMap) return
 
@@ -201,6 +167,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     // Apply huds if player relogs with effects or is in a lingering cloud
     @EventHandler(priority = EventPriority.MONITOR)
     fun PlayerJoinEvent.onJoinWithEffects() {
+        if (player.toGeary().has<ReturnVanillaHud>()) return
         player.activePotionEffects.map { it.type }.forEach {
             player.handleEffectOverlays(it, true)
         }
@@ -209,6 +176,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityPotionEffectEvent.onEffect() {
         val player = entity as? Player ?: return
+        if (player.toGeary().has<ReturnVanillaHud>()) return
         when (action) {
             EntityPotionEffectEvent.Action.ADDED, EntityPotionEffectEvent.Action.CHANGED ->
                 player.handleEffectOverlays(newEffect?.type ?: return, true)

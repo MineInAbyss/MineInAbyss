@@ -137,11 +137,13 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 
 @Composable
 fun CosmeticHat(player: Player) =
-    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
+    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticHat()?.item  ?: ItemStack(Material.AIR)
+    else ItemStack(Material.AIR)
 
 @Composable
 fun CosmeticBackpack(player: Player) =
-    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
+    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticBackpack()?.item ?: ItemStack(Material.AIR)
+    else ItemStack(Material.AIR)
 
 @Composable
 fun OrthCoinBalance(player: Player) {

@@ -11,15 +11,15 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.idofront.serialization.SerializableItemStack
-import com.mineinabyss.idofront.serialization.toSerializable
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 @Serializable
 @SerialName("helper")
@@ -54,7 +54,7 @@ class HelperFeature : AbyssFeature {
         if (isInHelperMode) return
         toGeary().setPersisting(HelperInfo(
             OldLocSerializer(location.world.uid, location.x, location.y, location.z, location.yaw, location.pitch), gameMode, inventory.contents
-            ?.map { it?.toSerializable() ?: SerializableItemStack() } ?: emptyList()))
+            ?.map { it ?: ItemStack(Material.AIR) } ?: emptyList()))
         gameMode = GameMode.SPECTATOR
         inventory.clear()
         this.playerData.isAffectedByCurse = false
@@ -65,7 +65,7 @@ class HelperFeature : AbyssFeature {
         if (!isInHelperMode) return
         gameMode = helperMode!!.oldGameMode
         inventory.clear()
-        inventory.contents = helperMode!!.inventory.map { it.toItemStack() }.toTypedArray()
+        inventory.contents = helperMode!!.inventory.map { it }.toTypedArray()
         this.playerData.isAffectedByCurse = true
         teleport(helperMode!!.oldLocation.toLocation())
         toGeary().remove<HelperInfo>()

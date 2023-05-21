@@ -106,7 +106,7 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: () -> Unit) {
             nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
-                        .title("${Space.of(-64)}${Space.of(1)}:guild_search_menu:")
+                        .title("${Space.of(-61)}:guild_search_menu:")
                         .itemLeft(TitleItem.of("Guild Name"))
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }

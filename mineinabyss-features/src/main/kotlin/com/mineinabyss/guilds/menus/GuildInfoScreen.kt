@@ -1,10 +1,6 @@
 package com.mineinabyss.guilds.menus
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.guilds.extensions.getGuildLevel
-import com.mineinabyss.guilds.extensions.getGuildMemberCount
-import com.mineinabyss.guilds.extensions.getGuildName
-import com.mineinabyss.guilds.extensions.getGuildOwner
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
@@ -14,7 +10,6 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.miniMsg
-import org.bukkit.Bukkit
 
 @Composable
 fun GuildUIScope.GuildInfoScreen() {
@@ -42,11 +37,10 @@ fun GuildUIScope.CurrentGuildInfoButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
             "<gold><b>Current Guild Info</b>".miniMsg(),
-            "<yellow><b>Guild Name:</b> <yellow><i>${player.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <yellow><i>${
-                Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
-            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg(),
+            "<yellow><b>Guild Name:</b> <yellow><i>${guildName}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${guildOwner.name}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${memberCount}".miniMsg(),
             modifier = Modifier.size(2, 2)
         )
     }

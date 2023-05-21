@@ -59,7 +59,7 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
         newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
         player.info("<yellow><b>❌ <yellow>You denied the join-request from ${newMember.name}")
         val requestDeniedMessage =
-            "<red>Your request to join <i>${player.getGuildName()} has been denied!"
+            "<red>Your request to join <i>${guildName} has been denied!"
         if (newMember.isOnline) newMember.player?.error(requestDeniedMessage)
         else {
             transaction(AbyssContext.db) {

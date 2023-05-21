@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuiyOwner.PvpPrompt(player: Player) {
-    Chest(setOf(player), "${Space.of(-12)}<white>:pvp_menu_toggle:", Modifier.height(4),
+    Chest(setOf(player), "${Space.of(-8)}:pvp_menu_toggle:", Modifier.height(4),
         onClose = { reopen() }) {
         EnablePvp(player, Modifier.at(1, 1))
         DisablePvp(player, Modifier.at(5, 1))
