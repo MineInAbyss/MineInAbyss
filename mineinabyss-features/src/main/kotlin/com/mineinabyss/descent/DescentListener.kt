@@ -5,10 +5,10 @@ import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.miniMsg
-import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,14 +19,14 @@ import kotlin.time.toKotlinDuration
 class DescentListener : Listener {
     @EventHandler
     fun PlayerAscendEvent.onReturnToOrth() {
-        if (toSection != MIAConfig.data.hubSection) return
+        if (toSection != abyss.config.hubSection) return
         player.removeDescentContext()
     }
 
     @EventHandler
     fun PlayerDescendEvent.onDescend() {
-        if (fromSection != MIAConfig.data.hubSection) return
-        player.toGeary {
+        if (fromSection != abyss.config.hubSection) return
+        player.toGeary().apply {
             setPersisting(DescentContext())
 
             val addPins = get<OrthPins>()?.selected ?: setOf()

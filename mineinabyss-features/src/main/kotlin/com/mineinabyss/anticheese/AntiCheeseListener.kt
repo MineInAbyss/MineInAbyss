@@ -2,14 +2,9 @@ package com.mineinabyss.anticheese
 
 import com.destroystokyo.paper.MaterialTags
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent
-import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.mineinabyss.core.layer
-import dev.geco.gsit.api.GSitAPI
-import dev.geco.gsit.api.event.EntityGetUpSitEvent
-import dev.geco.gsit.api.event.EntitySitEvent
-import dev.geco.gsit.api.event.PreEntitySitEvent
 import org.bukkit.Material
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
@@ -19,7 +14,6 @@ import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockDispenseEvent
-import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.block.BlockSpreadEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -29,7 +23,6 @@ import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.potion.PotionEffectType
 
 class AntiCheeseListener : Listener {
-
     @EventHandler
     fun BlockSpreadEvent.onSculkSpread() {
         if (block.type == Material.SCULK || block.type == Material.SCULK_VEIN) isCancelled = true
@@ -92,32 +85,6 @@ class AntiCheeseListener : Listener {
     @EventHandler
     fun PlayerFishEvent.cancelBlockGrief() {
         if (caught?.type != EntityType.PLAYER && player.isInHub()) isCancelled = true
-    }
-}
-
-class GSitListener : Listener {
-
-    // Cancels pistons if a player is riding it via a GSit Seat
-    @EventHandler
-    fun BlockPistonExtendEvent.seatMovedByPiston() {
-        if (GSitAPI.getSeats(blocks).isNotEmpty()) isCancelled = true
-    }
-
-    @EventHandler
-    fun PreEntitySitEvent.onSitMidair() {
-        if ((entity as? Player ?: return).fallDistance >= 4.0) isCancelled = true
-    }
-
-    @EventHandler
-    fun EntitySitEvent.handleCurseOnSitting() {
-        val player = (entity as? Player ?: return)
-        handleCurse(player, seat.location.toBlockLocation(), player.location)
-    }
-
-    @EventHandler
-    fun EntityGetUpSitEvent.handleCurseOnSitting() {
-        val player = (entity as? Player ?: return)
-        handleCurse(player, player.location, seat.location.toBlockLocation())
     }
 }
 

@@ -3,8 +3,8 @@ package com.mineinabyss.displayLocker
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.displaylocker.lockedDisplay
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.geary.papermc.store.encodeComponentsTo
+import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.spawning.spawn
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent

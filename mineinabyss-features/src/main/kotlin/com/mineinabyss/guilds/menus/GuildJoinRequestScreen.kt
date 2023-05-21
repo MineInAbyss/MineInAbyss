@@ -13,7 +13,7 @@ import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.sql.insert

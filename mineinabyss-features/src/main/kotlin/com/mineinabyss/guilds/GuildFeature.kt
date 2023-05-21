@@ -7,7 +7,7 @@ import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.deeperworld.DeeperContext
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guilds.database.GuildRank
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildMainMenu
@@ -19,11 +19,10 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
-import com.mineinabyss.mineinabyss.core.AbyssContext
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
+import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
@@ -59,11 +58,14 @@ class GuildFeature(
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
         }
 
-        if (AbyssContext.isChattyLoaded) {
+        if (abyss.isChattyLoaded) {
             getAllGuilds().forEach {
-                chattyConfig.channels.putIfAbsent("${it.guildName} $guildChannelId", this@GuildFeature.guildChattyChannel)
+                chattyConfig.channels.putIfAbsent(
+                    "${it.guildName} $guildChannelId",
+                    this@GuildFeature.guildChattyChannel
+                )
             }
-            registerEvents(ChattyGuildListener())
+            listeners(ChattyGuildListener())
         }
 
         // Generate the guild-list
@@ -116,7 +118,7 @@ class GuildFeature(
                         playerAction {
                             val player = sender as? Player ?: return@playerAction
 
-                            if (!AbyssContext.isChattyLoaded) {
+                            if (!abyss.isChattyLoaded) {
                                 player.error("Chatty is not loaded.")
                                 return@playerAction
                             }
@@ -280,8 +282,10 @@ class GuildFeature(
                             "guildBalance" -> listOf("set", "add", "take").filter { it.startsWith(args[3]) }
                             "setGuildMemberRank" ->
                                 Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[3]) }
+
                             "clearJoinRequests", "clearGuildInvites", "addGuildMember", "removeGuildMember" ->
                                 getAllGuildNames().filter { it.startsWith(args[3]) }
+
                             else -> null
                         }
                     }
@@ -291,9 +295,11 @@ class GuildFeature(
                             "guildBalance" -> getAllGuildNames().filter { it.startsWith(args[4]) }
                             "addGuildMember" -> Bukkit.getOnlinePlayers().filter { !it.hasGuild() }
                                 .map { it.name }.filter { it.startsWith(args[4]) }
+
                             "removeGuildMember" -> Bukkit.getOnlinePlayers()
                                 .filter { it.hasGuild() && it.getGuildName().lowercase() == args[3].lowercase() }
                                 .map { it.name }
+
                             else -> null
                         }
                     }
@@ -306,6 +312,7 @@ class GuildFeature(
                             else -> null
                         }
                     }
+
                     else -> null
                 }
             }

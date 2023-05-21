@@ -9,7 +9,6 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerJoinEvent
 
 class HelperListener : Listener {
-
     @EventHandler
     fun PlayerAttemptPickupItemEvent.onPickup() {
         if (player.isInHelperMode) isCancelled = true

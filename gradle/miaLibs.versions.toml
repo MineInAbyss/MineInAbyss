@@ -1,23 +1,17 @@
 [versions]
-geary = "0.20.115"
-gearyaddons = "0.7.46"
-looty = "0.8.69"
+gearyPaper = "0.24-SNAPSHOT"
 guiy = "0.7.26"
 deeperworld = "0.6.85"
 chatty = "0.3.64"
-mobzy = "0.19.88"
 protocolburrito = "0.5.38"
 
 
 [libraries]
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
-geary-papermc-core = { module = "com.mineinabyss:geary-papermc-core", version.ref = "geary" }
-geary-commons-papermc = { module = "com.mineinabyss:geary-commons-papermc", version.ref = "gearyaddons" }
-looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
+geary-papermc = { module = "com.mineinabyss:geary-papermc", version.ref = "gearyPaper" }
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
-mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.gecolay:gsit:1.2.4"
@@ -27,4 +21,4 @@ minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.2"
 minecraft-plugin-happyhud = "com.ehhtan:HappyHUD:0.3.0-SNAPSHOT"
-minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R3.0.0"
+minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R3.1.7"

@@ -2,7 +2,7 @@ package com.mineinabyss.enchants.enchantments
 
 import com.mineinabyss.components.mobs.Splitjaw
 import com.mineinabyss.enchants.CustomEnchants
-import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

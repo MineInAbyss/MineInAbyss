@@ -1,16 +1,15 @@
 package com.mineinabyss.enchants
 
 import com.mineinabyss.enchants.enchantments.*
+import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
-import com.mineinabyss.mineinabyss.core.geary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -21,7 +20,7 @@ class EnchantsFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         CustomEnchants.register()
 
-        registerEvents(
+        listeners(
             SoulBoundListener(),
             FrostAspectListener(),
             BirdSwatterListener(),
@@ -30,9 +29,9 @@ class EnchantsFeature : AbyssFeature {
             MagnetismListener(),
         )
 
-        geary {
-            systems(SoulSystem())
-        }
+        geary.pipeline.addSystems(
+            SoulSystem()
+        )
 
         commands {
             mineinabyss {
@@ -85,6 +84,7 @@ class EnchantsFeature : AbyssFeature {
                             else -> null
                         }
                     }
+
                     3 -> {
                         when (args[0]) {
                             "enchant" ->
@@ -94,6 +94,7 @@ class EnchantsFeature : AbyssFeature {
                             else -> null
                         }
                     }
+
                     else -> null
                 }
             }

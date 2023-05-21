@@ -1,9 +1,9 @@
 plugins {
-    id("com.mineinabyss.conventions.kotlin")
-    id("com.mineinabyss.conventions.papermc")
-    id("com.mineinabyss.conventions.copyjar")
-    id("com.mineinabyss.conventions.publication")
-    kotlin("jvm") apply false
+    alias(libs.plugins.mia.kotlin.jvm)
+    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.mia.copyjar)
+    alias(libs.plugins.mia.publication)
+    alias(libs.plugins.mia.papermc)
 }
 
 allprojects {
@@ -11,7 +11,8 @@ allprojects {
 
     repositories {
         mavenCentral()
-        //mavenLocal()
+        maven("https://repo.mineinabyss.com/releases")
+        maven("https://repo.mineinabyss.com/snapshots")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://mvn.lumine.io/repository/maven-public/") { metadataSources { artifact() } } // Model Engine
@@ -28,14 +29,10 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(libs.idofront.core)
-        implementation(libs.idofront.autoscan) {
-            exclude("org.reflections")
-        }
+        implementation(libs.bundles.idofront.core)
 
         // Geary platform
-        compileOnly(miaLibs.geary.papermc.core)
-        compileOnly(miaLibs.geary.commons.papermc)
+        compileOnly(miaLibs.geary.papermc)
 
         // MineInAbyss platform
         compileOnly(libs.kotlin.stdlib)
@@ -57,8 +54,6 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
 
-        compileOnly(miaLibs.looty)
-        compileOnly(miaLibs.mobzy)
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
         compileOnly(miaLibs.minecraft.plugin.modelengine)

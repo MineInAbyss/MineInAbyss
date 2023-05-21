@@ -2,7 +2,7 @@ package com.mineinabyss.orthbanking
 
 import com.mineinabyss.components.npc.orthbanking.OrthBanker
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.helpers.changeHudState
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

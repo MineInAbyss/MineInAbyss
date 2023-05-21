@@ -14,7 +14,7 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.helpers.head
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select

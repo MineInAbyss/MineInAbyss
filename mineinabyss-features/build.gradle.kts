@@ -1,9 +1,9 @@
 plugins {
-    id("com.mineinabyss.conventions.kotlin")
+    alias(libs.plugins.mia.kotlin.jvm)
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.nms")
     kotlin("plugin.serialization")
-    id("org.jetbrains.compose")
+    alias(libs.plugins.compose)
 }
 
 dependencies {
@@ -11,5 +11,5 @@ dependencies {
 
     compileOnly(miaLibs.guiy)
     compileOnly(miaLibs.chatty)
-    compileOnly(libs.minecraft.headlib)
+//    compileOnly(libs.minecraft.headlib)
 }

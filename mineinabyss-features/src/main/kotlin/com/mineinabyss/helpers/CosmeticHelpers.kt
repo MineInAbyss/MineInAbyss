@@ -1,7 +1,7 @@
 package com.mineinabyss.helpers
 
 import com.mineinabyss.components.cosmetics.Cosmetics
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import io.github.fisher2911.hmccosmetics.HMCCosmetics
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem
 import io.github.fisher2911.hmccosmetics.api.HMCCosmeticsAPI
@@ -16,7 +16,7 @@ val mcCosmetics: MCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin
 val hmcCosmetics: HMCCosmetics by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmetics }
 
 fun Player.playGesture(gestureName: String) {
-    toGeary { setPersisting(Cosmetics(gesture = gestureName)) }
+    toGeary().setPersisting(Cosmetics(gesture = gestureName))
     CustomPlayerModel(player, QuitMethod.SNEAK) { }.playAnimation(gestureName)
 }
 

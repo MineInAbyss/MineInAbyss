@@ -13,7 +13,7 @@ import org.bukkit.World
  * @property abyssWorlds A list of worlds that are part of the abyss
  */
 class AbyssWorldManagerImpl : AbyssWorldManager {
-    private var _layers: List<Layer> = MIAConfig.data.layers
+    private var _layers: List<Layer> = abyss.config.layers
     override val layers = _layers.associateBy { it.key }
     private val abyssWorlds = mutableSetOf<World>()
 

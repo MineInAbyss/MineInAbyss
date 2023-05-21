@@ -10,7 +10,7 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.navigation.Navigator
 import com.mineinabyss.helpers.Text
 import com.mineinabyss.helpers.ui.composables.Button
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player
 
 sealed class ShopScreen(val title: String, val height: Int) {

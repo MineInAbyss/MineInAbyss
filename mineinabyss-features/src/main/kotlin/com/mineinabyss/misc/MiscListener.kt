@@ -1,7 +1,7 @@
 package com.mineinabyss.misc
 
 import com.mineinabyss.components.displaylocker.LockDisplayItem
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Material
@@ -22,7 +22,6 @@ import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
 
 class MiscListener : Listener {
-
     @EventHandler
     fun ProjectileHitEvent.onDouseItemFrame() {
         val entity = entity as? ThrownPotion ?: return

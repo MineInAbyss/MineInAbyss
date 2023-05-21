@@ -13,7 +13,6 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("playerprofile")
 class PlayerProfileFeature : AbyssFeature {
-
     override fun MineInAbyssPlugin.enableFeature() {
 
         commands {

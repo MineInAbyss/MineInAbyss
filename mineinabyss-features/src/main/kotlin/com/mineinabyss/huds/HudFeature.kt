@@ -2,7 +2,7 @@ package com.mineinabyss.huds
 
 import com.mineinabyss.components.huds.AlwaysShowAirHud
 import com.mineinabyss.components.huds.AlwaysShowArmorHud
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success

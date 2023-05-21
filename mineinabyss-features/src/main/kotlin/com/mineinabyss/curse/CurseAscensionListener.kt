@@ -1,10 +1,11 @@
 package com.mineinabyss.curse
 
-import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.helpers.handleCurse
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
+import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.isPluginEnabled
 import com.mineinabyss.mobzy.systems.systems.ModelEngineSystem.toModelEntity
 import io.papermc.paper.event.entity.EntityMoveEvent

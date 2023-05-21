@@ -9,7 +9,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 class PvpDamageListener : Listener {
-
     @EventHandler
     fun EntityDamageByEntityEvent.playerCombatSystem() {
         val player = entity as? Player ?: return

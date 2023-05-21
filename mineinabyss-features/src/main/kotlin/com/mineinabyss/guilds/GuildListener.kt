@@ -6,7 +6,7 @@ import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
-import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guilds.database.GuildMessageQueue
 import com.mineinabyss.guilds.database.GuildMessageQueue.content
 import com.mineinabyss.guilds.database.GuildRank
@@ -17,9 +17,8 @@ import com.mineinabyss.guilds.extensions.hasGuild
 import com.mineinabyss.guilds.menus.GuildMainMenu
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.miniMsg
-import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.core.mineInAbyss
+import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.mineinabyss.core.abyss
 import io.papermc.paper.event.player.AsyncChatEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -31,15 +30,13 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.time.Duration.Companion.seconds
 
 class GuildListener(private val feature: GuildFeature) : Listener {
-
-
-
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
         rightClicked.toGearyOrNull()?.get<GuildMaster>() ?: return
@@ -49,8 +46,8 @@ class GuildListener(private val feature: GuildFeature) : Listener {
     @EventHandler
     suspend fun PlayerJoinEvent.onJoin() {
         delay(1.seconds)
-        withContext(mineInAbyss.asyncDispatcher) {
-            transaction(AbyssContext.db) {
+        withContext(abyss.plugin.asyncDispatcher) {
+            transaction(abyss.db) {
                 GuildMessageQueue.select { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.info(it[content].miniMsg())
                 }

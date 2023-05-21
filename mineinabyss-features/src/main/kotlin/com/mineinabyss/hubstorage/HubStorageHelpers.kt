@@ -5,4 +5,4 @@ import com.mineinabyss.mineinabyss.core.MIAConfig
 import org.bukkit.entity.Player
 
 fun Player.openHubStorage() = openInventory(enderChest)
-fun Player.isInHub() = MIAConfig.data.hubSection == location.let { WorldManager.getSectionFor(it) }
+fun Player.isInHub() = abyss.config.hubSection == location.let { WorldManager.getSectionFor(it) }

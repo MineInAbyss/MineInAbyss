@@ -5,17 +5,16 @@ import com.mineinabyss.components.moderation.OldLocSerializer
 import com.mineinabyss.components.moderation.helperMode
 import com.mineinabyss.components.moderation.isInHelperMode
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.helpers.luckPerms
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.serialization.SerializableItemStack
 import com.mineinabyss.idofront.serialization.toSerializable
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.GameMode
@@ -25,7 +24,7 @@ import org.bukkit.entity.Player
 @SerialName("helper")
 class HelperFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(HelperListener())
+        listeners(HelperListener())
 
         commands {
             mineinabyss {
@@ -53,8 +52,10 @@ class HelperFeature : AbyssFeature {
     fun Player.enterHelperMode() {
         if (isInHelperMode) return
         toGeary().setPersisting(HelperInfo(
-            OldLocSerializer(location.world.uid, location.x, location.y, location.z, location.yaw, location.pitch), gameMode, inventory.contents
-            ?.map { it?.toSerializable() ?: SerializableItemStack() } ?: emptyList()))
+            OldLocSerializer(location.world.uid, location.x, location.y, location.z, location.yaw, location.pitch),
+            gameMode,
+            inventory.contents
+                ?.map { it?.toSerializable() ?: SerializableItemStack() } ?: emptyList()))
         gameMode = GameMode.SPECTATOR
         inventory.clear()
         this.playerData.isAffectedByCurse = false

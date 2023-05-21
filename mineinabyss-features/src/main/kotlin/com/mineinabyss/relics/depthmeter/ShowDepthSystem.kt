@@ -5,14 +5,14 @@ import com.mineinabyss.components.relics.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.miniMsg
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

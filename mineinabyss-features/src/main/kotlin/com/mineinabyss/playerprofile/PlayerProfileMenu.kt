@@ -3,7 +3,7 @@ package com.mineinabyss.playerprofile
 import androidx.compose.runtime.*
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guilds.extensions.*
 import com.mineinabyss.guilds.menus.GuildScreen
 import com.mineinabyss.guiy.components.Item
@@ -17,8 +17,8 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.helpers.*
 import com.mineinabyss.helpers.ui.composables.Button
 import com.mineinabyss.idofront.font.Space
-import com.mineinabyss.idofront.messaging.miniMsg
-import com.mineinabyss.idofront.plugin.isPluginEnabled
+import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.mineinabyss.core.abyss
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -34,7 +34,13 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
     val titleComponent =
-        Component.text("${Space.of(-12)}:player_profile${if (isPatreon) "_patreon" else ""}${if (!hideArmorIcons) "_armor_hidden:" else "_armor_visible:"}${Space.of(-178)}")
+        Component.text(
+            "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon" else ""}${if (!hideArmorIcons) "_armor_hidden:" else "_armor_visible:"}${
+                Space.of(
+                    -178
+                )
+            }"
+        )
     val rankComponent = Component.text("${Space.of(-42)}${DisplayRanks(player)}")
 
     Chest(setOf(viewer),
@@ -126,7 +132,7 @@ fun BootsSlot(player: Player, hideArmorIcons: Boolean) =
 
 @Composable
 fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
-    Button(onClick = toggleArmor, modifier = Modifier.at(7,3)) {
+    Button(onClick = toggleArmor, modifier = Modifier.at(7, 3)) {
         Text(
             "<b><dark_purple>Toggle armor visibility".miniMsg(),
             "<light_purple>Hides your armor from other".miniMsg(),
@@ -137,11 +143,11 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 
 @Composable
 fun CosmeticHat(player: Player) =
-    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
+    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticHat().itemStack else ItemStack(Material.AIR)
 
 @Composable
 fun CosmeticBackpack(player: Player) =
-    if (isPluginEnabled("HMCCosmetics")) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
+    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticBackpack().itemStack else ItemStack(Material.AIR)
 
 @Composable
 fun OrthCoinBalance(player: Player) {

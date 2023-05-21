@@ -1,18 +1,17 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.mineinabyss.geary.addon.GearyAddon
 import com.mineinabyss.idofront.commands.Command
-import com.mineinabyss.idofront.commands.CommandHolder
+import com.mineinabyss.idofront.commands.entrypoint.CommandDSLEntrypoint
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 
 abstract class MineInAbyssPlugin : JavaPlugin() {
-    fun CommandHolder.mineinabyss(run: Command.() -> Unit) {
-        AbyssContext.miaSubcommands += run
+    fun CommandDSLEntrypoint.mineinabyss(run: Command.() -> Unit) {
+        abyss.miaSubcommands += run
     }
 
-    fun CommandHolder.tabCompletion(completion: TabCompletion.() -> List<String>?) {
-        AbyssContext.tabCompletions += completion
+    fun CommandDSLEntrypoint.tabCompletion(completion: TabCompletion.() -> List<String>?) {
+        abyss.tabCompletions += completion
     }
 
     class TabCompletion(
@@ -21,12 +20,8 @@ abstract class MineInAbyssPlugin : JavaPlugin() {
         val alias: String,
         val args: Array<String>
     )
-}
 
-inline fun MineInAbyssPlugin.geary(run: GearyAddon.() -> Unit) {
-    AbyssContext.addonScope.apply(run)
-}
-
-inline fun MineInAbyssPlugin.commands(run: CommandHolder.() -> Unit) {
-    AbyssContext.commandExecutor.commands.apply(run)
+    inline fun commands(run: CommandDSLEntrypoint.() -> Unit) {
+        abyss.commandExecutor.commands.apply(run)
+    }
 }

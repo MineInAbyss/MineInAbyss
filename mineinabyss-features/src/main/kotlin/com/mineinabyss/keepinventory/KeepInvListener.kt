@@ -9,7 +9,6 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.world.WorldLoadEvent
 
 class KeepInvListener(private val feature: KeepInvFeature) : Listener {
-
     // Force keepinv to be false
     @EventHandler
     fun WorldLoadEvent.onWorldLoad() {

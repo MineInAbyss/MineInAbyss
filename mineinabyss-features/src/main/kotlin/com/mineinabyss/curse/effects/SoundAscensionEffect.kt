@@ -8,6 +8,7 @@ import com.mineinabyss.idofront.operators.plus
 import com.mineinabyss.idofront.operators.times
 import com.mineinabyss.idofront.serialization.DurationSerializer
 import com.mineinabyss.idofront.time.ticks
+import com.mineinabyss.mineinabyss.core.abyss
 import com.mineinabyss.mineinabyss.core.mineInAbyss
 import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
@@ -29,7 +30,7 @@ data class SoundAscensionEffect(
     override fun applyEffect(player: Player) { //TODO do not play sounds too quickly together
         val soundLocation = player.location + (Vector.getRandom() * 5 - Vector(2.5, 2.5, 2.5))
         val sound = sounds.random()
-        mineInAbyss.launch {
+        abyss.plugin.launch {
             delay(Random.nextLong(10).ticks)
             player.playSound(soundLocation, sound, 1f, 1f)
         }

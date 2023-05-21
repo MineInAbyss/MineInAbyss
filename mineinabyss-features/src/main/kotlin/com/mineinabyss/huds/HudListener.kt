@@ -8,15 +8,14 @@ import com.mineinabyss.components.huds.AlwaysShowArmorHud
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.world.section.Section
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.helpers.changeHudState
 import com.mineinabyss.helpers.changeHudStates
 import com.mineinabyss.helpers.happyHUD
 import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.time.ticks
-import com.mineinabyss.mineinabyss.core.MIAConfig
+import com.mineinabyss.mineinabyss.core.abyss
 import com.mineinabyss.mineinabyss.core.layer
-import com.mineinabyss.mineinabyss.core.mineInAbyss
 import com.ticxo.modelengine.api.events.ModelDismountEvent
 import com.ticxo.modelengine.api.events.ModelMountEvent
 import dev.geco.gsit.api.event.EntitySitEvent
@@ -45,8 +44,15 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun PlayerJoinEvent.onJoin() {
         when (player.gameMode) {
-            GameMode.CREATIVE, GameMode.SPECTATOR -> player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, false)
-            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
+            GameMode.CREATIVE, GameMode.SPECTATOR -> player.changeHudStates(
+                happyHUD.layouts().defaults.map { it.key },
+                false
+            )
+
+            GameMode.SURVIVAL, GameMode.ADVENTURE -> player.changeHudStates(
+                happyHUD.layouts().defaults.map { it.key },
+                true
+            )
         }
 
         // Toggle armor and air if they are set to always show
@@ -78,7 +84,8 @@ class HudListener(private val feature: HudFeature) : Listener {
     private fun Player.handleLayerHud(fromSection: Section, toSection: Section) {
         if (fromSection.layer == toSection.layer) return
         changeHudStates(layerLayouts, false) //Clear Layer Hud
-        val layout = MIAConfig.data.layers.firstOrNull { it == toSection.layer && it.name in layerLayouts }?.name ?: return
+        val layout = abyss.config.layers
+            .firstOrNull { it == toSection.layer && it.name in layerLayouts }?.name ?: return
         layout.broadcastVal("layout: ")
         changeHudState(layout, true)
     }
@@ -91,6 +98,7 @@ class HudListener(private val feature: HudFeature) : Listener {
                 player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, false)
                 player.changeHudState(feature.armorLayout, false)
             }
+
             GameMode.SURVIVAL, GameMode.ADVENTURE -> {
                 player.changeHudStates(happyHUD.layouts().defaults.map { it.key }, true)
                 if (player.displayArmorHud())
@@ -108,6 +116,7 @@ class HudListener(private val feature: HudFeature) : Listener {
                 player.changeHudState(feature.balanceEmptyOffhandLayout, false)
                 player.changeHudState(feature.balanceOffhandLayout, true)
             }
+
             else -> {
                 player.changeHudState(feature.balanceOffhandLayout, false)
                 player.changeHudState(feature.balanceEmptyOffhandLayout, true)
@@ -122,6 +131,7 @@ class HudListener(private val feature: HudFeature) : Listener {
                 player.changeHudState(feature.balanceEmptyOffhandLayout, false)
                 player.changeHudState(feature.balanceOffhandLayout, true)
             }
+
             else -> {
                 player.changeHudState(feature.balanceOffhandLayout, false)
                 player.changeHudState(feature.balanceEmptyOffhandLayout, true)
@@ -144,7 +154,7 @@ class HudListener(private val feature: HudFeature) : Listener {
         player.changeHudState(feature.armorLayout, (player.displayArmorHud()))
     }
 
-    private fun Player.displayArmorHud() : Boolean {
+    private fun Player.displayArmorHud(): Boolean {
         val attribute = getAttribute(Attribute.GENERIC_ARMOR) ?: return false
         return attribute.value > attribute.baseValue && isValidGamemode()
     }
@@ -187,7 +197,7 @@ class HudListener(private val feature: HudFeature) : Listener {
         if (block.type != Material.POWDER_SNOW || !player.isValidGamemode()) return
         if (!player.isFrozen || player in playerFrozenMap) return
 
-        mineInAbyss.launch(mineInAbyss.asyncDispatcher) {
+        abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
             playerFrozenMap += player
             player.changeHudState(feature.freezingLayout, true)
             do {
@@ -212,6 +222,7 @@ class HudListener(private val feature: HudFeature) : Listener {
         when (action) {
             EntityPotionEffectEvent.Action.ADDED, EntityPotionEffectEvent.Action.CHANGED ->
                 player.handleEffectOverlays(newEffect?.type ?: return, true)
+
             EntityPotionEffectEvent.Action.REMOVED, EntityPotionEffectEvent.Action.CLEARED ->
                 player.handleEffectOverlays(oldEffect?.type ?: return, false)
         }
@@ -221,7 +232,7 @@ class HudListener(private val feature: HudFeature) : Listener {
         if (!this.isValidGamemode()) return
         when (effect) {
             PotionEffectType.ABSORPTION -> changeHudState(feature.absorptionLayout, toggle)
-            PotionEffectType.HUNGER ->  changeHudState(feature.hungerLayout, toggle)
+            PotionEffectType.HUNGER -> changeHudState(feature.hungerLayout, toggle)
             PotionEffectType.WITHER -> changeHudState(feature.bleedingLayout, toggle)
             PotionEffectType.POISON -> changeHudState(feature.poisonLayout, toggle)
         }

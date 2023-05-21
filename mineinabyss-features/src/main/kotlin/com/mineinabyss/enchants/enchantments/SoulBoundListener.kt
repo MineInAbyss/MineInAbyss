@@ -15,7 +15,7 @@ import org.bukkit.event.entity.PlayerDeathEvent
 class SoulBoundListener : Listener {
     @EventHandler
     fun PlayerAscendEvent.soulbindItems() {
-        if (toSection != MIAConfig.data.hubSection) return
+        if (toSection != abyss.config.hubSection) return
         player.inventory.contents?.filterNotNull()?.forEach {
             val item = it.toGearyFromUUIDOrNull() ?: return
             item.get<Orthbound>() ?: return@forEach

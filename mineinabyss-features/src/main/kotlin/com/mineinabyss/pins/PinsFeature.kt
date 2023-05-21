@@ -1,15 +1,14 @@
 package com.mineinabyss.pins
 
 import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
-import com.mineinabyss.mineinabyss.core.geary
 import com.mineinabyss.pins.ui.PinMenu
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,18 +18,16 @@ import org.bukkit.entity.Player
 @SerialName("pins")
 class PinsFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(
+        listeners(
             PinDropListener()
         )
 
-        geary {
-            systems(
-                PinActivatorSystem(),
-                AbyssalPinBehaviour(),
-                AddPinBehaviour(),
-                PinRegistrySystem()
-            )
-        }
+        geary.pipeline.addSystems(
+            PinActivatorSystem(),
+            AbyssalPinBehaviour(),
+            AddPinBehaviour(),
+            PinRegistrySystem()
+        )
 
         commands {
             mineinabyss {

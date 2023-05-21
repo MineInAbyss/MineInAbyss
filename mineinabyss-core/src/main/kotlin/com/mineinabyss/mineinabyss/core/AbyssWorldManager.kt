@@ -13,8 +13,6 @@ import org.bukkit.World
 
  */
 interface AbyssWorldManager {
-    companion object : AbyssWorldManager by getService()
-
     val layers: Map<LayerKey, Layer>
 
     /**

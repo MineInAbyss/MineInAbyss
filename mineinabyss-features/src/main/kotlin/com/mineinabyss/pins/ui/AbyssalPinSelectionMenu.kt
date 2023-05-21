@@ -3,7 +3,7 @@ package com.mineinabyss.pins.ui
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.pins.AbyssalPin
 import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.geary.systems.query.GearyQuery

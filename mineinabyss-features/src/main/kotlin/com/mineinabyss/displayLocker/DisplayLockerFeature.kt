@@ -2,18 +2,17 @@ package com.mineinabyss.displayLocker
 
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.access.toGeary
-import com.mineinabyss.geary.papermc.store.encodeComponentsTo
+import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -25,7 +24,7 @@ class DisplayLockerFeature(
     val bypassPermission: String = "mineinabyss.lockdisplay.bypass",
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(DisplayLockerListener(this@DisplayLockerFeature))
+        listeners(DisplayLockerListener(this@DisplayLockerFeature))
 
         commands {
             mineinabyss {
@@ -53,8 +52,7 @@ class DisplayLockerFeature(
                             if (uuid in locked.allowedAccess) {
                                 player.error("$playerName can already interact with this ${entity.name}")
                                 return@playerAction
-                            }
-                            else {
+                            } else {
                                 locked.allowedAccess.add(uuid)
                                 entity.toGeary().encodeComponentsTo(entity)
                                 player.success("$playerName can now interact with this ${entity.name}")
@@ -95,7 +93,7 @@ class DisplayLockerFeature(
                         }
                     }
 
-                    "list" (desc = "Get a list of all players allowed to interact with this display item.") {
+                    "list"(desc = "Get a list of all players allowed to interact with this display item.") {
                         playerAction {
                             val player = sender as Player
                             val entity = player.playerData.getRecentEntity() ?: return@playerAction
@@ -106,8 +104,7 @@ class DisplayLockerFeature(
                                 locked.allowedAccess.forEach {
                                     player.info(it.toPlayer()?.name)
                                 }
-                            }
-                            else {
+                            } else {
                                 player.error("This ${entity.name} is not protected.")
                                 player.error("Anyone can interact with it.")
                             }
@@ -120,6 +117,7 @@ class DisplayLockerFeature(
                     1 -> listOf(
                         "lock"
                     ).filter { it.startsWith(args[0]) }
+
                     2 -> {
                         when (args[0]) {
                             "lock" -> listOf("add", "remove", "clear", "check", "toggle")
@@ -127,11 +125,13 @@ class DisplayLockerFeature(
 
                         }
                     }
+
                     3 -> when (args[1]) {
                         "add" -> Bukkit.getOnlinePlayers().map { it.name }
                         "remove" -> Bukkit.getOnlinePlayers().map { it.name }
                         else -> null
                     }
+
                     else -> null
                 }
             }
