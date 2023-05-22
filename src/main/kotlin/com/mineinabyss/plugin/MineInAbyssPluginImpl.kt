@@ -31,25 +31,28 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
         saveDefaultConfig()
 
         geary {
-            autoscan(classLoader, "com.mineinabyss.features", "com.mineinabyss.components", "com.mineinabyss.mineinabyss.core") {
+            autoscan(
+                classLoader,
+                "com.mineinabyss.features",
+                "com.mineinabyss.components",
+                "com.mineinabyss.mineinabyss.core"
+            ) {
                 components()
                 subClassesOf<AbyssFeature>()
                 subClassesOf<AscensionEffect>()
             }
 
             on(GearyPhase.ENABLE) {
-                DI.add<AbyssContext>(object: AbyssContext(this@MineInAbyssPluginImpl) {
+                DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {
                     override val worldManager = AbyssWorldManagerImpl(config.layers)
                 })
 
-                "Enabling features" {
-                    abyss.config.features.forEach { feature ->
-                        feature.apply {
-                            val featureName = feature::class.simpleName
-                            attempt(success = "Enabled $featureName", fail = "Failed to enable $featureName") {
-                                abyss.plugin.enableFeature()
-                            }.onFailure(Throwable::printStackTrace)
-                        }
+                abyss.config.features.forEach { feature ->
+                    feature.apply {
+                        val featureName = feature::class.simpleName
+                        "Enable $featureName" {
+                            abyss.plugin.enableFeature()
+                        }.onFailure(Throwable::printStackTrace)
                     }
                 }
 
