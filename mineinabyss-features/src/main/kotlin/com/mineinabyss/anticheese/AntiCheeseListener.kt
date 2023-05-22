@@ -62,7 +62,7 @@ class AntiCheeseListener : Listener {
     @EventHandler
     fun BlockDispenseEvent.preventBackpackPlace() {
         if (MaterialTags.SHULKER_BOXES.isTagged(item)) {
-            val inv = (block.state as Dispenser).inventory.contents ?: return
+            val inv = (block.state as Dispenser).inventory.contents
             val relative = block.getRelative((block.blockData as Directional).facing)
             if (relative.isSolid || !relative.isReplaceable) return
 

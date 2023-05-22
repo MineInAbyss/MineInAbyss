@@ -1,7 +1,7 @@
 package com.mineinabyss.guilds.extensions
 
+import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.chattyData
-import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
@@ -99,7 +99,7 @@ fun Player.deleteGuild() {
         else playerData.orthCoinsHeld += getGuildBalance()
 
         val guildChatId = getGuildChatId()
-        chattyConfig.channels.remove(guildChatId)
+        chatty.config.channels -= guildChatId
 
         // Rest will be reset when they join
         this@deleteGuild.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {

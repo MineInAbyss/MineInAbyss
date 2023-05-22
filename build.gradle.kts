@@ -20,6 +20,7 @@ allprojects {
         maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
+        maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
         maven("https://repo.hibiscusmc.com/releases") // HMCCosmetics
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
@@ -67,6 +68,9 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.luckperms)
         compileOnly(miaLibs.minecraft.plugin.placeholderapi)
         compileOnly(miaLibs.minecraft.plugin.happyhud)
+        compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
+        compileOnly(miaLibs.minecraft.plugin.traincarts)
+        compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
     }
 }
