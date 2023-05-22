@@ -2,11 +2,10 @@ package com.mineinabyss.okibotravel
 
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.plugin.registerEvents
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.commands
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
@@ -23,7 +22,7 @@ class OkiboTravelFeature(
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        registerEvents(OkiboTravelListener(this@OkiboTravelFeature))
+        listeners(OkiboTravelListener(this@OkiboTravelFeature))
 
         commands {
             mineinabyss {

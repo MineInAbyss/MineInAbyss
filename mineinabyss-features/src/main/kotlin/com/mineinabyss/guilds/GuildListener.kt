@@ -1,8 +1,8 @@
 package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
+import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.chattyData
-import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
@@ -51,7 +51,7 @@ class GuildListener(private val feature: GuildFeature) : Listener {
                 GuildMessageQueue.select { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.info(it[content].miniMsg())
                 }
-                GuildMessageQueue.deleteWhere { GuildMessageQueue.playerUUID eq player.uniqueId }
+                GuildMessageQueue.deleteWhere { playerUUID eq player.uniqueId }
             }
         }
     }
@@ -78,7 +78,7 @@ class ChattyGuildListener : Listener {
     fun AsyncChatEvent.onGuildChat() {
         val channelId = player.chattyData.channelId
 
-        if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chattyConfig.channels.keys) {
+        if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chatty.config.channels.keys) {
             player.chattyData.channelId = getDefaultChat().key
             return
         }
@@ -89,7 +89,7 @@ class ChattyGuildListener : Listener {
             it.getGuildName() == player.getGuildName() && it != player
         })
 
-        if (chattyConfig.chat.disableChatSigning) {
+        if (chatty.config.chat.disableChatSigning) {
             viewers().forEach { a -> RendererExtension.render(player, player.displayName(), message(), a) }
             viewers().clear()
         }

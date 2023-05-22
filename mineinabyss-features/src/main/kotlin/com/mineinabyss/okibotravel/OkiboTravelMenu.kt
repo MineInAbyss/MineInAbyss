@@ -7,8 +7,8 @@ import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.helpers.TitleItem
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.miniMsg
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player
 
 @Composable

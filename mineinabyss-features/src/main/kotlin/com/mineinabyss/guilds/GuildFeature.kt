@@ -2,8 +2,8 @@ package com.mineinabyss.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.chatty.ChattyConfig
+import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelType
-import com.mineinabyss.chatty.helpers.chattyConfig
 import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.deeperworld.DeeperContext
@@ -30,7 +30,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 val guildChannel =
-    ChattyConfig.Data.ChattyChannel(
+    ChattyConfig.ChattyChannel(
         channelType = ChannelType.PRIVATE,
         proxy = false,
         discordsrv = false,
@@ -47,7 +47,7 @@ const val guildChannelId: String = "Guild Chat"
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
-    private val guildChattyChannel: ChattyConfig.Data.ChattyChannel = guildChannel,
+    private val guildChattyChannel: ChattyConfig.ChattyChannel = guildChannel,
     val guildNameMaxLength: Int = 20,
     val guildNameBannedWords: List<String> = emptyList()
 ) : AbyssFeature {
@@ -61,7 +61,7 @@ class GuildFeature(
 
         if (abyss.isChattyLoaded) {
             getAllGuilds().forEach {
-                chattyConfig.channels.putIfAbsent(
+                chatty.config.channels.putIfAbsent(
                     "${it.guildName} $guildChannelId",
                     this@GuildFeature.guildChattyChannel
                 )
@@ -126,7 +126,7 @@ class GuildFeature(
 
                             if (player.hasGuild()) {
                                 val name = player.getGuildName()
-                                chattyConfig.channels.putIfAbsent(
+                                chatty.config.channels.putIfAbsent(
                                     "$name $guildChannelId",
                                     this@GuildFeature.guildChattyChannel
                                 )

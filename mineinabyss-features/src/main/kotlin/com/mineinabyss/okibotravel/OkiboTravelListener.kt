@@ -1,7 +1,7 @@
 package com.mineinabyss.okibotravel
 
 import com.mineinabyss.components.okibotravel.OkiboTravel
-import com.mineinabyss.geary.papermc.access.toGearyOrNull
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
