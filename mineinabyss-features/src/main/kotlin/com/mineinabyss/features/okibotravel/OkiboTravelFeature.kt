@@ -1,9 +1,12 @@
 package com.mineinabyss.features.okibotravel
 
+import com.mineinabyss.components.okibotravel.OkiboLineStation
+import com.mineinabyss.components.okibotravel.OkiboTraveler
+import com.mineinabyss.features.okibotravel.menu.OkiboMainScreen
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
@@ -14,10 +17,10 @@ import org.bukkit.Location
 @Serializable
 @SerialName("okibotravel")
 class OkiboTravelFeature(
-    val travelPoints: Set<OkiboTravelPoint> = setOf(
-        OkiboTravelPoint("Gondola", Location(Bukkit.getWorld("world"), -491.0, 128.0, -31.0)),
-        OkiboTravelPoint("Guild HQ", Location(Bukkit.getWorld("world"), -160.0, 135.0, -533.0)),
-        OkiboTravelPoint("Big Tree", Location(Bukkit.getWorld("world"), 153.0, 130.0, 607.0))
+    val travelPoints: Set<OkiboLineStation> = setOf(
+        OkiboLineStation("GoldenBridge", Location(Bukkit.getWorld("world"), -491.0, 128.0, -31.0)),
+        OkiboLineStation("GuildHQ", Location(Bukkit.getWorld("world"), -160.0, 135.0, -533.0)),
+        OkiboLineStation("Big Tree", Location(Bukkit.getWorld("world"), 153.0, 130.0, 607.0))
     ),
 ) : AbyssFeature {
 
@@ -27,14 +30,12 @@ class OkiboTravelFeature(
         commands {
             mineinabyss {
                 "okibo" {
+                    val station by optionArg(travelPoints.map { it.name }) { default = travelPoints.first().name }
                     playerAction {
-                        guiy { OkiboTravelMenu(player, this@OkiboTravelFeature) }
+                        guiy { OkiboMainScreen(player, this@OkiboTravelFeature, OkiboTraveler(station)) }
                     }
                 }
             }
         }
     }
 }
-
-@Serializable
-data class OkiboTravelPoint(val name: String, val travelPoint: @Serializable(with = LocationSerializer::class) Location)
