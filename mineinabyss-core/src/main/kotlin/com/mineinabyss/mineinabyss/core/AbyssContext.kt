@@ -1,7 +1,11 @@
 package com.mineinabyss.mineinabyss.core
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.geary.serialization.dsl.serializableComponents
 import com.mineinabyss.idofront.commands.Command
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
+import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.plugin.Services
 import github.scarsz.discordsrv.DiscordSRV
@@ -16,21 +20,38 @@ import org.jetbrains.exposed.sql.Database
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 val abyss by DI.observe<AbyssContext>()
 
-class AbyssContext(
+abstract class AbyssContext(
     val plugin: MineInAbyssPlugin,
-    val config: AbyssConfig,
-    val worldManager: AbyssWorldManager
 ) {
+    abstract val worldManager: AbyssWorldManager
+
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isGSitLoaded get() = plugin.server.pluginManager.isPluginEnabled("GSit")
     val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
     val isMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("MCCosmetics")
-    val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
     val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
-    val isHappyHudEnabled get() = plugin.server.pluginManager.isPluginEnabled("HappyHud")
+    val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
+    val isHappyHUDEnabled get() = plugin.server.pluginManager.isPluginEnabled("HappyHUD")
 
     val econ: Economy? = Services.getOrNull<Economy>()
+
+    val configController = config<AbyssConfig>("config") {
+        formats {
+            mapOf(
+                "yml" to Yaml(
+                    // We autoscan in our Feature classes so need to use Geary's module.
+                    serializersModule = serializableComponents.serializers.module,
+                    configuration = YamlConfiguration(
+                        extensionDefinitionPrefix = "x-",
+                        allowAnchorsAndAliases = true,
+                    )
+                )
+            )
+        }
+        plugin.fromPluginPath(loadDefault = true)
+    }
+    val config: AbyssConfig by configController
 
     val miaSubcommands = mutableListOf<Command.() -> Unit>()
     val tabCompletions = mutableListOf<MineInAbyssPlugin.TabCompletion.() -> List<String>?>()
