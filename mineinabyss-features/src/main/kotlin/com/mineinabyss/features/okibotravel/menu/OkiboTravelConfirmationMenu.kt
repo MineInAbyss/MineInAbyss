@@ -10,7 +10,6 @@ import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.idofront.messaging.broadcastVal
 import org.bukkit.entity.Player
 
 @Composable
@@ -56,7 +55,6 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
     train.properties.isPlayerTakeable = false
 
     //checkStationDistance(train, destination).logVal("Distance to station")
-    train.head().discoverRail().enterDirection().broadcastVal()
 }
 
 /*private fun checkStationDistance(train: MinecartGroup, destination: OkiboLineStation): Double {
