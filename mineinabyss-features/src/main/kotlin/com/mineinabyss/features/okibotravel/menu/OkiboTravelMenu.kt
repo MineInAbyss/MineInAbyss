@@ -3,11 +3,15 @@ package com.mineinabyss.features.okibotravel.menu
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboTraveler
+import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
+import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 @Composable
 fun OkiboUIScope.OkiboTravelMenu(player: Player, feature: OkiboTravelFeature, okiboTraveler: OkiboTraveler) {
@@ -23,4 +27,7 @@ fun TravelPointButton(player: Player, modifier: Modifier, feature: OkiboTravelFe
     // Make button for station
     // Cost = okiboTraveler.mainStation
     val cost = okiboTraveler.costTo(station, feature.travelPoints) ?: return
+    Button(onClick = { player.openInventory.title = cost.toString() }) {
+        Item(ItemStack(Material.STONE))
+    }
 }

@@ -30,15 +30,15 @@ class OkiboTravelFeature(
 
         commands {
             mineinabyss {
+                val station by optionArg(travelPoints.map { it.name }) { default = travelPoints.first().name }
                 "okibo" {
-                    val station by optionArg(travelPoints.map { it.name }) { default = travelPoints.first().name }
                     "gui" {
                         playerAction {
                             guiy { OkiboMainScreen(player, this@OkiboTravelFeature, OkiboTraveler(station)) }
                         }
                     }
-                    var destination by optionArg(travelPoints.map { it.name }) { default = travelPoints.last().name }
                     "spawn" {
+                        var destination by optionArg(travelPoints.map { it.name }) { default = travelPoints.last().name }
                         playerAction {
                             destination = if (station == destination) travelPoints.firstOrNull { it.name != station }?.name ?: station else destination
                             spawnOkiboCart(player, travelPoints.find { it.name == station }!!, travelPoints.find { it.name == destination }!!)
