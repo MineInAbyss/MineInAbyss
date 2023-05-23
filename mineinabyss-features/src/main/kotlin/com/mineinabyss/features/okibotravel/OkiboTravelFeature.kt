@@ -3,6 +3,7 @@ package com.mineinabyss.features.okibotravel
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.features.okibotravel.menu.OkiboMainScreen
+import com.mineinabyss.features.okibotravel.menu.spawnOkiboCart
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -31,8 +32,17 @@ class OkiboTravelFeature(
             mineinabyss {
                 "okibo" {
                     val station by optionArg(travelPoints.map { it.name }) { default = travelPoints.first().name }
-                    playerAction {
-                        guiy { OkiboMainScreen(player, this@OkiboTravelFeature, OkiboTraveler(station)) }
+                    "gui" {
+                        playerAction {
+                            guiy { OkiboMainScreen(player, this@OkiboTravelFeature, OkiboTraveler(station)) }
+                        }
+                    }
+                    var destination by optionArg(travelPoints.map { it.name }) { default = travelPoints.last().name }
+                    "spawn" {
+                        playerAction {
+                            destination = if (station == destination) travelPoints.firstOrNull { it.name != station }?.name ?: station else destination
+                            spawnOkiboCart(player, travelPoints.find { it.name == station }!!, travelPoints.find { it.name == destination }!!)
+                        }
                     }
                 }
             }
