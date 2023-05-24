@@ -1,6 +1,6 @@
 package com.mineinabyss.components.displaylocker
 
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.serialization.UUIDSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,4 +15,4 @@ data class LockDisplayItem(
     val allowedAccess: MutableSet<@Serializable(with = UUIDSerializer::class) UUID>
 )
 
-val Entity.lockedDisplay get() = toGeary().get<LockDisplayItem>()
+val Entity.lockedDisplay get() = toGearyOrNull()?.get<LockDisplayItem>()
