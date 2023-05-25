@@ -13,6 +13,7 @@ allprojects {
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://mvn.lumine.io/repository/maven-public/") { metadataSources { artifact() } } // Model Engine
