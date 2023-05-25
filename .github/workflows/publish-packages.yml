@@ -1,9 +1,10 @@
-name: Publish GitHub Packages
+name: Publish Packages
 
 on:
   push:
     branches:
       - master
+      - develop
     paths-ignore:
       - '**.md'
 
@@ -14,28 +15,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - uses: MineInAbyss/publish-action@master
         with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
+          maven-metadata-url: https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml
+          maven-username: ${{ secrets.MAVEN_PUBLISH_USERNAME }}
+          maven-password: ${{ secrets.MAVEN_PUBLISH_PASSWORD }}
+          release-files: |
+            ${{ github.workspace }}/publish/*.jar
 
-      - name: Run gradle publish
-        run: gradle publish -PmineinabyssMavenUsername=${{ secrets.MAVEN_PUBLISH_USERNAME }} -PmineinabyssMavenPassword=${{ secrets.MAVEN_PUBLISH_PASSWORD }}
-
-      - name: Get version from gradle
-        shell: bash
-        id: extract_version
-        run: |
-          version=`gradle properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}'`
-          echo "::set-output name=version::$version"
-
-      - name: Create GitHub Release
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: v${{ steps.extract_version.outputs.version }}
-          files: |
-            build/libs/*-all.jar
+  deploy:
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
