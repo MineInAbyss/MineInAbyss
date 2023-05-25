@@ -13,16 +13,14 @@ allprojects {
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
+        maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.codemc.org/repository/maven-public/")
-        maven("https://mvn.lumine.io/repository/maven-public/") { metadataSources { artifact() } } // Model Engine
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
-        maven("https://m2.dv8tion.net/releases") // DiscordSRV
+//        maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
         maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
-        maven("https://repo.hibiscusmc.com/releases") // HMCCosmetics
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
@@ -58,6 +56,7 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
 
+        compileOnly(miaLibs.guiy)
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
         compileOnly(miaLibs.mobzy)
