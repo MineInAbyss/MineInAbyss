@@ -1,6 +1,7 @@
 package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
+import com.hibiscusmc.hmccosmetics.config.Wardrobe
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
@@ -10,6 +11,7 @@ import com.mineinabyss.features.helpers.hmcCosmetics
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -21,7 +23,8 @@ import org.bukkit.block.BlockFace
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") : AbyssFeature {
+class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") :
+    AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         if (!abyss.isHMCCosmeticsEnabled) return
         listeners(CosmeticListener(this@CosmeticsFeature))
@@ -87,33 +90,38 @@ class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultB
                         "open" {
                             playerAction {
                                 player.toGeary().get<PersonalWardrobe>()?.let {
-                                    player.cosmeticUser?.enterWardrobe(
-                                        false,
-                                        player.location,
-                                        it.viewerLocation,
-                                        it.npcLocation
+                                    val wardrobe = Wardrobe(
+                                        player.uniqueId.toString(),
+                                        it.wardrobeLocation,
+                                        "mineinabyss.cosmetics.wardrobe",
+                                        10
                                     )
-                                } ?: player.cosmeticUser?.enterWardrobe(
-                                    false,
-                                    player.location.clone(),
-                                    player.location.clone().apply {
-                                        when (player.facing) {
-                                            BlockFace.NORTH -> yaw = 180f
-                                            BlockFace.SOUTH -> yaw = 0f
-                                            BlockFace.WEST -> yaw = 90f
-                                            BlockFace.EAST -> yaw = 270f
-                                            else -> {}
-                                        }
-                                    },
-                                    player.location.clone().apply {
-                                        when {
-                                            player.facing.name.startsWith("NORTH") -> z -= 5
-                                            player.facing.name.startsWith("SOUTH") -> z += 5
-                                            player.facing.name.startsWith("WEST") -> x -= 5
-                                            player.facing.name.startsWith("EAST") -> x += 5
-                                        }
-                                        pitch = 0f
-                                    })
+                                    player.cosmeticUser?.enterWardrobe(false, wardrobe)
+                                } ?: run {
+                                    val wardrobe =
+                                        Wardrobe(player.uniqueId.toString(), PersonalWardrobe(player.location.clone(),
+                                            player.location.clone().apply {
+                                                when (player.facing) {
+                                                    BlockFace.NORTH -> yaw = 180f
+                                                    BlockFace.SOUTH -> yaw = 0f
+                                                    BlockFace.WEST -> yaw = 90f
+                                                    BlockFace.EAST -> yaw = 270f
+                                                    else -> {}
+                                                }
+                                            },
+                                            player.location.clone().apply {
+                                                when {
+                                                    player.facing.name.startsWith("NORTH") -> z -= 5
+                                                    player.facing.name.startsWith("SOUTH") -> z += 5
+                                                    player.facing.name.startsWith("WEST") -> x -= 5
+                                                    player.facing.name.startsWith("EAST") -> x += 5
+                                                }
+                                                pitch = 0f
+                                            }).wardrobeLocation
+                                            , "mineinabyss.cosmetics.wardrobe", 10
+                                        )
+                                    player.cosmeticUser?.enterWardrobe(false, wardrobe)
+                                }
 
                             }
                         }
@@ -127,8 +135,10 @@ class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultB
                     "dye" {
                         val cosmeticSlot by optionArg(CosmeticSlot.values().map { it.name })
                         playerAction {
-                            player.cosmeticUser?.let {
-                                DyeMenu.openMenu(it, it.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot)))
+                            player.cosmeticUser?.let { user ->
+                                user.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot))?.let { cosmetic ->
+                                    DyeMenu.openMenu(user, cosmetic)
+                                } ?: player.error("You do not have any cosmetic to dye")
                             }
                         }
                     }

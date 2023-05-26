@@ -20,6 +20,7 @@ allprojects {
         maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
+        mavenLocal()
         maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
         maven("https://repo.hibiscusmc.com/releases") // HMCCosmetics
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
@@ -60,6 +61,7 @@ allprojects {
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
         compileOnly(miaLibs.mobzy)
+        compileOnly(miaLibs.looty) { isChanging = true }
         compileOnly(miaLibs.minecraft.plugin.modelengine)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
@@ -79,4 +81,8 @@ dependencies {
     // Shaded
     implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor( 0, "seconds")
 }
