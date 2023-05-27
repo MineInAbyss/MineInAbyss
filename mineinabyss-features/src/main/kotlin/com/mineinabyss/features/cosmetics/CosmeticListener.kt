@@ -1,5 +1,6 @@
 package com.mineinabyss.features.cosmetics
 
+import com.destroystokyo.paper.MaterialTags
 import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticEquipEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
@@ -10,24 +11,15 @@ import com.mineinabyss.features.helpers.equipCosmeticBackPack
 import com.mineinabyss.features.helpers.unequipCosmeticBackpack
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.geary.papermc.tracking.items.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.looty.features.backpack.Backpack
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemStack
 
 class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
-
-    // Hide HMCCosmetics backpack equip if player isn't wearing a backpack
-    // Cancel HMCCosmetics backpack equip if player isn't wearing a backpack
-    /*@EventHandler
-    fun CosmeticChangeEvent.onEquipBackpack() {
-        val player = (user as? User ?: return).player ?: return
-        if (cosmeticItem.type != ArmorItem.Type.BACKPACK || player.toGeary().has<Backpack>()) return
-        player.toGeary().setPersisting(Cosmetics(cosmeticBackpack = cosmeticItem.id))
-    }*/
 
     @EventHandler
     fun PlayerCosmeticEquipEvent.onEquipBackpack() {
@@ -42,32 +34,32 @@ class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
         if (!player.isSneaking || !rightClicked) return
-        val (item, hand) = (item ?: return) to (hand ?: return)
+        val (item, hand) = (item ?: ItemStack(Material.AIR)) to (hand ?: return)
 
-        player.toGearyOrNull()?.let {
+        player.toGearyOrNull()?.let { gearyPlayer ->
             when {
-                it.has<BackpackStorage>() && (item.type.isAir || player.inventory.firstEmpty() != -1) -> {
-                    val backpack = it.get<BackpackStorage>()!!.backpack
-                    player.inventory.addItem(backpack)
-                    it.remove<BackpackStorage>()
+                gearyPlayer.has<BackpackStorage>() && item.type.isAir && player.inventory.firstEmpty() != -1 -> {
+                    player.inventory.addItem(gearyPlayer.get<BackpackStorage>()!!.backpack)
+                    gearyPlayer.remove<BackpackStorage>()
                     player.unequipCosmeticBackpack()
                 }
 
-                !it.has<BackpackStorage>() && player.inventory.toGeary()?.itemInMainHand?.has<Backpack>() == true -> {
+                !gearyPlayer.has<BackpackStorage>() && !item.type.isAir &&MaterialTags.SHULKER_BOXES.isTagged(item) -> {
                     val backpackId = Cosmetics.getCosmetic(player.cosmeticComponent.cosmeticBackpack)?.id
                     if (backpackId == null)
-                        it.setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, feature.defaultBackpack))
+                        gearyPlayer.setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, feature.defaultBackpack))
 
-                    it.setPersisting(BackpackStorage(item))
+                    gearyPlayer.setPersisting(BackpackStorage(item))
                     player.equipCosmeticBackPack(backpackId ?: feature.defaultBackpack)
                     player.inventory.getItem(hand).subtract()
                 }
 
                 else -> return
             }
+            isCancelled = true
         }
 
     }
