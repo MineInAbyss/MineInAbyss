@@ -8,8 +8,4 @@ plugins {
 
 dependencies {
     compileOnly(project(":mineinabyss-core"))
-
-    compileOnly(miaLibs.guiy)
-    compileOnly(miaLibs.chatty)
-    compileOnly(libs.minecraft.plugin.protocollib)
 }

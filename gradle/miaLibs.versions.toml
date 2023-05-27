@@ -19,8 +19,8 @@ looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.3.1"
-minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.4.0"
-minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.0"
+minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.3.1"
+minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.2"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.2"
 minecraft-plugin-happyhud = "com.ehhtan:HappyHUD:0.3.0-SNAPSHOT"
