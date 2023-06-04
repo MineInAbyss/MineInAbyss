@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Build
 
 on:
   pull_request:
@@ -20,5 +20,5 @@ jobs:
           java-version: 17
           cache: gradle
 
-      - name: Run build
+      - name: Build
         run: gradle build

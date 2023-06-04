@@ -1,4 +1,4 @@
-name: Publish Packages
+name: Publish
 
 on:
   push:
@@ -11,14 +11,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
       - uses: MineInAbyss/publish-action@master
         with:
           maven-metadata-url: https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml
+          pages-path: build/dokka/htmlMultiModule/
+          dokka: dokkaHtmlMultiModule
           maven-username: ${{ secrets.MAVEN_PUBLISH_USERNAME }}
           maven-password: ${{ secrets.MAVEN_PUBLISH_PASSWORD }}
           release-files: |
             ${{ github.workspace }}/publish/*.jar
+
+  deploy:
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
