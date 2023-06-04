@@ -33,15 +33,11 @@ fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
-    val titleComponent =
-        Component.text(
-            "${Space.of(-12)}:player_profile${if (isPatreon) "_patreon" else ""}${if (!hideArmorIcons) "_armor_hidden:" else "_armor_visible:"}${
-                Space.of(
-                    -178
-                )
-            }"
-        )
-    val rankComponent = Component.text("${Space.of(-42)}${DisplayRanks(player)}")
+    val titleComponent = Component.text(":space_-11::player_profile" +
+            (if (isPatreon) "_patreon" else "") +
+            ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
+            ":space_-178:")
+    val rankComponent = Component.text(":space_-42:${DisplayRanks(player)}")
 
     Chest(setOf(viewer),
         titleComponent.append(titleName).append(rankComponent),
