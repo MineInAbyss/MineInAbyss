@@ -27,6 +27,7 @@ import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
+import net.wesjd.anvilgui.AnvilGUI.ResponseAction
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
@@ -180,10 +181,10 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
                     .itemLeft(guildRenamePaper)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
-                    .onComplete { player, guildName: String ->
-                        player.createGuild(guildName, feature)
-                        nav.open(Default(player))
-                        AnvilGUI.Response.close()
+                    .onComplete { completion ->
+                        completion.player.createGuild(completion.text, feature)
+                        nav.open(Default(completion.player))
+                        listOf(ResponseAction.close())
                     }
             ))
         }
