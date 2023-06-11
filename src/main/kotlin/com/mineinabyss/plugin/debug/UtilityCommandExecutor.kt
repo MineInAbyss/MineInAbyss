@@ -51,8 +51,8 @@ class UtilityCommandExecutor : IdofrontCommandExecutor() {
         val worldsToBeChecked = layer.sections.groupBy { it.world }
         worldsToBeChecked.forEach { (world, sections) ->
             sections.forEach { section ->
-                for (x in (section.region.a.x / 16)..(section.region.b.x / 16)) {
-                    for (z in (section.region.a.z / 16)..(section.region.b.z / 16)) {
+                for (x in (section.region.start.x / 16)..(section.region.end.x / 16)) {
+                    for (z in (section.region.start.z / 16)..(section.region.end.z / 16)) {
                         val chunk = world.getChunkAt(x, z)
                         chunk.load()
                         val containers = chunk.tileEntities
