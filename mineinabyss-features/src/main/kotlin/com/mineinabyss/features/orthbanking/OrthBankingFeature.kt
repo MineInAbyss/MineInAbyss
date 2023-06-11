@@ -6,7 +6,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.changeHudState
 import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.geary.papermc.tracking.items.toGeary
+import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer

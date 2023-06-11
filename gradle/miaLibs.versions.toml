@@ -1,8 +1,8 @@
 [versions]
 gearyPaper = "0.24-SNAPSHOT"
-guiy = "0.7.26"
-deeperworld = "0.6.85"
-chatty = "0.5.0"
+guiy = "0.9-SNAPSHOT"
+deeperworld = "0.8-SNAPSHOT"
+chatty = "0.6-SNAPSHOT"
 mobzy = "0.21-SNAPSHOT"
 looty = "0.10-SNAPSHOT"
 protocolburrito = "0.5.38"

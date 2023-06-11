@@ -90,13 +90,7 @@ object MountUtils {
 }
 
 object CoinFactory {
-    val orthCoin get() = itemTracking.provider.serializePrefabToItemStack(PrefabKey.of("mineinabyss", "orthcoin"))
-    val mittyToken
-        get() = itemTracking.provider.serializePrefabToItemStack(
-            PrefabKey.of(
-                "mineinabyss",
-                "patreon_token"
-            )
-        )
+    val orthCoin get() = itemTracking.createItem(PrefabKey.of("mineinabyss", "orthcoin"))
+    val mittyToken get() = itemTracking.createItem(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 

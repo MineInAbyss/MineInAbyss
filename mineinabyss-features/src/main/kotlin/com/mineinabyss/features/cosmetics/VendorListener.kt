@@ -2,8 +2,9 @@ package com.mineinabyss.features.cosmetics
 
 import com.mineinabyss.components.cosmetics.CosmeticVoucher
 import com.mineinabyss.features.helpers.luckPerms
-import com.mineinabyss.geary.papermc.tracking.items.toGeary
+import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.textcomponents.serialize
 import net.luckperms.api.node.Node
 import org.bukkit.Sound
@@ -23,7 +24,7 @@ class VendorListener : Listener {
             it.nodes += Node.builder(voucher.permission).build()
             luckPerms.userManager.saveUser(it)
 
-            player.sendMessage("<gold>You have redeemed a Cosmetic Voucher for ${voucher.originalItem.displayName?.serialize()}!")
+            player.sendMessage("<gold>You have redeemed a Cosmetic Voucher for ${voucher.originalItem.displayName?.serialize()}!".miniMsg())
             player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f)
             item.subtract()
         }
