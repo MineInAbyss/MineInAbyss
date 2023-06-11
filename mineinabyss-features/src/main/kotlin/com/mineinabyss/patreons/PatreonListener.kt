@@ -18,15 +18,14 @@ class PatreonListener : Listener {
         val permGroups = player.luckpermGroups
         player.toGeary().let { gearyPlayer ->
             // Remove perks from old patreons
-            when {
-                !permGroups.any { it.startsWith("patreon") } && gearyPlayer.has<Patreon>() -> player.removePatreonPerks()
-                else -> gearyPlayer.getOrSetPersisting { Patreon(if ("patreonplus" in permGroups) 2 else 1) }
-            }
+            if (permGroups.any { it.startsWith("patreon") })
+                gearyPlayer.setPersisting(Patreon(if ("patreonplus" in permGroups) 2 else 1))
+            else player.removePatreonPerks()
         }
     }
 
     private fun Player.removePatreonPerks() {
-        toGeary().remove<Patreon>()
+        toGeary().remove<Patreon>() || return
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "luckperms user $name meta clear prefix")
         this.chattyNickname = null
     }
