@@ -5,9 +5,9 @@ import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.items.gearyItems
 import com.mineinabyss.geary.papermc.tracking.items.helpers.GearyItemPrefabQuery
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
-import com.mineinabyss.geary.papermc.tracking.items.itemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -154,10 +154,10 @@ class PatreonFeature(
                     "voucher"(desc = "Convert old cosmetic items to vouchers") {
                         playerAction {
                             val prefab = player.inventory.toGeary()?.itemInMainHand?.get<PrefabKey>() ?: return@playerAction
-                            val item = itemTracking.createItem(prefab) ?: return@playerAction
+                            val item = gearyItems.createItem(prefab) ?: return@playerAction
                             //TODO Cleanup this mess
                             GearyItemPrefabQuery().firstOrNull { it.entity.get<CosmeticVoucher>()?.originalItem?.prefab == prefab.full }?.let {
-                                itemTracking.createItem(it.entity.get<PrefabKey>()!!)?.let {  voucher ->
+                                gearyItems.createItem(it.entity.get<PrefabKey>()!!)?.let {  voucher ->
                                     if (player.inventory.firstEmpty() != -1) {
                                         player.inventory.itemInMainHand.subtract()
                                         player.inventory.addItem(voucher)

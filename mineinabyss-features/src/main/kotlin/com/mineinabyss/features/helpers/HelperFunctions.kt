@@ -1,7 +1,7 @@
 package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.geary.papermc.tracking.items.itemTracking
+import com.mineinabyss.geary.papermc.tracking.items.gearyItems
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.discordSRV
@@ -90,7 +90,7 @@ object MountUtils {
 }
 
 object CoinFactory {
-    val orthCoin get() = itemTracking.createItem(PrefabKey.of("mineinabyss", "orthcoin"))
-    val mittyToken get() = itemTracking.createItem(PrefabKey.of("mineinabyss", "patreon_token"))
+    val orthCoin get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "orthcoin"))
+    val mittyToken get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 
