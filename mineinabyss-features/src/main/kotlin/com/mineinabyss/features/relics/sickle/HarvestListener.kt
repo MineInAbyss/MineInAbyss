@@ -3,6 +3,7 @@ package com.mineinabyss.features.relics.sickle
 import com.mineinabyss.components.relics.Sickle
 import com.mineinabyss.features.helpers.BlockUtil
 import com.mineinabyss.geary.annotations.Handler
+import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.bridge.components.RightClicked
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
@@ -15,7 +16,7 @@ import org.bukkit.entity.Player
 class HarvestListener : GearyListener() {
     val SourceScope.player by get<Player>()
     private val TargetScope.sickle by get<Sickle>()
-    val EventScope.sickle by get<RightClicked>()
+    val EventScope.sickle by family { has<RightClicked>() }
 
     @Handler
     fun SourceScope.doHarvest(target: TargetScope) {
