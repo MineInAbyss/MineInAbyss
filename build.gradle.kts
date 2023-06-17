@@ -83,7 +83,3 @@ dependencies {
     implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
 }
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor( 0, "seconds")
-}
