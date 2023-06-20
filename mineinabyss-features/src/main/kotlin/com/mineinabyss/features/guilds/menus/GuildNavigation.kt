@@ -181,9 +181,9 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
                     .itemLeft(guildRenamePaper)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
-                    .onComplete { completion ->
-                        completion.player.createGuild(completion.text, feature)
-                        nav.open(Default(completion.player))
+                    .onClick { _, snapshot ->
+                        snapshot.player.createGuild(snapshot.text, feature)
+                        nav.open(Default(snapshot.player))
                         listOf(ResponseAction.close())
                     }
             ))

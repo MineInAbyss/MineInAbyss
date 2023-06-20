@@ -76,8 +76,8 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
                     .itemLeft(guildInvitePaper)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
-                    .onComplete { completion ->
-                        completion.player.invitePlayerToGuild(completion.text)
+                    .onClick { _, snapshot ->
+                        snapshot.player.invitePlayerToGuild(snapshot.text)
                         listOf(AnvilGUI.ResponseAction.close())
                     }
             ))

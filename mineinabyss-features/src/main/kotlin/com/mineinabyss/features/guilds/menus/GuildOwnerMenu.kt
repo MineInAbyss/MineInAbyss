@@ -68,8 +68,8 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
                         .itemLeft(renameItem)
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
-                        .onComplete { completion ->
-                            completion.player.changeStoredGuildName(completion.text)
+                        .onClick { _, snapshot ->
+                            snapshot.player.changeStoredGuildName(snapshot.text)
                             listOf(AnvilGUI.ResponseAction.close())
                         }
                 ))

@@ -110,9 +110,9 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: () -> Unit) {
                         .itemLeft(TitleItem.of("Guild Name"))
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
-                        .onComplete { completion ->
-                            val guilds = displayGuildList(completion.text)
-                            if (guilds.isEmpty()) completion.player.error("No guild found with that name")
+                        .onClick { _, snapshot ->
+                            val guilds = displayGuildList(snapshot.text)
+                            if (guilds.isEmpty()) snapshot.player.error("No guild found with that name")
                             else queriedList = guilds.chunked(20)
                             run(onClick)
                             listOf(AnvilGUI.ResponseAction.close())
