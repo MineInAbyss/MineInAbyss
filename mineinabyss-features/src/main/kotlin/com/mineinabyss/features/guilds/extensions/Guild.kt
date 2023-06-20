@@ -9,6 +9,7 @@ import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.features.helpers.CoinFactory
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -105,7 +106,7 @@ fun Player.deleteGuild() {
         this@deleteGuild.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {
             it as Player
             if (it.chattyData.channelId == guildChatId)
-                it.chattyData.channelId = getDefaultChat().key
+                it.toGeary().setPersisting(it.chattyData.copy(channelId = getDefaultChat().key))
         }
 
         /* Delete join-requests & invites if the guild is deleted */
@@ -150,7 +151,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         this@changeStoredGuildName.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {
             it as Player
             if (it.chattyData.channelId == getGuildName().getGuildChatId())
-                it.chattyData.channelId = newGuildName.getGuildChatId()
+                it.toGeary().setPersisting(it.chattyData.copy(channelId = newGuildName.getGuildChatId()))
         }
 
         Guilds.update({ Guilds.id eq guildId }) {

@@ -3,6 +3,7 @@ package com.mineinabyss.features.guilds.extensions
 import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.features.guilds.database.*
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -331,7 +332,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
 
         // Remove player from guild-chat. Offline members handled when they join
         if (member.isOnline && member.player!!.chattyData.channelId == getGuildName().getGuildChatId()) {
-            member.player!!.chattyData.channelId = getDefaultChat().key
+            member.player!!.toGeary().setPersisting(member.player!!.chattyData.copy(channelId = getDefaultChat().key))
         }
 
         Players.deleteWhere {
@@ -377,7 +378,7 @@ fun Player.leaveGuild() {
         }
 
         if (this@leaveGuild.chattyData.channelId == guildName.getGuildChatId()) {
-            this@leaveGuild.chattyData.channelId = getDefaultChat().key
+            this@leaveGuild.toGeary().setPersisting(this@leaveGuild.chattyData.copy(channelId = getDefaultChat().key))
         }
 
         Players.deleteWhere {

@@ -14,6 +14,7 @@ import com.mineinabyss.features.guilds.extensions.getGuildName
 import com.mineinabyss.features.guilds.extensions.getGuildRank
 import com.mineinabyss.features.guilds.extensions.hasGuild
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.messaging.info
@@ -79,7 +80,7 @@ class ChattyGuildListener : Listener {
         val channelId = player.chattyData.channelId
 
         if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chatty.config.channels.keys) {
-            player.chattyData.channelId = getDefaultChat().key
+            player.toGeary().setPersisting(player.chattyData.copy(channelId = getDefaultChat().key))
             return
         }
         if (player.chattyData.channelId != player.getGuildChatId()) return
@@ -98,8 +99,7 @@ class ChattyGuildListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
         if (player.chattyData.channelId.endsWith(guildChannelId)) {
-            player.chattyData.channelId =
-                player.getGuildChatId().takeIf { it.isNotBlank() } ?: getDefaultChat().key
+            player.toGeary().setPersisting(player.chattyData.copy(channelId = player.getGuildChatId().takeIf { it.isNotBlank() } ?: getDefaultChat().key))
         }
     }
 }
