@@ -50,7 +50,7 @@ class PatreonFeature(
                         playerAction {
                             val player = sender as Player
                             if (token == null) return@playerAction
-                            if (!player.toGeary().has<Patreon>()) {
+                            if (player.toGeary().get<Patreon>()?.tier == 0) {
                                 player.error("This command is only for Patreon supporters!")
                                 return@playerAction
                             }
@@ -70,7 +70,7 @@ class PatreonFeature(
 
                             token.amount = patreon.tier
                             player.inventory.addItem(token)
-                            patreon.kitUsedMonth = month
+                            player.toGeary().setPersisting(patreon.copy(kitUsedMonth = month))
                         }
                     }
                     "prefix"(desc = "Change your prefix emote") {

@@ -2,6 +2,7 @@ package com.mineinabyss.patreons
 
 import com.mineinabyss.chatty.components.chattyNickname
 import com.mineinabyss.components.players.Patreon
+import com.mineinabyss.components.players.patreon
 import com.mineinabyss.geary.papermc.access.toGeary
 import com.mineinabyss.helpers.luckpermGroups
 import org.bukkit.Bukkit
@@ -19,13 +20,13 @@ class PatreonListener : Listener {
         player.toGeary().let { gearyPlayer ->
             // Remove perks from old patreons
             if (permGroups.any { it.startsWith("patreon") })
-                gearyPlayer.setPersisting(Patreon(if ("patreonplus" in permGroups) 2 else 1))
+                gearyPlayer.setPersisting(player.patreon?.copy(tier = if ("patreonplus" in permGroups) 2 else 1) ?: Patreon())
             else player.removePatreonPerks()
         }
     }
 
     private fun Player.removePatreonPerks() {
-        toGeary().remove<Patreon>() || return
+        toGeary().setPersisting(patreon?.copy(tier = 0) ?: return)
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "luckperms user $name meta clear prefix")
         this.chattyNickname = null
     }
