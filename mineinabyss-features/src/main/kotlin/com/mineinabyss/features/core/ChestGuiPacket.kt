@@ -9,7 +9,7 @@ import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.BlockInventoryHolder
 
-class CorePacket : PacketAdapter(
+class ChestGuiPacket : PacketAdapter(
     abyss.plugin, ListenerPriority.LOWEST, PacketType.Play.Server.OPEN_WINDOW
 ) {
     //Override the normal
@@ -22,7 +22,6 @@ class CorePacket : PacketAdapter(
             WrappedChatComponent.fromText(
                 when (inventory.type) {
                     InventoryType.CHEST -> ":space_-11::vanilla_chest_${inventory.size / 9}::space_-170:${event.player.openInventory.originalTitle}"
-                    //InventoryType.ANVIL -> "${Space.of(-61)}:vanilla_anvil:${Space.of(-105)}${event.player.openInventory.title}"
                     else -> return
                 }
             )

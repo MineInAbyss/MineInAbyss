@@ -1,6 +1,7 @@
 package com.mineinabyss.features.core
 
 import com.comphenix.protocol.ProtocolLibrary
+import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
@@ -13,6 +14,8 @@ class CoreFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib"))
-            ProtocolLibrary.getProtocolManager().addPacketListener(CorePacket())
+            ProtocolLibrary.getProtocolManager().addPacketListener(ChestGuiPacket())
+
+        listeners(PreventSignEditListener())
     }
 }
