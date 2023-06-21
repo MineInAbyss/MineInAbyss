@@ -75,6 +75,7 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.traincarts)
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
+        compileOnly(miaLibs.minecraft.plugin.openinv)
     }
 }
 
