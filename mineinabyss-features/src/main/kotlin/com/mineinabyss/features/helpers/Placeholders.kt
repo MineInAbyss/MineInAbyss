@@ -3,11 +3,9 @@ package com.mineinabyss.features.helpers
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.features.helpers.MountUtils.mount
 import com.mineinabyss.features.relics.depthmeter.getDepth
 import com.mineinabyss.mineinabyss.core.layer
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
-import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import kotlin.math.atan2
 import kotlin.math.roundToInt
@@ -45,9 +43,9 @@ class Placeholders : PlaceholderExpansion() {
             "time" to world.time.toString(),
             "fulltime" to world.fullTime.toString(),
 
-            "mount_health" to mount?.health.toString(),
-            "mount_health_rounded" to mount?.health?.roundToInt().toString(),
-            "mount_health_max" to mount?.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value.toString()
+            //"mount_health" to mount?.health.toString(),
+            //"mount_health_rounded" to mount?.health?.roundToInt().toString(),
+            //"mount_health_max" to mount?.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value.toString()
         )
 
     private fun Player.getCompassAngleUnicode(): String {

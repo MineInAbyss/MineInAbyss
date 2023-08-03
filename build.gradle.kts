@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     alias(libs.plugins.mia.kotlin.jvm)
     alias(libs.plugins.kotlinx.serialization)
@@ -7,6 +9,8 @@ plugins {
     alias(libs.plugins.mia.papermc)
 }
 
+val mavenUser: String by project
+val mavenPassword: String by project
 allprojects {
     apply(plugin = "java")
 
@@ -15,6 +19,13 @@ allprojects {
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
         maven("https://repo.mineinabyss.com/mirror")
+        maven {
+            url = URI("https://${mavenUser}:${mavenPassword}@repo.mineinabyss.com/private")
+            credentials {
+                username = mavenUser
+                password = mavenPassword
+            }
+        }
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib

@@ -13,8 +13,6 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.mineinabyss.core.abyss
 import com.mineinabyss.mineinabyss.core.layer
-import com.ticxo.modelengine.api.events.ModelDismountEvent
-import com.ticxo.modelengine.api.events.ModelMountEvent
 import dev.geco.gsit.api.event.EntitySitEvent
 import io.papermc.paper.event.entity.EntityInsideBlockEvent
 import kotlinx.coroutines.delay
@@ -119,7 +117,7 @@ class HudListener(private val feature: HudFeature) : Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun ModelMountEvent.onMountModelEngine() {
         val player = (passenger as? Player) ?: return
         if (player.toGeary().has<ReturnVanillaHud>()) return
@@ -129,7 +127,7 @@ class HudListener(private val feature: HudFeature) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun ModelDismountEvent.onDismountModelEngine() {
         (passenger as? Player)?.changeHudState(feature.mountedLayout, false)
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityMountEvent.onMount() {

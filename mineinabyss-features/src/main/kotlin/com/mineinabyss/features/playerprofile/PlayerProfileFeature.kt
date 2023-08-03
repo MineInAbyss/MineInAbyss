@@ -1,6 +1,7 @@
 package com.mineinabyss.features.playerprofile
 
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.idofront.commands.arguments.playerArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
@@ -17,6 +18,7 @@ class PlayerProfileFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "profile"(desc = "Opens a players profile") {
+                    val player: Player by playerArg { default = sender as? Player }
                     playerAction {
                         guiy { PlayerProfile(sender as Player, player) }
                     }

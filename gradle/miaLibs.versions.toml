@@ -2,14 +2,12 @@
 gearyPaper = "0.24.1"
 guiy = "0.9.0"
 deeperworld = "0.8.0"
-chatty = "0.6.1"
+chatty = "0.6.5"
 mobzy = "0.21-SNAPSHOT"
 looty = "0.10-SNAPSHOT"
-protocolburrito = "0.7.0"
 
 
 [libraries]
-protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
 geary-papermc = { module = "com.mineinabyss:geary-papermc", version.ref = "gearyPaper" }
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
@@ -18,16 +16,16 @@ mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
-minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.3.1"
-minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.4.0"
+minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.4.10"
+minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.5.0"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.2"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
-minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.2"
+minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.3"
 minecraft-plugin-happyhud = "com.ehhtan:HappyHUD:0.3.0-SNAPSHOT"
 #minecraft-plugin-hmcwraps = "de.skyslycer.hmcwraps:api:1.0.0"
-minecraft-plugin-shopkeepers = "com.nisovin.shopkeepers:ShopkeepersAPI:2.16.5"
-minecraft-plugin-modelengine = "com.ticxo.modelengine:api:R3.1.7"
-minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.19.4-v2-SNAPSHOT"
-minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.19.4-v2-SNAPSHOT"
-minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.19.3-v2"
+minecraft-plugin-shopkeepers = "com.nisovin.shopkeepers:ShopkeepersAPI:2.17.1"
+minecraft-plugin-modelengine = "com.ticxo.modelengine:api:B4.0.0"
+minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.20.1-v1-SNAPSHOT"
+minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.20.1-v1-SNAPSHOT"
+minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.20.1-v1"
 minecraft-plugin-openinv = "com.github.jikoo.OpenInv:openinvapi:4.3.1"

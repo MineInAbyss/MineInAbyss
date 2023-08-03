@@ -1,7 +1,7 @@
 package com.mineinabyss.features.cosmetics
 
 import com.destroystokyo.paper.MaterialTags
-import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticEquipEvent
+import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticEquipEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.mineinabyss.components.cosmetics.BackpackStorage
@@ -24,12 +24,14 @@ class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
     @EventHandler
     fun PlayerCosmeticEquipEvent.onEquipBackpack() {
         if (cosmetic.slot != CosmeticSlot.BACKPACK) return
-        user.player.toGeary().let {
-            it.setPersisting(CosmeticComponent(user.player.cosmeticComponent.gesture, cosmetic.id))
-            if (!it.has<BackpackStorage>()) {
-                user.player.error("Equip a backpack (Shift + Right Click) to show the cosmetic")
-                //user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN)
-                isCancelled = true
+        user.player?.let { player ->
+            player.toGeary().let {
+                it.setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, cosmetic.id))
+                if (!it.has<BackpackStorage>()) {
+                    player.error("Equip a backpack (Shift + Right Click) to show the cosmetic")
+                    //user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN)
+                    isCancelled = true
+                }
             }
         }
     }

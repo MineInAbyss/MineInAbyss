@@ -7,14 +7,12 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
-import com.ticxo.modelengine.api.ModelEngineAPI
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -83,11 +81,11 @@ val Player.luckpermGroups
     get() = luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
         ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 
-object MountUtils {
-    /** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*/
+/*object MountUtils {
+    *//** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*//*
     val Player.mount: LivingEntity?
         get() = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
-}
+}*/
 
 object CoinFactory {
     val orthCoin get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "orthcoin"))

@@ -1,12 +1,9 @@
 package com.mineinabyss.features.curse
 
 import com.mineinabyss.features.helpers.handleCurse
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.destructure.component1
 import com.mineinabyss.idofront.destructure.component2
 import com.mineinabyss.idofront.destructure.component3
-import com.mineinabyss.mineinabyss.core.abyss
-import com.mineinabyss.mobzy.modelengine.toModelEntity
 import io.papermc.paper.event.entity.EntityMoveEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -46,10 +43,10 @@ class CurseAscensionListener : Listener {
         }
     }
 
-    @EventHandler
+    /*@EventHandler
     fun EntityMoveEvent.onRidableModelEngineAscend() {
         if (!abyss.isModelEngineEnabled || !abyss.isMobzyEnabled) return
-        val mount = entity.toModelEntity()?.mountManager ?: return
+        val mount = entity.toModelEntity()?.mount ?: return
         if (entity.toGearyOrNull() == null) return
 
         if (mount.driver != null && mount.driver is Player)
@@ -57,7 +54,7 @@ class CurseAscensionListener : Listener {
         mount.passengers.keys.filterIsInstance<Player>().forEach { passenger ->
             handleCurse(passenger, from, to)
         }
-    }
+    }*/
 
     @EventHandler(ignoreCancelled = true)
     fun PlayerTeleportEvent.handleCurseOnTeleport() {
