@@ -1,14 +1,20 @@
-package com.mineinabyss.components.tutorial
+package com.mineinabyss.features.tutorial
 
+import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Color
 import org.bukkit.Location
-import org.bukkit.entity.Display.Billboard
-import org.bukkit.entity.TextDisplay.TextAlignment
+import org.bukkit.entity.Display
+import org.bukkit.entity.TextDisplay
 import org.joml.Vector3f
+
+val tutorial by DI.observe<TutorialContext>()
+interface TutorialContext {
+    val tutorialEntities: List<TutorialEntity>
+}
 
 @Serializable
 data class TutorialEntity(
@@ -16,8 +22,8 @@ data class TutorialEntity(
     val text: String,
     val backgroundColor: @Serializable(ColorSerializer::class) Color = Color.fromARGB(0, 0, 0, 0),
     val shadow: Boolean = true,
-    val alignment: TextAlignment = TextAlignment.CENTER,
-    val billboard: Billboard = Billboard.VERTICAL,
+    val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
+    val billboard: Display.Billboard = Display.Billboard.VERTICAL,
     val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
     val viewRange: Float? = null,
 )

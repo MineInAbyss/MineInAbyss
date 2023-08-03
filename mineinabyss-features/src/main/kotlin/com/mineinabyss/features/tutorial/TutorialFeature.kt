@@ -1,9 +1,12 @@
 package com.mineinabyss.features.tutorial
 
-import com.mineinabyss.components.tutorial.TutorialEntity
+import com.mineinabyss.idofront.config.config
+import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
+import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
@@ -11,15 +14,76 @@ import org.bukkit.Location
 import org.bukkit.entity.TextDisplay
 import org.joml.Vector3f
 
+@Serializable
+@SerialName("tutorial")
+class TutorialFeature : AbyssFeature {
+    private fun spawnTutorialEntities() {
+        for (entity in tutorial.tutorialEntities) {
+            orth.spawn(entity.location, TextDisplay::class.java) { textDisplay ->
+                textDisplay.text(entity.text.miniMsg())
+                textDisplay.billboard = entity.billboard
+                textDisplay.alignment = entity.alignment
+                textDisplay.isShadowed = entity.shadow
+                textDisplay.backgroundColor = entity.backgroundColor
+                entity.viewRange?.let { textDisplay.viewRange = it }
+                textDisplay.transformation = textDisplay.transformation.apply { scale.set(entity.scale) }
+
+                textDisplay.isPersistent = false
+            }
+        }
+    }
+
+    private fun setTutorialContext() {
+        DI.remove<TutorialContext>()
+        DI.add<TutorialContext>(object : TutorialContext {
+            override val tutorialEntities: List<TutorialEntity> by config("tutorialEntities") { abyss.plugin.fromPluginPath(loadDefault = true) }
+        })
+    }
+
+    override fun MineInAbyssPlugin.enableFeature() {
+
+        setTutorialContext()
+        spawnTutorialEntities()
+
+        commands {
+            mineinabyss {
+                "tutorial"(desc = "Opens the tutorial") {
+                    "spawn" {
+                        action {
+                            spawnTutorialEntities()
+                        }
+                    }
+                    "reload" {
+                        action {
+                            setTutorialContext()
+                            spawnTutorialEntities()
+                            sender.success("Tutorial reloaded")
+                        }
+                    }
+                }
+            }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf("tutorial").filter { it.startsWith(args[0]) }
+                    else -> emptyList()
+                }
+            }
+        }
+
+    }
+}
+
 val orth = Bukkit.getWorld("world")!!
 private val defaultTutorialEntities: List<TutorialEntity> = listOf(
     // Mining info
-    TutorialEntity(location = Location(orth, -576.0, 98.0, -76.0),
+    TutorialEntity(
+        location = Location(orth, -576.0, 98.0, -76.0),
         text = """
             <yellow>Ores generate as you mine,
              and different <gold>Layers <yellow>have different ores and %.
             <yellow>You can get a list of spawns from <gold>/orespawns
-        """.trimIndent()),
+        """.trimIndent()
+    ),
 
     // Tutorial beginning
     TutorialEntity(location = Location(orth, -559.0, 130.0, -39.0),
@@ -117,43 +181,3 @@ private val defaultTutorialEntities: List<TutorialEntity> = listOf(
         """.trimIndent()),
 )
 
-@Serializable
-@SerialName("tutorial")
-class TutorialFeature(private val tutorialTexts: List<TutorialEntity> = emptyList()) : AbyssFeature {
-    private fun spawnTutorialEntities() {
-        for (entity in tutorialTexts.toMutableList().apply { addAll(defaultTutorialEntities) }) {
-            orth.spawn(entity.location, TextDisplay::class.java) { textDisplay ->
-                textDisplay.text(entity.text.miniMsg())
-                textDisplay.billboard = entity.billboard
-                textDisplay.alignment = entity.alignment
-                textDisplay.isShadowed = entity.shadow
-                textDisplay.backgroundColor = entity.backgroundColor
-                entity.viewRange?.let { textDisplay.viewRange = it }
-                textDisplay.transformation = textDisplay.transformation.apply { scale.set(entity.scale) }
-
-                textDisplay.isPersistent = false
-            }
-        }
-    }
-
-    override fun MineInAbyssPlugin.enableFeature() {
-        spawnTutorialEntities()
-
-        commands {
-            mineinabyss {
-                "tutorial"(desc = "Opens the tutorial") {
-                    action {
-                        spawnTutorialEntities()
-                    }
-                }
-            }
-            tabCompletion {
-                when (args.size) {
-                    1 -> listOf("tutorial").filter { it.startsWith(args[0]) }
-                    else -> emptyList()
-                }
-            }
-        }
-
-    }
-}
