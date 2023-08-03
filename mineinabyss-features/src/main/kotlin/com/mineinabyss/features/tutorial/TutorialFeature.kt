@@ -51,6 +51,7 @@ class TutorialFeature : AbyssFeature {
                     "spawn" {
                         action {
                             spawnTutorialEntities()
+                            sender.success("Tutorial-Entities spawned")
                         }
                     }
                     "reload" {
@@ -65,6 +66,7 @@ class TutorialFeature : AbyssFeature {
             tabCompletion {
                 when (args.size) {
                     1 -> listOf("tutorial").filter { it.startsWith(args[0]) }
+                    2 -> if (args.first() == "tutorial") listOf("spawn", "reload").filter { it.startsWith(args[1]) } else listOf()
                     else -> emptyList()
                 }
             }
