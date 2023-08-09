@@ -10,6 +10,7 @@ class CoreListener : Listener {
     fun PlayerFailMoveEvent.onMoveWrongly() {
         when (failReason) {
             PlayerFailMoveEvent.FailReason.MOVED_TOO_QUICKLY -> logWarning = false
+            PlayerFailMoveEvent.FailReason.MOVED_WRONGLY -> logWarning = false
             else -> {}
         }
     }
