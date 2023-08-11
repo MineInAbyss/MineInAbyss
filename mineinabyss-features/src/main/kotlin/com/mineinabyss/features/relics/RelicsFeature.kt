@@ -4,6 +4,7 @@ import com.mineinabyss.features.relics.depthmeter.DepthHudSystem
 import com.mineinabyss.features.relics.depthmeter.RemoveDepthMeterHud
 import com.mineinabyss.features.relics.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.relics.depthmeter.ToggleDepthHudSystem
+import com.mineinabyss.features.relics.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.relics.sickle.HarvestListener
 import com.mineinabyss.features.relics.sickle.SickleListener
 import com.mineinabyss.geary.modules.geary
@@ -40,8 +41,9 @@ class RelicsFeature(
             RemoveDepthMeterHud(this@RelicsFeature),
             ToggleStarCompassHudSystem(this@RelicsFeature),
             RemoveStarCompassBar(this@RelicsFeature),
-            HarvestListener()
+            HarvestListener(),
+            GrapplingHookListener()
         )
-        listeners(SickleListener())
+        listeners(SickleListener(), GrapplingHookListener())
     }
 }
