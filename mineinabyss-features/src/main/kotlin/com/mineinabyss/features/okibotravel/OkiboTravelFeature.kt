@@ -19,9 +19,9 @@ import org.bukkit.Location
 @SerialName("okibotravel")
 class OkiboTravelFeature(
     val travelPoints: Set<OkiboLineStation> = setOf(
-        OkiboLineStation("GoldenBridge", Location(Bukkit.getWorld("world"), -491.0, 128.0, -31.0)),
-        OkiboLineStation("GuildHQ", Location(Bukkit.getWorld("world"), -160.0, 135.0, -533.0)),
-        OkiboLineStation("Big Tree", Location(Bukkit.getWorld("world"), 153.0, 130.0, 607.0))
+        OkiboLineStation("GoldenBridge", Location(Bukkit.getWorld("world"), -617.0, 147.0, -68.0)),
+        OkiboLineStation("GuildHQ", Location(Bukkit.getWorld("world"), -121.0, 130.0, -571.0)),
+        OkiboLineStation("SlumDistrict", Location(Bukkit.getWorld("world"), -67.0, 131.0, 647.0))
     ),
 ) : AbyssFeature {
 
@@ -30,20 +30,37 @@ class OkiboTravelFeature(
 
         commands {
             mineinabyss {
-                val station by optionArg(travelPoints.map { it.name }) { default = travelPoints.first().name }
                 "okibo" {
+                    val station by optionArg(travelPoints.map { it.name }) { default = travelPoints.first().name }
                     "gui" {
                         playerAction {
                             guiy { OkiboMainScreen(player, this@OkiboTravelFeature, OkiboTraveler(station)) }
                         }
                     }
                     "spawn" {
-                        var destination by optionArg(travelPoints.map { it.name }) { default = travelPoints.last().name }
+                        var destination by optionArg(travelPoints.map { it.name }) {
+                            default = travelPoints.last().name
+                        }
                         playerAction {
-                            destination = if (station == destination) travelPoints.firstOrNull { it.name != station }?.name ?: station else destination
-                            spawnOkiboCart(player, travelPoints.find { it.name == station }!!, travelPoints.find { it.name == destination }!!)
+                            destination =
+                                if (station == destination) travelPoints.firstOrNull { it.name != station }?.name
+                                    ?: station else destination
+                            spawnOkiboCart(
+                                player,
+                                travelPoints.find { it.name == station }!!,
+                                travelPoints.find { it.name == destination }!!
+                            )
                         }
                     }
+                }
+            }
+            tabCompletion {
+                when (args.size) {
+                    1 -> listOf("okibo").filter { it.startsWith(args[0]) }
+                    2 -> if (args[0] == "okibo") listOf("gui", "spawn").filter { it.startsWith(args[1]) } else null
+                    3 -> if (args[0] == "okibo") travelPoints.map { it.name }.filter { it.startsWith(args[2]) } else null
+                    4 -> if (args[1] == "spawn") travelPoints.map { it.name }.filter { it.startsWith(args[3]) } else null
+                    else -> null
                 }
             }
         }
