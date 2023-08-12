@@ -12,22 +12,20 @@ data class PlayerGrapple(
     val hook: Arrow,
     val hookData: GrapplingHook,
     val player: Player,
-    val pb: Bat,
+    val bat: Bat,
     var job: Job? = null
 ) {
-    val batAddY = 0.9
+    val batAddY = 1.6
 
-    fun terminateGrapple() {
-        if (pb.isLeashed) pb.setLeashHolder(null)
-        pb.remove()
+    fun removeGrapple() {
+        bat.setLeashHolder(null)
+        bat.remove()
 
-        when {
-            !hook.isDead -> {
-                hook.remove()
-                val newY = player.location.clone().apply { y += batAddY }
-                if (hook.isInBlock && isProx(newY, hook.location, false) && newY.direction.y > 0.2)
-                    player.velocity = player.velocity.setY(0.5 * 1.0)
-            }
+        if (!hook.isDead) {
+            hook.remove()
+            val newY = player.location.clone().apply { y += batAddY }
+            if (hook.isInBlock && isProx(newY, hook.location, false) && newY.direction.y > 0.2)
+                player.velocity = player.velocity.setY(0.5)
         }
         hookMap.remove(player.uniqueId)
     }
@@ -36,5 +34,5 @@ data class PlayerGrapple(
     fun isProx(one: Location, two: Location, ignoreY: Boolean, nu: Double) =
         one.clone().apply { if (ignoreY) y = 0.0 }.distance(two.clone().apply { if (ignoreY) y = 0.0 }) < nu
 
-    fun moveBatToPlayer() = pb.teleport(player.location.clone().apply { y += batAddY })
+    fun moveBatToPlayer() = bat.teleport(player.location.clone().apply { y += batAddY })
 }

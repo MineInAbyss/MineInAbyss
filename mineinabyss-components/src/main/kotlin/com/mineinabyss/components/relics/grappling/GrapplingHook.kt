@@ -6,7 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("mineinabyss:grappling_hook")
 data class GrapplingHook(
-    val range: Double = 10.0,
+    val range: Double,
     val hookSpeed: Double,
     val pullSpeed: Double,
+    val pullStrength: Double,
+    val type: GrapplingHookType,
 )
+
+enum class GrapplingHookType {
+    MECHANICAL, MANUAL
+}
