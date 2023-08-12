@@ -1,9 +1,6 @@
 package com.mineinabyss.features.relics.grapplinghook
 
-import com.mineinabyss.components.relics.grappling.GrapplingHook
-import com.mineinabyss.components.relics.grappling.GrapplingHookEntity
-import com.mineinabyss.components.relics.grappling.PlayerGrapple
-import com.mineinabyss.components.relics.grappling.hookMap
+import com.mineinabyss.components.relics.grappling.*
 import com.mineinabyss.geary.annotations.Handler
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.bridge.components.RightClicked
@@ -26,7 +23,11 @@ class GearyHookListener : GearyListener() {
     fun SourceScope.doGrapple(target: TargetScope) {
         player.swingMainHand()
         if (player.uniqueId in hookMap) {
-            hookMap[player.uniqueId]?.removeGrapple()
+            val playerHook = hookMap[player.uniqueId]!!
+            playerHook.removeGrapple()
+            playerHook.job?.cancel()
+            if (playerHook.hookData.type == GrapplingHookType.MANUAL)
+                ManualGrapple.stopManualGrapple(player)
             return
         }
 

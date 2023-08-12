@@ -44,4 +44,6 @@ data class PlayerGrapple(
         leashEntity.integers.write(0, bat.entityId).write(1, hook.entityId)
         Bukkit.getOnlinePlayers().forEach { leashEntity.sendTo(it) }
     }
+
+    fun isBeneathHook() = hook.location.x - player.location.x < 1 && hook.location.z - player.location.z < 1
 }

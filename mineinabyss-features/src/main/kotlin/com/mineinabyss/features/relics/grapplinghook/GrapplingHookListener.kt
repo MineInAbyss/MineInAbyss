@@ -13,9 +13,9 @@ import com.mineinabyss.deeperworld.world.section.inSectionTransition
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.mineinabyss.core.abyss
-import com.mineinabyss.staminaclimb.wallDifficulty
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.Bat
@@ -59,11 +59,24 @@ class GrapplingHookListener : Listener {
         val (anchor, particle) = playerHook.hook to playerHook.player
         val (pBatAdd, aBatAdd) = particle.height * 0.5 to anchor.height * 0.5
 
-        if (playerHook.job != null) return
+        playerHook.job?.cancel()
 
         hookMap[player.uniqueId] = playerHook.copy(job = when(playerHook.hookData.type) {
             GrapplingHookType.MECHANICAL -> mechanicalHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
-            GrapplingHookType.MANUAL -> manualHookJob(player)
+            GrapplingHookType.MANUAL -> {
+                if (playerHook.isBeneathHook()) {
+                    if (player.velocity.y in -0.08..-0.07)
+                        player.velocity = player.velocity.add(Vector(0.0, 0.25, 0.0))
+                    player.isGrappling = true
+                    player.allowFlight = true
+                    player.isFlying = true
+                    manualHookJob(player)
+                } else {
+                    ManualGrapple.isGrappling.remove(player.uniqueId)
+                }
+                player.flySpeed = 0.03f
+                null
+            }
         })
     }
 
@@ -72,12 +85,18 @@ class GrapplingHookListener : Listener {
             val playerHook = hookMap[player.uniqueId] ?: return@launch
             player.isGrappling = true
             do {
-                if ((playerHook.hook.location.y - player.eyeLocation.y) !in (0.0..0.4) && player.wallDifficulty >= 0 && !player.isSneaking) {
-                    player.velocity = player.velocity.setY(0.25)
-                    ManualGrapple.isGrappling[player.uniqueId] = true
-                } else {
-                    player.velocity = player.velocity
+                Bukkit.getPlayer(player.uniqueId)?.let {
+                    if (playerHook.isBeneathHook() && it.isGrappling) {
+                        it.allowFlight = true
+                        it.isFlying = true
+                        it.isGrappling = true
+                    } else {
+                        it.isGrappling = false
+                        it.isFlying = false
+                        it.allowFlight = false
+                    }
                 }
+
                 delay(1.ticks)
             } while (player.isGrappling && !player.isDead)
             ManualGrapple.stopManualGrapple(player)
