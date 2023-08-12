@@ -1,26 +1,24 @@
 package com.mineinabyss.features.relics.grapplinghook
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.events.PacketContainer
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
-import com.mineinabyss.components.relics.grappling.*
-import com.mineinabyss.geary.annotations.Handler
-import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.papermc.bridge.components.RightClicked
+import com.mineinabyss.components.relics.grappling.GrapplingHookEntity
+import com.mineinabyss.components.relics.grappling.GrapplingHookType
+import com.mineinabyss.components.relics.grappling.PlayerGrapple
+import com.mineinabyss.components.relics.grappling.hookMap
+import com.mineinabyss.deeperworld.event.PlayerAscendEvent
+import com.mineinabyss.deeperworld.event.PlayerDescendEvent
+import com.mineinabyss.deeperworld.world.section.inSectionTransition
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.accessors.EventScope
-import com.mineinabyss.geary.systems.accessors.SourceScope
-import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.mineinabyss.core.abyss
-import com.mineinabyss.protocolburrito.dsl.sendTo
+import com.mineinabyss.staminaclimb.wallDifficulty
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import org.bukkit.Bukkit
 import org.bukkit.Sound
-import org.bukkit.entity.*
+import org.bukkit.entity.Arrow
+import org.bukkit.entity.Bat
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.BatToggleSleepEvent
@@ -28,76 +26,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.*
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
 import kotlin.math.round
 import kotlin.math.roundToInt
 
-class GrapplingHookListener : GearyListener(), Listener {
-    val SourceScope.player by get<Player>()
-    private val TargetScope.grapplingHook by get<GrapplingHook>()
-    val EventScope.grapplingHook by family { has<RightClicked>() }
-
-    @Handler
-    fun SourceScope.doGrapple(target: TargetScope) {
-        player.swingMainHand()
-        if (player.uniqueId in hookMap) {
-            hookMap[player.uniqueId]?.removeGrapple()
-            return
-        }
-
-        val lookDir = player.eyeLocation.direction
-        val hook = player.world.spawn(player.eyeLocation.add(lookDir), Arrow::class.java) { hook ->
-            hook.isPersistent = false
-            hook.velocity = lookDir.multiply(target.grapplingHook.hookSpeed * 2.0)
-            hook.isSilent = true
-            hook.shooter = player
-        }
-        hook.pickupStatus = AbstractArrow.PickupStatus.DISALLOWED
-        hook.toGeary().add<GrapplingHookEntity>()
-
-        val bat = summonBat(player)
-        bat.toGeary().add<GrapplingHookEntity>()
-
-        hookMap[player.uniqueId] = PlayerGrapple(hook, target.grapplingHook, player, bat)
-
-        val leashEntity = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY)
-        leashEntity.integers.write(0, bat.entityId)
-        leashEntity.integers.write(1, hook.entityId)
-        Bukkit.getOnlinePlayers().forEach { leashEntity.sendTo(it) }
-    }
-
-    private fun summonBat(link: Entity): Bat {
-        return link.world.spawn(link.location, Bat::class.java) { bat ->
-            bat.isSilent = true
-            bat.setAI(false)
-            bat.isInvulnerable = true
-            bat.isCollidable = false
-            bat.isAwake = false
-            bat.isAware = false
-            bat.isPersistent = false
-            bat.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, Int.MAX_VALUE, false, false))
-        }
-    }
-
-    @EventHandler fun PlayerJoinEvent.onJoin() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerQuitEvent.onQuit() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerDeathEvent.onDeath() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerMoveEvent.onMoveWithGrappleShot() = hookMap[player.uniqueId]?.moveBatToPlayer()
-    @EventHandler fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerItemHeldEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun BatToggleSleepEvent.onBatAwake() = entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }
-
-    @EventHandler
-    fun EntityDamageByEntityEvent.onPlayerHitBat() {
-        val bat = entity as? Bat ?: return
-        if (bat.toGearyOrNull()?.has<GrapplingHookEntity>() == true) isCancelled = true
-        val player = damager as? Player ?: return
-
-        isCancelled = true
-        hookMap[player.uniqueId]?.removeGrapple()
-    }
+class GrapplingHookListener : Listener {
 
     @EventHandler
     fun ProjectileHitEvent.onHit() {
@@ -106,6 +39,11 @@ class GrapplingHookListener : GearyListener(), Listener {
         if (arrow.toGearyOrNull()?.has<GrapplingHookEntity>() != true) return
         if (hitBlock == null) return
         val playerHook = hookMap[player.uniqueId] ?: return
+
+        if (playerHook.hook.location.inSectionTransition) {
+            playerHook.removeGrapple()
+            return
+        }
 
         if (player.location.distance(playerHook.hook.location) > playerHook.hookData.range) {
             playerHook.removeGrapple()
@@ -117,38 +55,24 @@ class GrapplingHookListener : GearyListener(), Listener {
         val (pBatAdd, aBatAdd) = particle.height * 0.5 to anchor.height * 0.5
         hookMap[player.uniqueId] = playerHook.copy(job = when(playerHook.hookData.type) {
             GrapplingHookType.MECHANICAL -> mechanicalHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
-            GrapplingHookType.MANUAL -> manualHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
+            GrapplingHookType.MANUAL -> manualHookJob(player)
         })
     }
 
-    @EventHandler
-    fun PlayerMoveEvent.onMoveWithManualHook() {
-        val playerHook = hookMap[player.uniqueId] ?: return
-        if (!hasChangedBlock()) return
-        if (playerHook.hookData.type != GrapplingHookType.MANUAL) return
-        if (playerHook.hook.isDead || playerHook.bat.isDead) {
-            playerHook.removeGrapple()
-            return
-        }
-
-        val lookDir = player.location.direction.normalize()
-
-        // Check if player is moving forward (W) or backward (S)
-        val forwardMovement = player.location.direction.dot(lookDir) > 0.0
-
-        // Adjust velocity based on movement direction
-        val verticalVelocity = when {
-            player.isSneaking -> -0.2
-            player.isJumping -> 0.2
-            else -> 0.0
-        }
-
-        player.velocity = Vector(0.0, verticalVelocity, 0.0)
-    }
-
-    private fun manualHookJob(maxCount: Int, player: Player, playerHook: PlayerGrapple, anchor: Arrow, particle: Player, pBatAdd: Double, aBatAdd: Double): Job {
+    private fun manualHookJob(player: Player): Job {
         return abyss.plugin.launch {
-
+            val playerHook = hookMap[player.uniqueId] ?: return@launch
+            player.isGrappling = true
+            do {
+                if ((playerHook.hook.location.y - player.eyeLocation.y) !in (0.0..0.4) && player.wallDifficulty >= 0 && !player.isSneaking) {
+                    player.velocity = player.velocity.setY(0.25)
+                    ManualGrapple.isGrappling[player.uniqueId] = true
+                } else {
+                    player.velocity = player.velocity
+                }
+                delay(1.ticks)
+            } while (player.isGrappling && !player.isDead)
+            ManualGrapple.stopManualGrapple(player)
         }
     }
 
@@ -211,4 +135,22 @@ class GrapplingHookListener : GearyListener(), Listener {
             } while (counter <= maxCount && !playerHook.bat.isDead && !playerHook.hook.isDead && !player.isDead)
         }
     }
+
+    @EventHandler fun PlayerJoinEvent.onJoin() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerQuitEvent.onQuit() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerDeathEvent.onDeath() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerMoveEvent.onMoveWithGrappleShot() = hookMap[player.uniqueId]?.moveBatToPlayer()
+    @EventHandler fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerItemHeldEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun BatToggleSleepEvent.onBatAwake() = entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }
+    @EventHandler fun EntityDamageByEntityEvent.onPlayerHitBat() {
+        val bat = entity as? Bat ?: return
+        if (bat.toGearyOrNull()?.has<GrapplingHookEntity>() == true) isCancelled = true
+        val player = damager as? Player ?: return
+
+        isCancelled = true
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+    @EventHandler fun PlayerAscendEvent.onPlayerChangeSection() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerDescendEvent.onPlayerChangeSection() = hookMap[player.uniqueId]?.removeGrapple()
 }

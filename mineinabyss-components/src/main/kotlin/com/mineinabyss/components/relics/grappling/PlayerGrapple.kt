@@ -18,7 +18,7 @@ data class PlayerGrapple(
     val batAddY = 1.6
 
     fun removeGrapple() {
-        bat.setLeashHolder(null)
+        job?.cancel()
         bat.remove()
 
         if (!hook.isDead) {
