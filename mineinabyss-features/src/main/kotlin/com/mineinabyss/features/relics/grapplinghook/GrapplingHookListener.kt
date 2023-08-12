@@ -67,6 +67,7 @@ class GrapplingHookListener : Listener {
         hookMap[player.uniqueId] = playerHook.copy(job = when(playerHook.hookData.type) {
             GrapplingHookType.MECHANICAL -> mechanicalHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
             GrapplingHookType.MANUAL -> {
+                player.flySpeed = if (playerHook.isOverHook() && !player.isSneaking) -0.01f else 0.03f
                 if (playerHook.isBeneathHook()) {
                     if (player.velocity.y in -0.08..-0.07)
                         player.velocity = player.velocity.add(Vector(0.0, 0.25, 0.0))
@@ -74,10 +75,7 @@ class GrapplingHookListener : Listener {
                     player.allowFlight = true
                     player.isFlying = true
                     manualHookJob(player)
-                } else {
-                    ManualGrapple.isGrappling.remove(player.uniqueId)
-                }
-                player.flySpeed = 0.03f
+                } else if (!playerHook.isOverHook()) ManualGrapple.isGrappling.remove(player.uniqueId)
                 null
             }
         })
@@ -89,11 +87,12 @@ class GrapplingHookListener : Listener {
             player.isGrappling = true
             do {
                 Bukkit.getPlayer(player.uniqueId)?.let {
+                    it.flySpeed = if (playerHook.isOverHook() && !it.isSneaking) -0.01f else 0.03f
                     if (playerHook.isBeneathHook() && it.isGrappling) {
                         it.allowFlight = true
                         it.isFlying = true
                         it.isGrappling = true
-                    } else {
+                    } else if (!playerHook.isOverHook()) {
                         it.isGrappling = false
                         it.isFlying = false
                         it.allowFlight = false

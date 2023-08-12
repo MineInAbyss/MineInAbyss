@@ -10,6 +10,7 @@ import org.bukkit.entity.Arrow
 import org.bukkit.entity.Bat
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.abs
 
 val hookMap = mutableMapOf<UUID, PlayerGrapple>()
 data class PlayerGrapple(
@@ -43,5 +44,6 @@ data class PlayerGrapple(
     }
     fun sendGrappleLeash() = Bukkit.getOnlinePlayers().forEach { leashPacket.sendTo(it) }
 
-    fun isBeneathHook() = hook.location.x - player.location.x < 1 && hook.location.z - player.location.z < 1
+    fun isBeneathHook() = abs(hook.location.x - player.location.x) < 1 && abs(hook.location.z - player.location.z) < 1 && hook.location.y > player.eyeLocation.y
+    fun isOverHook() = hook.location.y < player.eyeLocation.y
 }
