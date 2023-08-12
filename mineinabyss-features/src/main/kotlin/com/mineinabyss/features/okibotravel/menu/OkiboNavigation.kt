@@ -29,9 +29,9 @@ fun GuiyOwner.OkiboMainScreen(player: Player, feature: OkiboTravelFeature, okibo
         nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
             Chest(setOf(player), screen.title, Modifier.height(screen.height), onClose = { player.closeInventory() }) {
                 when (screen) {
-                    is OkiboScreen.Default -> OkiboTravelMenu(player, feature, okiboTraveler)
+                    is OkiboScreen.Default -> OkiboTravelMenu(player, okiboTraveler)
                     is OkiboScreen.OkiboTravelConfirmationScreen ->
-                        OkiboTravelConfirmationMenu(player, feature, screen.startStation, screen.destination)
+                        OkiboTravelConfirmationMenu(player, screen.startStation, screen.destination)
                 }
             }
         }
