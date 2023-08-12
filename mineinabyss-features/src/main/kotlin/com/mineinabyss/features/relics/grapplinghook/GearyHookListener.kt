@@ -43,6 +43,7 @@ class GearyHookListener : GearyListener() {
 
         val bat = summonBat(player)
         bat.toGeary().add<GrapplingHookEntity>()
+        player.addPassenger(bat)
         val playerHook = PlayerGrapple(hook, target.grapplingHook, player, bat)
         playerHook.sendGrappleLeash()
         hookMap[player.uniqueId] = playerHook

@@ -26,7 +26,10 @@ import org.bukkit.event.entity.BatToggleSleepEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.entity.ProjectileHitEvent
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerItemHeldEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.util.Vector
 import kotlin.math.round
 import kotlin.math.roundToInt
@@ -173,7 +176,6 @@ class GrapplingHookListener : Listener {
     @EventHandler fun PlayerJoinEvent.onJoin() = hookMap[player.uniqueId]?.removeGrapple()
     @EventHandler fun PlayerQuitEvent.onQuit() = hookMap[player.uniqueId]?.removeGrapple()
     @EventHandler fun PlayerDeathEvent.onDeath() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerMoveEvent.onMoveWithGrappleShot() = hookMap[player.uniqueId]?.moveBatToPlayer()
     @EventHandler fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
     @EventHandler fun PlayerItemHeldEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
     @EventHandler fun BatToggleSleepEvent.onBatAwake() = entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }

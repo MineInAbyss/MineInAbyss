@@ -38,12 +38,10 @@ data class PlayerGrapple(
     fun isProx(one: Location, two: Location, ignoreY: Boolean, nu: Double) =
         one.clone().apply { if (ignoreY) y = 0.0 }.distance(two.clone().apply { if (ignoreY) y = 0.0 }) < nu
 
-    fun moveBatToPlayer() = bat.teleport(player.location.clone().apply { y += batAddY })
-    fun sendGrappleLeash() {
-        val leashEntity = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY)
-        leashEntity.integers.write(0, bat.entityId).write(1, hook.entityId)
-        Bukkit.getOnlinePlayers().forEach { leashEntity.sendTo(it) }
+    private val leashPacket = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY).apply {
+        integers.write(0, bat.entityId).write(1, hook.entityId)
     }
+    fun sendGrappleLeash() = Bukkit.getOnlinePlayers().forEach { leashPacket.sendTo(it) }
 
     fun isBeneathHook() = hook.location.x - player.location.x < 1 && hook.location.z - player.location.z < 1
 }
