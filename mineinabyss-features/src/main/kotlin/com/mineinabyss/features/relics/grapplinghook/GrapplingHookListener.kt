@@ -1,5 +1,7 @@
 package com.mineinabyss.features.relics.grapplinghook
 
+import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.events.PacketContainer
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
 import com.mineinabyss.components.relics.grappling.*
@@ -13,13 +15,18 @@ import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
 import com.mineinabyss.mineinabyss.core.abyss
+import com.mineinabyss.protocolburrito.dsl.sendTo
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.*
+import org.bukkit.event.entity.BatToggleSleepEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.*
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -52,8 +59,13 @@ class GrapplingHookListener : GearyListener(), Listener {
 
         val bat = summonBat(player)
         bat.toGeary().add<GrapplingHookEntity>()
-        bat.setLeashHolder(hook)
+
         hookMap[player.uniqueId] = PlayerGrapple(hook, target.grapplingHook, player, bat)
+
+        val leashEntity = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY)
+        leashEntity.integers.write(0, bat.entityId)
+        leashEntity.integers.write(1, hook.entityId)
+        Bukkit.getOnlinePlayers().forEach { leashEntity.sendTo(it) }
     }
 
     private fun summonBat(link: Entity): Bat {
@@ -69,30 +81,13 @@ class GrapplingHookListener : GearyListener(), Listener {
         }
     }
 
-    @EventHandler
-    fun PlayerJoinEvent.onJoin() = hookMap[player.uniqueId]?.removeGrapple()
-
-    @EventHandler
-    fun PlayerQuitEvent.onQuit() = hookMap[player.uniqueId]?.removeGrapple()
-
-    @EventHandler
-    fun PlayerDeathEvent.onDeath() = hookMap[player.uniqueId]?.removeGrapple()
-
-    @EventHandler
-    fun PlayerMoveEvent.onMoveWithGrappleShot() = hookMap[player.uniqueId]?.moveBatToPlayer()
-
-    @EventHandler
-    fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
-
-    @EventHandler
-    fun PlayerItemHeldEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
-
-    @EventHandler
-    fun EntityDropItemEvent.onBatDropLeash() =
-        (entity as? Bat)?.toGearyOrNull()?.get<GrapplingHookEntity>()?.let { isCancelled = true }
-
-    @EventHandler
-    fun BatToggleSleepEvent.onBatAwake() = entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }
+    @EventHandler fun PlayerJoinEvent.onJoin() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerQuitEvent.onQuit() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerDeathEvent.onDeath() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerMoveEvent.onMoveWithGrappleShot() = hookMap[player.uniqueId]?.moveBatToPlayer()
+    @EventHandler fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun PlayerItemHeldEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
+    @EventHandler fun BatToggleSleepEvent.onBatAwake() = entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }
 
     @EventHandler
     fun EntityDamageByEntityEvent.onPlayerHitBat() {
@@ -124,6 +119,31 @@ class GrapplingHookListener : GearyListener(), Listener {
             GrapplingHookType.MECHANICAL -> mechanicalHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
             GrapplingHookType.MANUAL -> manualHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
         })
+    }
+
+    @EventHandler
+    fun PlayerMoveEvent.onMoveWithManualHook() {
+        val playerHook = hookMap[player.uniqueId] ?: return
+        if (!hasChangedBlock()) return
+        if (playerHook.hookData.type != GrapplingHookType.MANUAL) return
+        if (playerHook.hook.isDead || playerHook.bat.isDead) {
+            playerHook.removeGrapple()
+            return
+        }
+
+        val lookDir = player.location.direction.normalize()
+
+        // Check if player is moving forward (W) or backward (S)
+        val forwardMovement = player.location.direction.dot(lookDir) > 0.0
+
+        // Adjust velocity based on movement direction
+        val verticalVelocity = when {
+            player.isSneaking -> -0.2
+            player.isJumping -> 0.2
+            else -> 0.0
+        }
+
+        player.velocity = Vector(0.0, verticalVelocity, 0.0)
     }
 
     private fun manualHookJob(maxCount: Int, player: Player, playerHook: PlayerGrapple, anchor: Arrow, particle: Player, pBatAdd: Double, aBatAdd: Double): Job {
