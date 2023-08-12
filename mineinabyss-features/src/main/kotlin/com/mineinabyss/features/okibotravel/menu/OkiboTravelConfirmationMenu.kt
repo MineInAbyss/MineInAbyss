@@ -10,6 +10,7 @@ import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.idofront.messaging.broadcastVal
 import org.bukkit.entity.Player
 
 @Composable
@@ -40,8 +41,8 @@ fun ConfirmTravel(
 }
 
 internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destination: OkiboLineStation) {
-    val spawnGroup = SpawnableGroup.parse(TrainCarts.plugin, "OkiboCartPaid")
-    val spawnLocations = spawnGroup.findSpawnLocations(station.location, station.location.direction, SpawnableGroup.SpawnMode.DEFAULT)
+    val spawnGroup = SpawnableGroup.parse(TrainCarts.plugin, "OkiboCartPaid").broadcastVal("Spawn group: ")
+    val spawnLocations = spawnGroup.findSpawnLocations(station.location, station.location.direction, SpawnableGroup.SpawnMode.DEFAULT).broadcastVal("Spawn locations: ")
     val train = spawnGroup.spawn(spawnLocations)
 
     train.head().addPassengerForced(player)
