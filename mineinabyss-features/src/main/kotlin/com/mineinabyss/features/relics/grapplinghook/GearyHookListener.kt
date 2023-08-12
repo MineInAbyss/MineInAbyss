@@ -1,7 +1,5 @@
 package com.mineinabyss.features.relics.grapplinghook
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.components.relics.grappling.GrapplingHook
 import com.mineinabyss.components.relics.grappling.GrapplingHookEntity
 import com.mineinabyss.components.relics.grappling.PlayerGrapple
@@ -14,8 +12,6 @@ import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.EventScope
 import com.mineinabyss.geary.systems.accessors.SourceScope
 import com.mineinabyss.geary.systems.accessors.TargetScope
-import com.mineinabyss.protocolburrito.dsl.sendTo
-import org.bukkit.Bukkit
 import org.bukkit.entity.*
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -46,13 +42,11 @@ class GearyHookListener : GearyListener() {
 
         val bat = summonBat(player)
         bat.toGeary().add<GrapplingHookEntity>()
+        val playerHook = PlayerGrapple(hook, target.grapplingHook, player, bat)
+        playerHook.sendGrappleLeash()
+        hookMap[player.uniqueId] = playerHook
 
-        hookMap[player.uniqueId] = PlayerGrapple(hook, target.grapplingHook, player, bat)
 
-        val leashEntity = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY)
-        leashEntity.integers.write(0, bat.entityId)
-        leashEntity.integers.write(1, hook.entityId)
-        Bukkit.getOnlinePlayers().forEach { leashEntity.sendTo(it) }
     }
 
     private fun summonBat(link: Entity): Bat {
@@ -68,3 +62,5 @@ class GearyHookListener : GearyListener() {
         }
     }
 }
+
+

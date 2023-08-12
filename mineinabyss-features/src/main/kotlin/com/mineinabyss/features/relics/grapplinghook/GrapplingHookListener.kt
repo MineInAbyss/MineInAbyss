@@ -1,5 +1,6 @@
 package com.mineinabyss.features.relics.grapplinghook
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
 import com.mineinabyss.components.relics.grappling.GrapplingHookEntity
@@ -49,10 +50,17 @@ class GrapplingHookListener : Listener {
             playerHook.removeGrapple()
             return
         }
+    }
 
+    @EventHandler
+    fun PlayerJumpEvent.onJump() {
+        val playerHook = hookMap[player.uniqueId] ?: return
         val maxCount = round(playerHook.hookData.pullStrength * 20).roundToInt()
         val (anchor, particle) = playerHook.hook to playerHook.player
         val (pBatAdd, aBatAdd) = particle.height * 0.5 to anchor.height * 0.5
+
+        if (playerHook.job != null) return
+
         hookMap[player.uniqueId] = playerHook.copy(job = when(playerHook.hookData.type) {
             GrapplingHookType.MECHANICAL -> mechanicalHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
             GrapplingHookType.MANUAL -> manualHookJob(player)
@@ -80,8 +88,14 @@ class GrapplingHookListener : Listener {
         return abyss.plugin.launch {
             var counter = 0
             do {
-                counter++
+                if (!player.isSneaking) counter++
                 if (counter > maxCount && !playerHook.bat.isDead && !anchor.isDead && !particle.isDead) {
+                    playerHook.removeGrapple()
+                    return@launch
+                }
+
+                // Check repelled length
+                if (anchor.location.y - player.eyeLocation.y >= playerHook.hookData.range) {
                     playerHook.removeGrapple()
                     return@launch
                 }
@@ -131,6 +145,7 @@ class GrapplingHookListener : Listener {
                     )
                 }
                 particle.velocity = vector
+                playerHook.sendGrappleLeash()
                 delay(1.ticks)
             } while (counter <= maxCount && !playerHook.bat.isDead && !playerHook.hook.isDead && !player.isDead)
         }

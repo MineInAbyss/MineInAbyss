@@ -1,6 +1,10 @@
 package com.mineinabyss.components.relics.grappling
 
+import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.events.PacketContainer
+import com.mineinabyss.protocolburrito.dsl.sendTo
 import kotlinx.coroutines.Job
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.Bat
@@ -35,4 +39,9 @@ data class PlayerGrapple(
         one.clone().apply { if (ignoreY) y = 0.0 }.distance(two.clone().apply { if (ignoreY) y = 0.0 }) < nu
 
     fun moveBatToPlayer() = bat.teleport(player.location.clone().apply { y += batAddY })
+    fun sendGrappleLeash() {
+        val leashEntity = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY)
+        leashEntity.integers.write(0, bat.entityId).write(1, hook.entityId)
+        Bukkit.getOnlinePlayers().forEach { leashEntity.sendTo(it) }
+    }
 }
