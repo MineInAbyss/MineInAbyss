@@ -74,7 +74,6 @@ allprojects {
         compileOnly(miaLibs.deeperworld)
         compileOnly(miaLibs.mobzy)
         compileOnly(miaLibs.protocolburrito)
-        compileOnly(miaLibs.staminaclimb)
         compileOnly(miaLibs.looty) { isChanging = true }
         compileOnly(miaLibs.minecraft.plugin.modelengine)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
