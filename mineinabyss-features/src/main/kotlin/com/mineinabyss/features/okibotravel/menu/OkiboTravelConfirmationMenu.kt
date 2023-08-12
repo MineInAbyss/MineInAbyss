@@ -6,23 +6,21 @@ import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup
 import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboTraveler
-import com.mineinabyss.features.okibotravel.OkiboTravelFeature
+import com.mineinabyss.features.okibotravel.okiboLine
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.idofront.messaging.broadcastVal
 import org.bukkit.entity.Player
 
 @Composable
 fun OkiboUIScope.OkiboTravelConfirmationMenu(
     player: Player,
-    feature: OkiboTravelFeature,
     startingPoint: OkiboLineStation,
     destination: OkiboLineStation
 ) {
     //TODO Implement
-    ConfirmTravel(player, Modifier.size(1, 1).at(0), feature, startingPoint, destination)
-    CancelTravel(player, Modifier.size(1, 1).at(1), feature, startingPoint, destination)
+    ConfirmTravel(player, Modifier.size(1, 1).at(0), startingPoint, destination)
+    CancelTravel(player, Modifier.size(1, 1).at(1), startingPoint, destination)
 }
 
 
@@ -30,19 +28,18 @@ fun OkiboUIScope.OkiboTravelConfirmationMenu(
 fun ConfirmTravel(
     player: Player,
     modifier: Modifier,
-    feature: OkiboTravelFeature,
     station: OkiboLineStation,
     destination: OkiboLineStation
 ) {
     //TODO
     // Make button for station
     // Cost = okiboTraveler.mainStation
-    val cost = OkiboTraveler(station.name).costTo(destination, feature.travelPoints) ?: return
+    val cost = OkiboTraveler(station.name).costTo(destination, okiboLine.okiboStations) ?: return
 }
 
 internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destination: OkiboLineStation) {
-    val spawnGroup = SpawnableGroup.parse(TrainCarts.plugin, "OkiboCartPaid").broadcastVal("Spawn group: ")
-    val spawnLocations = spawnGroup.findSpawnLocations(station.location, station.location.direction, SpawnableGroup.SpawnMode.DEFAULT).broadcastVal("Spawn locations: ")
+    val spawnGroup = SpawnableGroup.parse(TrainCarts.plugin, "OkiboCartPaid")
+    val spawnLocations = spawnGroup.findSpawnLocations(station.location, station.location.direction, SpawnableGroup.SpawnMode.DEFAULT)
     val train = spawnGroup.spawn(spawnLocations)
 
     train.head().addPassengerForced(player)
@@ -89,12 +86,11 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
 fun CancelTravel(
     player: Player,
     modifier: Modifier,
-    feature: OkiboTravelFeature,
     station: OkiboLineStation,
     destination: OkiboLineStation
 ) {
     //TODO
     // Make button for station
     // Cost = okiboTraveler.mainStation
-    val cost = OkiboTraveler(station.name).costTo(destination, feature.travelPoints) ?: return
+    val cost = OkiboTraveler(station.name).costTo(destination, okiboLine.okiboStations) ?: return
 }

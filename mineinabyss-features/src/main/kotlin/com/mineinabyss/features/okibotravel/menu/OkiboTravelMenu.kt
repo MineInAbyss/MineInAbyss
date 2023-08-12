@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.features.okibotravel.OkiboTravelFeature
+import com.mineinabyss.features.okibotravel.okiboLine
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
@@ -14,19 +14,19 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Composable
-fun OkiboUIScope.OkiboTravelMenu(player: Player, feature: OkiboTravelFeature, okiboTraveler: OkiboTraveler) {
-    feature.travelPoints.forEachIndexed { index, station ->
+fun OkiboUIScope.OkiboTravelMenu(player: Player, okiboTraveler: OkiboTraveler) {
+    okiboLine.okiboStations.forEachIndexed { index, station ->
         //TODO modifier.at to place in grid based on index
-        TravelPointButton(player, Modifier.size(1,1).at(index), feature, station, okiboTraveler)
+        TravelPointButton(player, Modifier.size(1,1).at(index), station, okiboTraveler)
     }
 }
 
 @Composable
-fun TravelPointButton(player: Player, modifier: Modifier, feature: OkiboTravelFeature, station: OkiboLineStation, okiboTraveler: OkiboTraveler) {
+fun TravelPointButton(player: Player, modifier: Modifier, station: OkiboLineStation, okiboTraveler: OkiboTraveler) {
     //TODO
     // Make button for station
     // Cost = okiboTraveler.mainStation
-    val cost = okiboTraveler.costTo(station, feature.travelPoints) ?: return
+    val cost = okiboTraveler.costTo(station, okiboLine.okiboStations) ?: return
     Button(onClick = { player.openInventory.title = cost.toString() }) {
         Item(ItemStack(Material.STONE))
     }
