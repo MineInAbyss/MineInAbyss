@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun OkiboUIScope.OkiboTravelMenu(player: Player, okiboTraveler: OkiboTraveler) {
-    okiboLine.okiboStations.forEachIndexed { index, station ->
+    okiboLine.config.okiboStations.forEachIndexed { index, station ->
         //TODO modifier.at to place in grid based on index
         TravelPointButton(player, Modifier.size(1,1).at(index), station, okiboTraveler)
     }
@@ -26,7 +26,7 @@ fun TravelPointButton(player: Player, modifier: Modifier, station: OkiboLineStat
     //TODO
     // Make button for station
     // Cost = okiboTraveler.mainStation
-    val cost = okiboTraveler.costTo(station, okiboLine.okiboStations) ?: return
+    val cost = okiboTraveler.costTo(station, okiboLine.config.okiboStations) ?: return
     Button(onClick = { player.openInventory.title = cost.toString() }) {
         Item(ItemStack(Material.STONE))
     }

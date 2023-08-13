@@ -1,0 +1,88 @@
+okiboStations:
+  - name: GoldenBridge
+    location:
+      x: -617.0
+      y: 147.0
+      z: -68.0
+  - name: GuildHQ
+    location:
+      x: -121.0
+      y: 130.0
+      z: -571.0
+  - name: TowerDistrict
+    location:
+      x: 422
+      y: 136
+      z: -345
+  - name: VillageDistrict
+    location:
+      x: 580
+      y: 128
+      z: 130
+  - name: CliffDistrict
+    location:
+      x: 422
+      y: 128
+      z: 450
+  - name: SlumDistrict
+    location:
+      x: -67.0
+      y: 131.0
+      z: 647.0
+  - name: Orphanage
+    location:
+      x: -643
+      y: 145
+      z: 177
+okiboMaps:
+  - station: GoldenBridge
+    scale: [2.0, 2.0, 2.0]
+    font: orth_map
+    text: |
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    hitboxes:
+      - destStation: GuildHQ
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+      - destStation: TowerDistrict
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+      - destStation: VillageDistrict
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+      - destStation: CliffDistrict
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+      - destStation: SlumDistrict
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+      - destStation: Orphanage
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+      - destStation: GoldenBridge
+        offset: [0.6,3.1,0.0]
+        hitbox:
+          width: 0.3
+          height: 0.3
+

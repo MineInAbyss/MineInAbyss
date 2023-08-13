@@ -34,7 +34,7 @@ fun ConfirmTravel(
     //TODO
     // Make button for station
     // Cost = okiboTraveler.mainStation
-    val cost = OkiboTraveler(station.name).costTo(destination, okiboLine.okiboStations) ?: return
+    val cost = OkiboTraveler(station.name).costTo(destination, okiboLine.config.okiboStations) ?: return
 }
 
 internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destination: OkiboLineStation) {
@@ -92,5 +92,5 @@ fun CancelTravel(
     //TODO
     // Make button for station
     // Cost = okiboTraveler.mainStation
-    val cost = OkiboTraveler(station.name).costTo(destination, okiboLine.okiboStations) ?: return
+    val cost = OkiboTraveler(station.name).costTo(destination, okiboLine.config.okiboStations) ?: return
 }
