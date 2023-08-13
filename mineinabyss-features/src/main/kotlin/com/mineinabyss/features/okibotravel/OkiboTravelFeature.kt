@@ -1,9 +1,11 @@
 package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.components.okibotravel.OkiboLineStation
+import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.features.okibotravel.menu.OkiboMainScreen
 import com.mineinabyss.features.okibotravel.menu.spawnOkiboCart
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -16,6 +18,9 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bukkit.entity.Display
+import org.bukkit.entity.Interaction
+import org.bukkit.entity.TextDisplay
 
 @Serializable
 @SerialName("okibotravel")
@@ -34,6 +39,35 @@ class OkiboTravelFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "okibo" {
+                    "test" {
+                        playerAction {
+                            val okiboMap = player.world.spawn(player.location, TextDisplay::class.java) {
+                                it.text("""
+                                <font:orth_map>
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            """.trimIndent().miniMsg())
+                                it.billboard = Display.Billboard.FIXED
+                                it.isPersistent = false
+                                it.isShadowed = false
+                                it.transformation = it.transformation.apply { scale.set(2f, 2f, 2f) }
+                            }
+                            val okiboMapHitbox = player.world.spawn(player.location, Interaction::class.java) {
+                                it.interactionHeight = 6.0f
+                                it.interactionWidth = 6.0f
+                            }
+                            okiboMapHitbox.toGeary().add<OkiboMap>()
+
+                        }
+                    }
                     "reload" {
                         action {
                             setupOkiboContext()
