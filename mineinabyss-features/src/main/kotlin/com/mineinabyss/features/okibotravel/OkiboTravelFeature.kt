@@ -108,7 +108,7 @@ class OkiboTravelFeature : AbyssFeature {
                 when (args.size) {
                     1 -> listOf("okibo").filter { it.startsWith(args[0]) }
                     2 -> if (args[0] == "okibo") listOf("gui", "spawn", "reload", "map").filter { it.startsWith(args[1]) } else null
-                    3 -> if (args[0] == "okibo") okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[2]) } else null
+                    3 -> if (args[1] in listOf("gui", "spawn")) okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[2]) } else null
                     4 -> if (args[1] == "spawn") okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[3]) } else null
                     else -> null
                 }
