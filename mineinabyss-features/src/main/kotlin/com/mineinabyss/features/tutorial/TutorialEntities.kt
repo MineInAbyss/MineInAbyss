@@ -4,6 +4,7 @@ import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Color
 import org.bukkit.Location
@@ -17,6 +18,7 @@ interface TutorialContext {
 }
 
 @Serializable
+@SerialName("mineinabyss:tutorial_entity")
 data class TutorialEntity(
     val location: @Serializable(LocationSerializer::class) Location,
     val text: String,
