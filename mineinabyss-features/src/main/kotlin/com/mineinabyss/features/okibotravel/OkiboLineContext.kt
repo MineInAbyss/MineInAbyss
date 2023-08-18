@@ -26,27 +26,14 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
     train.properties.isSlowingDown = false
     train.properties.collision = CollisionOptions.CANCEL
     train.properties.isPlayerTakeable = false
-
-    //checkStationDistance(train, destination).logVal("Distance to station")
 }
 
 //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
-fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
-    val stations = okiboLine.config.okiboStations
-    val start = stations.indexOf(this.parentStation ?: this)
-    val end = stations.indexOf(destination.parentStation ?: destination)
-
-    if (start == -1 || end == -1) return null
-
-    val clockwiseStations = (end - start + stations.size) % stations.size
-    val counterClockwiseStations = (stations.size - clockwiseStations) % stations.size
-    // Cost from parent-station -> parent-station
-    var mainCost = minOf(clockwiseStations, counterClockwiseStations)
-    // Cost from sub-station -> parent-station
-    if (this.isSubStation) mainCost += 1
-    // Cost from parent-station -> sub-station
-    if (destination.isSubStation) mainCost += 1
-    return mainCost
+fun OkiboLineStation.costTo(destination: OkiboLineStation): Int {
+    val (startNode, endNode) = TrainCarts.plugin.pathProvider.getWorld(this.location.world).let {
+        it.getNodeByName(this.name) to it.getNodeByName(destination.name)
+    }
+    return startNode.findRoute(endNode).size
 }
 
 val OkiboLineStation.isSubStation get() = okiboLine.config.okiboStations.any { this in it.subStations }
