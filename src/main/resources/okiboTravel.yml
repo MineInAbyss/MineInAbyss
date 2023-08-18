@@ -1,3 +1,4 @@
+costPerKM: 2.0
 okiboStations:
   - name: GoldenBridge
     location:
