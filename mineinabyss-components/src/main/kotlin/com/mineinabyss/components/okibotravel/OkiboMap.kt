@@ -11,6 +11,7 @@ import org.joml.Vector3f
 @SerialName("mineinabyss:okibo_map")
 data class OkiboMap(
     val station: String,
+    val offset: @Serializable(VectorSerializer::class) Vector = Vector(0, 0, 0),
     val text: String = """
       
       

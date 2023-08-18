@@ -1,25 +1,16 @@
 package com.mineinabyss.features.okibotravel
 
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.spawning.spawn
-import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.key.Key
-import org.bukkit.Bukkit
-import org.bukkit.Color
-import org.bukkit.entity.Interaction
-import org.bukkit.entity.TextDisplay
-import java.util.*
 
 @Serializable
 @SerialName("okibotravel")
@@ -34,47 +25,21 @@ class OkiboTravelFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         setupOkiboContext()
         listeners(OkiboTravelListener())
+        spawnOkiboMaps()
 
-        val mapEntities = mutableSetOf<UUID>()
         commands {
             mineinabyss {
                 "okibo" {
                     "map" {
                         playerAction {
-                            mapEntities.forEach { Bukkit.getEntity(it)?.remove() }
-                            mapEntities.clear()
-                            okiboLine.config.okiboMaps.forEach { mapText ->
-                                val station = okiboLine.config.okiboStations.firstOrNull { it.name == mapText.station } ?: return@forEach
-
-                                val text = station.location.clone().subtract(1.0,0.0,0.0).spawn<TextDisplay> {
-                                    text(mapText.text.miniMsg().font(Key.key(mapText.font)))
-                                    isPersistent = false
-                                    transformation = transformation.apply { scale.set(mapText.scale) }
-                                    backgroundColor = Color.fromARGB(0,0,0,0)
-                                    mapEntities += uniqueId
-                                } ?: return@forEach
-
-                                mapText.hitboxes.forEach { mapHitbox ->
-                                    val hitbox = text.location.clone().add(mapHitbox.offset).spawn<Interaction> {
-                                        interactionHeight = mapHitbox.hitbox.height.toFloat()
-                                        interactionWidth = mapHitbox.hitbox.width.toFloat()
-                                        isPersistent = false
-                                        mapEntities += uniqueId
-
-                                    }
-
-                                    hitbox?.toGearyOrNull()?.set(mapHitbox)
-                                    okiboLine.config.okiboStations.firstOrNull { it.name == mapHitbox.destStation }?.let { station ->
-                                        hitbox?.toGearyOrNull()?.setPersisting(station)
-                                    }
-                                }
-                            }
+                            spawnOkiboMaps()
                             player.success("Okibo-Maps spawned")
                         }
                     }
                     "reload" {
                         action {
                             setupOkiboContext()
+                            spawnOkiboMaps()
                             sender.success("Okibo-Context reloaded")
                         }
                     }

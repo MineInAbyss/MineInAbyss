@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.mia.copyjar)
     alias(libs.plugins.mia.publication)
     alias(libs.plugins.mia.autoversion)
+    alias(libs.plugins.mia.nms)
     alias(libs.plugins.mia.papermc)
 }
 
@@ -45,6 +46,7 @@ allprojects {
 
         // Shaded
         implementation(libs.bundles.idofront.core)
+        implementation(libs.idofront.nms)
 
         // Geary platform
         compileOnly(miaLibs.geary.papermc)
@@ -73,7 +75,8 @@ allprojects {
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
         compileOnly(miaLibs.mobzy)
-        compileOnly(miaLibs.looty) { isChanging = true }
+        compileOnly(miaLibs.looty)
+        compileOnly(miaLibs.protocolburrito)
         compileOnly(miaLibs.minecraft.plugin.modelengine)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)

@@ -1,27 +1,25 @@
 package com.mineinabyss.features.okibotravel
 
+import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.helpers.with
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import kotlin.time.Duration.Companion.seconds
 
 class OkiboTravelListener : Listener {
 
     @EventHandler
-    fun PlayerInteractEntityEvent.onClickMap() {
-        val destination = rightClicked.toGearyOrNull()?.get<OkiboLineStation>() ?: return
+    fun PlayerUseUnknownEntityEvent.onInteractMap() {
+        val destination = getMapEntityFromCollisionHitbox(entityId)?.getStation ?: return
         val playerStation = okiboLine.config.okiboStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
         val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
 
