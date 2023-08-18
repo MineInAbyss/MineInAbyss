@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import kotlin.time.Duration.Companion.seconds
 
-class OkiboTravelListener(private val feature: OkiboTravelFeature) : Listener {
+class OkiboTravelListener : Listener {
 
     @EventHandler
     fun PlayerInteractEntityEvent.onClickMap() {
@@ -51,18 +51,6 @@ class OkiboTravelListener(private val feature: OkiboTravelFeature) : Listener {
             delay(5.seconds)
             if (player.isOnline) player.toGeary().remove<OkiboTraveler>()
         }
-    }
-
-    //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
-    private fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
-        val stations = okiboLine.config.okiboStations
-        val start = stations.indexOf(this)
-        val end = stations.indexOf(destination)
-        if (start == -1 || end == -1) return null
-
-        val clockwiseStations = (end - start + stations.size) % stations.size
-        val counterClockwiseStations = (stations.size - clockwiseStations) % stations.size
-        return minOf(clockwiseStations, counterClockwiseStations)
     }
 
     @EventHandler

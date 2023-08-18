@@ -33,7 +33,7 @@ class OkiboTravelFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
         setupOkiboContext()
-        listeners(OkiboTravelListener(this@OkiboTravelFeature))
+        listeners(OkiboTravelListener())
 
         val mapEntities = mutableSetOf<UUID>()
         commands {
@@ -78,7 +78,9 @@ class OkiboTravelFeature : AbyssFeature {
                             sender.success("Okibo-Context reloaded")
                         }
                     }
-                    val station by optionArg(okiboLine.config.okiboStations.map { it.name }) { default = okiboLine.config.okiboStations.first().name }
+                    val station by optionArg(okiboLine.config.okiboStations.map { it.name }.toMutableList().apply {
+                        addAll(okiboLine.config.okiboStations.flatMap { it.subStations.map { sub -> "${it.name}.${sub.name}" } })
+                    }) { default = okiboLine.config.okiboStations.first().name }
                     "spawn" {
                         var destination by optionArg(okiboLine.config.okiboStations.map { it.name }) {
                             default = okiboLine.config.okiboStations.last().name

@@ -10,5 +10,5 @@ import org.bukkit.Location
 data class OkiboLineStation(
     val name: String,
     val location: @Serializable(with = LocationSerializer::class) Location,
-    //val subStations: Set<OkiboLineStation> = setOf()
+    val subStations: Set<OkiboLineStation> = setOf()
 )

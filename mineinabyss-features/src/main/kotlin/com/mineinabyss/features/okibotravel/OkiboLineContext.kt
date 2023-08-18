@@ -29,3 +29,25 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
 
     //checkStationDistance(train, destination).logVal("Distance to station")
 }
+
+//TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
+fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
+    val stations = okiboLine.config.okiboStations
+    val start = stations.indexOf(this.parentStation ?: this)
+    val end = stations.indexOf(destination.parentStation ?: destination)
+
+    if (start == -1 || end == -1) return null
+
+    val clockwiseStations = (end - start + stations.size) % stations.size
+    val counterClockwiseStations = (stations.size - clockwiseStations) % stations.size
+    // Cost from parent-station -> parent-station
+    var mainCost = minOf(clockwiseStations, counterClockwiseStations)
+    // Cost from sub-station -> parent-station
+    if (this.isSubStation) mainCost += 1
+    // Cost from parent-station -> sub-station
+    if (destination.isSubStation) mainCost += 1
+    return mainCost
+}
+
+val OkiboLineStation.isSubStation get() = okiboLine.config.okiboStations.any { this in it.subStations }
+val OkiboLineStation.parentStation get() = okiboLine.config.okiboStations.firstOrNull { this in it.subStations }
