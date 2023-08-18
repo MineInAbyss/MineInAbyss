@@ -1,14 +1,11 @@
 package com.mineinabyss.features.okibotravel
 
-import com.mineinabyss.components.okibotravel.OkiboTraveler
-import com.mineinabyss.features.okibotravel.menu.OkiboMainScreen
-import com.mineinabyss.features.okibotravel.menu.spawnOkiboCart
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.spawning.spawn
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -72,21 +69,16 @@ class OkiboTravelFeature : AbyssFeature {
                                     }
                                 }
                             }
-
+                            player.success("Okibo-Maps spawned")
                         }
                     }
                     "reload" {
                         action {
                             setupOkiboContext()
-                            sender.sendMessage("Okibo-Context reloaded".miniMsg())
+                            sender.success("Okibo-Context reloaded")
                         }
                     }
                     val station by optionArg(okiboLine.config.okiboStations.map { it.name }) { default = okiboLine.config.okiboStations.first().name }
-                    "gui" {
-                        playerAction {
-                            guiy { OkiboMainScreen(player, this@OkiboTravelFeature, OkiboTraveler(station)) }
-                        }
-                    }
                     "spawn" {
                         var destination by optionArg(okiboLine.config.okiboStations.map { it.name }) {
                             default = okiboLine.config.okiboStations.last().name
@@ -107,7 +99,7 @@ class OkiboTravelFeature : AbyssFeature {
             tabCompletion {
                 when (args.size) {
                     1 -> listOf("okibo").filter { it.startsWith(args[0]) }
-                    2 -> if (args[0] == "okibo") listOf("gui", "spawn", "reload", "map").filter { it.startsWith(args[1]) } else null
+                    2 -> if (args[0] == "okibo") listOf("spawn", "reload", "map").filter { it.startsWith(args[1]) } else null
                     3 -> if (args[1] in listOf("gui", "spawn")) okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[2]) } else null
                     4 -> if (args[1] == "spawn") okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[3]) } else null
                     else -> null

@@ -12,6 +12,7 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -35,6 +36,8 @@ class OrthBankingFeature(
                         ensureSenderIsPlayer()
                         action {
                             val player = sender as Player
+                            player.info("Balance is now ${if (player.playerData.showPlayerBalance) "hidden" else "shown"}.")
+                            player.info("You have ${player.playerData.orthCoinsHeld} Orth Coins and ${player.playerData.mittyTokensHeld} Mitty Tokens.")
                             player.playerData.showPlayerBalance = !player.playerData.showPlayerBalance
                             (sender as Player).changeHudState(balanceHudId, player.playerData.showPlayerBalance)
                         }

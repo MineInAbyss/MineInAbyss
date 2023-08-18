@@ -1,31 +1,72 @@
 package com.mineinabyss.features.okibotravel
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboTraveler
-import com.mineinabyss.features.okibotravel.menu.OkiboMainScreen
-import com.mineinabyss.features.okibotravel.menu.spawnOkiboCart
+import com.mineinabyss.components.playerData
+import com.mineinabyss.geary.helpers.with
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.mineinabyss.core.abyss
+import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import kotlin.time.Duration.Companion.seconds
 
 class OkiboTravelListener(private val feature: OkiboTravelFeature) : Listener {
 
     @EventHandler
-    fun PlayerInteractAtEntityEvent.onTalkToOkiboMan() {
-        val okiboTraveler = rightClicked.toGearyOrNull()?.get<OkiboTraveler>() ?: return
-        guiy { OkiboMainScreen(player, feature, okiboTraveler) }
+    fun PlayerInteractEntityEvent.onClickMap() {
+        val destination = rightClicked.toGearyOrNull()?.get<OkiboLineStation>() ?: return
+        val playerStation = okiboLine.config.okiboStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
+        val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
+
+        player.toGeary().with { traveler: OkiboTraveler ->
+            when (traveler.selectedDestination) {
+                destination -> {
+                    when {
+                        cost > player.playerData.orthCoinsHeld -> player.error("You do not have enough coins to travel to that station!")
+                        cost == 0 -> player.error("You are already at that station!")
+                        else -> {
+                            player.playerData.orthCoinsHeld -= cost
+                            spawnOkiboCart(player, playerStation, destination)
+                        }
+                    }
+                    return
+                }
+                else -> player.toGeary().remove<OkiboTraveler>()
+            }
+        }
+
+        player.info("<gold>You selected <yellow>${destination.name}</yellow> station!")
+        player.info("<gold>The cost to travel there will be <yellow>$cost</yellow> Orth Coins.")
+        player.info("<gold>Click the map again to confirm your selection.")
+        player.toGeary().set(OkiboTraveler(destination))
+
+        abyss.plugin.launch {
+            delay(5.seconds)
+            if (player.isOnline) player.toGeary().remove<OkiboTraveler>()
+        }
+    }
+
+    //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
+    private fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
+        val stations = okiboLine.config.okiboStations
+        val start = stations.indexOf(this)
+        val end = stations.indexOf(destination)
+        if (start == -1 || end == -1) return null
+
+        val clockwiseStations = (end - start + stations.size) % stations.size
+        val counterClockwiseStations = (stations.size - clockwiseStations) % stations.size
+        return minOf(clockwiseStations, counterClockwiseStations)
     }
 
     @EventHandler
-    fun PlayerInteractEntityEvent.onClickMap() {
-        val destination = rightClicked.toGearyOrNull()?.get<OkiboLineStation>() ?: return
-        player.sendMessage("You clicked the map at station ${destination.name}!".miniMsg())
-        val playerStation = okiboLine.config.okiboStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
-        spawnOkiboCart(player, playerStation, destination)
+    fun PlayerJoinEvent.onJoin() {
+        player.toGeary().remove<OkiboTraveler>()
     }
 }
