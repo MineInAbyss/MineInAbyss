@@ -35,8 +35,9 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
 
 //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
 fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
-    val startNode = TrainCarts.plugin.pathProvider.getWorld(this.location.world).getNodeByName(this.name)
-    return (startNode.findConnection(destination.name)?.distance?.times(okiboLine.config.costPerKM)?.div(1000))?.roundToInt()
+    val startNode = TrainCarts.plugin.pathProvider.getWorld(this.location.world).let { it.getNodeByName(this.name) ?: it.getNodeAtRail(this.location.block) } ?: return null
+    val destNode = TrainCarts.plugin.pathProvider.getWorld(this.location.world).let { it.getNodeByName(destination.name) ?: it.getNodeAtRail(destination.location.block) } ?: return null
+    return (startNode.findConnection(destNode)?.distance?.times(okiboLine.config.costPerKM)?.div(1000))?.roundToInt()
 }
 
 val OkiboLineStation.isSubStation get() = okiboLine.config.okiboStations.any { this in it.subStations }

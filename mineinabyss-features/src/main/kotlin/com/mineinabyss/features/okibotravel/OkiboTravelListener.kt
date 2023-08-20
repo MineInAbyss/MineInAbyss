@@ -13,12 +13,14 @@ import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.EquipmentSlot
 import kotlin.time.Duration.Companion.seconds
 
 class OkiboTravelListener : Listener {
 
     @EventHandler
     fun PlayerUseUnknownEntityEvent.onInteractMap() {
+        if (hand != EquipmentSlot.HAND) return
         val destination = getHitboxStation(entityId)?.getStation ?: return
         val playerStation = okiboLine.config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
         val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
@@ -30,8 +32,8 @@ class OkiboTravelListener : Listener {
                         cost > player.playerData.orthCoinsHeld -> player.error("You do not have enough coins to travel to that station!")
                         cost == 0 -> player.error("You are already at that station!")
                         else -> {
-                            player.playerData.orthCoinsHeld -= cost
-                            spawnOkiboCart(player, playerStation, destination)
+                            //player.playerData.orthCoinsHeld -= cost
+                            //spawnOkiboCart(player, playerStation, destination)
                         }
                     }
                     return
