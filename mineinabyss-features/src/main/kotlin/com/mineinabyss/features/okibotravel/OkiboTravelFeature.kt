@@ -4,6 +4,7 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -27,6 +28,9 @@ class OkiboTravelFeature : AbyssFeature {
         listeners(OkiboTravelListener())
         spawnOkiboMaps()
 
+        val allStations = okiboLine.config.okiboStations.toMutableList().apply {
+            addAll(okiboLine.config.okiboStations.map { it.subStations }.flatten()) }
+
         commands {
             mineinabyss {
                 "okibo" {
@@ -43,21 +47,17 @@ class OkiboTravelFeature : AbyssFeature {
                             sender.success("Okibo-Context reloaded")
                         }
                     }
-                    val station by optionArg(okiboLine.config.okiboStations.map { it.name }.toMutableList().apply {
-                        addAll(okiboLine.config.okiboStations.flatMap { it.subStations.map { sub -> "${it.name}.${sub.name}" } })
-                    }) { default = okiboLine.config.okiboStations.first().name }
+                    val station by optionArg(allStations.map { it.name }) { default = okiboLine.config.okiboStations.first().name }
                     "spawn" {
-                        var destination by optionArg(okiboLine.config.okiboStations.map { it.name }) {
-                            default = okiboLine.config.okiboStations.last().name
-                        }
+                        var destination by optionArg(allStations.map { it.name }) { default = okiboLine.config.okiboStations.last().name }
                         playerAction {
                             destination =
                                 if (station == destination) okiboLine.config.okiboStations.firstOrNull { it.name != station }?.name
                                     ?: station else destination
                             spawnOkiboCart(
                                 player,
-                                okiboLine.config.okiboStations.find { it.name == station }!!,
-                                okiboLine.config.okiboStations.find { it.name == destination }!!
+                                allStations.find { it.name == station } ?: return@playerAction player.error("Invalid station!"),
+                                allStations.find { it.name == destination } ?: return@playerAction player.error("Invalid destination!")
                             )
                         }
                     }
