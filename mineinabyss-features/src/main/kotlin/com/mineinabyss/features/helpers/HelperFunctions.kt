@@ -7,6 +7,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.discordSRV
 import com.mineinabyss.mineinabyss.core.isAbyssWorld
 import com.mineinabyss.mineinabyss.core.layer
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.node.NodeType
@@ -25,17 +26,18 @@ data class ItemDrop(
 
 val luckPerms = LuckPermsProvider.get()
 
+val Player.simpleLayerName: String
+    get() = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: Component.empty()).lowercase().replace(" ", "_")
+
 // Unicodes for whistles, also used for HappyHUD but through custom font file
 fun Player.getLayerWhistleForHud(): String {
-    val layer =
-        PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: return "").lowercase()
-    return when {
-        "orth" in layer -> "\uEBAF"
-        "edge" in layer -> "\uEBB0"
-        "forest" in layer -> "\uEBB1"
-        "great" in layer -> "\uEBB2"
-        "goblets" in layer -> "\uEBB2"
-        "sea" in layer -> "\uEBB3"
+    return when(simpleLayerName) {
+        "orth" -> "\uEBAF"
+        "edge_of_the_abyss" -> "\uEBB0"
+        "forest_of_temptation" -> "\uEBB1"
+        "great_fault" -> "\uEBB2"
+        "the_goblets_of_giants" -> "\uEBB2"
+        "sea_of_corpses" -> "\uEBB3"
         else -> ""
     }
 }

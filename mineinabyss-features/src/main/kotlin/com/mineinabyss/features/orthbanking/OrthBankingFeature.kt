@@ -4,7 +4,6 @@ import com.mineinabyss.components.npc.orthbanking.MittyToken
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
-import com.mineinabyss.features.helpers.changeHudState
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.commands.arguments.intArg
@@ -23,20 +22,22 @@ import org.bukkit.entity.Player
 @Serializable
 @SerialName("orth_banking")
 class OrthBankingFeature(
-    val balanceHudId: String = "balance"
+    val balanceHudId: String = "balance_empty_offhand",
+    val balanceHudOffhandId: String = "balance_offhand",
 ) : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
-        listeners(OrthBankingListener(this@OrthBankingFeature))
+        listeners(OrthBankingListener())
 
         commands {
             mineinabyss {
                 "bank"(desc = "Orthbanking related commands") {
                     "balance"(desc = "Toggles whether or not the balance should be shown.") {
-                        ensureSenderIsPlayer()
-                        action {
-                            val player = sender as Player
+                        playerAction {
                             player.playerData.showPlayerBalance = !player.playerData.showPlayerBalance
-                            (sender as Player).changeHudState(balanceHudId, player.playerData.showPlayerBalance)
+                            when (player.playerData.showPlayerBalance) {
+                                true -> player.success("Balance-HUD toggled on.")
+                                false -> player.error("Balance-HUD toggled off.")
+                            }
                         }
                     }
                     "deposit"(desc = "Dev command until Guiy can take items") {
