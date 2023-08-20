@@ -9,4 +9,6 @@ data class OkiboTravelConfig(
     val okiboStations: Set<OkiboLineStation>,
     val okiboMaps: Set<OkiboMap>,
     val costPerKM: Double
-)
+) {
+    val allStations get() = okiboStations.toMutableList().apply { addAll(okiboStations.map { it.subStations }.flatten()) }
+}

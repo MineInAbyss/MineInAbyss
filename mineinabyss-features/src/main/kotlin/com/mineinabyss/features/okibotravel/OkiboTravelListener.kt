@@ -19,8 +19,8 @@ class OkiboTravelListener : Listener {
 
     @EventHandler
     fun PlayerUseUnknownEntityEvent.onInteractMap() {
-        val destination = getMapEntityFromCollisionHitbox(entityId)?.getStation ?: return
-        val playerStation = okiboLine.config.okiboStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
+        val destination = getHitboxStation(entityId)?.getStation ?: return
+        val playerStation = okiboLine.config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
         val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
 
         player.toGeary().with { traveler: OkiboTraveler ->

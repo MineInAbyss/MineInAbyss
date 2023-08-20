@@ -28,9 +28,6 @@ class OkiboTravelFeature : AbyssFeature {
         listeners(OkiboTravelListener())
         spawnOkiboMaps()
 
-        val allStations = okiboLine.config.okiboStations.toMutableList().apply {
-            addAll(okiboLine.config.okiboStations.map { it.subStations }.flatten()) }
-
         commands {
             mineinabyss {
                 "okibo" {
@@ -47,17 +44,17 @@ class OkiboTravelFeature : AbyssFeature {
                             sender.success("Okibo-Context reloaded")
                         }
                     }
-                    val station by optionArg(allStations.map { it.name }) { default = okiboLine.config.okiboStations.first().name }
+                    val station by optionArg(okiboLine.config.allStations.map { it.name }) { default = okiboLine.config.okiboStations.first().name }
                     "spawn" {
-                        var destination by optionArg(allStations.map { it.name }) { default = okiboLine.config.okiboStations.last().name }
+                        var destination by optionArg(okiboLine.config.allStations.map { it.name }) { default = okiboLine.config.okiboStations.last().name }
                         playerAction {
                             destination =
                                 if (station == destination) okiboLine.config.okiboStations.firstOrNull { it.name != station }?.name
                                     ?: station else destination
                             spawnOkiboCart(
                                 player,
-                                allStations.find { it.name == station } ?: return@playerAction player.error("Invalid station!"),
-                                allStations.find { it.name == destination } ?: return@playerAction player.error("Invalid destination!")
+                                okiboLine.config.allStations.find { it.name == station } ?: return@playerAction player.error("Invalid station!"),
+                                okiboLine.config.allStations.find { it.name == destination } ?: return@playerAction player.error("Invalid destination!")
                             )
                         }
                     }
@@ -67,8 +64,8 @@ class OkiboTravelFeature : AbyssFeature {
                 when (args.size) {
                     1 -> listOf("okibo").filter { it.startsWith(args[0]) }
                     2 -> if (args[0] == "okibo") listOf("spawn", "reload", "map").filter { it.startsWith(args[1]) } else null
-                    3 -> if (args[1] in listOf("gui", "spawn")) okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[2]) } else null
-                    4 -> if (args[1] == "spawn") okiboLine.config.okiboStations.map { it.name }.filter { it.startsWith(args[3]) } else null
+                    3 -> if (args[1] in listOf("gui", "spawn")) okiboLine.config.allStations.map { it.name }.filter { it.startsWith(args[2]) } else null
+                    4 -> if (args[1] == "spawn") okiboLine.config.allStations.map { it.name }.filter { it.startsWith(args[3]) } else null
                     else -> null
                 }
             }

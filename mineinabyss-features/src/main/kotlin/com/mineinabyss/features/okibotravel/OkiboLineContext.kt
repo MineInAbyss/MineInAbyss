@@ -45,6 +45,6 @@ fun OkiboLineStation.nextStation(destination: OkiboLineStation) : OkiboLineStati
     TrainCarts.plugin.pathProvider.getWorld(this.location.world).let {
         val (startNode, endNode) = (it.getNodeByName(this.name) ?: return null) to (it.getNodeByName(destination.name) ?: return null)
         val nextStation = startNode.findRoute(endNode).first().destination.name
-        return okiboLine.config.okiboStations.find { it.name == nextStation } ?: okiboLine.config.okiboStations.map { it.subStations }.flatten().find { it.name == nextStation }
+        return okiboLine.config.allStations.find { it.name == nextStation }
     }
 }

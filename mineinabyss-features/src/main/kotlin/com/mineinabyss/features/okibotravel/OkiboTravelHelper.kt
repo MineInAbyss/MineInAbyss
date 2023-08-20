@@ -22,7 +22,10 @@ val mapEntities = mutableMapOf<OkiboMap, Int>()
 val hitboxEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
 
 val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
+val OkiboMap.OkiboMapHitbox.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == destStation }
 
+fun getHitboxStation(entityId: Int) =
+    hitboxEntities.entries.firstOrNull { it.value == entityId }?.key?.second
 fun getMapEntityFromCollisionHitbox(id: Int) =
     hitboxEntities.entries.firstOrNull { it.value == id }?.key?.first
 
