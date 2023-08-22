@@ -2,14 +2,10 @@ package com.mineinabyss.features.relics.depthmeter
 
 import com.mineinabyss.components.relics.DepthMeter
 import com.mineinabyss.components.relics.ShowDepthMeterHud
-import com.mineinabyss.features.helpers.changeHudState
-import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.geary.annotations.Handler
-import com.mineinabyss.geary.components.events.EntityRemoved
 import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.EventScope
@@ -47,27 +43,14 @@ class ToggleDepthHudSystem : GearyListener() {
     }
 }
 
-class DepthHudSystem(private val feature: RelicsFeature) : RepeatingSystem(2.ticks) {
-    private val TargetScope.depthMeter by get<DepthMeter>()
+class DepthHudSystem : RepeatingSystem(5.ticks) {
+    private val TargetScope.player by get<Player>()
 
     override fun TargetScope.tick() {
-        val player = entity.parent?.get<Player>() ?: return
-        if (!player.isOnline) return
-        if (player.isInHub()) player.changeHudState(feature.depthHudId, false)
-        else player.changeHudState(feature.depthHudId, player.toGeary().has<ShowDepthMeterHud>())
-
-        player.changeHudState(feature.layerHudId, player.toGeary().has<ShowDepthMeterHud>())
-    }
-}
-
-class RemoveDepthMeterHud(private val feature: RelicsFeature) : GearyListener() {
-    private val TargetScope.depthMeter by get<DepthMeter>()
-    private val EventScope.removed by family { has<EntityRemoved>() }
-
-    @Handler
-    fun TargetScope.removeBar() {
-        val player = entity.parent?.get<Player>() ?: return
-        player.changeHudState(feature.depthHudId, false)
-        player.changeHudState(feature.layerHudId, false)
+        when {
+            player.inventory.withIndex().any { player.inventory.toGeary()?.get(it.index)?.has<DepthMeter>() == true } ->
+                player.toGeary().add<ShowDepthMeterHud>()
+            else -> player.toGeary().remove<ShowDepthMeterHud>()
+        }
     }
 }

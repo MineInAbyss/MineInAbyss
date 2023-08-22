@@ -2,7 +2,6 @@ package com.mineinabyss.features.huds
 
 import com.mineinabyss.components.huds.AlwaysShowAirHud
 import com.mineinabyss.components.huds.ReturnVanillaHud
-import com.mineinabyss.features.helpers.changeHudState
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
@@ -46,7 +45,7 @@ class HudFeature(
             return
         }
 
-        listeners(HudListener(this@HudFeature))
+        listeners(HudListener())
 
         commands {
             mineinabyss {
@@ -69,7 +68,6 @@ class HudFeature(
                                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"/usepack $vanillaPackName ${player.name}")
                                 }
 
-                                player.changeHudState(vanillaHudLayout, it.has<AlwaysShowAirHud>())
                                 player.success("Toggled custom hud of vanilla elements ${if (it.has<AlwaysShowAirHud>()) "on" else "off"}")
                             }
                         }
