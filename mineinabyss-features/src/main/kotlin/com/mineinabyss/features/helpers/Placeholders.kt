@@ -1,5 +1,7 @@
 package com.mineinabyss.features.helpers
 
+import com.mineinabyss.components.huds.AlwaysShowAirHud
+import com.mineinabyss.components.huds.ReturnVanillaHud
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.relics.ShowDepthMeterHud
 import com.mineinabyss.components.relics.ShowStarCompassHud
@@ -34,15 +36,19 @@ class Placeholders : PlaceholderExpansion() {
         get() = mapOf(
             "orthbanking_coins" to playerData.orthCoinsHeld.toString(),
             "orthbanking_tokens" to playerData.mittyTokensHeld.toString(),
-            "orthbanking_hud_state" to playerData.showPlayerBalance.toString(),
+
+            "hud_orthbanking" to playerData.showPlayerBalance.toString(),
+            "hud_depthmeter" to toGeary().has<ShowDepthMeterHud>().toString(),
+            "hud_starcompass" to toGeary().has<ShowStarCompassHud>().toString(),
+            "hud_always_air" to toGeary().has<AlwaysShowAirHud>().toString(),
+            "hud_always_armor" to toGeary().has<AlwaysShowAirHud>().toString(),
+            "hud_vanilla" to toGeary().has<ReturnVanillaHud>().toString(),
 
             "layer" to (location.layer?.name ?: "").toString(),
             "layer_simple" to simpleLayerName,
             "whistle" to getLayerWhistleForHud(),
             "section" to (location.section?.name ?: "Unmanaged Section").toString(),
-            "depth_hud_state" to toGeary().has<ShowDepthMeterHud>().toString(),
             "depth" to getDepth().toString(),
-            "starcompass_hud_state" to toGeary().has<ShowStarCompassHud>().toString(),
             "starcompass_unicode" to getCompassAngle().first,
             "starcompass_angle" to getCompassAngle().second.toString(),
 
