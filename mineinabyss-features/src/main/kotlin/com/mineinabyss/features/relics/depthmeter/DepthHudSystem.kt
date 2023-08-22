@@ -47,8 +47,9 @@ class DepthHudSystem : RepeatingSystem(5.ticks) {
     private val TargetScope.player by get<Player>()
 
     override fun TargetScope.tick() {
+        val depthMeters = player.inventory.withIndex().filter { player.inventory.toGeary()?.get(it.index)?.has<DepthMeter>() == true }.mapNotNull { it.value }
         when {
-            player.inventory.withIndex().any { player.inventory.toGeary()?.get(it.index)?.has<DepthMeter>() == true } ->
+            depthMeters.any { Enchantment.ARROW_INFINITE !in it.enchantments } ->
                 player.toGeary().add<ShowDepthMeterHud>()
             else -> player.toGeary().remove<ShowDepthMeterHud>()
         }
