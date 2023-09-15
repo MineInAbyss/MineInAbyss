@@ -1,8 +1,6 @@
 package com.mineinabyss.features.huds
 
-import com.mineinabyss.components.huds.AlwaysShowAirHud
 import com.mineinabyss.components.huds.ReturnVanillaHud
-import com.mineinabyss.features.helpers.changeHudState
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.messaging.success
@@ -12,7 +10,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.Bukkit
 
 @Serializable
 @SerialName("custom_hud")
@@ -46,32 +43,19 @@ class HudFeature(
             return
         }
 
-        listeners(HudListener(this@HudFeature))
+        listeners(HudListener())
 
         commands {
             mineinabyss {
                 "hud" {
                     "toggleCustomHud" {
-                        //TODO Check if /resetpack is needed first
-                        //TODO Check if theres api over using commands
                         playerAction {
-                            player.toGeary().let {
-
-                                if (it.has<ReturnVanillaHud>()) {
-                                    it.remove<ReturnVanillaHud>()
-                                    //remove<AlwaysShowAirHud>()
-                                    //remove<AlwaysShowArmorHud>()
-                                    player.performCommand("/usepack $hudPackName ${player.name}")
-                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"/usepack $hudPackName ${player.name}")
-
-                                } else {
-                                    it.add<ReturnVanillaHud>()
-                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),"/usepack $vanillaPackName ${player.name}")
-                                }
-
-                                player.changeHudState(vanillaHudLayout, it.has<AlwaysShowAirHud>())
-                                player.success("Toggled custom hud of vanilla elements ${if (it.has<AlwaysShowAirHud>()) "on" else "off"}")
+                            when {
+                                player.toGeary().has<ReturnVanillaHud>() -> player.toGeary().remove<ReturnVanillaHud>()
+                                else -> player.toGeary().add<ReturnVanillaHud>()
                             }
+
+                            player.success("Toggled custom hud of vanilla elements ${if (player.toGeary().has<ReturnVanillaHud>()) "off" else "on"}")
                         }
                     }
                 }
