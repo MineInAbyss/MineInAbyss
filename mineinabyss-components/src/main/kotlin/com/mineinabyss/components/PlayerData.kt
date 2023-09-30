@@ -1,6 +1,6 @@
 package com.mineinabyss.components
 
-import com.mineinabyss.geary.papermc.access.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.serialization.UUIDSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

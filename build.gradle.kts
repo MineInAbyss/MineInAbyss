@@ -1,25 +1,40 @@
+import java.net.URI
+
 plugins {
-    id("com.mineinabyss.conventions.kotlin")
-    id("com.mineinabyss.conventions.papermc")
-    id("com.mineinabyss.conventions.copyjar")
-    id("com.mineinabyss.conventions.publication")
-    kotlin("jvm") apply false
+    alias(libs.plugins.mia.kotlin.jvm)
+    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.mia.copyjar)
+    alias(libs.plugins.mia.publication)
+    alias(libs.plugins.mia.autoversion)
+    alias(libs.plugins.mia.nms)
+    alias(libs.plugins.mia.papermc)
 }
 
+val mavenUser: String by project
+val mavenPassword: String by project
 allprojects {
     apply(plugin = "java")
 
     repositories {
         mavenCentral()
-        //mavenLocal()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://repo.mineinabyss.com/releases")
+        maven("https://repo.mineinabyss.com/snapshots")
+        maven("https://repo.mineinabyss.com/mirror")
+        maven {
+            url = URI("https://${mavenUser}:${mavenPassword}@repo.mineinabyss.com/private")
+            credentials {
+                username = mavenUser
+                password = mavenPassword
+            }
+        }
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.org/repository/maven-public/")
-        maven("https://mvn.lumine.io/repository/maven-public/") { metadataSources { artifact() } } // Model Engine
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
-        maven("https://m2.dv8tion.net/releases") // DiscordSRV
+//        maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
-        maven("https://repo.hibiscusmc.com/releases") // HMCCosmetics
+        mavenLocal()
+        maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
@@ -30,14 +45,11 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(libs.idofront.core)
-        implementation(libs.idofront.autoscan) {
-            exclude("org.reflections")
-        }
+        implementation(libs.bundles.idofront.core)
+        implementation(libs.idofront.nms)
 
         // Geary platform
-        compileOnly(miaLibs.geary.papermc.core)
-        compileOnly(miaLibs.geary.commons.papermc)
+        compileOnly(miaLibs.geary.papermc)
 
         // MineInAbyss platform
         compileOnly(libs.kotlin.stdlib)
@@ -58,12 +70,14 @@ allprojects {
         compileOnly(libs.minecraft.plugin.fawe.core)
         compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(libs.minecraft.plugin.protocollib)
+        compileOnly(libs.minecraft.plugin.modelengine)
 
-        compileOnly(miaLibs.looty)
-        compileOnly(miaLibs.mobzy)
+        compileOnly(miaLibs.guiy)
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
-        compileOnly(miaLibs.minecraft.plugin.modelengine)
+        compileOnly(miaLibs.mobzy)
+        compileOnly(miaLibs.looty)
+        compileOnly(miaLibs.protocolburrito)
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
         compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
@@ -71,7 +85,11 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.luckperms)
         compileOnly(miaLibs.minecraft.plugin.placeholderapi)
         compileOnly(miaLibs.minecraft.plugin.happyhud)
+        compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
+        compileOnly(miaLibs.minecraft.plugin.traincarts)
+        compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
+        compileOnly(miaLibs.minecraft.plugin.openinv)
     }
 }
 
