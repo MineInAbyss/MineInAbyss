@@ -10,8 +10,8 @@ plugins {
     alias(libs.plugins.mia.papermc)
 }
 
-val mavenUser: String by project
-val mavenPassword: String by project
+val mavenUser = (project.property("mavenUser") as? String) ?: System.getenv("MAVEN_PUBLISH_USERNAME") ?: ""
+val mavenPassword = (project.property("mavenPassword") as? String) ?: System.getenv("MAVEN_PUBLISH_PASSWORD") ?: ""
 allprojects {
     apply(plugin = "java")
 

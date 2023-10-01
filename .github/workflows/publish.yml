@@ -19,8 +19,8 @@ jobs:
           maven-metadata-url: https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml
           pages-path: build/dokka/htmlMultiModule/
           dokka: dokkaHtmlMultiModule
-          maven-username: ${{ secrets.MAVEN_USERNAME }}
-          maven-password: ${{ secrets.MAVEN_PASSWORD }}
+          maven-username: ${{ secrets.MAVEN_PUBLISH_USERNAME }}
+          maven-password: ${{ secrets.MAVEN_PUBLISH_PASSWORD }}
           release-files: |
             ${{ github.workspace }}/publish/*.jar
 
