@@ -12,6 +12,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug Environment Variables
+        run: |
+          echo "MAVEN_USERNAME: $MAVEN_USERNAME"
+          echo "MAVEN_PASSWORD: $MAVEN_PASSWORD"
+
       - uses: actions/checkout@v3
 
       - uses: MineInAbyss/publish-action@master
