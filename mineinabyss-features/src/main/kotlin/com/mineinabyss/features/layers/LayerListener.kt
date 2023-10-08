@@ -5,10 +5,13 @@ import com.mineinabyss.deeperworld.event.PlayerChangeSectionEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.services.PlayerManager
 import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
+import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.layer
 import net.kyori.adventure.title.Title
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import kotlin.time.Duration.Companion.seconds
@@ -40,9 +43,11 @@ class LayerListener : Listener {
     fun PlayerDeathEvent.appendLayerToDeathMessage() {
         val section = player.location.section ?: return
         val layerOfDeath = section.layer ?: return
-        apply {
-            //TODO translatable key for dying in layer
-            deathMessage(deathMessage()?.append(" ${layerOfDeath.deathMessage}".miniMsg()))
-        }
+        deathMessage(deathMessage()?.append(" ${layerOfDeath.deathMessage}".miniMsg()))
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun PlayerCreateGraveEvent.onCreateGrave() {
+        if (player.isInHub()) isCancelled = true
     }
 }

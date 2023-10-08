@@ -38,6 +38,7 @@ allprojects {
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
+        mavenLocal()
     }
 
     dependencies {
