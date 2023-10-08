@@ -6,6 +6,7 @@ chatty = "0.6.5"
 mobzy = "0.21-SNAPSHOT"
 looty = "0.10-SNAPSHOT"
 protocolburrito = "0.7.0"
+eternalfortune = "0.2.0"
 
 
 [libraries]
@@ -16,6 +17,7 @@ chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
+eternalfortune = { module = "com.mineinabyss:eternalfortune", version.ref = "eternalfortune" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.4.10"

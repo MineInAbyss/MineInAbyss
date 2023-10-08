@@ -78,6 +78,8 @@ allprojects {
         compileOnly(miaLibs.mobzy)
         compileOnly(miaLibs.looty)
         compileOnly(miaLibs.protocolburrito)
+        compileOnly(miaLibs.eternalfortune)
+
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
         compileOnly(miaLibs.minecraft.plugin.hmccosmetics)

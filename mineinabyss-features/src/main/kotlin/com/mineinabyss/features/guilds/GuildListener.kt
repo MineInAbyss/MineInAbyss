@@ -6,17 +6,16 @@ import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.chatty.listeners.RendererExtension
 import com.mineinabyss.components.guilds.GuildMaster
+import com.mineinabyss.eternalfortune.api.events.PlayerOpenGraveEvent
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.GuildMessageQueue.content
 import com.mineinabyss.features.guilds.database.GuildRank
-import com.mineinabyss.features.guilds.extensions.getGuildChatId
-import com.mineinabyss.features.guilds.extensions.getGuildName
-import com.mineinabyss.features.guilds.extensions.getGuildRank
-import com.mineinabyss.features.guilds.extensions.hasGuild
+import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.mineinabyss.core.abyss
@@ -54,6 +53,17 @@ class GuildListener(private val feature: GuildFeature) : Listener {
                 }
                 GuildMessageQueue.deleteWhere { playerUUID eq player.uniqueId }
             }
+        }
+    }
+
+    @EventHandler
+    fun PlayerOpenGraveEvent.onOpenGuildMemberGrave() {
+        if (grave.isExpired() || !grave.isProtected() || graveOwner.uniqueId == player.uniqueId) return
+
+        isCancelled = when {
+            !player.hasGuild() || !graveOwner.hasGuild() -> true
+            player.getGuildName() != graveOwner.getGuildName() -> true
+            else -> !feature.canOpenGuildMemberGraves
         }
     }
 }

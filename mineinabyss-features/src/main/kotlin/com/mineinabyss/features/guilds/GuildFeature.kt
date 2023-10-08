@@ -49,7 +49,9 @@ const val guildChannelId: String = "Guild Chat"
 class GuildFeature(
     private val guildChattyChannel: ChattyConfig.ChattyChannel = guildChannel,
     val guildNameMaxLength: Int = 20,
-    val guildNameBannedWords: List<String> = emptyList()
+    val guildNameBannedWords: List<String> = emptyList(),
+    //TODO Eventually move to a per-guild config
+    val canOpenGuildMemberGraves: Boolean = true
 ) : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
