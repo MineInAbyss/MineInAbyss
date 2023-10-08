@@ -94,3 +94,5 @@ object CoinFactory {
     val mittyToken get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 
+val Player.isInventoryFull: Boolean
+    get() = inventory.firstEmpty() == -1
