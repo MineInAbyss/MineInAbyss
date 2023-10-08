@@ -64,21 +64,32 @@ class GrapplingHookListener : Listener {
 
         playerHook.job?.cancel()
 
-        hookMap[player.uniqueId] = playerHook.copy(job = when(playerHook.hookData.type) {
-            GrapplingHookType.MECHANICAL -> mechanicalHookJob(maxCount, player, playerHook, anchor, particle, pBatAdd, aBatAdd)
-            GrapplingHookType.MANUAL -> {
-                player.flySpeed = if (playerHook.isOverHook() && !player.isSneaking) -0.01f else 0.03f
-                if (playerHook.isBeneathHook()) {
-                    if (player.velocity.y in -0.08..-0.07)
-                        player.velocity = player.velocity.add(Vector(0.0, 0.25, 0.0))
-                    player.isGrappling = true
-                    player.allowFlight = true
-                    player.isFlying = true
-                    manualHookJob(player)
-                } else if (!playerHook.isOverHook()) ManualGrapple.isGrappling.remove(player.uniqueId)
-                null
+        hookMap[player.uniqueId] = playerHook.copy(
+            job = when (playerHook.hookData.type) {
+                GrapplingHookType.MECHANICAL -> mechanicalHookJob(
+                    maxCount,
+                    player,
+                    playerHook,
+                    anchor,
+                    particle,
+                    pBatAdd,
+                    aBatAdd
+                )
+
+                GrapplingHookType.MANUAL -> {
+                    player.flySpeed = if (playerHook.isOverHook() && !player.isSneaking) -0.01f else 0.03f
+                    if (playerHook.isBeneathHook()) {
+                        if (player.velocity.y in -0.08..-0.07)
+                            player.velocity = player.velocity.add(Vector(0.0, 0.25, 0.0))
+                        player.isGrappling = true
+                        player.allowFlight = true
+                        player.isFlying = true
+                        manualHookJob(player)
+                    } else if (!playerHook.isOverHook()) ManualGrapple.isGrappling.remove(player.uniqueId)
+                    null
+                }
             }
-        })
+        )
     }
 
     private fun manualHookJob(player: Player): Job {
@@ -105,7 +116,15 @@ class GrapplingHookListener : Listener {
         }
     }
 
-    private fun mechanicalHookJob(maxCount: Int, player: Player, playerHook: PlayerGrapple, anchor: Arrow, particle: Player, pBatAdd: Double, aBatAdd: Double): Job {
+    private fun mechanicalHookJob(
+        maxCount: Int,
+        player: Player,
+        playerHook: PlayerGrapple,
+        anchor: Arrow,
+        particle: Player,
+        pBatAdd: Double,
+        aBatAdd: Double
+    ): Job {
         return abyss.plugin.launch {
             var counter = 0
             do {
@@ -121,9 +140,15 @@ class GrapplingHookListener : Listener {
                     return@launch
                 }
 
-                val (pLoc, aLoc) = player.location.clone().apply { y+= pBatAdd } to playerHook.hook.location.clone().apply { y+= aBatAdd }
+                val (pLoc, aLoc) = player.location.clone().apply { y += pBatAdd } to playerHook.hook.location.clone()
+                    .apply { y += aBatAdd }
                 val (pVector, aVector) = pLoc.toVector() to aLoc.toVector()
-                var (prox, superProx) = playerHook.isProx(pLoc, aLoc, player.isSneaking) to playerHook.isProx(pLoc, aLoc, true, 0.1)
+                var (prox, superProx) = playerHook.isProx(pLoc, aLoc, player.isSneaking) to playerHook.isProx(
+                    pLoc,
+                    aLoc,
+                    true,
+                    0.1
+                )
                 val particleAboveAnchor = aLoc.y <= pLoc.y && !player.isInWater
                 var multConst = 0.65
 
@@ -159,7 +184,7 @@ class GrapplingHookListener : Listener {
                     else vector.setY(vector.y * -0.6)
                 } else if (counter % 8 == 0) {
                     playerHook.player.world.playSound(
-                        playerHook.player.location.clone().apply { y+= playerHook.batAddY },
+                        playerHook.player.location.clone().apply { y += playerHook.batAddY },
                         Sound.ITEM_CROSSBOW_LOADING_MIDDLE,
                         0.5f,
                         1.1f
@@ -172,13 +197,34 @@ class GrapplingHookListener : Listener {
         }
     }
 
-    @EventHandler fun PlayerJoinEvent.onJoin() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerQuitEvent.onQuit() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerDeathEvent.onDeath() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerItemHeldEvent.onSwapWithGrappleShot() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun BatToggleSleepEvent.onBatAwake() = entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }
-    @EventHandler fun EntityDamageByEntityEvent.onPlayerHitBat() {
+    @EventHandler
+    fun PlayerJoinEvent.onJoin() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+
+    @EventHandler
+    fun PlayerQuitEvent.onQuit() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+
+    @EventHandler
+    fun PlayerDeathEvent.onDeath() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+    @EventHandler
+    fun PlayerSwapHandItemsEvent.onSwapWithGrappleShot() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+    @EventHandler
+    fun PlayerItemHeldEvent.onSwapWithGrappleShot() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+    @EventHandler
+    fun BatToggleSleepEvent.onBatAwake() {
+        entity.toGeary().get<GrapplingHookEntity>()?.let { isCancelled = true }
+    }
+    @EventHandler
+    fun EntityDamageByEntityEvent.onPlayerHitBat() {
         val bat = entity as? Bat ?: return
         if (bat.toGearyOrNull()?.has<GrapplingHookEntity>() == true) isCancelled = true
         val player = damager as? Player ?: return
@@ -186,6 +232,13 @@ class GrapplingHookListener : Listener {
         isCancelled = true
         hookMap[player.uniqueId]?.removeGrapple()
     }
-    @EventHandler fun PlayerAscendEvent.onPlayerChangeSection() = hookMap[player.uniqueId]?.removeGrapple()
-    @EventHandler fun PlayerDescendEvent.onPlayerChangeSection() = hookMap[player.uniqueId]?.removeGrapple()
+
+    @EventHandler
+    fun PlayerAscendEvent.onPlayerChangeSection() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
+    @EventHandler
+    fun PlayerDescendEvent.onPlayerChangeSection() {
+        hookMap[player.uniqueId]?.removeGrapple()
+    }
 }

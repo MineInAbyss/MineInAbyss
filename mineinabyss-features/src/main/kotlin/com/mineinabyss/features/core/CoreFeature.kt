@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 class CoreFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {
-        if (Plugins.isEnabled("ProtocolLib"))
-            ProtocolLibrary.getProtocolManager().addPacketListener(ChestGuiPacket())
+        /*if (Plugins.isEnabled("ProtocolLib"))
+            ProtocolLibrary.getProtocolManager().addPacketListener(ChestGuiPacket())*/
 
         listeners(CoreListener(), PreventSignEditListener())
     }
