@@ -4,7 +4,7 @@ author: Derongan
 main: com.mineinabyss.plugin.MineInAbyssPluginImpl
 api-version: "1.20"
 depend: [ Geary, DeeperWorld, Guiy ]
-softdepend: [ Vault, Multiverse-Core, MCCosmetics, HMCCosmetics, GSit, DiscordSRV, Chatty, ModelEngine, HappyHUD ]
+softdepend: [ Vault, Multiverse-Core, MCCosmetics, HMCCosmetics, GSit, DiscordSRV, Chatty, ModelEngine ]
 
 prefix: MiA
 description: A mod that adds abyss effects

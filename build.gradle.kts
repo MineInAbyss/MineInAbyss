@@ -84,7 +84,6 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.discordsrv)
         compileOnly(miaLibs.minecraft.plugin.luckperms)
         compileOnly(miaLibs.minecraft.plugin.placeholderapi)
-        compileOnly(miaLibs.minecraft.plugin.happyhud)
         compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
         compileOnly(miaLibs.minecraft.plugin.traincarts)
         compileOnly(miaLibs.minecraft.plugin.tccoasters)

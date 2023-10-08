@@ -32,7 +32,6 @@ abstract class AbyssContext(
     val isMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("MCCosmetics")
     val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
     val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
-    val isHappyHUDEnabled get() = plugin.server.pluginManager.isPluginEnabled("HappyHUD")
 
     val econ: Economy? = Services.getOrNull<Economy>()
 
