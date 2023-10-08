@@ -1,12 +1,12 @@
-package com.mineinabyss.features.relics.grapplinghook
+package com.mineinabyss.features.tools.grapplinghook
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
-import com.mineinabyss.components.relics.grappling.GrapplingHookEntity
-import com.mineinabyss.components.relics.grappling.GrapplingHookType
-import com.mineinabyss.components.relics.grappling.PlayerGrapple
-import com.mineinabyss.components.relics.grappling.hookMap
+import com.mineinabyss.components.tools.grappling.GrapplingHookEntity
+import com.mineinabyss.components.tools.grappling.GrapplingHookType
+import com.mineinabyss.components.tools.grappling.PlayerGrapple
+import com.mineinabyss.components.tools.grappling.hookMap
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.world.section.inSectionTransition

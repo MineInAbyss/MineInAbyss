@@ -1,7 +1,7 @@
-package com.mineinabyss.features.relics.depthmeter
+package com.mineinabyss.features.tools.depthmeter
 
-import com.mineinabyss.components.relics.DepthMeter
-import com.mineinabyss.components.relics.ShowDepthMeterHud
+import com.mineinabyss.components.tools.DepthMeter
+import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary

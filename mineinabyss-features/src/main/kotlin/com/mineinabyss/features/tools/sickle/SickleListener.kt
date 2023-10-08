@@ -1,4 +1,4 @@
-package com.mineinabyss.features.relics.sickle
+package com.mineinabyss.features.tools.sickle
 
 import com.destroystokyo.paper.MaterialTags
 import com.mineinabyss.features.helpers.ItemDrop

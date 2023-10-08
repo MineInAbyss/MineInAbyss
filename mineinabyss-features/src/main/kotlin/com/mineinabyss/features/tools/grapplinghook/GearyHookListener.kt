@@ -1,6 +1,6 @@
-package com.mineinabyss.features.relics.grapplinghook
+package com.mineinabyss.features.tools.grapplinghook
 
-import com.mineinabyss.components.relics.grappling.*
+import com.mineinabyss.components.tools.grappling.*
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.bridge.components.RightClicked
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary

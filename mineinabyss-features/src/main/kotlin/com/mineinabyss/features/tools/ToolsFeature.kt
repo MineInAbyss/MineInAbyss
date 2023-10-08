@@ -1,5 +1,7 @@
-package com.mineinabyss.features.relics
+package com.mineinabyss.features.tools
 
+import com.mineinabyss.features.relics.ToggleStarCompassHud
+import com.mineinabyss.features.relics.ToggleStarCompassHudSystem
 import com.mineinabyss.features.tools.depthmeter.DepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.ToggleDepthHudSystem
@@ -16,12 +18,27 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("relics")
-class RelicsFeature : AbyssFeature {
+@SerialName("tools")
+class ToolsFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
+        commands {
+            mineinabyss {
+                "depth" {
+                    playerAction {
+                        ShowDepthSystem().run {
+                            player.sendDepthMessage()
+                        }
+                    }
+                }
+            }
+        }
         geary.pipeline.addSystems(
-            ToggleStarCompassHudSystem(),
-            ToggleStarCompassHud(),
+            ShowDepthSystem(),
+            ToggleDepthHudSystem(),
+            DepthHudSystem(),
+            HarvestListener(),
+            GearyHookListener()
         )
+        listeners(SickleListener(), GrapplingHookListener())
     }
 }

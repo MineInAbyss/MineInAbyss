@@ -1,6 +1,6 @@
-package com.mineinabyss.features.relics.sickle
+package com.mineinabyss.features.tools.sickle
 
-import com.mineinabyss.components.relics.Sickle
+import com.mineinabyss.components.tools.Sickle
 import com.mineinabyss.features.helpers.BlockUtil
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.bridge.components.RightClicked

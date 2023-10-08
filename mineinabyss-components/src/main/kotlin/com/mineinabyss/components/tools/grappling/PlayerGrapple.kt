@@ -1,4 +1,4 @@
-package com.mineinabyss.components.relics.grappling
+package com.mineinabyss.components.tools.grappling
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer

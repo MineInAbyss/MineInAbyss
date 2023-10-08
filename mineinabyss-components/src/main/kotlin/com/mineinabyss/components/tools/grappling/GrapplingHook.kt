@@ -1,4 +1,4 @@
-package com.mineinabyss.components.relics.grappling
+package com.mineinabyss.components.tools.grappling
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

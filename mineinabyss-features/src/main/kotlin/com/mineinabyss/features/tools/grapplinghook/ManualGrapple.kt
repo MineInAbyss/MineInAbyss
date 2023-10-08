@@ -1,4 +1,4 @@
-package com.mineinabyss.features.relics.grapplinghook
+package com.mineinabyss.features.tools.grapplinghook
 
 import org.bukkit.GameMode
 import org.bukkit.entity.Player

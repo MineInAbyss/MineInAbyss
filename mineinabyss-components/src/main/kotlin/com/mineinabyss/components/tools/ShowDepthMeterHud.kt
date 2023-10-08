@@ -1,4 +1,4 @@
-package com.mineinabyss.components.relics
+package com.mineinabyss.components.tools
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
