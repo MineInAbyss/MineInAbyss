@@ -26,34 +26,31 @@ class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
     fun PlayerCosmeticPostEquipEvent.onEquipBackpack() {
         if (cosmetic.slot != CosmeticSlot.BACKPACK) return
         val player = user.player ?: return
-        player.toGeary().let {
-            it.setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, cosmetic.id))
-            if (it.has<BackpackStorage>()) return
-            player.error("Equip a backpack (Shift + Right Click) to show the cosmetic")
-            user.userBackpackManager?.despawnBackpack()
-        }
+        player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, cosmetic.id))
+        if (player.toGeary().has<BackpackStorage>()) return
+        player.error("Equip a backpack (Shift + Right Click) to show the cosmetic")
+        user.userBackpackManager?.despawnBackpack()
     }
 
     @EventHandler
     fun PlayerInteractEvent.equipBackpack() {
         if (!player.isSneaking || !rightClicked) return
-        val (hand, gearyPlayer) = (hand ?: return) to (player.toGearyOrNull() ?: return)
+        val (hand, gearyPlayer) = (hand ?: return) to player.toGeary()
         val item = player.inventory.getItem(hand)
 
         when {
             !player.isInventoryFull && item.type.isAir && gearyPlayer.has<BackpackStorage>() -> {
-                player.inventory.addItem(gearyPlayer.get<BackpackStorage>()!!.backpack.clone())
+                if (player.inventory.addItem(gearyPlayer.get<BackpackStorage>()!!.backpack.clone()).isNotEmpty()) return
                 gearyPlayer.remove<BackpackStorage>()
                 player.unequipCosmeticBackpack()
             }
 
             !item.type.isAir && MaterialTags.SHULKER_BOXES.isTagged(item) && !gearyPlayer.has<BackpackStorage>() -> {
-                val backpackId = Cosmetics.getCosmetic(player.cosmeticComponent.cosmeticBackpack)?.id
-                if (backpackId == null)
-                    gearyPlayer.setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, feature.defaultBackpack))
+                val backpackId = Cosmetics.getCosmetic(player.cosmeticComponent.cosmeticBackpack)?.id ?: player.cosmeticComponent.cosmeticBackpack ?: feature.defaultBackpack
+                gearyPlayer.setPersisting(player.cosmeticComponent.copy(cosmeticBackpack = backpackId))
 
                 gearyPlayer.setPersisting(BackpackStorage(item.clone()))
-                player.equipCosmeticBackPack(backpackId ?: feature.defaultBackpack)
+                player.equipCosmeticBackPack(backpackId)
                 item.subtract()
             }
 
