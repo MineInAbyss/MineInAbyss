@@ -6,6 +6,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.spawning.spawn
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent
 import org.bukkit.GameMode
@@ -36,37 +37,47 @@ import org.bukkit.inventory.EquipmentSlot
 class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listener {
     @EventHandler
     fun HangingPlaceEvent.onPlaceItemFrame() {
-        val frame = entity as? ItemFrame ?: return
-        val player = player ?: return
-        val geary = frame.toGeary()
-        geary.getOrSetPersisting { LockDisplayItem(player.uniqueId, false, mutableSetOf(player.uniqueId)) }
-        geary.encodeComponentsTo(frame)
+        val (frame, player) = (entity as? ItemFrame ?: return) to (player ?: return)
+        val lockState = player.playerData.defaultDisplayLockState
+        frame.toGeary()
+            .getOrSetPersisting { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
+        frame.toGeary().encodeComponentsTo(frame)
         player.playerData.recentInteractEntity = frame.uniqueId
-        player.error("Use <b>/mia lock toggle</b> to protect this Item Frame.")
+        when (lockState) {
+            true -> player.success("This Item Frame is now protected!")
+            false -> player.error("Use <b>/mia lock toggle</b> to protect this Item Frame.")
+        }
     }
 
     @EventHandler
     fun PlayerInteractEvent.onPlaceArmorStand() { // pretty much the same code as before
         if (player.inventory.itemInMainHand.type != Material.ARMOR_STAND) return
         if (hand != EquipmentSlot.HAND || blockFace == BlockFace.DOWN || action != Action.RIGHT_CLICK_BLOCK) return
+        val lockState = player.playerData.defaultDisplayLockState
         isCancelled = true
 
         val initialLocation = player.getLastTwoTargetBlocks(null, 6)
-        val newLocation =
-            if (blockFace == BlockFace.UP) initialLocation.last()?.location?.toCenterLocation()?.apply { y += 0.5 }
-                ?: return
-            else initialLocation.first()?.location?.toCenterLocation()?.apply { y -= 0.5 } ?: return
+        val newLocation = initialLocation.last()?.location?.toCenterLocation()?.apply {
+            when (blockFace) {
+                BlockFace.UP -> y += 0.5
+                else -> y -= 0.5
+            }
+        } ?: return
 
         newLocation.spawn<ArmorStand>()?.apply {
             setRotation(player.location.yaw - 180, 0.0F)
-            toGeary().getOrSetPersisting { LockDisplayItem(player.uniqueId, false, mutableSetOf(player.uniqueId)) }
+            toGeary().getOrSetPersisting { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
             toGeary().encodeComponentsTo(this)
             player.playerData.recentInteractEntity = uniqueId
         } ?: return
 
         if (player.gameMode != GameMode.CREATIVE) player.inventory.itemInMainHand.subtract()
         player.playSound(newLocation, Sound.ENTITY_ARMOR_STAND_PLACE, 1f, 1f)
-        player.error("Use <b>/mia lock toggle</b> to protect this Armor Stand")
+
+        when (lockState) {
+            true ->  player.success("This Armor Stand is now protected!")
+            false -> player.error("Use <b>/mia lock toggle</b> to protect this Armor Stand.")
+        }
     }
 
     @EventHandler

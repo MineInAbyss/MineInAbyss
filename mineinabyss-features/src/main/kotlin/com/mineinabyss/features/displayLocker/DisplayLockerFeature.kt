@@ -29,6 +29,12 @@ class DisplayLockerFeature(
         commands {
             mineinabyss {
                 "lock"(desc = "Protection related commands") {
+                    "default_state"(desc= "Toggles the default lockstate of player") {
+                        playerAction {
+                            player.playerData.defaultDisplayLockState = !player.playerData.defaultDisplayLockState
+                            player.success("Your default lockstate is now ${if (player.playerData.defaultDisplayLockState) "locked" else "unlocked"}")
+                        }
+                    }
                     "toggle"(desc = "Toggles if a display item should be protected or not") {
                         playerAction {
                             val player = sender as Player
