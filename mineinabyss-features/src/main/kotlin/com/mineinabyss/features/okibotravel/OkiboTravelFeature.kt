@@ -23,6 +23,8 @@ class OkiboTravelFeature : AbyssFeature {
         })
     }
 
+    override val dependsOn: Set<String>
+        get() = setOf("Train_Carts", "TCCoasters")
     override fun MineInAbyssPlugin.enableFeature() {
         setupOkiboContext()
         listeners(OkiboTravelListener())

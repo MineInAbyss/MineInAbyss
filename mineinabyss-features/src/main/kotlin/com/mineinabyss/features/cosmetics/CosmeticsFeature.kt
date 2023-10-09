@@ -23,8 +23,8 @@ import org.bukkit.block.BlockFace
 
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") :
-    AbyssFeature {
+class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") : AbyssFeature {
+    override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun MineInAbyssPlugin.enableFeature() {
         if (!abyss.isHMCCosmeticsEnabled) return
         listeners(CosmeticListener(this@CosmeticsFeature))

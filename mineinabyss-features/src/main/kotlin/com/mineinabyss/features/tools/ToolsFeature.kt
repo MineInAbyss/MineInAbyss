@@ -20,6 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("tools")
 class ToolsFeature : AbyssFeature {
+    override val dependsOn: Set<String> = setOf("DeeperWorld")
     override fun MineInAbyssPlugin.enableFeature() {
         commands {
             mineinabyss {

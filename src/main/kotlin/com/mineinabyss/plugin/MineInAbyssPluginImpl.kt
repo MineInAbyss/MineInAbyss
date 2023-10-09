@@ -11,7 +11,9 @@ import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.idofront.messaging.logError
 import com.mineinabyss.idofront.platforms.Platforms
+import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.actions
 import com.mineinabyss.mineinabyss.core.AbyssContext
 import com.mineinabyss.mineinabyss.core.AbyssFeature
@@ -50,9 +52,12 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                 abyss.config.features.forEach { feature ->
                     feature.apply {
                         val featureName = feature::class.simpleName
-                        "Enable $featureName" {
-                            abyss.plugin.enableFeature()
-                        }.onFailure(Throwable::printStackTrace)
+                        when (dependsOn.all { Plugins.isEnabled(it) }) {
+                            true -> "Enabled $featureName" {
+                                abyss.plugin.enableFeature()
+                            }.onFailure(Throwable::printStackTrace)
+                            false ->  logError("Disabled $featureName, missing dependencies: ${dependsOn.filterNot { Plugins.isEnabled(it) }}")
+                        }
                     }
                 }
 
