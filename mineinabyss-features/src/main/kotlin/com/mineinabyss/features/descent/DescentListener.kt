@@ -5,6 +5,7 @@ import com.mineinabyss.components.pins.ActivePins
 import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -19,13 +20,13 @@ import kotlin.time.toKotlinDuration
 class DescentListener : Listener {
     @EventHandler
     fun PlayerAscendEvent.onReturnToOrth() {
-        if (toSection != abyss.config.hubSection) return
+        if (toSection != Features.layers.hubSection) return
         player.removeDescentContext()
     }
 
     @EventHandler
     fun PlayerDescendEvent.onDescend() {
-        if (fromSection != abyss.config.hubSection) return
+        if (fromSection != Features.layers.hubSection) return
         player.toGeary().apply {
             setPersisting(DescentContext())
 

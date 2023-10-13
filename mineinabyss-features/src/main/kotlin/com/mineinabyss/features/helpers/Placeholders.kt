@@ -9,7 +9,6 @@ import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.tools.depthmeter.getDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.mineinabyss.core.layer
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 import kotlin.math.atan2

@@ -3,6 +3,7 @@ package com.mineinabyss.features.tools.depthmeter
 import com.mineinabyss.components.tools.DepthMeter
 import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -10,7 +11,6 @@ import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.Pointers
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.mineinabyss.core.layer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
@@ -68,7 +68,9 @@ class ShowDepthSystem : GearyListener() {
                     <dark_aqua><i>The needle spins.</i>
                     You suddenly become aware that you are in """.trimIndent().miniMsg().append(
                     (if (isInHub()) "${layer.name}<dark_aqua>.".trimIndent()
-                    else "${layer.name}<dark_aqua> and <aqua>${pluralizeMeters(getDepth())}</aqua> deep into the <green>Abyss</green>.").trimIndent().miniMsg())
+                    else "${layer.name}<dark_aqua> and <aqua>${pluralizeMeters(getDepth())}</aqua> deep into the <green>Abyss</green>.").trimIndent()
+                        .miniMsg()
+                )
             )
         } else info("<i><dark_aqua>The compass wiggles slightly but does not otherwise respond.")
     }

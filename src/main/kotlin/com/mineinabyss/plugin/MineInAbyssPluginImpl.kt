@@ -6,6 +6,8 @@ import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.Guilds
 import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.helpers.Placeholders
+import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.features.layers.AbyssWorldManagerImpl
 import com.mineinabyss.geary.addons.GearyPhase
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.modules.geary
@@ -46,9 +48,12 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
 
             on(GearyPhase.ENABLE) {
                 DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {
-                    override val worldManager = AbyssWorldManagerImpl(config.layers)
+                    override val worldManager = AbyssWorldManagerImpl(Features.layers.layers)
                 })
 
+                "Registering features for DI" {
+                    abyss.config.features.forEach { DI.addByClass(it) }
+                }
                 abyss.config.features.forEach { feature ->
                     feature.apply {
                         val featureName = feature::class.simpleName

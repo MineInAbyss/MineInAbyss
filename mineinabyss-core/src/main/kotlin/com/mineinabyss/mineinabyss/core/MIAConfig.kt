@@ -17,10 +17,8 @@ import kotlin.reflect.full.createInstance
  */
 @Serializable
 class AbyssConfig(
-    val layers: List<Layer>, //TODO way of changing the serializer from service
     @SerialName("features")
     private val _features: List<AbyssFeature>,
-    private val hubSectionName: String = "orth",
 ) {
     private val reflections
         get() = Reflections(
@@ -45,7 +43,4 @@ class AbyssConfig(
 
     val features: List<AbyssFeature> get() = classToFeatureMap.values.toList()
 
-    val hubSection by lazy {
-        WorldManager.getSectionFor(hubSectionName) ?: error("Section $hubSectionName was not found for the hub.")
-    }
 }
