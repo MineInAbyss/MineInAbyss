@@ -3,6 +3,7 @@ package com.mineinabyss.plugin.debug
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.execution.stopCommand
@@ -25,13 +26,13 @@ class UtilityCommandExecutor : IdofrontCommandExecutor() {
 
                 if (layerToClear == "all") {
                     sender.info("Start clearing out $parsedItem from containers in all layers.")
-                    abyss.worldManager.layers.values.forEach {
+                    Features.layers.worldManager.layers.values.forEach {
                         abyss.plugin.launch {
                             clearItemFromContainers(it, parsedItem, sender)
                         }
                     }
                 } else {
-                    val parsedLayer = abyss.worldManager.getLayerFor(LayerKey(layerToClear))
+                    val parsedLayer = Features.layers.worldManager.getLayerFor(LayerKey(layerToClear))
                         ?: command.stopCommand("Layer not found")
                     sender.info("Start clearing out $parsedItem from containers in ${parsedLayer.name}.")
                     abyss.plugin.launch {

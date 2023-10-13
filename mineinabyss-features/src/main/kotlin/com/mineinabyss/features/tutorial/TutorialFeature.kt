@@ -48,7 +48,7 @@ class TutorialFeature : AbyssFeature {
     private fun setTutorialContext() {
         DI.remove<TutorialContext>()
         DI.add<TutorialContext>(object : TutorialContext {
-            override val tutorialEntities: List<TutorialEntity> by config("tutorialEntities") { abyss.plugin.fromPluginPath(loadDefault = true) }
+            override val tutorialEntities by config<List<TutorialEntity>>("tutorialEntities", abyss.dataPath, listOf())
         })
     }
 

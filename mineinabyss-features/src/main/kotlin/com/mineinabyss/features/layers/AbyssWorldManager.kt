@@ -1,4 +1,4 @@
-package com.mineinabyss.mineinabyss.core
+package com.mineinabyss.features.layers
 
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey

@@ -6,8 +6,6 @@ import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.Guilds
 import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.helpers.Placeholders
-import com.mineinabyss.features.helpers.di.Features
-import com.mineinabyss.features.layers.AbyssWorldManagerImpl
 import com.mineinabyss.geary.addons.GearyPhase
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.modules.geary
@@ -47,9 +45,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             }
 
             on(GearyPhase.ENABLE) {
-                DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {
-                    override val worldManager = AbyssWorldManagerImpl(Features.layers.layers)
-                })
+                DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {})
 
                 "Registering features for DI" {
                     abyss.config.features.forEach { DI.addByClass(it) }
@@ -61,7 +57,16 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                             true -> "Enabled $featureName" {
                                 abyss.plugin.enableFeature()
                             }.onFailure(Throwable::printStackTrace)
-                            false ->  logError("Disabled $featureName, missing dependencies: ${dependsOn.filterNot { Plugins.isEnabled(it) }}")
+
+                            false -> logError(
+                                "Disabled $featureName, missing dependencies: ${
+                                    dependsOn.filterNot {
+                                        Plugins.isEnabled(
+                                            it
+                                        )
+                                    }
+                                }"
+                            )
                         }
                     }
                 }

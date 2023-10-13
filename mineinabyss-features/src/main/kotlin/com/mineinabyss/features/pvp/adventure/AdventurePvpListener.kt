@@ -12,7 +12,7 @@ import org.bukkit.event.Listener
 class AdventurePvpListener : Listener {
     @EventHandler
     fun PlayerDescendEvent.promptPvpSelect() {
-        if (!player.playerData.showPvpPrompt || fromSection != Features.layers.hubSection) return
+        if (!player.playerData.showPvpPrompt || fromSection != Features.layers.config.hubSection) return
         guiy { PvpPrompt(player) }
     }
 }

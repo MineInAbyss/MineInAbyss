@@ -3,10 +3,12 @@ package com.mineinabyss.features.layers
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.deeperworld.world.section.Section
-import com.mineinabyss.mineinabyss.core.AbyssWorldManager
 import org.bukkit.World
 
-class AbyssWorldManagerImpl(
+/**
+ * Abyss world manager that assumes a single abyss for the whole server.
+ */
+class SingleAbyssWorldManager(
     layers: Collection<Layer>
 ) : AbyssWorldManager {
     override val layers = layers.associateBy { it.key }

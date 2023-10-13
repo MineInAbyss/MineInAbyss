@@ -19,7 +19,7 @@ class OkiboTravelFeature : AbyssFeature {
     private fun setupOkiboContext() {
         DI.remove<OkiboLineContext>()
         DI.add<OkiboLineContext>(object : OkiboLineContext {
-            override val config: OkiboTravelConfig by config("okiboTravel") { abyss.plugin.fromPluginPath(loadDefault = true) }
+            override val config by config("okiboTravel", abyss.dataPath, OkiboTravelConfig())
         })
     }
 

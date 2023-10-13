@@ -4,7 +4,10 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.geary.serialization.dsl.serializableComponents
 import com.mineinabyss.idofront.commands.Command
+import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
+import com.mineinabyss.idofront.config.ConfigFormats
+import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.plugin.Services
@@ -14,6 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.jetbrains.exposed.sql.Database
+import java.nio.file.Path
 
 /** A reference to the MineInAbyss plugin */
 //val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin("MineInAbyss") as MineInAbyssPlugin }
@@ -23,7 +27,7 @@ val abyss by DI.observe<AbyssContext>()
 abstract class AbyssContext(
     val plugin: MineInAbyssPlugin,
 ) {
-    abstract val worldManager: AbyssWorldManager
+    val dataPath: Path = plugin.dataFolder.toPath()
 
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isGSitLoaded get() = plugin.server.pluginManager.isPluginEnabled("GSit")
@@ -35,21 +39,22 @@ abstract class AbyssContext(
 
     val econ: Economy? = Services.getOrNull<Economy>()
 
-    val configController = config<AbyssConfig>("config") {
-        formats {
-            mapOf(
-                "yml" to Yaml(
-                    // We autoscan in our Feature classes so need to use Geary's module.
-                    serializersModule = serializableComponents.serializers.module,
-                    configuration = YamlConfiguration(
-                        extensionDefinitionPrefix = "x-",
-                        allowAnchorsAndAliases = true,
+    val configController = config<AbyssConfig>(
+        "config", plugin.dataFolder.toPath(), AbyssConfig(), formats = ConfigFormats(
+            overrides = listOf(
+                Format(
+                    "yml", Yaml(
+                        // We autoscan in our Feature classes so need to use Geary's module.
+                        serializersModule = serializableComponents.serializers.module,
+                        configuration = YamlConfiguration(
+                            extensionDefinitionPrefix = "x-",
+                            allowAnchorsAndAliases = true,
+                        )
                     )
                 )
             )
-        }
-        plugin.fromPluginPath(loadDefault = true)
-    }
+        )
+    )
     val config: AbyssConfig by configController
 
     val miaSubcommands = mutableListOf<Command.() -> Unit>()

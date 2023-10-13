@@ -18,7 +18,7 @@ import kotlin.reflect.full.createInstance
 @Serializable
 class AbyssConfig(
     @SerialName("features")
-    private val _features: List<AbyssFeature>,
+    private val _features: List<AbyssFeature> = listOf(),
 ) {
     private val reflections
         get() = Reflections(
@@ -29,7 +29,7 @@ class AbyssConfig(
         )
 
     @Transient
-    val classToFeatureMap = _features
+    val features = _features
         .groupBy { it::class }
         .mapValuesTo(mutableMapOf()) { it.value.single() }
         .also { map ->
@@ -40,7 +40,7 @@ class AbyssConfig(
                     map[feature::class] = feature
                 }
         }
-
-    val features: List<AbyssFeature> get() = classToFeatureMap.values.toList()
+        .values
+        .toList()
 
 }
