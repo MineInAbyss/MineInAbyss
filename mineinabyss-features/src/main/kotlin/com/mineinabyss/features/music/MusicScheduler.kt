@@ -20,8 +20,7 @@ object MusicScheduler {
     private val regionContainer = WorldGuard.getInstance().platform.regionContainer
     fun scheduleMusicPlaying(player: Player) {
         abyss.plugin.launch {
-            // TODO stop on disconnect
-            while (player.isOnline) {
+            while (player.isConnected) {
                 logInfo("Starting music scheduler for ${player.name}")
                 val playable = getPlayableSongsAtLocation(player.location)
                 if (playable.isEmpty()) delay(conf.maxSongWaitTime)
@@ -65,6 +64,6 @@ object MusicScheduler {
         }
         player.playSound(player.location, song.key, SoundCategory.AMBIENT, 1f, 1f)
         delay(song.duration)
-        if (player.isOnline) player.toGeary().remove<NowPlaying>()
+        if (player.isConnected) player.toGeary().remove<NowPlaying>()
     }
 }
