@@ -98,8 +98,6 @@ class FeatureFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.disableFeature() = actions {
         "Disabling features" {
-            DI.remove<AbyssContext>()
-            DI.remove<AbyssFeatureConfig>()
             abyssFeatures.features.forEach { feature ->
                 feature.apply {
                     runCatching { abyss.plugin.disableFeature() }
@@ -107,6 +105,8 @@ class FeatureFeature : AbyssFeature {
                         .onFailure { e -> logError("Failed to disable ${feature::class.simpleName}: $e") }
                 }
             }
+            DI.remove<AbyssContext>()
+            DI.remove<AbyssFeatureConfig>()
         }
     }
 }
