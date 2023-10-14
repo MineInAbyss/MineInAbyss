@@ -4,7 +4,6 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.geary.serialization.dsl.serializableComponents
 import com.mineinabyss.idofront.commands.Command
-import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
@@ -38,24 +37,6 @@ abstract class AbyssContext(
     val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
 
     val econ: Economy? = Services.getOrNull<Economy>()
-
-    val configController = config<AbyssConfig>(
-        "config", plugin.dataFolder.toPath(), AbyssConfig(), formats = ConfigFormats(
-            overrides = listOf(
-                Format(
-                    "yml", Yaml(
-                        // We autoscan in our Feature classes so need to use Geary's module.
-                        serializersModule = serializableComponents.serializers.module,
-                        configuration = YamlConfiguration(
-                            extensionDefinitionPrefix = "x-",
-                            allowAnchorsAndAliases = true,
-                        )
-                    )
-                )
-            )
-        )
-    )
-    val config: AbyssConfig by configController
 
     val miaSubcommands = mutableListOf<Command.() -> Unit>()
     val tabCompletions = mutableListOf<MineInAbyssPlugin.TabCompletion.() -> List<String>?>()

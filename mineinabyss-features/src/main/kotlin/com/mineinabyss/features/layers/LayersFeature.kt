@@ -14,8 +14,7 @@ import kotlinx.serialization.Transient
 @SerialName("layers")
 class LayersFeature : AbyssFeature, Configurable<LayersConfig> {
     @Transient
-    override val configManager = config<LayersConfig>("layers", abyss.plugin.dataFolder.toPath(), LayersConfig())
-    override val config by configManager
+    override val configManager = config("layers", abyss.plugin.dataFolder.toPath(), LayersConfig())
 
     @Transient
     val worldManager: AbyssWorldManager = SingleAbyssWorldManager(config.layers)

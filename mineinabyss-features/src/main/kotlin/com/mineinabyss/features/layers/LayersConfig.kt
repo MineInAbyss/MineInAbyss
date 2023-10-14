@@ -2,7 +2,9 @@ package com.mineinabyss.features.layers
 
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.deeperworld.services.WorldManager
+import kotlinx.serialization.Serializable
 
+@Serializable
 class LayersConfig(
     val layers: List<Layer> = listOf(),
     private val hubSectionName: String = "orth",

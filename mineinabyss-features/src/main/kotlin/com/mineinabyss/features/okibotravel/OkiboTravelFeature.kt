@@ -1,32 +1,35 @@
 package com.mineinabyss.features.okibotravel
 
+import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
+import com.mineinabyss.mineinabyss.core.Configurable
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 @SerialName("okibotravel")
-class OkiboTravelFeature : AbyssFeature {
-    private fun setupOkiboContext() {
-        DI.remove<OkiboLineContext>()
-        DI.add<OkiboLineContext>(object : OkiboLineContext {
-            override val config by config("okiboTravel", abyss.dataPath, OkiboTravelConfig())
-        })
-    }
+class OkiboTravelFeature : AbyssFeature, Configurable<OkiboTravelConfig> {
+    @Transient
+    override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
+        spawnOkiboMaps()
+        logSuccess("Okibo-Context reloaded")
+    })
 
-    override val dependsOn: Set<String>
-        get() = setOf("Train_Carts", "TCCoasters")
+    override val dependsOn = setOf("Train_Carts", "TCCoasters")
+
     override fun MineInAbyssPlugin.enableFeature() {
-        setupOkiboContext()
         listeners(OkiboTravelListener())
         spawnOkiboMaps()
 
@@ -37,13 +40,6 @@ class OkiboTravelFeature : AbyssFeature {
                         playerAction {
                             spawnOkiboMaps()
                             player.success("Okibo-Maps spawned")
-                        }
-                    }
-                    "reload" {
-                        action {
-                            setupOkiboContext()
-                            spawnOkiboMaps()
-                            sender.success("Okibo-Context reloaded")
                         }
                     }
                     val station by optionArg(okiboLine.config.allStations.map { it.name }) { default = okiboLine.config.okiboStations.first().name }

@@ -1,5 +1,7 @@
 package com.mineinabyss.plugin
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.features.guilds.database.GuildJoinQueue
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
@@ -10,15 +12,16 @@ import com.mineinabyss.geary.addons.GearyPhase
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
+import com.mineinabyss.geary.serialization.dsl.serializableComponents
+import com.mineinabyss.idofront.config.ConfigFormats
+import com.mineinabyss.idofront.config.Format
+import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.messaging.logError
 import com.mineinabyss.idofront.platforms.Platforms
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.actions
-import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.abyss
+import com.mineinabyss.mineinabyss.core.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -30,8 +33,6 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
     }
 
     override fun onEnable() = actions {
-        saveDefaultConfig()
-
         geary {
             autoscan(
                 classLoader,
@@ -47,10 +48,28 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
             on(GearyPhase.ENABLE) {
                 DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {})
 
+                val featureConfigController = config<AbyssFeatureConfig>(
+                    "config", abyss.dataPath, AbyssFeatureConfig(), formats = ConfigFormats(
+                        overrides = listOf(
+                            Format(
+                                "yml", Yaml(
+                                    // We autoscan in our Feature classes so need to use Geary's module.
+                                    serializersModule = serializableComponents.serializers.module,
+                                    configuration = YamlConfiguration(
+                                        extensionDefinitionPrefix = "x-",
+                                        allowAnchorsAndAliases = true,
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+                DI.addByDelegate<AbyssFeatureConfig> { featureConfigController.getOrLoad() }
+
                 "Registering features for DI" {
-                    abyss.config.features.forEach { DI.addByClass(it) }
+                    abyssFeatures.features.forEach { DI.addByClass(it) }
                 }
-                abyss.config.features.forEach { feature ->
+                abyssFeatures.features.forEach { feature ->
                     feature.apply {
                         val featureName = feature::class.simpleName
                         when (dependsOn.all { Plugins.isEnabled(it) }) {
@@ -88,7 +107,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
 
     override fun onDisable() = actions {
         "Disabling features" {
-            abyss.config.features.forEach {
+            abyssFeatures.features.forEach {
                 it.apply {
                     "Disabled ${it::class.simpleName}" {
                         abyss.plugin.disableFeature()

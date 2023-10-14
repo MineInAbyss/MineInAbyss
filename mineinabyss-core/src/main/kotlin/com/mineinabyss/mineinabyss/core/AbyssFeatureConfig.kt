@@ -1,7 +1,6 @@
 package com.mineinabyss.mineinabyss.core
 
-import com.mineinabyss.components.layer.Layer
-import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.idofront.di.DI
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -10,15 +9,17 @@ import org.reflections.util.ConfigurationBuilder
 import org.reflections.util.FilterBuilder
 import kotlin.reflect.full.createInstance
 
+val abyssFeatures by DI.observe<AbyssFeatureConfig>()
+
 /**
  * @param layers A list of all the layers and sections composing them to be registered.
  * @property hubSection The hub section of the abyss, a safe place for living and trading.
  * @property guilds Guild related options.
  */
 @Serializable
-class AbyssConfig(
+class AbyssFeatureConfig(
     @SerialName("features")
-    private val _features: List<AbyssFeature> = listOf(),
+    private val _features: List<AbyssFeature> = listOf(AllFeatures()),
 ) {
     private val reflections
         get() = Reflections(

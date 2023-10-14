@@ -2,6 +2,7 @@ package com.mineinabyss.features.okibotravel
 
 import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.components.okibotravel.OkiboMap
+import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
 import net.kyori.adventure.key.Key
