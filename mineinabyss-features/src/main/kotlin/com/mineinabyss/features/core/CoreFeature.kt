@@ -8,8 +8,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-@SerialName("core")
 class CoreFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {

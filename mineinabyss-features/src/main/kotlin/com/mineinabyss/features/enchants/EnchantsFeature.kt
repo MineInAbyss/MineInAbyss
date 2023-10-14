@@ -14,8 +14,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("enchants")
 class EnchantsFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         CustomEnchants.register()

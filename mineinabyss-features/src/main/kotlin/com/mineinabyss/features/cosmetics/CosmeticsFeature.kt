@@ -21,6 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.block.BlockFace
 
+//TODO config context
 @Serializable
 @SerialName("cosmetics")
 class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") : AbyssFeature {

@@ -13,8 +13,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-@SerialName("shopkeeping")
 class ShopKeepingFeature : AbyssFeature {
 
     override fun MineInAbyssPlugin.enableFeature() {

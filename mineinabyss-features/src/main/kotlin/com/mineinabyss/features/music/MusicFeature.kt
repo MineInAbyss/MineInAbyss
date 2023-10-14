@@ -10,8 +10,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-@Serializable
-@SerialName("music")
 class MusicFeature : AbyssFeature, Configurable<MusicConfig> {
     @Transient
     override val configManager = config("music", abyss.dataPath, MusicConfig())

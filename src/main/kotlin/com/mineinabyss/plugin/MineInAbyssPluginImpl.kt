@@ -29,6 +29,7 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class MineInAbyssPluginImpl : MineInAbyssPlugin() {
+
     override fun onLoad() {
         Platforms.load(this, "mineinabyss")
     }
@@ -42,81 +43,19 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                 "com.mineinabyss.mineinabyss.core"
             ) {
                 components()
-                subClassesOf<AbyssFeature>()
                 subClassesOf<AscensionEffect>()
             }
 
             on(GearyPhase.ENABLE) {
-                DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {})
-
-                val featureConfigController = config<AbyssFeatureConfig>(
-                    "config", abyss.dataPath, AbyssFeatureConfig(), formats = ConfigFormats(
-                        overrides = listOf(
-                            Format(
-                                "yml", Yaml(
-                                    // We autoscan in our Feature classes so need to use Geary's module.
-                                    serializersModule = serializableComponents.serializers.module,
-                                    configuration = YamlConfiguration(allowAnchorsAndAliases = true)
-                                )
-                            )
-                        )
-                    )
-                )
-                DI.addByDelegate<AbyssFeatureConfig> { featureConfigController.getOrLoad() }
-
-                "Registering feature contexts" {
-                    abyssFeatures.features
-                        .filterIsInstance<AbyssFeatureWithContext<*>>()
-                        .forEach {
-                            runCatching {it.createAndInjectContext() }
-                                .onFailure { e -> logError("Failed to create context for ${it::class.simpleName}: $e") }
-                        }
-                }
-                abyssFeatures.features.forEach { feature ->
-                    feature.apply {
-                        val featureName = feature::class.simpleName
-                        when (dependsOn.all { Plugins.isEnabled(it) }) {
-                            true -> "Enabled $featureName" {
-                                abyss.plugin.enableFeature()
-                            }.onFailure(Throwable::printStackTrace)
-
-                            false -> logError(
-                                "Disabled $featureName, missing dependencies: ${
-                                    dependsOn.filterNot {
-                                        Plugins.isEnabled(
-                                            it
-                                        )
-                                    }
-                                }"
-                            )
-                        }
-                    }
-                }
-
-                transaction(abyss.db) {
-                    addLogger(StdOutSqlLogger)
-
-                    SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue)
-                }
-
-                if (abyss.isPlaceholderApiLoaded) {
-                    Placeholders().register()
-                }
+                DI.add(FeatureFeature())
+                featureManager.enable(this@MineInAbyssPluginImpl)
             }
         }
 
         PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
     }
 
-    override fun onDisable() = actions {
-        "Disabling features" {
-            abyssFeatures.features.forEach {
-                it.apply {
-                    "Disabled ${it::class.simpleName}" {
-                        abyss.plugin.disableFeature()
-                    }
-                }
-            }
-        }
+    override fun onDisable() {
+        featureManager.disable(this@MineInAbyssPluginImpl)
     }
 }

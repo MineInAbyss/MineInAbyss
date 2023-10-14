@@ -18,8 +18,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-@Serializable
-@SerialName("okibotravel")
 class OkiboTravelFeature : AbyssFeature, Configurable<OkiboTravelConfig> {
     @Transient
     override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {

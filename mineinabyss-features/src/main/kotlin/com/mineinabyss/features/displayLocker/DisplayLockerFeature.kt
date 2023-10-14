@@ -17,7 +17,7 @@ import kotlinx.serialization.SerialName
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-
+//TODO context
 @kotlinx.serialization.Serializable
 @SerialName("lock_display_item")
 class DisplayLockerFeature(

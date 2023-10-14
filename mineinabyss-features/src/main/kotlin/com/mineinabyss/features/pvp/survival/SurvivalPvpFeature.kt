@@ -13,8 +13,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("survival_pvp")
 class SurvivalPvpFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         listeners(

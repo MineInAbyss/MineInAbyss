@@ -12,8 +12,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("keepinv")
+//TODO context
 class KeepInvFeature(
     val KeepInvInVoid: Boolean = true
 ) : AbyssFeature {

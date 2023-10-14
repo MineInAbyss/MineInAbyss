@@ -44,6 +44,7 @@ val guildChannel =
 const val guildChannelId: String = "Guild Chat"
 
 
+//TODO context
 @Serializable
 @SerialName("guilds")
 class GuildFeature(
@@ -53,7 +54,6 @@ class GuildFeature(
     //TODO Eventually move to a per-guild config
     val canOpenGuildMemberGraves: Boolean = true
 ) : AbyssFeature {
-
     override fun MineInAbyssPlugin.enableFeature() {
         server.pluginManager.registerSuspendingEvents(GuildListener(this@GuildFeature), this)
 
