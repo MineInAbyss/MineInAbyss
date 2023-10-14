@@ -56,15 +56,15 @@ class AbyssFeatureConfig(
 
         with(feature) {
             runCatching { abyss.plugin.disableFeature() }
-                .onSuccess { sender.success("Disabled feature $simpleClassName") }
-                .onFailure { sender.error("Failed to disable feature $simpleClassName: $it") }
+                .onSuccess { sender.success("$simpleClassName: Disabled") }
+                .onFailure { sender.error("$simpleClassName: Failed to disable, $it") }
             if (feature is AbyssFeatureWithContext<*>)
                 runCatching { feature.createAndInjectContext() }
-                    .onSuccess { sender.success("Recreated context for feature $simpleClassName") }
-                    .onFailure { sender.error("Failed to recreate context for feature $simpleClassName: $it") }
+                    .onSuccess { sender.success("$simpleClassName: Recreated context") }
+                    .onFailure { sender.error("$simpleClassName: Failed to recreate context, $it") }
             runCatching { abyss.plugin.enableFeature() }
-                .onSuccess { sender.success("Enabled feature $simpleClassName") }
-                .onFailure { sender.error("Failed to enable feature $simpleClassName: $it") }
+                .onSuccess { sender.success("$simpleClassName: Enabled") }
+                .onFailure { sender.error("$simpleClassName: Failed to enable, $it") }
         }
     }
 }
