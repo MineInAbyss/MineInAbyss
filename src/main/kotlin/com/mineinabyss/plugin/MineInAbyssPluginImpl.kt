@@ -55,10 +55,7 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                                 "yml", Yaml(
                                     // We autoscan in our Feature classes so need to use Geary's module.
                                     serializersModule = serializableComponents.serializers.module,
-                                    configuration = YamlConfiguration(
-                                        extensionDefinitionPrefix = "x-",
-                                        allowAnchorsAndAliases = true,
-                                    )
+                                    configuration = YamlConfiguration(allowAnchorsAndAliases = true)
                                 )
                             )
                         )
