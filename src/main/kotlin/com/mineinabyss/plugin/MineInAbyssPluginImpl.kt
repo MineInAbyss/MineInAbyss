@@ -18,6 +18,7 @@ import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.messaging.logError
+import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.platforms.Platforms
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.actions
@@ -63,8 +64,13 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                 )
                 DI.addByDelegate<AbyssFeatureConfig> { featureConfigController.getOrLoad() }
 
-                "Registering features for DI" {
-                    abyssFeatures.features.forEach { DI.addByClass(it) }
+                "Registering feature contexts" {
+                    abyssFeatures.features
+                        .filterIsInstance<AbyssFeatureWithContext<*>>()
+                        .forEach {
+                            runCatching {it.createAndInjectContext() }
+                                .onFailure { e -> logError("Failed to create context for ${it::class.simpleName}: $e") }
+                        }
                 }
                 abyssFeatures.features.forEach { feature ->
                     feature.apply {

@@ -1,9 +1,14 @@
 package com.mineinabyss.mineinabyss.core
 
 import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.logError
+import com.mineinabyss.idofront.messaging.logSuccess
+import com.mineinabyss.idofront.messaging.success
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.bukkit.command.CommandSender
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
 import org.reflections.util.FilterBuilder
@@ -44,4 +49,22 @@ class AbyssFeatureConfig(
         .values
         .toList()
 
+    fun reloadFeature(simpleClassName: String, sender: CommandSender) {
+        val feature = features
+            .find { it::class.simpleName == simpleClassName }
+            ?: error("Feature not found $simpleClassName")
+
+        with(feature) {
+            runCatching { abyss.plugin.disableFeature() }
+                .onSuccess { sender.success("Disabled feature $simpleClassName") }
+                .onFailure { sender.error("Failed to disable feature $simpleClassName: $it") }
+            if (feature is AbyssFeatureWithContext<*>)
+                runCatching { feature.createAndInjectContext() }
+                    .onSuccess { sender.success("Recreated context for feature $simpleClassName") }
+                    .onFailure { sender.error("Failed to recreate context for feature $simpleClassName: $it") }
+            runCatching { abyss.plugin.enableFeature() }
+                .onSuccess { sender.success("Enabled feature $simpleClassName") }
+                .onFailure { sender.error("Failed to enable feature $simpleClassName: $it") }
+        }
+    }
 }
