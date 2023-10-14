@@ -5,6 +5,7 @@ import com.mineinabyss.components.music.Song
 import com.mineinabyss.idofront.serialization.DurationSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.bukkit.SoundCategory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -21,6 +22,8 @@ class MusicConfig(
         "default" to Song(
             "mineinabyss:music.custom.layer5.beneath_the_ice",
             4.minutes,
+            SoundCategory.AMBIENT,
+            1f,1f,
             listOf("layerfive")
         )
     ),

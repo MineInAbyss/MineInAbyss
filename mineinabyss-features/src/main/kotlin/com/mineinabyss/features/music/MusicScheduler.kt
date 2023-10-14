@@ -11,7 +11,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import kotlinx.coroutines.delay
 import org.bukkit.Location
-import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
 import kotlin.time.Duration.Companion.seconds
 
@@ -62,7 +61,7 @@ object MusicScheduler {
             val recents = getOrSet { RecentlyPlayed(setOf()) }
             set(RecentlyPlayed(recents.songs + songName))
         }
-        player.playSound(player.location, song.key, SoundCategory.AMBIENT, 1f, 1f)
+        player.playSound(player, song.key, song.category, song.volume, song.pitch)
         delay(song.duration)
         if (player.isConnected) player.toGeary().remove<NowPlaying>()
     }
