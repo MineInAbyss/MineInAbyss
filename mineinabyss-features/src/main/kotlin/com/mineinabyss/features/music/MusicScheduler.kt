@@ -12,15 +12,18 @@ import com.sk89q.worldguard.WorldGuard
 import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 object MusicScheduler {
     private val conf get() = Features.music.config
     private val regionContainer = WorldGuard.getInstance().platform.regionContainer
+
     fun scheduleMusicPlaying(player: Player) {
         abyss.plugin.launch {
             while (player.isConnected) {
                 logInfo("Starting music scheduler for ${player.name}")
+                delay(chooseTimeBetween(conf.minWaitTimeOnLogin, conf.maxWaitTimeOnLogin))
                 val playable = getPlayableSongsAtLocation(player.location)
                 if (playable.isEmpty()) delay(conf.maxSongWaitTime)
                 else {
@@ -38,7 +41,7 @@ object MusicScheduler {
                     logInfo("Finished playing $song")
 
                     // Choose a random wait time as defined in config
-                    delay((conf.minSongWaitTime.inWholeSeconds..conf.maxSongWaitTime.inWholeSeconds).random().seconds)
+                    delay(chooseTimeBetween(conf.minSongWaitTime, conf.maxSongWaitTime))
                 }
             }
 
@@ -54,7 +57,7 @@ object MusicScheduler {
 
 
     suspend fun playSongIfNotPlaying(songName: String, player: Player) {
-        val song = conf.songs[songName] ?: return
+        val song = conf.songsByKey[songName] ?: return
         player.toGeary().apply {
             if (has<NowPlaying>()) return
             set(NowPlaying(song, System.currentTimeMillis()))
@@ -64,5 +67,9 @@ object MusicScheduler {
         player.playSound(player, song.key, song.category, song.volume, song.pitch)
         delay(song.duration)
         if (player.isConnected) player.toGeary().remove<NowPlaying>()
+    }
+
+    private fun chooseTimeBetween(start: Duration, end: Duration): Duration {
+        return (start.inWholeSeconds..end.inWholeSeconds).random().seconds
     }
 }

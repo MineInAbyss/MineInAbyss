@@ -1,5 +1,6 @@
 package com.mineinabyss.features.configs
 
+import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -19,7 +20,7 @@ class ConfigReloadsFeature : AbyssFeature {
         commands {
             mineinabyss {
                 "reloadConfig" {
-                    val config by stringArg()
+                    val config by optionArg(configs.keys.toList())
                     action {
                         val configurable =
                             configs[config] ?: return@action sender.error("Config not found: $config")
