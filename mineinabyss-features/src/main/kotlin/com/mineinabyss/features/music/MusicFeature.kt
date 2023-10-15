@@ -1,20 +1,22 @@
 package com.mineinabyss.features.music
 
-import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.Configurable
+import com.mineinabyss.mineinabyss.core.AbyssFeatureWithContext
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.abyss
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import org.bukkit.Bukkit
+import org.bukkit.event.HandlerList
 
-class MusicFeature : AbyssFeature, Configurable<MusicConfig> {
-    @Transient
-    override val configManager = config("music", abyss.dataPath, MusicConfig())
+class MusicFeature : AbyssFeatureWithContext<MusicContext>(MusicContext::class) {
+    override fun createContext() = MusicContext()
 
     override fun MineInAbyssPlugin.enableFeature() {
-        listeners(QueueMusicListener())
+        listeners(context.queueMusicListener)
+    }
+
+    override fun MineInAbyssPlugin.disableFeature() {
+        HandlerList.unregisterAll(context.queueMusicListener)
+        Bukkit.getServer().onlinePlayers.forEach {
+            MusicScheduler.stopSchedulingMusic(it)
+        }
     }
 }
