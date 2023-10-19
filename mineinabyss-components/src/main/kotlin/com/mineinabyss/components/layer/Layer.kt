@@ -1,6 +1,7 @@
 package com.mineinabyss.components.layer
 
 import com.mineinabyss.components.curse.AscensionEffect
+import com.mineinabyss.components.music.Song
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.deeperworld.world.section.Section
 import kotlinx.serialization.SerialName
@@ -27,9 +28,13 @@ class Layer(
     val ascensionEffects: List<AscensionEffect> = emptyList(),
     val hasPvpDefault: Boolean = false,
     val blockBlacklist: List<Material> = emptyList(),
+    @SerialName("songs")
+    val _songs: List<String> = emptyList(),
     @SerialName("sections")
     val _sections: List<String> = emptyList(),
 ) {
+    @Transient
+    val songs: List<Song> = emptyList()
     @Transient
     val sections: List<Section> = _sections.mapNotNull { WorldManager.getSectionFor(it) }
     val startDepth: Int get() = depth.start

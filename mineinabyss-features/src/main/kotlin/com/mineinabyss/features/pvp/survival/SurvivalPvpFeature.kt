@@ -8,13 +8,11 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.mineinabyss.core.AbyssFeature
 import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.layer
+import com.mineinabyss.features.helpers.layer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("survival_pvp")
 class SurvivalPvpFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         listeners(

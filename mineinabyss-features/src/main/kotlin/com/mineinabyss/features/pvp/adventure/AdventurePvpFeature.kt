@@ -12,8 +12,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-@SerialName("adventure_pvp")
 class AdventurePvpFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         listeners(

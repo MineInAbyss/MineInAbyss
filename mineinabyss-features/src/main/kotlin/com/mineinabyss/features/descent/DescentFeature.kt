@@ -11,8 +11,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-@SerialName("descent")
 class DescentFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         listeners(

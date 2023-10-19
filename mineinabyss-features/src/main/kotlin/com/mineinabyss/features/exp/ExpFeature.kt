@@ -6,8 +6,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-@SerialName("exp")
 class ExpFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         listeners(ExpListener())

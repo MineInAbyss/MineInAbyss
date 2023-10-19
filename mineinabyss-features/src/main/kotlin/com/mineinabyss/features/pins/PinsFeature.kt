@@ -14,8 +14,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("pins")
 class PinsFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         listeners(

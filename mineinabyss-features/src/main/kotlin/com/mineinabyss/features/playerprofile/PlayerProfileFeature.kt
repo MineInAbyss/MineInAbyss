@@ -10,8 +10,6 @@ import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("playerprofile")
 class PlayerProfileFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
 

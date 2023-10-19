@@ -20,8 +20,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("orth_banking")
 class OrthBankingFeature(
     val balanceHudId: String = "balance_empty_offhand",
     val balanceHudOffhandId: String = "balance_offhand",

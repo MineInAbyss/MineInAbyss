@@ -1,5 +1,7 @@
 package com.mineinabyss.plugin
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.features.guilds.database.GuildJoinQueue
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
@@ -10,28 +12,29 @@ import com.mineinabyss.geary.addons.GearyPhase
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
+import com.mineinabyss.geary.serialization.dsl.serializableComponents
+import com.mineinabyss.idofront.config.ConfigFormats
+import com.mineinabyss.idofront.config.Format
+import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.messaging.logError
+import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.platforms.Platforms
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.actions
-import com.mineinabyss.mineinabyss.core.AbyssContext
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.abyss
+import com.mineinabyss.mineinabyss.core.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class MineInAbyssPluginImpl : MineInAbyssPlugin() {
+
     override fun onLoad() {
         Platforms.load(this, "mineinabyss")
     }
 
     override fun onEnable() = actions {
-        saveDefaultConfig()
-
         geary {
             autoscan(
                 classLoader,
@@ -40,51 +43,19 @@ class MineInAbyssPluginImpl : MineInAbyssPlugin() {
                 "com.mineinabyss.mineinabyss.core"
             ) {
                 components()
-                subClassesOf<AbyssFeature>()
                 subClassesOf<AscensionEffect>()
             }
 
             on(GearyPhase.ENABLE) {
-                DI.add<AbyssContext>(object : AbyssContext(this@MineInAbyssPluginImpl) {
-                    override val worldManager = AbyssWorldManagerImpl(config.layers)
-                })
-
-                abyss.config.features.forEach { feature ->
-                    feature.apply {
-                        val featureName = feature::class.simpleName
-                        when (dependsOn.all { Plugins.isEnabled(it) }) {
-                            true -> "Enabled $featureName" {
-                                abyss.plugin.enableFeature()
-                            }.onFailure(Throwable::printStackTrace)
-                            false ->  logError("Disabled $featureName, missing dependencies: ${dependsOn.filterNot { Plugins.isEnabled(it) }}")
-                        }
-                    }
-                }
-
-                transaction(abyss.db) {
-                    addLogger(StdOutSqlLogger)
-
-                    SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue)
-                }
-
-                if (abyss.isPlaceholderApiLoaded) {
-                    Placeholders().register()
-                }
+                DI.add(FeatureFeature())
+                featureManager.enable(this@MineInAbyssPluginImpl)
             }
         }
 
         PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
     }
 
-    override fun onDisable() = actions {
-        "Disabling features" {
-            abyss.config.features.forEach {
-                it.apply {
-                    "Disabled ${it::class.simpleName}" {
-                        abyss.plugin.disableFeature()
-                    }
-                }
-            }
-        }
+    override fun onDisable() {
+        featureManager.disable(this@MineInAbyssPluginImpl)
     }
 }

@@ -13,8 +13,6 @@ import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-@SerialName("gondolas")
 class GondolaFeature : AbyssFeature {
     override fun MineInAbyssPlugin.enableFeature() {
         geary.pipeline.addSystems(

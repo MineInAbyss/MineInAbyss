@@ -17,8 +17,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
 
-@Serializable
-@SerialName("tutorial")
 class TutorialFeature : AbyssFeature {
     private fun TextDisplay.trackEntity() {
         toGearyOrNull()?.add<TutorialEntity>() ?: run {
@@ -48,7 +46,7 @@ class TutorialFeature : AbyssFeature {
     private fun setTutorialContext() {
         DI.remove<TutorialContext>()
         DI.add<TutorialContext>(object : TutorialContext {
-            override val tutorialEntities: List<TutorialEntity> by config("tutorialEntities") { abyss.plugin.fromPluginPath(loadDefault = true) }
+            override val tutorialEntities by config<List<TutorialEntity>>("tutorialEntities", abyss.dataPath, listOf())
         })
     }
 

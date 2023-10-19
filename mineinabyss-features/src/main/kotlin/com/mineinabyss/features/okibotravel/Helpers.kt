@@ -4,15 +4,10 @@ import com.bergerkiller.bukkit.tc.TrainCarts
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup
 import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions
 import com.mineinabyss.components.okibotravel.OkiboLineStation
-import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.messaging.broadcast
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
-
-val okiboLine by DI.observe<OkiboLineContext>()
-interface OkiboLineContext {
-    val config: OkiboTravelConfig
-}
 
 internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destination: OkiboLineStation) {
     val direction = station.nextStation(destination)?.location?.toVector()?.subtract(station.location.toVector())?.normalize() ?: station.location.direction
