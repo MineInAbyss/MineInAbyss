@@ -41,18 +41,23 @@ object MusicScheduler {
                     val notRecentlyPlayed = playable.filter { it !in recentlyPlayed.songs }
                     logInfo("Recently played: $recentlyPlayed")
                     logInfo("Playable: $playable")
-                    val chooseFrom = if (notRecentlyPlayed.isEmpty()) {
+                    val chooseFrom = notRecentlyPlayed.takeIf { notRecentlyPlayed.isEmpty() }?.apply {
                         player.toGeary().set(RecentlyPlayed(setOf()))
-                        notRecentlyPlayed
-                    } else playable
-                    val song = chooseFrom.random()
+                    } ?: playable
+                    val song = chooseFrom.randomOrNull()
                     logInfo("Playing $song")
-                    playSongIfNotPlaying(song, player)
 
-                    // Choose a random wait time as defined in config
-                    val wait = chooseTimeBetween(conf.minSongWaitTime, conf.maxSongWaitTime)
-                    logInfo("Finished playing $song, waiting $wait before playing another.")
-                    delay(wait)
+                    delay(song?.let {
+                        playSongIfNotPlaying(song, player)
+
+                        // Choose a random wait time as defined in config
+                        val wait = chooseTimeBetween(conf.minSongWaitTime, conf.maxSongWaitTime)
+                        logInfo("Finished playing $song, waiting $wait before playing another.")
+                        wait
+                    } ?: run {
+                        logInfo("No songs to play, waiting ${conf.maxSongWaitTime} before trying again.")
+                        conf.maxSongWaitTime
+                    })
                 }
             }
         }
