@@ -33,8 +33,8 @@ class OkiboTravelListener : Listener {
                         cost > player.playerData.orthCoinsHeld -> player.error("You do not have enough coins to travel to that station!")
                         cost == 0 -> player.error("You are already at that station!")
                         else -> {
-                            //player.playerData.orthCoinsHeld -= cost
-                            //spawnOkiboCart(player, playerStation, destination)
+                            player.playerData.orthCoinsHeld -= cost
+                            spawnOkiboCart(player, playerStation, destination)
                         }
                     }
                     return
