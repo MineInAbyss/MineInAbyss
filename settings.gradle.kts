@@ -33,7 +33,6 @@ dependencyResolutionManagement {
 }
 
 include(
-    "mineinabyss-core",
     "mineinabyss-components",
     "mineinabyss-features"
 )

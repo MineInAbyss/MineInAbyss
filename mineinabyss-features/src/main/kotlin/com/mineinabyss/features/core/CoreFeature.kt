@@ -1,19 +1,15 @@
 package com.mineinabyss.features.core
 
-import com.comphenix.protocol.ProtocolLibrary
-import com.mineinabyss.idofront.plugin.Plugins
+import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-class CoreFeature : AbyssFeature {
+class CoreFeature : Feature {
 
-    override fun MineInAbyssPlugin.enableFeature() {
+    override fun FeatureDSL.enable() {
         /*if (Plugins.isEnabled("ProtocolLib"))
             ProtocolLibrary.getProtocolManager().addPacketListener(ChestGuiPacket())*/
 
-        listeners(CoreListener(), PreventSignEditListener())
+        plugin.listeners(CoreListener(), PreventSignEditListener())
     }
 }

@@ -6,17 +6,17 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
 import com.mineinabyss.components.cosmetics.PersonalWardrobe
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.cosmeticUser
 import com.mineinabyss.features.helpers.hmcCosmetics
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.block.BlockFace
@@ -24,83 +24,86 @@ import org.bukkit.block.BlockFace
 //TODO config context
 @Serializable
 @SerialName("cosmetics")
-class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultBackpack: String = "backpack") : AbyssFeature {
+class CosmeticsFeature(
+    private val equipBackpacks: Boolean = false,
+    val defaultBackpack: String = "backpack"
+) : Feature {
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
-    override fun MineInAbyssPlugin.enableFeature() {
+    override fun FeatureDSL.enable() {
         if (!abyss.isHMCCosmeticsEnabled) return
-        listeners(CosmeticListener(this@CosmeticsFeature))
+        plugin.listeners(CosmeticListener(this@CosmeticsFeature))
         HMCCosmeticsPlugin.setup()
 
         // Makes backpacks equip/unequipable via player interaction
         // Make sure everything works before enabling it
         if (equipBackpacks)
-            listeners(CosmeticListener(this@CosmeticsFeature), VendorListener())
+            plugin.listeners(CosmeticListener(this@CosmeticsFeature), VendorListener())
 
-        commands {
-            mineinabyss {
-                "cosmetics" {
-                    "wardrobe" {
-                        "personal" {
-                            //TODO Add distance checks for difference between existing, non-null locations, and set locations
-                            "viewer" {
-                                playerAction {
-                                    player.toGeary().let {
-                                        val wardrobe = it.get<PersonalWardrobe>()
-                                        it.setPersisting(
-                                            PersonalWardrobe(
-                                                player.location,
-                                                wardrobe?.npcLocation,
-                                                wardrobe?.leaveLocation
-                                            )
+        mainCommand {
+            "cosmetics" {
+                "wardrobe" {
+                    "personal" {
+                        //TODO Add distance checks for difference between existing, non-null locations, and set locations
+                        "viewer" {
+                            playerAction {
+                                player.toGeary().let {
+                                    val wardrobe = it.get<PersonalWardrobe>()
+                                    it.setPersisting(
+                                        PersonalWardrobe(
+                                            player.location,
+                                            wardrobe?.npcLocation,
+                                            wardrobe?.leaveLocation
                                         )
-                                    }
-                                    player.success("Set viewer-location for Personal Wardrobe")
+                                    )
                                 }
-                            }
-                            "leave" {
-                                playerAction {
-                                    player.toGeary().let {
-                                        val wardrobe = it.get<PersonalWardrobe>()
-                                        it.setPersisting(
-                                            PersonalWardrobe(
-                                                wardrobe?.viewerLocation,
-                                                wardrobe?.npcLocation,
-                                                player.location
-                                            )
-                                        )
-                                    }
-                                    player.success("Set leave-location for Personal Wardrobe")
-                                }
-                            }
-                            "npc" {
-                                playerAction {
-                                    player.toGeary().let {
-                                        val wardrobe = it.get<PersonalWardrobe>()
-                                        it.setPersisting(
-                                            PersonalWardrobe(
-                                                wardrobe?.viewerLocation,
-                                                player.location,
-                                                wardrobe?.leaveLocation
-                                            )
-                                        )
-                                    }
-                                    player.success("Set location of NPC for Personal Wardrobe")
-                                }
+                                player.success("Set viewer-location for Personal Wardrobe")
                             }
                         }
-                        "open" {
+                        "leave" {
                             playerAction {
-                                player.toGeary().get<PersonalWardrobe>()?.let {
-                                    val wardrobe = Wardrobe(
-                                        player.uniqueId.toString(),
-                                        it.wardrobeLocation,
-                                        "mineinabyss.cosmetics.wardrobe",
-                                        10
+                                player.toGeary().let {
+                                    val wardrobe = it.get<PersonalWardrobe>()
+                                    it.setPersisting(
+                                        PersonalWardrobe(
+                                            wardrobe?.viewerLocation,
+                                            wardrobe?.npcLocation,
+                                            player.location
+                                        )
                                     )
-                                    player.cosmeticUser?.enterWardrobe(false, wardrobe)
-                                } ?: run {
-                                    val wardrobe =
-                                        Wardrobe(player.uniqueId.toString(), PersonalWardrobe(player.location.clone(),
+                                }
+                                player.success("Set leave-location for Personal Wardrobe")
+                            }
+                        }
+                        "npc" {
+                            playerAction {
+                                player.toGeary().let {
+                                    val wardrobe = it.get<PersonalWardrobe>()
+                                    it.setPersisting(
+                                        PersonalWardrobe(
+                                            wardrobe?.viewerLocation,
+                                            player.location,
+                                            wardrobe?.leaveLocation
+                                        )
+                                    )
+                                }
+                                player.success("Set location of NPC for Personal Wardrobe")
+                            }
+                        }
+                    }
+                    "open" {
+                        playerAction {
+                            player.toGeary().get<PersonalWardrobe>()?.let {
+                                val wardrobe = Wardrobe(
+                                    player.uniqueId.toString(),
+                                    it.wardrobeLocation,
+                                    "mineinabyss.cosmetics.wardrobe",
+                                    10
+                                )
+                                player.cosmeticUser?.enterWardrobe(false, wardrobe)
+                            } ?: run {
+                                val wardrobe =
+                                    Wardrobe(
+                                        player.uniqueId.toString(), PersonalWardrobe(player.location.clone(),
                                             player.location.clone().apply {
                                                 when (player.facing) {
                                                     BlockFace.NORTH -> yaw = 180f
@@ -118,60 +121,58 @@ class CosmeticsFeature(private val equipBackpacks: Boolean = false, val defaultB
                                                     player.facing.name.startsWith("EAST") -> x += 5
                                                 }
                                                 pitch = 0f
-                                            }).wardrobeLocation
-                                            , "mineinabyss.cosmetics.wardrobe", 10
-                                        )
-                                    player.cosmeticUser?.enterWardrobe(false, wardrobe)
-                                }
+                                            }).wardrobeLocation, "mineinabyss.cosmetics.wardrobe", 10
+                                    )
+                                player.cosmeticUser?.enterWardrobe(false, wardrobe)
+                            }
 
-                            }
                         }
                     }
-                    "menu" {
-                        playerAction {
-                            if (hmcCosmetics.isEnabled)
-                                Menus.getDefaultMenu().openMenu(player.cosmeticUser)
-                        }
+                }
+                "menu" {
+                    playerAction {
+                        if (hmcCosmetics.isEnabled)
+                            Menus.getDefaultMenu().openMenu(player.cosmeticUser)
                     }
-                    "dye" {
-                        val cosmeticSlot by optionArg(CosmeticSlot.values().map { it.name })
-                        playerAction {
-                            player.cosmeticUser?.let { user ->
-                                user.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot))?.let { cosmetic ->
-                                    DyeMenu.openMenu(user, cosmetic)
-                                } ?: player.error("You do not have any cosmetic to dye")
-                            }
+                }
+                "dye" {
+                    val cosmeticSlot by optionArg(CosmeticSlot.values().map { it.name })
+                    playerAction {
+                        player.cosmeticUser?.let { user ->
+                            user.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot))?.let { cosmetic ->
+                                DyeMenu.openMenu(user, cosmetic)
+                            } ?: player.error("You do not have any cosmetic to dye")
                         }
                     }
                 }
             }
-            tabCompletion {
-                when (args.size) {
-                    1 -> listOf("cosmetics").filter { it.startsWith(args[0]) }
-                    2 -> {
-                        when (args[0]) {
-                            "cosmetics" -> listOf("menu", "wardrobe", "dye").filter { it.startsWith(args[1]) }
-                            else -> listOf()
-                        }
+        }
+        tabCompletion {
+            when (args.size) {
+                1 -> listOf("cosmetics").filter { it.startsWith(args[0]) }
+                2 -> {
+                    when (args[0]) {
+                        "cosmetics" -> listOf("menu", "wardrobe", "dye").filter { it.startsWith(args[1]) }
+                        else -> listOf()
                     }
-
-                    3 -> {
-                        when (args[1]) {
-                            "wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
-                            "dye" -> CosmeticSlot.values().map { it.name }.filter { it.uppercase().startsWith(args[2]) }
-                            else -> listOf()
-                        }
-                    }
-
-                    4 -> {
-                        when (args[2]) {
-                            "personal" -> listOf("leave", "npc", "viewer").filter { it.startsWith(args[3]) }
-                            else -> listOf()
-                        }
-                    }
-
-                    else -> listOf()
                 }
+
+                3 -> {
+                    when (args[1]) {
+                        "wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
+                        "dye" -> CosmeticSlot.values().map { it.name }.filter { it.uppercase().startsWith(args[2]) }
+                        else -> listOf()
+                    }
+                }
+
+                4 -> {
+                    when (args[2]) {
+                        "personal" -> listOf("leave", "npc", "viewer").filter { it.startsWith(args[3]) }
+                        else -> listOf()
+                    }
+                }
+
+                else -> listOf()
             }
         }
     }

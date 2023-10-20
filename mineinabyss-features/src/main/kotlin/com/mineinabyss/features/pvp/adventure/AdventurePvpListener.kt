@@ -5,7 +5,6 @@ import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.pvp.PvpPrompt
 import com.mineinabyss.guiy.inventory.guiy
-import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 

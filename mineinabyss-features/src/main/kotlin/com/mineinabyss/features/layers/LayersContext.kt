@@ -2,12 +2,12 @@ package com.mineinabyss.features.layers
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.serialization.dsl.serializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
-import com.mineinabyss.mineinabyss.core.Configurable
-import com.mineinabyss.mineinabyss.core.abyss
+import com.mineinabyss.idofront.features.Configurable
 
 class LayersContext: Configurable<LayersConfig> {
     override val configManager = config(

@@ -1,20 +1,19 @@
-package com.mineinabyss.mineinabyss.core
+package com.mineinabyss.features
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.geary.serialization.dsl.serializableComponents
-import com.mineinabyss.idofront.commands.Command
-import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
+import com.mineinabyss.idofront.features.Configurable
+import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.plugin.Services
 import github.scarsz.discordsrv.DiscordSRV
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
-import org.bukkit.command.CommandSender
-import org.bukkit.command.TabCompleter
+import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import java.nio.file.Path
 
@@ -23,10 +22,28 @@ import java.nio.file.Path
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 val abyss by DI.observe<AbyssContext>()
 
-abstract class AbyssContext(
-    val plugin: MineInAbyssPlugin,
-) {
+class AbyssContext(
+    override val plugin: JavaPlugin,
+) : FeatureDSL(mainCommandProvider = { ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss") { } }),
+    Configurable<AbyssFeatureConfig> {
     val dataPath: Path = plugin.dataFolder.toPath()
+
+    override val configManager = config<AbyssFeatureConfig>(
+        "config", dataPath, AbyssFeatureConfig(), formats = ConfigFormats(
+            overrides = listOf(
+                Format(
+                    "yml", Yaml(
+                        // We autoscan in our Feature classes so need to use Geary's module.
+                        serializersModule = serializableComponents.serializers.module,
+                        configuration = YamlConfiguration(allowAnchorsAndAliases = true)
+                    )
+                )
+            )
+        )
+    )
+
+    override val features get() = config.features
+
 
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isGSitLoaded get() = plugin.server.pluginManager.isPluginEnabled("GSit")
@@ -38,26 +55,5 @@ abstract class AbyssContext(
 
     val econ: Economy? = Services.getOrNull<Economy>()
 
-    val miaSubcommands = mutableListOf<Command.() -> Unit>()
-    val tabCompletions = mutableListOf<MineInAbyssPlugin.TabCompletion.() -> List<String>?>()
     val db = Database.connect("jdbc:sqlite:" + plugin.dataFolder.path + "/data.db", "org.sqlite.JDBC")
-
-
-    val commandExecutor: IdofrontCommandExecutor = object : IdofrontCommandExecutor(), TabCompleter {
-        override val commands = commands(plugin) {
-            ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss") {
-                miaSubcommands.forEach { it() }
-            }
-        }
-
-        override fun onTabComplete(
-            sender: CommandSender,
-            command: org.bukkit.command.Command,
-            alias: String,
-            args: Array<String>
-        ): List<String> {
-            val tab = MineInAbyssPlugin.TabCompletion(sender, command, alias, args)
-            return tabCompletions.mapNotNull { it(tab) }.flatten()
-        }
-    }
 }

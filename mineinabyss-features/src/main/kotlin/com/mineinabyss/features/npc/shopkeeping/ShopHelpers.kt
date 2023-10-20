@@ -3,6 +3,7 @@ package com.mineinabyss.features.npc.shopkeeping
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.npc.shopkeeping.*
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.features.helpers.ui.composables.Button
@@ -16,7 +17,6 @@ import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.serialization.Serializable
 import net.luckperms.api.node.Node
 import org.bukkit.Sound

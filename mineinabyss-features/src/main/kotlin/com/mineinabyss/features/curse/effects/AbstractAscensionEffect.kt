@@ -2,8 +2,8 @@ package com.mineinabyss.features.curse.effects
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.curse.AscensionEffect
+import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.entities.toPlayer
-import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player

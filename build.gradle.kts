@@ -47,6 +47,7 @@ allprojects {
 
         // Shaded
         implementation(libs.bundles.idofront.core)
+        implementation(libs.idofront.features)
         implementation(libs.idofront.nms)
 
         // Geary platform
@@ -97,6 +98,6 @@ allprojects {
 
 dependencies {
     // Shaded
-    implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
+    api(project(":mineinabyss-components"))
 }

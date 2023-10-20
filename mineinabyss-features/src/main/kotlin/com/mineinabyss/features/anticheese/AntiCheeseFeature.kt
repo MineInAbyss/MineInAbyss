@@ -1,15 +1,13 @@
 package com.mineinabyss.features.anticheese
 
+import com.mineinabyss.features.abyss
+import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import com.mineinabyss.mineinabyss.core.abyss
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-class AntiCheeseFeature : AbyssFeature {
-    override fun MineInAbyssPlugin.enableFeature() {
-        if (abyss.isGSitLoaded) listeners(GSitListener())
-        listeners(AntiCheeseListener())
+class AntiCheeseFeature : Feature {
+    override fun FeatureDSL.enable() {
+        if (abyss.isGSitLoaded) plugin.listeners(GSitListener())
+        plugin.listeners(AntiCheeseListener())
     }
 }

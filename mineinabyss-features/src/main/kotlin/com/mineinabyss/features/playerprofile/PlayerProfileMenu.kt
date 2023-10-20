@@ -3,6 +3,7 @@ package com.mineinabyss.features.playerprofile
 import androidx.compose.runtime.*
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
 import com.mineinabyss.features.helpers.*
@@ -18,7 +19,6 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.mineinabyss.core.abyss
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor

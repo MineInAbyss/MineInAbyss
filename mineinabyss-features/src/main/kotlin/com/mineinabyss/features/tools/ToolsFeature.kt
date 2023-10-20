@@ -1,7 +1,5 @@
 package com.mineinabyss.features.tools
 
-import com.mineinabyss.features.relics.ToggleStarCompassHud
-import com.mineinabyss.features.relics.ToggleStarCompassHudSystem
 import com.mineinabyss.features.tools.depthmeter.DepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.ToggleDepthHudSystem
@@ -11,22 +9,18 @@ import com.mineinabyss.features.tools.sickle.HarvestListener
 import com.mineinabyss.features.tools.sickle.SickleListener
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-class ToolsFeature : AbyssFeature {
+class ToolsFeature : Feature {
     override val dependsOn: Set<String> = setOf("DeeperWorld")
-    override fun MineInAbyssPlugin.enableFeature() {
-        commands {
-            mineinabyss {
-                "depth" {
-                    playerAction {
-                        ShowDepthSystem().run {
-                            player.sendDepthMessage()
-                        }
+    override fun FeatureDSL.enable() {
+        mainCommand {
+            "depth" {
+                playerAction {
+                    ShowDepthSystem().run {
+                        player.sendDepthMessage()
                     }
                 }
             }
@@ -38,6 +32,6 @@ class ToolsFeature : AbyssFeature {
             HarvestListener(),
             GearyHookListener()
         )
-        listeners(SickleListener(), GrapplingHookListener())
+        plugin.listeners(SickleListener(), GrapplingHookListener())
     }
 }

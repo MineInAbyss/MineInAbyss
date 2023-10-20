@@ -10,9 +10,9 @@ import com.mineinabyss.components.tools.grappling.hookMap
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.world.section.inSectionTransition
+import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import org.bukkit.Bukkit

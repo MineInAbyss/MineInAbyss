@@ -4,10 +4,10 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.music.NowPlaying
 import com.mineinabyss.components.music.RecentlyPlayed
 import com.mineinabyss.components.music.ScheduledMusicJob
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.logInfo
-import com.mineinabyss.mineinabyss.core.abyss
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import kotlinx.coroutines.delay

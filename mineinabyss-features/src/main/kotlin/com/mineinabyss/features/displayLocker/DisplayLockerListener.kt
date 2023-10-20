@@ -3,6 +3,7 @@ package com.mineinabyss.features.displayLocker
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.displaylocker.lockedDisplay
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
@@ -34,7 +35,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 
 
-class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listener {
+class DisplayLockerListener : Listener {
     @EventHandler
     fun HangingPlaceEvent.onPlaceItemFrame() {
         val (frame, player) = (entity as? ItemFrame ?: return) to (player ?: return)
@@ -75,7 +76,7 @@ class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listene
         player.playSound(newLocation, Sound.ENTITY_ARMOR_STAND_PLACE, 1f, 1f)
 
         when (lockState) {
-            true ->  player.success("This Armor Stand is now protected!")
+            true -> player.success("This Armor Stand is now protected!")
             false -> player.error("Use <b>/mia lock toggle</b> to protect this Armor Stand.")
         }
     }
@@ -87,7 +88,7 @@ class DisplayLockerListener(private val feature: DisplayLockerFeature) : Listene
         if (rightClicked !is ArmorStand) return
         if (armorStand.owner == player.uniqueId && player.isSneaking)
             player.playerData.recentInteractEntity = rightClicked.uniqueId
-        if (!armorStand.lockState || player.uniqueId in armorStand.allowedAccess || player.hasPermission(feature.bypassPermission)) return
+        if (!armorStand.lockState || player.uniqueId in armorStand.allowedAccess || player.hasPermission(Features.displayLocker.config.bypassPermission)) return
 
         player.error("You do not have access to interact with this ${rightClicked.name}!")
         isCancelled = true

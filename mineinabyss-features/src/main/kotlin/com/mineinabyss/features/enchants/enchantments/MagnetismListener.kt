@@ -1,9 +1,9 @@
 package com.mineinabyss.features.enchants.enchantments
 
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.enchants.CustomEnchants.MAGNETISM
 import com.mineinabyss.idofront.time.ticks
-import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.delay
 import org.bukkit.entity.Item
 import org.bukkit.event.EventHandler

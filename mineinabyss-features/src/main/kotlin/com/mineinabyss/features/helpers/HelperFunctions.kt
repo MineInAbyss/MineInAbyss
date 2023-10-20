@@ -1,10 +1,10 @@
 package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.discordSRV
 import com.mineinabyss.geary.papermc.tracking.items.gearyItems
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.mineinabyss.core.discordSRV
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.luckperms.api.LuckPermsProvider

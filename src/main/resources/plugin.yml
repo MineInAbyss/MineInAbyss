@@ -1,7 +1,7 @@
 name: MineInAbyss
 version: ${plugin_version}
 author: Derongan
-main: com.mineinabyss.plugin.MineInAbyssPluginImpl
+main: com.mineinabyss.plugin.MineInAbyssPlugin
 api-version: "1.20"
 depend: [ Geary, DeeperWorld, Guiy ]
 softdepend: [ Vault, Multiverse-Core, HMCCosmetics, GSit, DiscordSRV, Chatty, ModelEngine, EternalFortune, Train_Carts, TCCoasters ]

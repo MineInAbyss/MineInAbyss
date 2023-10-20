@@ -2,7 +2,6 @@ package com.mineinabyss.features
 
 import com.charleskorn.kaml.YamlComment
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
-import com.mineinabyss.features.configs.ConfigReloadsFeature
 import com.mineinabyss.features.core.CoreFeature
 import com.mineinabyss.features.cosmetics.CosmeticsFeature
 import com.mineinabyss.features.curse.CurseFeature
@@ -29,15 +28,8 @@ import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
 import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.AbyssFeatureWithContext
-import com.mineinabyss.mineinabyss.core.abyss
-import kotlinx.serialization.EncodeDefault
+import com.mineinabyss.idofront.features.Feature
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import org.bukkit.command.CommandSender
 
 val abyssFeatures by DI.observe<AbyssFeatureConfig>()
 
@@ -57,7 +49,7 @@ class AbyssFeatureConfig(
     val cosmetics: Boolean = false,
     val curse: Boolean = false,
     val descent: Boolean = false,
-    val displayLocker: Boolean = false,
+    val displayLocker: DisplayLockerFeature.Config = DisplayLockerFeature.Config(),
     val enchants: Boolean = false,
     val exp: Boolean = false,
     val gondolas: Boolean = false,
@@ -79,56 +71,37 @@ class AbyssFeatureConfig(
     val tools: Boolean = false,
     val tutorial: Boolean = false,
 ) {
-    @Transient
-    val features = buildList<AbyssFeature> {
-        fun add(condition: Boolean, feature: () -> AbyssFeature) {
-            if (enableAll || condition) add(feature())
-        }
-        add(antiCheese) { AntiCheeseFeature() }
-        add(configManagement) { ConfigReloadsFeature() }
-        add(core) { CoreFeature() }
-        add(cosmetics) { CosmeticsFeature() }
-        add(curse) { CurseFeature() }
-        add(descent) { DescentFeature() }
-        add(displayLocker) { DisplayLockerFeature() }
-        add(enchants) { EnchantsFeature() }
-        add(exp) { ExpFeature() }
-        add(gondolas) { GondolaFeature() }
-        add(guilds) { GuildFeature() }
-        add(hubstorage) { HubStorageFeature() }
-        add(keepInventory) { KeepInvFeature() }
-        add(layers) { LayersFeature() }
-        add(misc) { MiscFeature() }
-        add(music) { MusicFeature() }
-        add(shopkeeping) { ShopKeepingFeature() }
-        add(okiboTravel) { OkiboTravelFeature() }
-        add(orthBanking) { OrthBankingFeature() }
-        add(patreons) { PatreonFeature() }
-        add(pins) { PinsFeature() }
-        add(playerProfile) { PlayerProfileFeature() }
-        add(survivalPvp) { SurvivalPvpFeature() }
-        add(adventurePvp) { AdventurePvpFeature() }
-        add(relics) { RelicsFeature() }
-        add(tools) { ToolsFeature() }
-        add(tutorial) { TutorialFeature() }
-    }
-
-    fun reloadFeature(simpleClassName: String, sender: CommandSender) {
-        val feature = features
-            .find { it::class.simpleName == simpleClassName }
-            ?: error("Feature not found $simpleClassName")
-
-        with(feature) {
-            runCatching { abyss.plugin.disableFeature() }
-                .onSuccess { sender.success("$simpleClassName: Disabled") }
-                .onFailure { sender.error("$simpleClassName: Failed to disable, $it") }
-            if (feature is AbyssFeatureWithContext<*>)
-                runCatching { feature.createAndInjectContext() }
-                    .onSuccess { sender.success("$simpleClassName: Recreated context") }
-                    .onFailure { sender.error("$simpleClassName: Failed to recreate context, $it") }
-            runCatching { abyss.plugin.enableFeature() }
-                .onSuccess { sender.success("$simpleClassName: Enabled") }
-                .onFailure { sender.error("$simpleClassName: Failed to enable, $it") }
+    val features by lazy {
+        buildList<Feature> {
+            fun add(condition: Boolean, feature: () -> Feature) {
+                if (enableAll || condition) add(feature())
+            }
+            add(antiCheese) { AntiCheeseFeature() }
+            add(core) { CoreFeature() }
+            add(cosmetics) { CosmeticsFeature() }
+            add(curse) { CurseFeature() }
+            add(descent) { DescentFeature() }
+            add(displayLocker.enabled) { DisplayLockerFeature(displayLocker) }
+            add(enchants) { EnchantsFeature() }
+            add(exp) { ExpFeature() }
+            add(gondolas) { GondolaFeature() }
+            add(guilds) { GuildFeature() }
+            add(hubstorage) { HubStorageFeature() }
+            add(keepInventory) { KeepInvFeature() }
+            add(layers) { LayersFeature() }
+            add(misc) { MiscFeature() }
+            add(music) { MusicFeature() }
+            add(shopkeeping) { ShopKeepingFeature() }
+            add(okiboTravel) { OkiboTravelFeature() }
+            add(orthBanking) { OrthBankingFeature() }
+            add(patreons) { PatreonFeature() }
+            add(pins) { PinsFeature() }
+            add(playerProfile) { PlayerProfileFeature() }
+            add(survivalPvp) { SurvivalPvpFeature() }
+            add(adventurePvp) { AdventurePvpFeature() }
+            add(relics) { RelicsFeature() }
+            add(tools) { ToolsFeature() }
+            add(tutorial) { TutorialFeature() }
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.mineinabyss.features.music
 
+import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.config.config
-import com.mineinabyss.mineinabyss.core.Configurable
-import com.mineinabyss.mineinabyss.core.abyss
+import com.mineinabyss.idofront.features.Configurable
 
 class MusicContext : Configurable<MusicConfig> {
     override val configManager = config("music", abyss.dataPath, MusicConfig())

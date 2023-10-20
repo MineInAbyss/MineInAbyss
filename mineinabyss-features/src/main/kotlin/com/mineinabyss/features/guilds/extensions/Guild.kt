@@ -5,6 +5,7 @@ import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
@@ -14,7 +15,6 @@ import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
