@@ -4,7 +4,6 @@ import com.destroystokyo.paper.MaterialTags
 import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticPostEquipEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType
 import com.mineinabyss.components.cosmetics.BackpackStorage
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
@@ -12,7 +11,6 @@ import com.mineinabyss.features.helpers.equipCosmeticBackPack
 import com.mineinabyss.features.helpers.isInventoryFull
 import com.mineinabyss.features.helpers.unequipCosmeticBackpack
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.event.Event
@@ -20,7 +18,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
 
-class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
+class CosmeticListener(private val config: CosmeticsFeature.Config) : Listener {
 
     @EventHandler
     fun PlayerCosmeticPostEquipEvent.onEquipBackpack() {
@@ -46,7 +44,7 @@ class CosmeticListener(private val feature: CosmeticsFeature) : Listener {
             }
 
             !item.type.isAir && MaterialTags.SHULKER_BOXES.isTagged(item) && !gearyPlayer.has<BackpackStorage>() -> {
-                val backpackId = Cosmetics.getCosmetic(player.cosmeticComponent.cosmeticBackpack)?.id ?: player.cosmeticComponent.cosmeticBackpack ?: feature.defaultBackpack
+                val backpackId = Cosmetics.getCosmetic(player.cosmeticComponent.cosmeticBackpack)?.id ?: player.cosmeticComponent.cosmeticBackpack ?: config.defaultBackpack
                 gearyPlayer.setPersisting(player.cosmeticComponent.copy(cosmeticBackpack = backpackId))
 
                 gearyPlayer.setPersisting(BackpackStorage(item.clone()))

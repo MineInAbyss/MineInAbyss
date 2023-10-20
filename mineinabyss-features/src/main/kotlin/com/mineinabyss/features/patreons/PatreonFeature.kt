@@ -19,7 +19,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.serialization.ItemStackSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.node.types.PrefixNode
@@ -30,12 +29,13 @@ import org.bukkit.inventory.ItemStack
 import java.time.Month
 import java.util.*
 
-//TODO context
-@Serializable
-@SerialName("patreon")
-class PatreonFeature(
-    private val token: @Serializable(ItemStackSerializer::class) ItemStack? = CoinFactory.mittyToken
-) : Feature {
+class PatreonFeature(val config: Config) : Feature {
+    @Serializable
+    class Config(
+        val enabled: Boolean = false,
+        val token: @Serializable(ItemStackSerializer::class) ItemStack? = CoinFactory.mittyToken
+    )
+
     override fun FeatureDSL.enable() {
         plugin.listeners(PatreonListener())
 
@@ -44,7 +44,7 @@ class PatreonFeature(
                 ("token" / "kit")(desc = "Redeem kit") {
                     playerAction {
                         val player = sender as Player
-                        if (token == null) return@playerAction
+                        if (config.token == null) return@playerAction
                         if (player.toGeary().get<Patreon>()?.tier == 0) {
                             player.error("This command is only for Patreon supporters!")
                             return@playerAction
@@ -63,8 +63,8 @@ class PatreonFeature(
                             return@playerAction
                         }
 
-                        token.amount = patreon.tier
-                        player.inventory.addItem(token)
+                        config.token.amount = patreon.tier
+                        player.inventory.addItem(config.token)
                         player.toGeary().setPersisting(patreon.copy(kitUsedMonth = month))
                     }
                 }

@@ -8,14 +8,18 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-//TODO context
-class KeepInvFeature(
-    val KeepInvInVoid: Boolean = true
-) : Feature {
+class KeepInvFeature(val config: Config) : Feature {
+    @Serializable
+    class Config {
+        val enabled = true
+        val keepInvInVoid: Boolean = true
+    }
+
     override fun FeatureDSL.enable() {
-        plugin.listeners(KeepInvListener(this@KeepInvFeature))
+        plugin.listeners(KeepInvListener(config))
 
         mainCommand {
             "keepinv"(desc = "Commands to toggle keepinventory status") {

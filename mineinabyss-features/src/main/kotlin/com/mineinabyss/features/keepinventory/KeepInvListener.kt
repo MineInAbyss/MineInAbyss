@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.world.WorldLoadEvent
 
-class KeepInvListener(private val feature: KeepInvFeature) : Listener {
+class KeepInvListener(private val config: KeepInvFeature.Config) : Listener {
     // Force keepinv to be false
     @EventHandler
     fun WorldLoadEvent.onWorldLoad() {
@@ -18,7 +18,7 @@ class KeepInvListener(private val feature: KeepInvFeature) : Listener {
 
     @EventHandler
     fun PlayerDeathEvent.optionalKeepInventory() {
-        if ((feature.KeepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
+        if ((config.keepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
             player.playerData.keepInvStatus) {
             keepInventory = true
             keepLevel = true
@@ -30,7 +30,7 @@ class KeepInvListener(private val feature: KeepInvFeature) : Listener {
 
     @EventHandler
     fun PlayerCreateGraveEvent.onCreateGrave() {
-        if ((feature.KeepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
+        if ((config.keepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
             player.playerData.keepInvStatus) {
             isCancelled = true
         }

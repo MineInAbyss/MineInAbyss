@@ -21,7 +21,7 @@ interface TutorialContext {
 
 @Serializable
 @SerialName("mineinabyss:tutorial_entity")
-data class TutorialEntity(
+data class TutorialEntity constructor(
     val location: @Serializable(LocationSerializer::class) Location,
     val text: String,
     @EncodeDefault(NEVER) val backgroundColor: @Serializable(ColorSerializer::class) Color = Color.fromARGB(0, 0, 0, 0),

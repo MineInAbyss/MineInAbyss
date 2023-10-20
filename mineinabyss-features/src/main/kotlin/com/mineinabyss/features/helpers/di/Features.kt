@@ -1,6 +1,7 @@
 package com.mineinabyss.features.helpers.di
 
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
+import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.layers.LayersContext
 import com.mineinabyss.features.music.MusicContext
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
@@ -11,4 +12,5 @@ object Features {
     val okiboLine: OkiboTravelFeature.Context by DI.observe()
     val music: MusicContext by DI.observe()
     val displayLocker: DisplayLockerFeature.Context by DI.observe()
+    val guilds: GuildFeature.Context by DI.observe()
 }

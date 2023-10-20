@@ -17,13 +17,15 @@ import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.config.config
+import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
-import kotlinx.serialization.SerialName
+import com.mineinabyss.idofront.plugin.unregisterListeners
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Bukkit
@@ -44,18 +46,27 @@ val guildChannel =
 const val guildChannelId: String = "Guild Chat"
 
 
-//TODO context
-@Serializable
-@SerialName("guilds")
-class GuildFeature(
-    private val guildChattyChannel: ChattyConfig.ChattyChannel = guildChannel,
-    val guildNameMaxLength: Int = 20,
-    val guildNameBannedWords: List<String> = emptyList(),
-    //TODO Eventually move to a per-guild config
-    val canOpenGuildMemberGraves: Boolean = true
-) : Feature {
+class GuildFeature(val config: Config) : FeatureWithContext<GuildFeature.Context>(::Context) {
+    @Serializable
+    class Config {
+        val enabled = false
+        val guildChattyChannel: ChattyConfig.ChattyChannel = guildChannel
+        val guildNameMaxLength: Int = 20
+        val guildNameBannedWords: List<String> = emptyList()
+        //TODO Eventually move to a per-guild config
+        val canOpenGuildMemberGraves: Boolean = true
+    }
+
+    class Context: Configurable<Config> {
+        override val configManager = config("guilds", abyss.dataPath, Config())
+        val listeners = buildList {
+            if(abyss.isChattyLoaded) add(ChattyGuildListener())
+        }.toTypedArray()
+    }
+
     override fun FeatureDSL.enable() {
-        plugin.server.pluginManager.registerSuspendingEvents(GuildListener(this@GuildFeature), plugin)
+        plugin.server.pluginManager.registerSuspendingEvents(GuildListener(), plugin)
+        plugin.listeners(*context.listeners)
 
         if (DeeperContext.isBlockLockerLoaded) {
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
@@ -65,10 +76,9 @@ class GuildFeature(
             getAllGuilds().forEach {
                 chatty.config.channels.putIfAbsent(
                     "${it.guildName} $guildChannelId",
-                    this@GuildFeature.guildChattyChannel
+                    config.guildChattyChannel
                 )
             }
-            plugin.listeners(ChattyGuildListener())
         }
 
         // Generate the guild-list
@@ -129,7 +139,7 @@ class GuildFeature(
                             val name = player.getGuildName()
                             chatty.config.channels.putIfAbsent(
                                 "$name $guildChannelId",
-                                this@GuildFeature.guildChattyChannel
+                                config.guildChattyChannel
                             )
                             player.swapChannelCommand("$name $guildChannelId")
                         } else player.error("You cannot use guild chat without a guild")
@@ -137,7 +147,7 @@ class GuildFeature(
                 }
                 "menu"(desc = "Open Guild Menu") {
                     playerAction {
-                        guiy { GuildMainMenu(player, this@GuildFeature, true) }
+                        guiy { GuildMainMenu(player, true) }
                     }
                 }
                 "admin" {
@@ -318,5 +328,9 @@ class GuildFeature(
                 else -> null
             }
         }
+    }
+
+    override fun FeatureDSL.disable() {
+        plugin.unregisterListeners(*context.listeners)
     }
 }

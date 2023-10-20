@@ -17,27 +17,27 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.block.BlockFace
 
-//TODO config context
-@Serializable
-@SerialName("cosmetics")
-class CosmeticsFeature(
-    private val equipBackpacks: Boolean = false,
-    val defaultBackpack: String = "backpack"
-) : Feature {
+class CosmeticsFeature(val config: Config) : Feature {
+    @Serializable
+    class Config {
+        val enabled = false
+        val equipBackpacks: Boolean = false
+        val defaultBackpack: String = "backpack"
+    }
+
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
         if (!abyss.isHMCCosmeticsEnabled) return
-        plugin.listeners(CosmeticListener(this@CosmeticsFeature))
+        plugin.listeners(CosmeticListener(config))
         HMCCosmeticsPlugin.setup()
 
         // Makes backpacks equip/unequipable via player interaction
         // Make sure everything works before enabling it
-        if (equipBackpacks)
-            plugin.listeners(CosmeticListener(this@CosmeticsFeature), VendorListener())
+        if (config.equipBackpacks)
+            plugin.listeners(VendorListener())
 
         mainCommand {
             "cosmetics" {

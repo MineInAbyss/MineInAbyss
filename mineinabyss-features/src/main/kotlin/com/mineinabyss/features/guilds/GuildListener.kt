@@ -16,6 +16,7 @@ import com.mineinabyss.features.guilds.extensions.getGuildName
 import com.mineinabyss.features.guilds.extensions.getGuildRank
 import com.mineinabyss.features.guilds.extensions.hasGuild
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
@@ -38,11 +39,11 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.time.Duration.Companion.seconds
 
-class GuildListener(private val feature: GuildFeature) : Listener {
+class GuildListener : Listener {
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
         rightClicked.toGearyOrNull()?.get<GuildMaster>() ?: return
-        guiy { GuildMainMenu(player, feature, true) }
+        guiy { GuildMainMenu(player, true) }
     }
 
     @EventHandler
@@ -65,7 +66,7 @@ class GuildListener(private val feature: GuildFeature) : Listener {
         isCancelled = when {
             !player.hasGuild() || !graveOwner.hasGuild() -> true
             player.getGuildName() != graveOwner.getGuildName() -> true
-            else -> !feature.canOpenGuildMemberGraves
+            else -> !Features.guilds.config.canOpenGuildMemberGraves
         }
     }
 }

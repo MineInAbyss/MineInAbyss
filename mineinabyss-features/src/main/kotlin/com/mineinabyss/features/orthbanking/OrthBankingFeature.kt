@@ -16,12 +16,17 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-class OrthBankingFeature(
-    val balanceHudId: String = "balance_empty_offhand",
-    val balanceHudOffhandId: String = "balance_offhand",
-) : Feature {
+class OrthBankingFeature(val config: Config) : Feature {
+    @Serializable
+    class Config {
+        val enabled = false
+        val balanceHudId: String = "balance_empty_offhand"
+        val balanceHudOffhandId: String = "balance_offhand"
+    }
+
     override fun FeatureDSL.enable() {
         plugin.listeners(OrthBankingListener())
 

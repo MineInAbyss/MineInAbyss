@@ -33,6 +33,9 @@ import kotlinx.serialization.Serializable
 
 val abyssFeatures by DI.observe<AbyssFeatureConfig>()
 
+@Serializable
+class Toggle(val enabled: Boolean = false)
+
 /**
  * @param layers A list of all the layers and sections composing them to be registered.
  * @property hubSection The hub section of the abyss, a safe place for living and trading.
@@ -43,65 +46,65 @@ class AbyssFeatureConfig(
     @YamlComment("Ignore following options, enable all features")
     val enableAll: Boolean = false,
     @YamlComment("Choose which features to enable with true/false")
-    val antiCheese: Boolean = false,
-    val configManagement: Boolean = true,
-    val core: Boolean = false,
-    val cosmetics: Boolean = false,
-    val curse: Boolean = false,
-    val descent: Boolean = false,
+    val antiCheese: Toggle = Toggle(),
+    val configManagement: Toggle = Toggle(),
+    val core: Toggle = Toggle(),
+    val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
+    val curse: Toggle = Toggle(),
+    val descent: Toggle = Toggle(),
     val displayLocker: DisplayLockerFeature.Config = DisplayLockerFeature.Config(),
-    val enchants: Boolean = false,
-    val exp: Boolean = false,
-    val gondolas: Boolean = false,
-    val guilds: Boolean = false,
-    val hubstorage: Boolean = false,
-    val keepInventory: Boolean = false,
-    val layers: Boolean = false,
-    val misc: Boolean = false,
-    val music: Boolean = false,
-    val shopkeeping: Boolean = false,
-    val okiboTravel: Boolean = false,
-    val orthBanking: Boolean = false,
-    val patreons: Boolean = false,
-    val pins: Boolean = false,
-    val playerProfile: Boolean = false,
-    val survivalPvp: Boolean = false,
-    val adventurePvp: Boolean = false,
-    val relics: Boolean = false,
-    val tools: Boolean = false,
-    val tutorial: Boolean = false,
+    val enchants: Toggle = Toggle(),
+    val exp: Toggle = Toggle(),
+    val gondolas: Toggle = Toggle(),
+    val guilds: GuildFeature.Config = GuildFeature.Config(),
+    val hubstorage: Toggle = Toggle(),
+    val keepInventory: KeepInvFeature.Config = KeepInvFeature.Config(),
+    val layers: Toggle = Toggle(),
+    val misc: Toggle = Toggle(),
+    val music: Toggle = Toggle(),
+    val shopkeeping: Toggle = Toggle(),
+    val okiboTravel: Toggle = Toggle(),
+    val orthBanking: OrthBankingFeature.Config = OrthBankingFeature.Config(),
+    val patreon: PatreonFeature.Config = PatreonFeature.Config(),
+    val pins: Toggle = Toggle(),
+    val playerProfile: Toggle = Toggle(),
+    val survivalPvp: Toggle = Toggle(),
+    val adventurePvp: Toggle = Toggle(),
+    val relics: Toggle = Toggle(),
+    val tools: Toggle = Toggle(),
+    val tutorial: Toggle = Toggle(),
 ) {
     val features by lazy {
         buildList<Feature> {
             fun add(condition: Boolean, feature: () -> Feature) {
                 if (enableAll || condition) add(feature())
             }
-            add(antiCheese) { AntiCheeseFeature() }
-            add(core) { CoreFeature() }
-            add(cosmetics) { CosmeticsFeature() }
-            add(curse) { CurseFeature() }
-            add(descent) { DescentFeature() }
+            add(antiCheese.enabled) { AntiCheeseFeature() }
+            add(core.enabled) { CoreFeature() }
+            add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }
+            add(curse.enabled) { CurseFeature() }
+            add(descent.enabled) { DescentFeature() }
             add(displayLocker.enabled) { DisplayLockerFeature(displayLocker) }
-            add(enchants) { EnchantsFeature() }
-            add(exp) { ExpFeature() }
-            add(gondolas) { GondolaFeature() }
-            add(guilds) { GuildFeature() }
-            add(hubstorage) { HubStorageFeature() }
-            add(keepInventory) { KeepInvFeature() }
-            add(layers) { LayersFeature() }
-            add(misc) { MiscFeature() }
-            add(music) { MusicFeature() }
-            add(shopkeeping) { ShopKeepingFeature() }
-            add(okiboTravel) { OkiboTravelFeature() }
-            add(orthBanking) { OrthBankingFeature() }
-            add(patreons) { PatreonFeature() }
-            add(pins) { PinsFeature() }
-            add(playerProfile) { PlayerProfileFeature() }
-            add(survivalPvp) { SurvivalPvpFeature() }
-            add(adventurePvp) { AdventurePvpFeature() }
-            add(relics) { RelicsFeature() }
-            add(tools) { ToolsFeature() }
-            add(tutorial) { TutorialFeature() }
+            add(enchants.enabled) { EnchantsFeature() }
+            add(exp.enabled) { ExpFeature() }
+            add(gondolas.enabled) { GondolaFeature() }
+            add(guilds.enabled) { GuildFeature(guilds) }
+            add(hubstorage.enabled) { HubStorageFeature() }
+            add(keepInventory.enabled) { KeepInvFeature(keepInventory) }
+            add(layers.enabled) { LayersFeature() }
+            add(misc.enabled) { MiscFeature() }
+            add(music.enabled) { MusicFeature() }
+            add(shopkeeping.enabled) { ShopKeepingFeature() }
+            add(okiboTravel.enabled) { OkiboTravelFeature() }
+            add(orthBanking.enabled) { OrthBankingFeature(orthBanking) }
+            add(patreon.enabled) { PatreonFeature(patreon) }
+            add(pins.enabled) { PinsFeature() }
+            add(playerProfile.enabled) { PlayerProfileFeature() }
+            add(survivalPvp.enabled) { SurvivalPvpFeature() }
+            add(adventurePvp.enabled) { AdventurePvpFeature() }
+            add(relics.enabled) { RelicsFeature() }
+            add(tools.enabled) { ToolsFeature() }
+            add(tutorial.enabled) { TutorialFeature() }
         }
     }
 }
