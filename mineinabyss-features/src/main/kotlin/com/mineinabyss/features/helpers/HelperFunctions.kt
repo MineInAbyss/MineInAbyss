@@ -7,9 +7,6 @@ import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import net.luckperms.api.LuckPermsProvider
-import net.luckperms.api.node.NodeType
-import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -21,8 +18,6 @@ data class ItemDrop(
     val dropAmount: IntRange,
     val applyFortune: Boolean = true
 )
-
-val luckPerms = LuckPermsProvider.get()
 
 val Player.simpleLayerName: String
     get() = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: Component.empty()).lowercase().replace(" ", "_")
@@ -76,10 +71,6 @@ val Player.linkedDiscordAccount
     get() = runCatching {
         discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
     }.getOrNull()
-
-val Player.luckpermGroups
-    get() = luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
-        ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
 
 /*object MountUtils {
     *//** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*//*

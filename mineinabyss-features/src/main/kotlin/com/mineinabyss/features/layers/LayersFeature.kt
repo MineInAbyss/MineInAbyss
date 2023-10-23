@@ -6,6 +6,8 @@ import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.event.HandlerList
 
 class LayersFeature : FeatureWithContext<LayersContext>(::LayersContext) {
+    override val dependsOn = setOf("DeeperWorld")
+
     override fun FeatureDSL.enable() {
         plugin.listeners(context.layersListener)
     }

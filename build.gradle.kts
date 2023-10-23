@@ -46,7 +46,6 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(libs.bundles.idofront.core)
         implementation(libs.idofront.features)
         implementation(libs.idofront.nms)
 
@@ -54,6 +53,7 @@ allprojects {
         compileOnly(miaLibs.geary.papermc)
 
         // MineInAbyss platform
+        compileOnly(libs.bundles.idofront.core)
         compileOnly(libs.kotlin.stdlib)
         compileOnly(libs.kotlinx.serialization.json)
         compileOnly(libs.kotlinx.serialization.kaml)

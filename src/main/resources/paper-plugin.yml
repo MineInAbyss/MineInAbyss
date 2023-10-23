@@ -1,0 +1,67 @@
+name: MineInAbyss
+version: "${plugin_version}"
+author: Derongan
+main: com.mineinabyss.plugin.MineInAbyssPlugin
+api-version: "1.20"
+
+prefix: MiA
+description: A mod that adds abyss effects
+
+permissions:
+  mineinabyss.stopdescent:
+    description: Allows players to leave a run
+  mineinabyss.start:
+    description: Allows players to start a run
+  mineinabyss.stats:
+    description: Allows players to see their stats
+
+dependencies:
+  server:
+    Geary:
+      required: true
+      load: BEFORE
+      join-classpath: true
+    Guiy:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    DeeperWorld:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    Vault:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    Multiverse-Core:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    HMCCosmetics:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    GSit:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    DiscordSRV:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    Chatty:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    ModelEngine:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    Train_Carts:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    TCCoasters:
+      required: false
+      load: BEFORE
+      join-classpath: true

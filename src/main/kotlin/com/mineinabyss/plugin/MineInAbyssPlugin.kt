@@ -6,16 +6,10 @@ import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.platforms.Platforms
 import com.mineinabyss.idofront.plugin.actions
 import org.bukkit.plugin.java.JavaPlugin
 
 class MineInAbyssPlugin : JavaPlugin() {
-
-    override fun onLoad() {
-        Platforms.load(this, "mineinabyss")
-    }
-
     override fun onEnable() = actions {
         geary {
             autoscan(

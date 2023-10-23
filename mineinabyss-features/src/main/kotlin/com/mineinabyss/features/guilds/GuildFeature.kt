@@ -46,7 +46,9 @@ val guildChannel =
 const val guildChannelId: String = "Guild Chat"
 
 
-class GuildFeature(val config: Config) : FeatureWithContext<GuildFeature.Context>(::Context) {
+class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
+    override val dependsOn = setOf("Chatty")
+
     @Serializable
     class Config {
         val enabled = false
@@ -76,7 +78,7 @@ class GuildFeature(val config: Config) : FeatureWithContext<GuildFeature.Context
             getAllGuilds().forEach {
                 chatty.config.channels.putIfAbsent(
                     "${it.guildName} $guildChannelId",
-                    config.guildChattyChannel
+                    context.config.guildChattyChannel
                 )
             }
         }
@@ -139,7 +141,7 @@ class GuildFeature(val config: Config) : FeatureWithContext<GuildFeature.Context
                             val name = player.getGuildName()
                             chatty.config.channels.putIfAbsent(
                                 "$name $guildChannelId",
-                                config.guildChattyChannel
+                                context.config.guildChattyChannel
                             )
                             player.swapChannelCommand("$name $guildChannelId")
                         } else player.error("You cannot use guild chat without a guild")

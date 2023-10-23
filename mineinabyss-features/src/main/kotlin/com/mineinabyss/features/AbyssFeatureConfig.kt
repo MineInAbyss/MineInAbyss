@@ -56,7 +56,7 @@ class AbyssFeatureConfig(
     val enchants: Toggle = Toggle(),
     val exp: Toggle = Toggle(),
     val gondolas: Toggle = Toggle(),
-    val guilds: GuildFeature.Config = GuildFeature.Config(),
+    val guilds: Toggle = Toggle(),
     val hubstorage: Toggle = Toggle(),
     val keepInventory: KeepInvFeature.Config = KeepInvFeature.Config(),
     val layers: Toggle = Toggle(),
@@ -88,7 +88,7 @@ class AbyssFeatureConfig(
             add(enchants.enabled) { EnchantsFeature() }
             add(exp.enabled) { ExpFeature() }
             add(gondolas.enabled) { GondolaFeature() }
-            add(guilds.enabled) { GuildFeature(guilds) }
+            add(guilds.enabled) { GuildFeature() }
             add(hubstorage.enabled) { HubStorageFeature() }
             add(keepInventory.enabled) { KeepInvFeature(keepInventory) }
             add(layers.enabled) { LayersFeature() }
