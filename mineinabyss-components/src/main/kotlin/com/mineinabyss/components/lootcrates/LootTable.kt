@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 @Serializable
+@SerialName("mineinabyss:loot_table")
 class LootTable(
     val rolls: Roll,
     val pools: List<LootPool>
@@ -25,7 +26,7 @@ class LootTable(
         val items = mutableListOf<ItemStack?>()
         repeat(rolls.roll()) {
             val random = (0..weightsSum).random()
-            items.add(pools[cumulativeWeights.indexOfFirst { it > random }].select())
+            items.add(pools[cumulativeWeights.indexOfFirst { it >= random }].select())
         }
         return items
     }
@@ -33,7 +34,7 @@ class LootTable(
     fun populateInventory(inventory: Inventory) {
         val selected = select().take(inventory.size)
         val selectedWithAirGaps = (selected + List(inventory.size - selected.size) { null }).shuffled()
-        selected.forEachIndexed { index, itemStack ->
+        selectedWithAirGaps.forEachIndexed { index, itemStack ->
             inventory.setItem(index, itemStack)
         }
     }

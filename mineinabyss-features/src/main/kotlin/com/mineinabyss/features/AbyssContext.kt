@@ -24,7 +24,7 @@ val abyss by DI.observe<AbyssContext>()
 
 class AbyssContext(
     override val plugin: JavaPlugin,
-) : FeatureDSL(mainCommandProvider = { ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss") { } }),
+) : FeatureDSL(mainCommandProvider = { ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss", it) }),
     Configurable<AbyssFeatureConfig> {
     val dataPath: Path = plugin.dataFolder.toPath()
 
