@@ -63,6 +63,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         override val configManager = config("guilds", abyss.dataPath, Config())
         val listeners = buildList {
             if(abyss.isChattyLoaded) add(ChattyGuildListener())
+            if(abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
         }.toTypedArray()
     }
 

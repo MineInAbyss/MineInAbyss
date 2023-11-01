@@ -1,7 +1,6 @@
 package com.mineinabyss.features.keepinventory
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
 import org.bukkit.GameRule
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -27,12 +26,5 @@ class KeepInvListener(private val config: KeepInvFeature.Config) : Listener {
             drops.clear()
         }
     }
-
-    @EventHandler
-    fun PlayerCreateGraveEvent.onCreateGrave() {
-        if ((config.keepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
-            player.playerData.keepInvStatus) {
-            isCancelled = true
-        }
-    }
 }
+

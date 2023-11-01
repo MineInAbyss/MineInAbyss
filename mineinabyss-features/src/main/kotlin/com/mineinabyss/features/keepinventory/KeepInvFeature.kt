@@ -1,25 +1,34 @@
 package com.mineinabyss.features.keepinventory
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import com.mineinabyss.idofront.plugin.unregisterListeners
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-class KeepInvFeature(val config: Config) : Feature {
+class KeepInvFeature(config: Config) : FeatureWithContext<KeepInvFeature.Context>({ Context(config) }) {
     @Serializable
     class Config {
         val enabled = true
         val keepInvInVoid: Boolean = true
     }
 
+    class Context(val config: Config) {
+        val listeners = buildList {
+            add(KeepInvListener(config))
+            if (abyss.isEternalFortuneLoaded) KeepInvGraveListener(config)
+        }.toTypedArray()
+    }
+
     override fun FeatureDSL.enable() {
-        plugin.listeners(KeepInvListener(config))
+        plugin.listeners(*context.listeners)
 
         mainCommand {
             "keepinv"(desc = "Commands to toggle keepinventory status") {
@@ -54,5 +63,9 @@ class KeepInvFeature(val config: Config) : Feature {
                 else -> null
             }
         }
+    }
+
+    override fun FeatureDSL.disable() {
+        plugin.unregisterListeners(*context.listeners)
     }
 }
