@@ -14,6 +14,7 @@ import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.hubstorage.HubStorageFeature
 import com.mineinabyss.features.keepinventory.KeepInvFeature
 import com.mineinabyss.features.layers.LayersFeature
+import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.misc.MiscFeature
 import com.mineinabyss.features.music.MusicFeature
 import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
@@ -60,6 +61,7 @@ class AbyssFeatureConfig(
     val hubstorage: Toggle = Toggle(),
     val keepInventory: KeepInvFeature.Config = KeepInvFeature.Config(),
     val layers: Toggle = Toggle(),
+    val lootCrates: Toggle = Toggle(),
     val misc: Toggle = Toggle(),
     val music: Toggle = Toggle(),
     val shopkeeping: Toggle = Toggle(),
@@ -92,6 +94,7 @@ class AbyssFeatureConfig(
             add(hubstorage.enabled) { HubStorageFeature() }
             add(keepInventory.enabled) { KeepInvFeature(keepInventory) }
             add(layers.enabled) { LayersFeature() }
+            add(lootCrates.enabled) { LootCratesFeature() }
             add(misc.enabled) { MiscFeature() }
             add(music.enabled) { MusicFeature() }
             add(shopkeeping.enabled) { ShopKeepingFeature() }

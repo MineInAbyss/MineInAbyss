@@ -1,5 +1,5 @@
 [versions]
-gearyPaper = "0.25-SNAPSHOT"
+gearyPaper = "0.27.0"
 guiy = "0.9.0"
 deeperworld = "0.8.0"
 chatty = "0.6.6"

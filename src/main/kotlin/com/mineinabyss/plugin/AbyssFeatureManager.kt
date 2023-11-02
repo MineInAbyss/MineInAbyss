@@ -7,6 +7,7 @@ import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.Guilds
 import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.helpers.Placeholders
+import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureManager
@@ -25,7 +26,7 @@ class AbyssFeatureManager(val plugin: JavaPlugin) : FeatureManager<AbyssContext>
         transaction(abyss.db) {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue)
+            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue, LootedChests)
         }
 
         if (abyss.isPlaceholderApiLoaded) {

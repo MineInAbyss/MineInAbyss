@@ -65,3 +65,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    LuckPerms:
+      required: false
+      load: BEFORE
+      join-classpath: true

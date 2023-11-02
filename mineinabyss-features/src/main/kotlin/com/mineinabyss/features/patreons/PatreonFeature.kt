@@ -30,6 +30,8 @@ import java.time.Month
 import java.util.*
 
 class PatreonFeature(val config: Config) : Feature {
+    override val dependsOn = setOf("LuckPerms")
+
     @Serializable
     class Config(
         val enabled: Boolean = false,
