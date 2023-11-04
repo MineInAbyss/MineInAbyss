@@ -1,0 +1,9 @@
+advancements:
+  - id: mineinabyss:orey
+    title: Orey
+    description: Mine your first ore
+    icon:
+      prefab: mineinabyss:charcoal_sand_ore
+    frame: TASK
+    visibility: ALWAYS
+    backgroundTexture: mineinabyss:textures/block/ores/charcoal_sand_ore.png

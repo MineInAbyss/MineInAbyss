@@ -1,5 +1,6 @@
 package com.mineinabyss.features.helpers.di
 
+import com.mineinabyss.features.advancements.AdvancementsFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
 import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.layers.LayersContext
@@ -15,4 +16,5 @@ object Features {
     val displayLocker: DisplayLockerFeature.Context by DI.observe()
     val guilds: GuildFeature.Context by DI.observe()
     val lootCrates: LootCratesFeature.Context by DI.observe()
+    val advancements: AdvancementsFeature.Context by DI.observe()
 }

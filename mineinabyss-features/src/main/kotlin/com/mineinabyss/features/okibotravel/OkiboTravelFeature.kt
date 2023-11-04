@@ -62,7 +62,6 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
                 1 -> listOf("okibo").filter { it.startsWith(args[0]) }
                 2 -> if (args[0] == "okibo") listOf(
                     "spawn",
-                    "reload",
                     "map"
                 ).filter { it.startsWith(args[1]) } else null
 

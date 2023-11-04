@@ -1,6 +1,7 @@
 package com.mineinabyss.features
 
 import com.charleskorn.kaml.YamlComment
+import com.mineinabyss.features.advancements.AdvancementsFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
 import com.mineinabyss.features.core.CoreFeature
 import com.mineinabyss.features.cosmetics.CosmeticsFeature
@@ -48,6 +49,7 @@ class AbyssFeatureConfig(
     @YamlComment("Ignore following options, enable all features")
     val enableAll: Boolean = false,
     @YamlComment("Choose which features to enable with true/false")
+    val advancement: Toggle = Toggle(),
     val antiCheese: Toggle = Toggle(),
     val configManagement: Toggle = Toggle(),
     val core: Toggle = Toggle(),
@@ -83,6 +85,7 @@ class AbyssFeatureConfig(
             fun add(condition: Boolean, feature: () -> Feature) {
                 if (enableAll || condition) add(feature())
             }
+            add(advancement.enabled) { AdvancementsFeature() }
             add(antiCheese.enabled) { AntiCheeseFeature() }
             add(core.enabled) { CoreFeature() }
             add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }

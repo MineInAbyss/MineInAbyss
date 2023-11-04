@@ -81,3 +81,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    CustomAdvancementsAPI:
+      required: false
+      load: BEFORE
+      join-classpath: true
