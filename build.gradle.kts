@@ -81,6 +81,7 @@ allprojects {
         compileOnly(miaLibs.looty)
         compileOnly(miaLibs.protocolburrito)
         compileOnly(miaLibs.eternalfortune)
+        compileOnly(miaLibs.packy)
 
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
@@ -93,6 +94,7 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
         compileOnly(miaLibs.minecraft.plugin.openinv)
+        compileOnly(miaLibs.minecraft.plugin.happyhud)
     }
 }
 

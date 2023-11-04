@@ -5,6 +5,7 @@ import com.mineinabyss.features.anticheese.AntiCheeseFeature
 import com.mineinabyss.features.core.CoreFeature
 import com.mineinabyss.features.cosmetics.CosmeticsFeature
 import com.mineinabyss.features.curse.CurseFeature
+import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
 import com.mineinabyss.features.enchants.EnchantsFeature
@@ -52,6 +53,7 @@ class AbyssFeatureConfig(
     val core: Toggle = Toggle(),
     val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
     val curse: Toggle = Toggle(),
+    val custom_hud: Toggle = Toggle(),
     val descent: Toggle = Toggle(),
     val displayLocker: DisplayLockerFeature.Config = DisplayLockerFeature.Config(),
     val enchants: Toggle = Toggle(),
@@ -85,6 +87,7 @@ class AbyssFeatureConfig(
             add(core.enabled) { CoreFeature() }
             add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }
             add(curse.enabled) { CurseFeature() }
+            add(custom_hud.enabled) { CustomHudFeature() }
             add(descent.enabled) { DescentFeature() }
             add(displayLocker.enabled) { DisplayLockerFeature(displayLocker) }
             add(enchants.enabled) { EnchantsFeature() }

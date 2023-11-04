@@ -44,6 +44,7 @@ class DepthHudSystem : RepeatingSystem(5.ticks) {
     private val Pointer.player by get<Player>()
 
     override fun Pointer.tick() {
+        if (!player.isConnected) return
         val depthMeters = player.inventory.withIndex().filter { player.inventory.toGeary()?.get(it.index)?.has<DepthMeter>() == true }.mapNotNull { it.value }
         when {
             depthMeters.any { Enchantment.ARROW_INFINITE !in it.enchantments } ->

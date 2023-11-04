@@ -69,3 +69,15 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    HappyHUD:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    BlockLocker:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    Packy:
+      required: false
+      load: BEFORE
+      join-classpath: true

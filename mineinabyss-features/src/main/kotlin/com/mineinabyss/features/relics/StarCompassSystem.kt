@@ -60,10 +60,11 @@ class ToggleStarCompassHud : RepeatingSystem(5.ticks) {
     private val Pointer.player by get<Player>()
 
     override fun Pointer.tick() {
+        if (!player.isConnected) return
         val starCompasses = player.inventory.withIndex().filter { player.inventory.toGeary()?.get(it.index)?.has<StarCompass>() == true }.mapNotNull { it.value }
         when {
-            //starCompasses.any { it.hasItemFlag(ItemFlag.HIDE_ENCHANTS) } -> player.toGeary().remove<ShowStarCompassHud>()
-            //else -> player.toGeary().setPersisting(ShowStarCompassHud(player.location.section))
+            starCompasses.any { it.hasItemFlag(ItemFlag.HIDE_ENCHANTS) } -> player.toGeary().remove<ShowStarCompassHud>()
+            else -> player.toGeary().setPersisting(ShowStarCompassHud(player.location.section))
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.mineinabyss.features.playerprofile
 
+import com.mineinabyss.features.abyss
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.playerArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -20,8 +21,7 @@ class PlayerProfileFeature : Feature {
             }
         }
         tabCompletion {
-            val list = mutableListOf<String>()
-            Bukkit.getOnlinePlayers().forEach { p -> if (p != sender as Player) list.add(p.name) }
+            val list = abyss.plugin.server.onlinePlayers.filter { it != sender as? Player }.map { it.name }
 
             when (args.size) {
                 1 -> listOf("profile").filter { it.startsWith(args[0]) }
