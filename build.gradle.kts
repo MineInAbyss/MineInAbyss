@@ -46,8 +46,8 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(libs.idofront.features)
-        implementation(libs.idofront.nms)
+        compileOnly(libs.idofront.features)
+        compileOnly(libs.idofront.nms)
 
         // Geary platform
         compileOnly(miaLibs.geary.papermc)

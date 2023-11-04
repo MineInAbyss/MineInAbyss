@@ -24,6 +24,7 @@ import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
 import kotlinx.serialization.Serializable
@@ -71,9 +72,8 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         plugin.server.pluginManager.registerSuspendingEvents(GuildListener(), plugin)
         plugin.listeners(*context.listeners)
 
-        if (DeeperContext.isBlockLockerLoaded) {
+        if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
-        }
 
         if (abyss.isChattyLoaded) {
             getAllGuilds().forEach {
