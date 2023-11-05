@@ -7,5 +7,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":mineinabyss-core"))
+    api(project(":mineinabyss-components"))
+    compileOnly(libs.minecraft.plugin.worldguard)
 }

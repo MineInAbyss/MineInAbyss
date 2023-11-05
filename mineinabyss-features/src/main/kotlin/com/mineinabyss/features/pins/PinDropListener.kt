@@ -5,7 +5,7 @@ import com.mineinabyss.components.pins.PinDrop
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.mineinabyss.core.layer
+import com.mineinabyss.features.helpers.layer
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.event.EventHandler

@@ -5,8 +5,8 @@ import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedChatComponent
+import com.mineinabyss.features.abyss
 import com.mineinabyss.guiy.inventory.GuiyInventoryHolder
-import com.mineinabyss.mineinabyss.core.abyss
 
 class ChestGuiPacket : PacketAdapter(
     abyss.plugin, ListenerPriority.LOWEST, PacketType.Play.Server.OPEN_WINDOW

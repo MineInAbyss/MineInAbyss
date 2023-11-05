@@ -1,7 +1,7 @@
 package com.mineinabyss.features.pvp
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.mineinabyss.core.layer
+import com.mineinabyss.features.helpers.layer
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler

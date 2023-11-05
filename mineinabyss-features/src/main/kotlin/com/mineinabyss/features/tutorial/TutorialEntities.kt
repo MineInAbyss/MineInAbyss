@@ -4,6 +4,8 @@ import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Color
@@ -19,13 +21,13 @@ interface TutorialContext {
 
 @Serializable
 @SerialName("mineinabyss:tutorial_entity")
-data class TutorialEntity(
+data class TutorialEntity constructor(
     val location: @Serializable(LocationSerializer::class) Location,
     val text: String,
-    val backgroundColor: @Serializable(ColorSerializer::class) Color = Color.fromARGB(0, 0, 0, 0),
-    val shadow: Boolean = true,
-    val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
-    val billboard: Display.Billboard = Display.Billboard.VERTICAL,
-    val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
-    val viewRange: Float? = null,
+    @EncodeDefault(NEVER) val backgroundColor: @Serializable(ColorSerializer::class) Color = Color.fromARGB(0, 0, 0, 0),
+    @EncodeDefault(NEVER) val shadow: Boolean = true,
+    @EncodeDefault(NEVER) val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
+    @EncodeDefault(NEVER) val billboard: Display.Billboard = Display.Billboard.VERTICAL,
+    @EncodeDefault(NEVER) val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
+    @EncodeDefault(NEVER) val viewRange: Float? = null,
 )

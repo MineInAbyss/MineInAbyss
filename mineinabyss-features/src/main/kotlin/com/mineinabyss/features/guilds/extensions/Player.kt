@@ -2,6 +2,7 @@ package com.mineinabyss.features.guilds.extensions
 
 import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.toPlayer
@@ -10,7 +11,6 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.textcomponents.serialize
-import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player

@@ -38,6 +38,7 @@ allprojects {
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
+        mavenLocal()
     }
 
     dependencies {
@@ -45,13 +46,14 @@ allprojects {
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        implementation(libs.bundles.idofront.core)
-        implementation(libs.idofront.nms)
+        compileOnly(libs.idofront.features)
+        compileOnly(libs.idofront.nms)
 
         // Geary platform
         compileOnly(miaLibs.geary.papermc)
 
         // MineInAbyss platform
+        compileOnly(libs.bundles.idofront.core)
         compileOnly(libs.kotlin.stdlib)
         compileOnly(libs.kotlinx.serialization.json)
         compileOnly(libs.kotlinx.serialization.kaml)
@@ -78,23 +80,27 @@ allprojects {
         compileOnly(miaLibs.mobzy)
         compileOnly(miaLibs.looty)
         compileOnly(miaLibs.protocolburrito)
+        compileOnly(miaLibs.eternalfortune)
+        compileOnly(miaLibs.packy)
+
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)
         compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
         compileOnly(miaLibs.minecraft.plugin.discordsrv)
         compileOnly(miaLibs.minecraft.plugin.luckperms)
         compileOnly(miaLibs.minecraft.plugin.placeholderapi)
-        compileOnly(miaLibs.minecraft.plugin.happyhud)
         compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
         compileOnly(miaLibs.minecraft.plugin.traincarts)
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
         compileOnly(miaLibs.minecraft.plugin.openinv)
+        compileOnly(miaLibs.minecraft.plugin.crazyadvancements)
+        compileOnly(miaLibs.minecraft.plugin.happyhud)
     }
 }
 
 dependencies {
     // Shaded
-    implementation(project(":mineinabyss-core"))
     implementation(project(":mineinabyss-features"))
+    api(project(":mineinabyss-components"))
 }

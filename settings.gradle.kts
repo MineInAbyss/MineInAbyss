@@ -3,10 +3,11 @@ rootProject.name = "mineinabyss"
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        //mavenLocal()
         maven("https://repo.mineinabyss.com/releases")
+        maven("https://repo.mineinabyss.com/snapshots")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo.papermc.io/repository/maven-public/") //Paper
+        mavenLocal()
     }
 
     val idofrontVersion: String by settings
@@ -22,8 +23,9 @@ dependencyResolutionManagement {
     val idofrontVersion: String by settings
 
     repositories {
-        //mavenLocal()
         maven("https://repo.mineinabyss.com/releases")
+        maven("https://repo.mineinabyss.com/snapshots")
+        mavenLocal()
     }
 
     versionCatalogs {
@@ -33,7 +35,6 @@ dependencyResolutionManagement {
 }
 
 include(
-    "mineinabyss-core",
     "mineinabyss-components",
     "mineinabyss-features"
 )

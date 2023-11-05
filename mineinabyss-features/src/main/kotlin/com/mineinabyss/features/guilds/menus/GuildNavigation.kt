@@ -2,7 +2,6 @@ package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMainMenu
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMemberMenu
@@ -68,7 +67,6 @@ typealias GuildNav = Navigator<GuildScreen>
 class GuildUIScope(
     val player: Player,
     val owner: GuiyOwner,
-    val feature: GuildFeature
 ) {
     //TODO cache more than just guild level here
     val guildName get() = player.getGuildName()
@@ -80,8 +78,8 @@ class GuildUIScope(
 }
 
 @Composable
-fun GuiyOwner.GuildMainMenu(player: Player, feature: GuildFeature, openedFromHQ: Boolean = false) {
-    val scope = remember { GuildUIScope(player, this, feature) }
+fun GuiyOwner.GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
+    val scope = remember { GuildUIScope(player, this) }
     scope.apply {
         nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
             Chest(
@@ -182,7 +180,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
                     .onClick { _, snapshot ->
-                        snapshot.player.createGuild(snapshot.text, feature)
+                        snapshot.player.createGuild(snapshot.text)
                         nav.open(Default(snapshot.player))
                         listOf(ResponseAction.close())
                     }

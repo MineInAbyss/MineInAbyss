@@ -5,16 +5,16 @@ import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
-import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.features.helpers.CoinFactory
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.mineinabyss.core.abyss
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -22,16 +22,17 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun OfflinePlayer.createGuild(guildName: String, feature: GuildFeature) {
+fun OfflinePlayer.createGuild(guildName: String) {
+    val config = Features.guilds.config
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
 
-    if (newGuildName.length > feature.guildNameMaxLength) {
+    if (newGuildName.length > config.guildNameMaxLength) {
         player?.error("Your guild name was longer than the maximum allowed length.")
-        player?.error("Please make it shorter than ${feature.guildNameMaxLength} characters.")
+        player?.error("Please make it shorter than ${config.guildNameMaxLength} characters.")
         return
     }
 
-    feature.guildNameBannedWords.forEach { banned ->
+    config.guildNameBannedWords.forEach { banned ->
         val bannedWord = banned.toRegex().find(newGuildName)?.value
         if (banned.toRegex(RegexOption.IGNORE_CASE).containsMatchIn(newGuildName)) {
             if (bannedWord?.contains("([^a-zA-Z])".toRegex()) == true)

@@ -1,17 +1,12 @@
 package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.discordSRV
 import com.mineinabyss.geary.papermc.tracking.items.gearyItems
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.mineinabyss.core.discordSRV
-import com.mineinabyss.mineinabyss.core.isAbyssWorld
-import com.mineinabyss.mineinabyss.core.layer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import net.luckperms.api.LuckPermsProvider
-import net.luckperms.api.node.NodeType
-import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -23,8 +18,6 @@ data class ItemDrop(
     val dropAmount: IntRange,
     val applyFortune: Boolean = true
 )
-
-val luckPerms = LuckPermsProvider.get()
 
 val Player.simpleLayerName: String
     get() = PlainTextComponentSerializer.plainText().serialize(location.layer?.name?.miniMsg() ?: Component.empty()).lowercase().replace(" ", "_")
@@ -79,10 +72,6 @@ val Player.linkedDiscordAccount
         discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
     }.getOrNull()
 
-val Player.luckpermGroups
-    get() = luckPerms.userManager.getUser(uniqueId)?.getNodes(NodeType.INHERITANCE)?.stream()
-        ?.map { obj: InheritanceNode -> obj.groupName }?.toList() ?: emptyList()
-
 /*object MountUtils {
     *//** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*//*
     val Player.mount: LivingEntity?
@@ -94,3 +83,5 @@ object CoinFactory {
     val mittyToken get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "patreon_token"))
 }
 
+val Player.isInventoryFull: Boolean
+    get() = inventory.firstEmpty() == -1

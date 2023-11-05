@@ -16,6 +16,7 @@ import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.CompassMeta
@@ -31,21 +32,25 @@ class ToggleStarCompassHudSystem : GearyListener() {
 
     override fun Pointers.handle() {
         val item = player.inventory.itemInMainHand
+        item.type = Material.COMPASS
         player.toGeary().let {
             if (it.has<ShowStarCompassHud>()) {
-                item.type = Material.COMPASS
-                item.editItemMeta {
-                    this as CompassMeta
+                item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+                item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                item.editItemMeta<CompassMeta> {
                     lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.centerLocation
                     isLodestoneTracked = false
-                    itemFlags.add(ItemFlag.HIDE_ENCHANTS)
                 }
                 it.remove<ShowStarCompassHud>()
             }
             else {
-                item.type = Material.COMPASS
-                item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
                 it.setPersisting(ShowStarCompassHud(player.location.section))
+                item.removeEnchantment(Enchantment.ARROW_INFINITE)
+                item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+                item.editItemMeta<CompassMeta> {
+                    lodestone = null
+                    isLodestoneTracked = false
+                }
             }
         }
     }
@@ -55,9 +60,10 @@ class ToggleStarCompassHud : RepeatingSystem(5.ticks) {
     private val Pointer.player by get<Player>()
 
     override fun Pointer.tick() {
+        if (!player.isConnected) return
         val starCompasses = player.inventory.withIndex().filter { player.inventory.toGeary()?.get(it.index)?.has<StarCompass>() == true }.mapNotNull { it.value }
         when {
-            starCompasses.any { it.itemMeta is CompassMeta } -> player.toGeary().remove<ShowStarCompassHud>()
+            starCompasses.any { it.hasItemFlag(ItemFlag.HIDE_ENCHANTS) } -> player.toGeary().remove<ShowStarCompassHud>()
             else -> player.toGeary().setPersisting(ShowStarCompassHud(player.location.section))
         }
     }

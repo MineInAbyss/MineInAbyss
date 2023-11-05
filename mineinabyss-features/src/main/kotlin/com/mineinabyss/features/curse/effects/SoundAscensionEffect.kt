@@ -3,12 +3,12 @@
 package com.mineinabyss.features.curse.effects
 
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.operators.minus
 import com.mineinabyss.idofront.operators.plus
 import com.mineinabyss.idofront.operators.times
 import com.mineinabyss.idofront.serialization.DurationSerializer
 import com.mineinabyss.idofront.time.ticks
-import com.mineinabyss.mineinabyss.core.abyss
 import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

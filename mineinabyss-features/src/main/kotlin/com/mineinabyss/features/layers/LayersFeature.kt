@@ -1,15 +1,18 @@
 package com.mineinabyss.features.layers
 
+import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.mineinabyss.core.AbyssFeature
-import com.mineinabyss.mineinabyss.core.MineInAbyssPlugin
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import org.bukkit.event.HandlerList
 
-@Serializable
-@SerialName("layers")
-class LayersFeature : AbyssFeature {
-    override fun MineInAbyssPlugin.enableFeature() {
-        listeners(LayerListener())
+class LayersFeature : FeatureWithContext<LayersContext>(::LayersContext) {
+    override val dependsOn = setOf("DeeperWorld")
+
+    override fun FeatureDSL.enable() {
+        plugin.listeners(context.layersListener)
+    }
+
+    override fun FeatureDSL.disable() {
+        HandlerList.unregisterAll(context.layersListener)
     }
 }

@@ -1,17 +1,18 @@
 package com.mineinabyss.features.helpers
 
-import com.mineinabyss.components.huds.AlwaysShowAirHud
-import com.mineinabyss.components.huds.ReturnVanillaHud
+import com.mineinabyss.components.custom_hud.customHudData
 import com.mineinabyss.components.playerData
-import com.mineinabyss.components.relics.ShowDepthMeterHud
+import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.features.relics.depthmeter.getDepth
+import com.mineinabyss.features.tools.depthmeter.getDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.mineinabyss.core.layer
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.entity.Player
+import org.bukkit.inventory.meta.ArmorMeta
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
@@ -23,73 +24,70 @@ class Placeholders : PlaceholderExpansion() {
 
     override fun getVersion() = "0.10"
 
-    override fun onPlaceholderRequest(player: Player, identifier: String): String {
-        player.mineinabyssPlaceholders.forEach {
-            if (identifier == it.key) {
-                return it.value
-            }
-        }
-        return identifier
-    }
+    override fun onPlaceholderRequest(player: Player, identifier: String) =
+        player.mineinabyssPlaceholders.firstOrNull { it.identifier == identifier }?.value?.toString() ?: identifier
 
-    private val Player.mineinabyssPlaceholders: Map<String, String>
-        get() = mapOf(
-            "orthbanking_coins" to playerData.orthCoinsHeld.toString(),
-            "orthbanking_tokens" to playerData.mittyTokensHeld.toString(),
+    class Placeholder(val identifier: String, val value: Any)
 
-            "hud_orthbanking" to playerData.showPlayerBalance.toString(),
-            "hud_depthmeter" to toGeary().has<ShowDepthMeterHud>().toString(),
-            "hud_starcompass" to toGeary().has<ShowStarCompassHud>().toString(),
-            "hud_always_air" to toGeary().has<AlwaysShowAirHud>().toString(),
-            "hud_always_armor" to toGeary().has<AlwaysShowAirHud>().toString(),
-            "hud_vanilla" to toGeary().has<ReturnVanillaHud>().toString(),
+    private val Player.mineinabyssPlaceholders: Set<Placeholder> get() = setOf(
+        Placeholder("orthbanking_coins", playerData.orthCoinsHeld),
+        Placeholder("orthbanking_tokens", playerData.mittyTokensHeld),
 
-            "layer" to (location.layer?.name ?: "").toString(),
-            "layer_simple" to simpleLayerName,
-            "whistle" to getLayerWhistleForHud(),
-            "section" to (location.section?.name ?: "Unmanaged Section").toString(),
-            "depth" to getDepth().toString(),
-            "starcompass_unicode" to getCompassAngle().first,
-            "starcompass_angle" to getCompassAngle().second.toString(),
+        Placeholder("hud_orthbanking", playerData.showPlayerBalance),
+        Placeholder("hud_depthmeter", toGeary().has<ShowDepthMeterHud>()),
+        Placeholder("hud_starcompass", toGeary().has<ShowStarCompassHud>()),
+        Placeholder("hud_always_air", customHudData.alwaysShowAir),
+        Placeholder("hud_always_armor", customHudData.alwaysShowArmor),
+        Placeholder("hud_show_top_bar", toGeary().apply { has<ShowDepthMeterHud>() && has<ShowStarCompassHud>() }),
+        Placeholder("hud_hide_armor_air_background", ((!customHudData.alwaysShowAir && !customHudData.alwaysShowArmor)
+                || ((getAttribute(Attribute.GENERIC_ARMOR)?.value ?: 0.0) > 0.0) || (remainingAir < maximumAir))
+        ),
 
-            "temperature" to location.block.temperature.times(10).roundToInt().toString(),
-            "humidity" to location.block.humidity.times(10).roundToInt().toString(),
-            "time" to world.time.toString(),
-            "fulltime" to world.fullTime.toString(),
+        Placeholder("layer", (location.layer?.name ?: "")),
+        Placeholder("layer_simple", simpleLayerName),
+        Placeholder("whistle", getLayerWhistleForHud()),
+        Placeholder("section", (location.section?.name ?: "Unmanaged Section")),
+        Placeholder("depth", getDepth()),
+        Placeholder("starcompass_unicode", getCompassAngle().unicode),
+        Placeholder("starcompass_angle", getCompassAngle().angle ?: "null"),
 
-            //"mount_health" to mount?.health.toString(),
-            //"mount_health_rounded" to mount?.health?.roundToInt().toString(),
-            //"mount_health_max" to mount?.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value.toString()
-        )
+        Placeholder("temperature", location.block.temperature.times(10).roundToInt()),
+        Placeholder("humidity", location.block.humidity.times(10).roundToInt()),
+        Placeholder("time", world.time),
+        Placeholder("fulltime", world.fullTime),
+    )
 
-    private fun Player.getCompassAngle(): Pair<String, String?> {
-        val loc = location.section?.centerLocation ?: return "\uEBBF" to null
-        if (world != loc.world) return "\uEBBF" to null
+    private class CompassAngle(val unicode: String, val angle: String? = null)
+
+    private fun Player.getCompassAngle(): CompassAngle {
+        val loc = location.section?.centerLocation ?: return CompassAngle("\uEBBF")
+        if (world != loc.world) return CompassAngle("\uEBBF")
 
         val dir = loc.subtract(location).toVector()
         val angleDir = (atan2(dir.z, dir.x) / 2 / Math.PI * 360 + 180) % 360
         val angleLook = (atan2(location.direction.z, location.direction.x) / 2 / Math.PI * 360 + 180) % 360
+
 
         return barUnicodeList[(((angleDir - angleLook + 360) % 360) / 22.5).toInt()]
     }
 
     // Don't alter this list unless you know what you're doing
     private val barUnicodeList = listOf(
-        "\uEBB7" to "S",
-        "\uEBB6" to "SSE",
-        "\uEBB5" to "SE",
-        "\uEBB4" to "ESE",
-        "\uEBB3" to "E",
-        "\uEBB2" to "ENE",
-        "\uEBB1" to "NE",
-        "\uEBB0" to "NNE",
-        "\uEBAF" to "N",
-        "\uEBBE" to "NNW",
-        "\uEBBD" to "NW",
-        "\uEBBC" to "WNW",
-        "\uEBBB" to "W",
-        "\uEBBA" to "WSW",
-        "\uEBB9" to "SW",
-        "\uEBB8" to "SSW",
+        CompassAngle("\uEBB7", "S"),
+        CompassAngle("\uEBB6", "SSE"),
+        CompassAngle("\uEBB5", "SE"),
+        CompassAngle("\uEBB4", "ESE"),
+        CompassAngle("\uEBB3", "E"),
+        CompassAngle("\uEBB2", "ENE"),
+        CompassAngle("\uEBB1", "NE"),
+        CompassAngle("\uEBB0", "NNE"),
+        CompassAngle("\uEBAF", "N"),
+        CompassAngle("\uEBBE", "NNW"),
+        CompassAngle("\uEBBD", "NW"),
+        CompassAngle("\uEBBC", "WNW"),
+        CompassAngle("\uEBBB", "W"),
+        CompassAngle("\uEBBA", "WSW"),
+        CompassAngle("\uEBB9", "SW"),
+        CompassAngle("\uEBB8", "SSW"),
     )
 }

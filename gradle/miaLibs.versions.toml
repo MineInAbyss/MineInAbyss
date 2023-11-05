@@ -1,11 +1,13 @@
 [versions]
-gearyPaper = "0.25-SNAPSHOT"
+gearyPaper = "0.27.0"
 guiy = "0.9.0"
 deeperworld = "0.8.0"
-chatty = "0.6.5"
+chatty = "0.6.6"
 mobzy = "0.21-SNAPSHOT"
-looty = "0.10-SNAPSHOT"
+looty = "0.11.0"
 protocolburrito = "0.7.0"
+eternalfortune = "0.2.2"
+packy = "0.2-SNAPSHOT"
 
 
 [libraries]
@@ -16,6 +18,8 @@ chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
+eternalfortune = { module = "com.mineinabyss:eternalfortune", version.ref = "eternalfortune" }
+packy = { module = "com.mineinabyss:Packy", version.ref = "packy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.4.10"
@@ -23,10 +27,11 @@ minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.6.4"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.26.2"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.4"
-minecraft-plugin-happyhud = "com.ehhtan:HappyHUD:1.0.6-RELEASE"
+minecraft-plugin-happyhud = "com.ehhtan:HappyHUD:1.0.7-RELEASE"
 #minecraft-plugin-hmcwraps = "de.skyslycer.hmcwraps:api:1.0.0"
 minecraft-plugin-shopkeepers = "com.nisovin.shopkeepers:ShopkeepersAPI:2.17.1"
 minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.20.1-v2-SNAPSHOT"
 minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.20.1-v2-SNAPSHOT"
 minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.20.1-v1"
 minecraft-plugin-openinv = "com.github.jikoo.OpenInv:openinvapi:4.3.1"
+minecraft-plugin-crazyadvancements = "eu.endercentral.crazy_advancements:CrazyAdvancementsAPI:2.1.15"
