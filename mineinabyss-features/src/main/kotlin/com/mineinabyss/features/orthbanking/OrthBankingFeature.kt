@@ -52,33 +52,16 @@ class OrthBankingFeature(val config: Config) : Feature {
                         val player = sender as Player
                         val currItem = player.inventory.itemInMainHand
                         val gearyItem = player.inventory.toGeary()?.itemInMainHand
-                        val isOrthCoin = currItem.isSimilar(CoinFactory.orthCoin)
-                        val currency =
-                            if (isOrthCoin) "coins" else "tokens"
 
-                        if (!player.isInHub()) {
-                            player.error("You must be in Orth to make a deposit.")
-                            return@action
-                        }
-
-                        if (gearyItem?.has<OrthCoin>() != true && gearyItem?.has<MittyToken>() != true) {
-                            player.error("You must be holding an Orth Coin or a Mitty Token to deposit.")
-                            return@action
-                        }
-
-                        if (amount <= 0) {
-                            player.error("You can't deposit 0 $currency.")
-                            return@action
-                        }
-
-                        if (amount > currItem.amount) {
-                            player.error("You don't have that many $currency.")
-                            return@action
+                        when {
+                            !player.isInHub() -> return@action player.error("You must be in Orth to make a deposit.")
+                            gearyItem?.has<OrthCoin>() != true -> return@action player.error("You must be holding an Orth Coin to deposit.")
+                            amount <= 0 -> return@action player.error("You can't deposit 0 Orth Coins.")
+                            amount > currItem.amount -> return@action player.error("You don't have that many Orth Coins.")
                         }
 
                         currItem.subtract(amount)
-                        if (isOrthCoin) player.playerData.orthCoinsHeld += amount
-                        else player.playerData.mittyTokensHeld += amount
+                        player.playerData.orthCoinsHeld += amount
                     }
                 }
                 "withdraw"(desc = "Dev command until Guiy can take items") {
@@ -87,45 +70,22 @@ class OrthBankingFeature(val config: Config) : Feature {
                     playerAction {
                         val player = sender as? Player ?: return@playerAction
                         val slot = player.inventory.firstEmpty()
-                        val isOrthCoin = type == "orthcoin"
-                        val item = (if (isOrthCoin) CoinFactory.orthCoin else CoinFactory.mittyToken)
-                        val currency =
-                            if (isOrthCoin) "coins" else if (type != "mitytoken") "tokens" else return@playerAction
-                        val heldAmount =
-                            if (isOrthCoin) player.playerData.orthCoinsHeld else player.playerData.mittyTokensHeld
+                        val item = CoinFactory.orthCoin ?: return@playerAction player.error("Failed to create Orth Coin.")
+                        val heldAmount = player.playerData.orthCoinsHeld
 
-                        if (!player.isInHub()) {
-                            player.error("You must be in Orth to make a withdraw.")
-                            return@playerAction
+                        when {
+                            !player.isInHub() -> return@playerAction player.error("You must be in Orth to make a withdraw.")
+                            amount <= 0 -> return@playerAction player.error("You can't withdraw 0 or less Orth Coins!")
+                            amount > heldAmount -> return@playerAction player.error("You don't have that many Orth Coins.")
+                            slot == -1 -> return@playerAction player.error("You do not have enough space in your inventory to withdraw the Orth Coins.")
                         }
 
-                        if (amount <= 0) {
-                            player.error("You can't withdraw 0 or less $currency!")
-                            return@playerAction
-                        }
+                        amount = minOf(amount, 64)
 
-                        if (amount > heldAmount) {
-                            player.error("You don't have that many $currency.")
-                            return@playerAction
-                        }
-
-                        if (amount > 64) amount = 64
-
-                        if (slot == -1) {
-                            player.error("You do not have enough space in your inventory to withdraw the $currency.")
-                            return@playerAction
-                        }
-
-                        if (item == null) {
-                            player.error("Failed to create $currency.")
-                            return@playerAction
-                        }
-
-                        if (isOrthCoin) player.playerData.orthCoinsHeld -= amount
-                        else player.playerData.mittyTokensHeld -= amount
+                        player.playerData.orthCoinsHeld
 
                         player.inventory.addItem(item.asQuantity(amount))
-                        player.success("You withdrew $amount $currency from your balance.")
+                        player.success("You withdrew $amount Orth Coins from your balance.")
                     }
                 }
             }
@@ -135,12 +95,12 @@ class OrthBankingFeature(val config: Config) : Feature {
                 1 -> listOf("bank").filter { it.startsWith(args[0]) }
                 2 -> {
                     when (args[0]) {
-                        "bank" -> listOf("withdraw", "deposit", "balance").filter { it.startsWith(args[1]) }
-                        else -> null
-                    }
+                        "bank" -> listOf("withdraw", "deposit", "balance")
+                        else -> listOf()
+                    }.filter { it.startsWith(args[1]) }
                 }
 
-                else -> null
+                else -> listOf()
             }
         }
     }
