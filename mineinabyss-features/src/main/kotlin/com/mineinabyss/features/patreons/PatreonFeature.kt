@@ -1,6 +1,7 @@
 package com.mineinabyss.features.patreons
 
 import com.mineinabyss.components.cosmetics.CosmeticVoucher
+import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.luckPerms
@@ -47,10 +48,7 @@ class PatreonFeature(val config: Config) : Feature {
                     playerAction {
                         val player = sender as Player
                         if (config.token == null) return@playerAction
-                        if (player.toGeary().get<Patreon>()?.tier == 0) {
-                            player.error("This command is only for Patreon supporters!")
-                            return@playerAction
-                        }
+                        if (player.toGeary().get<Patreon>()?.tier == 0) return@playerAction player.error("This command is only for Patreon supporters!")
 
                         val patreon = player.toGeary().get<Patreon>() ?: return@playerAction
                         val month = Month.of(Calendar.getInstance().get(Calendar.MONTH) + 1)
@@ -60,14 +58,8 @@ class PatreonFeature(val config: Config) : Feature {
                             return@playerAction
                         }
 
-                        if (player.inventory.firstEmpty() == -1) {
-                            player.error("Your inventory is full!")
-                            return@playerAction
-                        }
-
-                        config.token.amount = patreon.tier
-                        player.inventory.addItem(config.token)
-                        player.toGeary().setPersisting(patreon.copy(kitUsedMonth = month))
+                        player.playerData.mittyTokensHeld += patreon.tier
+                        patreon.kitUsedMonth = month
                     }
                 }
                 "prefix"(desc = "Change your prefix emote") {
@@ -154,30 +146,9 @@ class PatreonFeature(val config: Config) : Feature {
                         }
                     }
                 }
-                "voucher"(desc = "Convert old cosmetic items to vouchers") {
-                    @OptIn(UnsafeAccessors::class)
-                    playerAction {
-                        val prefab = player.inventory.toGeary()?.itemInMainHand?.get<PrefabKey>() ?: return@playerAction
-                        val item = gearyItems.createItem(prefab) ?: return@playerAction
-                        //TODO Cleanup this mess
-                        GearyItemPrefabQuery().toList { it }
-                            .firstOrNull { it.entity.get<CosmeticVoucher>()?.originalItem?.prefab == prefab.full }
-                            ?.let {
-                                gearyItems.createItem(it.entity.get<PrefabKey>()!!)?.let { voucher ->
-                                    if (player.inventory.firstEmpty() != -1) {
-                                        player.inventory.itemInMainHand.subtract()
-                                        player.inventory.addItem(voucher)
-                                        player.success("Converted ${item.displayName()} to a ${voucher.displayName()}")
-                                        player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
-                                    }
-                                }
-                            }
-                    }
-                }
             }
         }
-        val locs =
-            listOf(
+        val locs = listOf(
                 "global",
                 "orth",
                 "layerone",
@@ -190,38 +161,23 @@ class PatreonFeature(val config: Config) : Feature {
             )
         tabCompletion {
             when (args.size) {
-                1 -> listOf(
-                    "patreon"
-                ).filter { it.startsWith(args[0]) }
-
-                2 -> {
-                    when (args[0]) {
-                        "patreon" -> listOf("prefix", "token")
-                        else -> null
-                    }
+                1 -> listOf("patreon").filter { it.startsWith(args[0]) }
+                2 -> when (args[0]) {
+                    "patreon" -> listOf("prefix", "token").filter { it.startsWith(args[1]) }
+                    else -> null
                 }
-
-                3 -> {
-                    when (args[1]) {
-                        "prefix" -> listOf("remove", "set")
-                        else -> null
-                    }
+                3 -> when (args[1]) {
+                    "prefix" -> listOf("remove", "set").filter { it.startsWith(args[2]) }
+                    else -> null
                 }
-
-                4 -> {
-                    when (args[2]) {
-                        "set" -> listOf("kekw", "pogo", "pogyou", "pog")
-                        else -> null
-                    }
+                4 -> when (args[2]) {
+                    "set" -> listOf("kekw", "pogo", "pogyou", "pog").filter { it.startsWith(args[3]) }
+                    else -> null
                 }
-
-                5 -> {
-                    when (args[2]) {
-                        "set" -> locs
-                        else -> null
-                    }
+                5 -> when (args[2]) {
+                    "set" -> locs.filter { it.startsWith(args[4]) }
+                    else -> null
                 }
-
                 else -> null
             }
         }

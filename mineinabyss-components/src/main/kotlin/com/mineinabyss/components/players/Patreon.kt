@@ -9,8 +9,8 @@ import java.time.Month
 @Serializable
 @SerialName("mineinabyss:patreon")
 data class Patreon(
-    val tier: Int = 1,
-    val kitUsedMonth: Month? = null
+    var tier: Int = 1,
+    var kitUsedMonth: Month? = null
 )
 
 val Player.patreon get() = toGeary().get<Patreon>()
