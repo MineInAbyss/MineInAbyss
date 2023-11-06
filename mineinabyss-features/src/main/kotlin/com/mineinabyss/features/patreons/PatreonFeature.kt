@@ -176,7 +176,6 @@ class PatreonFeature(val config: Config) : Feature {
                             abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
                                 val preResetDatas = abyss.plugin.server.offlinePlayers.map { offlinePlayer ->
                                     runCatching {
-
                                         val offlinePdc = offlinePlayer.getOfflinePDC() ?: return@map null
                                         val heldTokens = (offlinePlayer.player?.playerData ?: offlinePdc.decode<PlayerData>())?.mittyTokensHeld ?: 0
                                         val wasPatreon = ((offlinePlayer.player?.patreon ?: offlinePdc.decode<Patreon>())?.tier ?: 0) > 0
@@ -192,7 +191,6 @@ class PatreonFeature(val config: Config) : Feature {
                     }
                     "reset_extra_token" {
                         action {
-
                             abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
                                 abyss.dataPath.resolve("preResetPatreons.txt").readLines().mapNotNull {
                                     runCatching { json.decodeFromString<PreResetPatreon>(it) }.getOrNull()
