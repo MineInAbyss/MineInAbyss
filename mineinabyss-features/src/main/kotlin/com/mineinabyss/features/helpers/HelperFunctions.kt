@@ -2,8 +2,6 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.discordSRV
-import com.mineinabyss.geary.papermc.tracking.items.gearyItems
-import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -71,17 +69,6 @@ val Player.linkedDiscordAccount
     get() = runCatching {
         discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
     }.getOrNull()
-
-/*object MountUtils {
-    *//** Gets the entity the player is mounted on, be that vanilla or ModelEngine entity*//*
-    val Player.mount: LivingEntity?
-        get() = (vehicle ?: ModelEngineAPI.getMountManager()?.getMountedPair(uniqueId)?.base?.original) as? LivingEntity
-}*/
-
-object CoinFactory {
-    val orthCoin get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "orthcoin"))
-    val mittyToken get() = gearyItems.createItem(PrefabKey.of("mineinabyss", "patreon_token"))
-}
 
 val Player.isInventoryFull: Boolean
     get() = inventory.firstEmpty() == -1
