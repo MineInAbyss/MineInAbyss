@@ -1,13 +1,14 @@
 package com.mineinabyss.features.lootcrates
 
 import com.mineinabyss.components.lootcrates.ContainsLoot
+import com.mineinabyss.components.lootcrates.LootCrateContants
 import com.mineinabyss.components.lootcrates.LootTable
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.helpers.entity
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.geary.prefabs.configuration.components.Prefab
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -27,11 +28,13 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
     class Context : Configurable<Config> {
         override val configManager = config("lootTables", abyss.dataPath, Config())
         val listeners = arrayOf(LootCratesListener(config.messages), LootCrateEditingListener(config.messages))
-        val lootTables = geary.queryManager
-            .getEntitiesMatching(family {
-                hasSet<LootTable>()
-                hasSet<Prefab>()
-            }).associate { it.get<PrefabKey>()!!.key to it.get<LootTable>()!! }
+        val lootTables by lazy {
+            geary.queryManager
+                .getEntitiesMatching(family {
+                    hasSet<LootTable>()
+                    hasSet<PrefabKey>()
+                }).associate { it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!! }
+        }
     }
 
     @Serializable
@@ -44,6 +47,11 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
 
     override fun FeatureDSL.enable() {
         plugin.listeners(*context.listeners)
+
+        entity {
+            set(LootTable.empty())
+            set(PrefabKey.of(LootCrateContants.CUSTOM_LOOT_TABLE))
+        }
 
         mainCommand {
             "lootcrates" {

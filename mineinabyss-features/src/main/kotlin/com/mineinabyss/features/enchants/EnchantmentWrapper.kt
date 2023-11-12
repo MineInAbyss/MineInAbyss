@@ -63,6 +63,14 @@ class EnchantmentWrapper(
         TODO("Not yet implemented")
     }
 
+    override fun getMinModifiedCost(level: Int): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun getMaxModifiedCost(level: Int): Int {
+        TODO("Not yet implemented")
+    }
+
     override fun getRarity(): EnchantmentRarity {
         TODO("Not yet implemented")
     }

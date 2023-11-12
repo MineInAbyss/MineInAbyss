@@ -30,5 +30,9 @@ class LootTable(
             inventory.setItem(index, itemStack)
         }
     }
+
+    companion object{
+        fun empty() = LootTable(Roll.Uniform(0, 0), emptyList())
+    }
 }
 

@@ -9,7 +9,7 @@ class WeightedRandomList<T>(val items: List<T>, weight: (T) -> Int) {
         .drop(1)
 
     @Transient
-    private val weightsSum = cumulativeWeights.last()
+    private val weightsSum = cumulativeWeights.lastOrNull() ?: 0
 
     fun chooseRandom(): T {
         val random = (0..weightsSum).random()

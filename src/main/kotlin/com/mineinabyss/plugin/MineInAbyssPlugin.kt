@@ -22,10 +22,11 @@ class MineInAbyssPlugin : JavaPlugin() {
         }
 
         PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
+
+        DI.add(AbyssFeatureManager(this@MineInAbyssPlugin))
     }
 
     override fun onEnable() {
-        DI.add(AbyssFeatureManager(this@MineInAbyssPlugin))
         featureManager.enable()
     }
 

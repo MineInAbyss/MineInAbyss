@@ -1,4 +1,4 @@
-package com.mineinabyss.features.lootcrates
+package com.mineinabyss.features.lootcrates.constants
 
 object LootCratePermissions {
     const val OPEN = "mineinabyss.lootcrates.open"

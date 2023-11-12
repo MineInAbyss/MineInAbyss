@@ -3,13 +3,16 @@ package com.mineinabyss.features.lootcrates
 import com.mineinabyss.components.lootcrates.ContainsLoot
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.features.lootcrates.constants.LootCratePermissions
 import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.geary.papermc.datastore.decode
+import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.block.Chest
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -27,7 +30,11 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
     fun PlayerInteractEvent.onChestInteract() {
         if (!rightClicked) return
         val chest = clickedBlock?.state as? Chest ?: return
-        val loot = chest.persistentDataContainer.decode<ContainsLoot>() ?: return
+        val pdc = chest.persistentDataContainer
+        val loot = pdc.decode<ContainsLoot>() ?: return
+        val gearyInventory = player.inventory.toGeary()
+        val mainHand = gearyInventory?.itemInMainHand
+        if (mainHand?.has<ContainsLoot>() == true) return
 
         if (!player.hasPermission(LootCratePermissions.OPEN)) {
             player.error(msg.noPermissionToOpen)
@@ -47,15 +54,10 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
                     it[playerUUID] = player.uniqueId
                     it[chestId] = uuid
                     it[dateLooted] = LocalDate.now()
+                    it[lootType] = loot.table
                 }
             }
-            val table = Features.lootCrates.lootTables[loot.table] ?: run {
-                player.error(msg.tableNotFound.format(loot.table))
-                return
-            }
-            val lootInventory = Bukkit.createInventory(null, 27, Component.text("Loot"))
-            table.populateInventory(lootInventory)
-            player.openInventory(lootInventory)
+            openChestWithLoot(player, loot, chest)
         } else {
             player.error(msg.alreadyLooted.format(lastLootDate))
         }
@@ -70,6 +72,22 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
             LootedChests.deleteWhere {
                 chestId eq chest.location.toLootChestUUID()
             }
+        }
+    }
+
+    companion object {
+        fun openChestWithLoot(player: Player, loot: ContainsLoot, chest: Chest) {
+            val lootInventory = Bukkit.createInventory(null, 27, Component.text("Loot"))
+            if (loot.isCustomLoot()) {
+                lootInventory.contents = chest.inventory.contents
+            } else {
+                val table = Features.lootCrates.lootTables[loot.table] ?: run {
+                    player.error(Features.lootCrates.config.messages.tableNotFound.format(loot.table))
+                    return
+                }
+                table.populateInventory(lootInventory)
+            }
+            player.openInventory(lootInventory)
         }
     }
 }

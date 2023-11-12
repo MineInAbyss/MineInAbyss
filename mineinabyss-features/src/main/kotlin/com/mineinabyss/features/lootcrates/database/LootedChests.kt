@@ -7,4 +7,5 @@ object LootedChests: IntIdTable() {
     val playerUUID = uuid("playerUUID")
     val dateLooted = date("dateLooted")
     val chestId = uuid("chestId")
+    val lootType = varchar("lootType", 50)
 }
