@@ -12,7 +12,7 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.entity.Player
 
-class EnchantsFeature : Feature {
+class EnchantsFeature : Feature() {
     override fun FeatureDSL.enable() {
         CustomEnchants.register()
 

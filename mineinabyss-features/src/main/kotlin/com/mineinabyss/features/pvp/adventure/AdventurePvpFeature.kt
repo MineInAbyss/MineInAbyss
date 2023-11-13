@@ -10,7 +10,7 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
 
-class AdventurePvpFeature : Feature {
+class AdventurePvpFeature : Feature() {
     override fun FeatureDSL.enable() {
         plugin.listeners(
             PvpDamageListener(),

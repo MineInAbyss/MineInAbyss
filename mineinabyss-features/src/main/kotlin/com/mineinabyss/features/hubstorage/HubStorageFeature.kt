@@ -6,7 +6,7 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.entity.Player
 
-class HubStorageFeature : Feature {
+class HubStorageFeature : Feature() {
     override fun FeatureDSL.enable() {
         mainCommand {
             "storage"(desc = "Opens player storage") {

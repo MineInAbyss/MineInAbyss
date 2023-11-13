@@ -12,7 +12,7 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.entity.Player
 
-class PinsFeature : Feature {
+class PinsFeature : Feature() {
     override fun FeatureDSL.enable() {
         plugin.listeners(
             PinDropListener()

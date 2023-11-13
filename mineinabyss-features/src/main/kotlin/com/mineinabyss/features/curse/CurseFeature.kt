@@ -8,7 +8,7 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 
-class CurseFeature : Feature {
+class CurseFeature : Feature() {
     override fun FeatureDSL.enable() {
         plugin.listeners(CurseAscensionListener(), CurseEffectsListener())
 

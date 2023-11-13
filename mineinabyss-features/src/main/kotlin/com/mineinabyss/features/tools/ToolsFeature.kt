@@ -13,7 +13,7 @@ import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.plugin.listeners
 
-class ToolsFeature : Feature {
+class ToolsFeature : Feature() {
     override val dependsOn: Set<String> = setOf("DeeperWorld")
     override fun FeatureDSL.enable() {
         mainCommand {

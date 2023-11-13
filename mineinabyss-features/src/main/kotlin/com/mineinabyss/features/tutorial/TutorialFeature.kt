@@ -15,7 +15,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
 
-class TutorialFeature : Feature {
+class TutorialFeature : Feature() {
     private fun TextDisplay.trackEntity() {
         toGearyOrNull()?.add<TutorialEntity>() ?: run {
             abyss.plugin.launch {

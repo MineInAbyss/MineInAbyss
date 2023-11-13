@@ -20,7 +20,7 @@ import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
 import org.bukkit.block.BlockFace
 
-class CosmeticsFeature(val config: Config) : Feature {
+class CosmeticsFeature(val config: Config) : Feature() {
     @Serializable
     class Config {
         val enabled = false

@@ -9,7 +9,7 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.plugin.listeners
 
-class DescentFeature : Feature {
+class DescentFeature : Feature() {
     override fun FeatureDSL.enable() {
         plugin.listeners(
             DescentListener()

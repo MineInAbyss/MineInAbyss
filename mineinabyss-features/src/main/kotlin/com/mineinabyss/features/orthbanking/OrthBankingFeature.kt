@@ -1,6 +1,5 @@
 package com.mineinabyss.features.orthbanking
 
-import com.mineinabyss.components.npc.orthbanking.MittyToken
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
@@ -19,7 +18,7 @@ import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-class OrthBankingFeature(val config: Config) : Feature {
+class OrthBankingFeature(val config: Config) : Feature() {
     @Serializable
     class Config {
         val enabled = false

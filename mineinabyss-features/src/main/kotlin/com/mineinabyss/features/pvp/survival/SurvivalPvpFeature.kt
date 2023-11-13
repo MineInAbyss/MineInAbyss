@@ -11,7 +11,7 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.entity.Player
 
-class SurvivalPvpFeature : Feature {
+class SurvivalPvpFeature : Feature() {
     override fun FeatureDSL.enable() {
         plugin.listeners(
             PvpDamageListener(),

@@ -6,10 +6,9 @@ import com.mineinabyss.idofront.commands.arguments.playerArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class PlayerProfileFeature : Feature {
+class PlayerProfileFeature : Feature() {
     override fun FeatureDSL.enable() {
 
         mainCommand {

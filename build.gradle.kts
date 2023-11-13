@@ -1,5 +1,3 @@
-import java.net.URI
-
 plugins {
     alias(libs.plugins.mia.kotlin.jvm)
     alias(libs.plugins.kotlinx.serialization)
@@ -20,20 +18,13 @@ allprojects {
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
         maven("https://repo.mineinabyss.com/mirror")
-        maven {
-            url = URI("https://${mavenUser}:${mavenPassword}@repo.mineinabyss.com/private")
-            credentials {
-                username = mavenUser
-                password = mavenPassword
-            }
-        }
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.org/repository/maven-public/")
+        maven("https://mvn.lumine.io/repository/maven-public/")
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
 //        maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
-        mavenLocal()
         maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers

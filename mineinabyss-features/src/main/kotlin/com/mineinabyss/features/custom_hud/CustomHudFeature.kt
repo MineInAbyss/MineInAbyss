@@ -10,7 +10,7 @@ import com.mineinabyss.idofront.plugin.listeners
 class CustomHudFeature(
     val backgroundLayout: String = "backgrounds",
     val customHudTemplate: String = "custom_hud"
-) : Feature {
+) : Feature() {
     override val dependsOn: Set<String> get() = setOf("HappyHUD", "Packy")
     override fun FeatureDSL.enable() {
         plugin.listeners(CustomHudListener(this@CustomHudFeature))

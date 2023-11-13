@@ -39,7 +39,7 @@ import java.util.*
 import kotlin.io.path.readLines
 import kotlin.io.path.writeLines
 
-class PatreonFeature(val config: Config) : Feature {
+class PatreonFeature(val config: Config) : Feature() {
     override val dependsOn = setOf("LuckPerms")
 
     @Serializable

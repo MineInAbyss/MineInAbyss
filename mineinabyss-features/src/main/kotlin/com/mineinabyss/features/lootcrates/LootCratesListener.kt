@@ -5,7 +5,9 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.lootcrates.constants.LootCratePermissions
 import com.mineinabyss.features.lootcrates.database.LootedChests
+import com.mineinabyss.features.lootcrates.database.LootedChests.locationEq
 import com.mineinabyss.geary.papermc.datastore.decode
+import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
@@ -18,7 +20,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -41,18 +43,19 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
             return
         }
 
-        val uuid = chest.location.toLootChestUUID()
         val lastLootDate = transaction(abyss.db) {
             LootedChests.select {
-                LootedChests.playerUUID eq player.uniqueId
-                LootedChests.chestId eq uuid
+                (LootedChests.playerUUID eq player.uniqueId) and locationEq(chest.location)
             }.singleOrNull()?.getOrNull(LootedChests.dateLooted)
         }
         if (lastLootDate == null) {
             transaction(abyss.db) {
                 LootedChests.insert {
                     it[playerUUID] = player.uniqueId
-                    it[chestId] = uuid
+                    it[x] = chest.location.blockX
+                    it[y] = chest.location.blockY
+                    it[z] = chest.location.blockZ
+                    it[world] = chest.location.world.name
                     it[dateLooted] = LocalDate.now()
                     it[lootType] = loot.table
                 }
@@ -67,10 +70,10 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun BlockBreakEvent.removeFromDBOnChestRemove() {
         val chest = block.state as? Chest ?: return
-        val loot = chest.persistentDataContainer.decode<ContainsLoot>() ?: return
+        if (!chest.persistentDataContainer.has<ContainsLoot>()) return
         transaction(abyss.db) {
             LootedChests.deleteWhere {
-                chestId eq chest.location.toLootChestUUID()
+                locationEq(chest.location)
             }
         }
     }

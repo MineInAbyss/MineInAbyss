@@ -43,6 +43,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
         val alreadyLooted: String = "You already looted this chest on %s",
         val noPermissionToEdit: String = "You don't have permission to edit loot crates",
         val noPermissionToOpen: String = "You don't have permission to open loot crates",
+        val lootTableItemTitle: String = "<green>Loot Crate: <gold>%s<yellow>:%s",
     )
 
     override fun FeatureDSL.enable() {
@@ -59,10 +60,11 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
                     val lootTable by optionArg(context.lootTables.keys.toList())
 
                     playerAction {
+                        val (namespace, key) = PrefabKey.of(lootTable)
                         player.inventory.addItem(
                             SerializableItemStack(
                                 type = Material.STICK,
-                                displayName = "<green>Loot Crate: $lootTable".miniMsg()
+                                displayName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
                             ).toItemStack().apply {
                                 editMeta {
                                     it.persistentDataContainer.encode(ContainsLoot(lootTable))

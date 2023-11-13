@@ -11,7 +11,7 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 
-class GondolaFeature : Feature {
+class GondolaFeature : Feature() {
     override fun FeatureDSL.enable() {
         geary.pipeline.addSystems(
             LoadedGondolas,
