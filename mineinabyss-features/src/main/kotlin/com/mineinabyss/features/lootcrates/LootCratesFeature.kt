@@ -1,7 +1,7 @@
 package com.mineinabyss.features.lootcrates
 
 import com.mineinabyss.components.lootcrates.ContainsLoot
-import com.mineinabyss.components.lootcrates.LootCrateContants
+import com.mineinabyss.components.lootcrates.LootCrateConstants
 import com.mineinabyss.components.lootcrates.LootTable
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.datatypes.family.family
@@ -51,7 +51,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
 
         entity {
             set(LootTable.empty())
-            set(PrefabKey.of(LootCrateContants.CUSTOM_LOOT_TABLE))
+            set(PrefabKey.of(LootCrateConstants.CUSTOM_LOOT_TABLE))
         }
 
         mainCommand {

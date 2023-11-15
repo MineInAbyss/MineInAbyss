@@ -3,12 +3,13 @@ package com.mineinabyss.components.lootcrates
 import com.mineinabyss.idofront.serialization.SerializableItemStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 @Serializable
 sealed class LootEntry(
-    val weight: Int = 0,
+    val weight: Int = 1,
     override val functions: List<LootFunction> = emptyList(),
     override val conditions: List<LootCondition> = emptyList()
 ): Selecting, Conditioned {
@@ -33,6 +34,9 @@ sealed class LootEntry(
     data class Group(
         val children: List<LootEntry>,
     ) : LootEntry() {
-        override fun selectBaseline() = children.randomOrNull()?.selectBaseline()
+        @Transient
+        val entries = LootEntryHolder(children)
+
+        override fun selectBaseline() = entries.selectFromRandomEntry()
     }
 }

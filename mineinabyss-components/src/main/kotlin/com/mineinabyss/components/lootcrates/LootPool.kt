@@ -12,9 +12,9 @@ class LootPool(
     override val conditions: List<LootCondition> = emptyList(),
 ): Selecting, Conditioned {
     @Transient
-    val weightedEntries = WeightedRandomList(entries) { it.weight }
+    val entryHolder = LootEntryHolder(entries)
 
     override fun selectBaseline(): ItemStack? {
-        return weightedEntries.chooseRandom { it.conditionsMet() }.select()
+        return entryHolder.selectFromRandomEntry()
     }
 }
