@@ -43,6 +43,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
         val alreadyLooted: String = "You already looted this chest on %s",
         val noPermissionToEdit: String = "You don't have permission to edit loot crates",
         val noPermissionToOpen: String = "You don't have permission to open loot crates",
+        val noPermissionToBreak: String = "You don't have permission to break loot crates, ask a member of staff if you need one removed.",
         val lootTableItemTitle: String = "<green>Loot Crate: <gold>%s<yellow>:%s",
     )
 
