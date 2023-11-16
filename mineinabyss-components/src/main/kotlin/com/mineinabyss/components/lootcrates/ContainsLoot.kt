@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("mineinabyss:contains_loot")
 class ContainsLoot(
-    val table: String
+    val table: String,
 ) {
-    fun isCustomLoot() = table == LootCrateContants.CUSTOM_LOOT_TABLE
+    fun isCustomLoot() = table == LootCrateConstants.CUSTOM_LOOT_TABLE
 }
+

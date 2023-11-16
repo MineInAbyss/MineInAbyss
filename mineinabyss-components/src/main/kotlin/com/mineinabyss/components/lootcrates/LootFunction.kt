@@ -6,8 +6,8 @@ import org.bukkit.inventory.ItemStack
 
 @Serializable
 sealed class LootFunction(
-    val conditions: List<LootCondition> = emptyList(),
-) {
+    override val conditions: List<LootCondition> = emptyList(),
+): Conditioned {
     abstract fun apply(itemStack: ItemStack)
 
     @Serializable

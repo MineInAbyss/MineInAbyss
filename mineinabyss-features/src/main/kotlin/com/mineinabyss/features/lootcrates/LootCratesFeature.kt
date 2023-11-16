@@ -1,7 +1,7 @@
 package com.mineinabyss.features.lootcrates
 
 import com.mineinabyss.components.lootcrates.ContainsLoot
-import com.mineinabyss.components.lootcrates.LootCrateContants
+import com.mineinabyss.components.lootcrates.LootCrateConstants
 import com.mineinabyss.components.lootcrates.LootTable
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.datatypes.family.family
@@ -43,6 +43,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
         val alreadyLooted: String = "You already looted this chest on %s",
         val noPermissionToEdit: String = "You don't have permission to edit loot crates",
         val noPermissionToOpen: String = "You don't have permission to open loot crates",
+        val noPermissionToBreak: String = "You don't have permission to break loot crates, ask a member of staff if you need one removed.",
         val lootTableItemTitle: String = "<green>Loot Crate: <gold>%s<yellow>:%s",
     )
 
@@ -51,7 +52,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
 
         entity {
             set(LootTable.empty())
-            set(PrefabKey.of(LootCrateContants.CUSTOM_LOOT_TABLE))
+            set(PrefabKey.of(LootCrateConstants.CUSTOM_LOOT_TABLE))
         }
 
         mainCommand {

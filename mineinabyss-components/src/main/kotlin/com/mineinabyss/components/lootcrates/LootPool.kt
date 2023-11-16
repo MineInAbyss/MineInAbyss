@@ -6,19 +6,15 @@ import org.bukkit.inventory.ItemStack
 
 @Serializable
 class LootPool(
-    val entries: List<LootSelector>,
-    val weight: Int = 1,
-    val functions: List<LootFunction> = emptyList(),
-) {
+    val rolls: Roll = Roll.Constant(1),
+    val entries: List<LootEntry>,
+    override val functions: List<LootFunction> = emptyList(),
+    override val conditions: List<LootCondition> = emptyList(),
+): Selecting, Conditioned {
     @Transient
-    val weightedEntries = WeightedRandomList(entries) { it.weight }
+    val entryHolder = LootEntryHolder(entries)
 
-    fun select(): ItemStack? {
-        return weightedEntries.chooseRandom().select()?.apply {
-            functions
-                .filter { function -> function.conditions.all { it.check() } }
-                .forEach { it.apply(this) }
-        }
+    override fun selectBaseline(): ItemStack? {
+        return entryHolder.selectFromRandomEntry()
     }
 }
-

@@ -1,5 +1,5 @@
 package com.mineinabyss.components.lootcrates
 
-object LootCrateContants {
+object LootCrateConstants {
     const val CUSTOM_LOOT_TABLE = "mineinabyss:loot_custom"
 }
