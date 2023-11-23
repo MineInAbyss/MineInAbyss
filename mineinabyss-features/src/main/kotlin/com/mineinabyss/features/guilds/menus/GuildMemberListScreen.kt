@@ -72,7 +72,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
             nav.open(
                 UniversalScreens.Anvil(
                 AnvilGUI.Builder()
-                    .title("${Space.of(-61)}:guild_search_menu:")
+                    .title(":space_-61::guild_search_menu:")
                     .itemLeft(guildInvitePaper)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }

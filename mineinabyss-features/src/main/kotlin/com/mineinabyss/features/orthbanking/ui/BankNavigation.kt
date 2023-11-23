@@ -14,9 +14,9 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player
 
 sealed class BankScreen(val title: String, val height: Int) {
-    object Default : BankScreen("${Space.of(-18)}:orthbanking_menu:", 4)
-    object Deposit : BankScreen("${Space.of(-18)}:orthbanker_deposit_menu:", 5)
-    object Widthdraw : BankScreen("${Space.of(18)}:orthbanker_withdrawal_menu:", 5)
+    object Default : BankScreen(":space_-8::orthbanking_menu:", 4)
+    object Deposit : BankScreen(":space_-8::orthbanker_deposit_menu:", 5)
+    object Widthdraw : BankScreen(":space_-8::orthbanker_withdrawal_menu:", 5)
 }
 
 @Composable
