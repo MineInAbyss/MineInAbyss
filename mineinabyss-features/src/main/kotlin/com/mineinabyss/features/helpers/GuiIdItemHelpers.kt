@@ -42,14 +42,13 @@ fun OfflinePlayer?.head(
     isCenterOfInv: Boolean = false,
 ): ItemStack {
     return ItemStack(Material.PLAYER_HEAD).editItemMeta {
-        if (this is SkullMeta) {
-            displayName(title)
-            lore(lore.toList())
-            if (isFlat) setCustomModelData(10)
-            if (isLarge) setCustomModelData(11)
-            if (isCenterOfInv && !isLarge) setCustomModelData(12)
-            if (isCenterOfInv && isLarge) setCustomModelData(13)
-            owningPlayer = this@head
-        }
+        this as SkullMeta
+        displayName(title)
+        lore(lore.toList())
+        if (isFlat) setCustomModelData(1)
+        if (isLarge) setCustomModelData(2)
+        if (isCenterOfInv && !isLarge) setCustomModelData(3)
+        if (isCenterOfInv && isLarge) setCustomModelData(4)
+        owningPlayer = this@head
     }
 }
