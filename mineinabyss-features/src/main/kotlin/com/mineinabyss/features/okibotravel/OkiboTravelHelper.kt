@@ -3,6 +3,7 @@ package com.mineinabyss.features.okibotravel
 import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
 import net.kyori.adventure.key.Key
@@ -42,12 +43,12 @@ fun spawnOkiboMaps() {
         )
         Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(spawnMapPacket).sendTo(it) }
 
-        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.miniMsg().font(mapText.font)))
+        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.broadcastVal().miniMsg().font(mapText.font)))
         val metaPacket = ClientboundSetEntityDataPacket(
             entityId, listOf(
-                SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, mapText.scale),
-                SynchedEntityData.DataValue(22, EntityDataSerializers.COMPONENT, txt ?: Component.empty()),
-                SynchedEntityData.DataValue(24, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
+                SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, mapText.scale),
+                SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, txt ?: Component.empty()),
+                SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
             )
         )
         Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(metaPacket).sendTo(it) }
