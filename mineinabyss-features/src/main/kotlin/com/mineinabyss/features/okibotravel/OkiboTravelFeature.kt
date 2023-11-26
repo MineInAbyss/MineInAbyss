@@ -21,7 +21,7 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
         val okiboTravelListener = OkiboTravelListener()
     }
 
-    override val dependsOn = setOf("Train_Carts", "TCCoasters")
+    override val dependsOn = setOf("Train_Carts", "TCCoasters", "BKCommonLib", "ProtocolBurrito")
 
     override fun FeatureDSL.enable() {
         plugin.listeners(context.okiboTravelListener)

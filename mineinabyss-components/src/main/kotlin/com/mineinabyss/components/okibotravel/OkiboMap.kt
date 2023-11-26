@@ -1,11 +1,13 @@
 package com.mineinabyss.components.okibotravel
 
+import com.mineinabyss.idofront.serialization.KeySerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import com.mineinabyss.idofront.serialization.VectorSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.key.Key
 import org.bukkit.util.Vector
 import org.joml.Vector3f
 
@@ -14,19 +16,8 @@ import org.joml.Vector3f
 data class OkiboMap(
     val station: String,
     @EncodeDefault(NEVER) val offset: @Serializable(VectorSerializer::class) Vector = Vector(0, 0, 0),
-    @EncodeDefault(NEVER) val text: String = """
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-    """.trimIndent(),
-    @EncodeDefault(NEVER) val font: String = "orth_map",
+    @EncodeDefault(NEVER) val text: String = ":orth_1::orth_2::orth_3::orth_4::orth_5::orth_6::orth_7::orth_8::orth_9::orth_10:",
+    @EncodeDefault(NEVER) val font: @Serializable(KeySerializer::class) Key = Key.key("mineinabyss:orth_map"),
     @EncodeDefault(NEVER) val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
     val hitboxes: Set<OkiboMapHitbox>
 ) {

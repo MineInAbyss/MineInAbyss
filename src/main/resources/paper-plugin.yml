@@ -89,3 +89,8 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    ProtocolBurrito:
+      required: false
+      load: BEFORE
+      join-classpath: true
+

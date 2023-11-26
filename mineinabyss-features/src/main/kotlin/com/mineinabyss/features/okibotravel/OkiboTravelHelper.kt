@@ -42,7 +42,7 @@ fun spawnOkiboMaps() {
         )
         Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(spawnMapPacket).sendTo(it) }
 
-        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.miniMsg().font(Key.key(mapText.font))))
+        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.miniMsg().font(mapText.font)))
         val metaPacket = ClientboundSetEntityDataPacket(
             entityId, listOf(
                 SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, mapText.scale),
