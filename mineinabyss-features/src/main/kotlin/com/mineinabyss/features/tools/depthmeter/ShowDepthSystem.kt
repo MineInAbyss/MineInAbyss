@@ -11,15 +11,9 @@ import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.Pointers
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
-
-@Serializable
-@SerialName("mineinabyss:show_depth")
-class ShowDepth
 
 class ShowDepthSystem : GearyListener() {
     private val Pointers.player by get<Player>().on(target)

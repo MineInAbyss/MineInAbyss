@@ -25,6 +25,10 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    WorldGuard:
+      required: false
+      load: BEFORE
+      join-classpath: true
     DeeperWorld:
       required: false
       load: BEFORE
