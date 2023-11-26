@@ -4,6 +4,7 @@ import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
@@ -53,41 +54,35 @@ class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFea
                     }
                 }
                 "add"(desc = "Add a player to this display item.") {
-                    val playerName by stringArg()
+                    val offlinePlayer by offlinePlayerArg()
                     playerAction {
                         val player = sender as Player
                         val entity = player.playerData.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
-                        val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
+                        val uuid = offlinePlayer.uniqueId
 
-                        if (uuid in locked.allowedAccess) {
-                            player.error("$playerName can already interact with this ${entity.name}")
-                            return@playerAction
-                        } else {
-                            locked.allowedAccess.add(uuid)
-                            entity.toGeary().encodeComponentsTo(entity)
-                            player.success("$playerName can now interact with this ${entity.name}")
-                        }
+                        if (uuid in locked.allowedAccess)
+                            return@playerAction player.error("${offlinePlayer.name} can already interact with this ${entity.name}")
+
+                        locked.allowedAccess.add(uuid)
+                        entity.toGeary().encodeComponentsTo(entity)
+                        player.success("${offlinePlayer.name} can now interact with this ${entity.name}")
                     }
                 }
 
                 "remove"(desc = "Remove a player to this display item.") {
-                    val playerName by stringArg {
-                        parseErrorMessage = { "No player with name: $passed." }
-                    }
+                    val offlinePlayer by offlinePlayerArg()
                     playerAction {
                         val player = sender as Player
                         val entity = player.playerData.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
-                        val uuid = Bukkit.getOfflinePlayer(playerName).uniqueId
+                        val uuid = offlinePlayer.uniqueId
 
                         if (uuid in locked.allowedAccess) {
                             locked.allowedAccess.remove(uuid)
                             entity.toGeary().encodeComponentsTo(entity)
-                            player.success("$playerName has been removed from this ${entity.name}")
-                            return@playerAction
-                        }
-                        player.error("$playerName cannot interact with this ${entity.name}")
+                            player.success("${offlinePlayer.name} has been removed from this ${entity.name}")
+                        } else player.error("${offlinePlayer.name} cannot interact with this ${entity.name}")
                     }
                 }
 
@@ -125,23 +120,18 @@ class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFea
         }
         tabCompletion {
             when (args.size) {
-                1 -> listOf(
-                    "lock"
-                ).filter { it.startsWith(args[0]) }
+                1 -> listOf("lock").filter { it.startsWith(args[0]) }
 
-                2 -> {
-                    when (args[0]) {
-                        "lock" -> listOf("add", "remove", "clear", "check", "toggle")
-                        else -> null
-
-                    }
-                }
+                2 -> when (args[0]) {
+                    "lock" -> listOf("add", "remove", "clear", "check", "toggle")
+                    else -> null
+                }?.filter { it.startsWith(args[1]) }
 
                 3 -> when (args[1]) {
                     "add" -> Bukkit.getOnlinePlayers().map { it.name }
                     "remove" -> Bukkit.getOnlinePlayers().map { it.name }
                     else -> null
-                }
+                }?.filter { it.lowercase().startsWith(args[2].lowercase()) }
 
                 else -> null
             }
