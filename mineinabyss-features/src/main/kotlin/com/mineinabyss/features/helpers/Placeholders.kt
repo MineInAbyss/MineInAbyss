@@ -25,37 +25,29 @@ class Placeholders : PlaceholderExpansion() {
     override fun getVersion() = "0.10"
 
     override fun onPlaceholderRequest(player: Player, identifier: String) =
-        player.mineinabyssPlaceholders.firstOrNull { it.identifier == identifier }?.value?.toString() ?: identifier
+        when (identifier) {
+            "orthbanking_coins" -> player.playerData.orthCoinsHeld
+            "orthbanking_tokens" -> player.playerData.mittyTokensHeld
 
-    class Placeholder(val identifier: String, val value: Any)
+            "hud_orthbanking" -> player.playerData.showPlayerBalance
+            "hud_depthmeter" -> player.toGeary().has<ShowDepthMeterHud>()
+            "hud_starcompass" -> player.toGeary().has<ShowStarCompassHud>()
+            "hud_always_air" -> player.customHudData.alwaysShowAir
+            "hud_always_armor" -> player.customHudData.alwaysShowArmor
+            "hud_show_top_bar" -> (player.toGeary().has<ShowDepthMeterHud>() && player.toGeary().has<ShowStarCompassHud>())
+            "hud_hide_armor_air_background" -> (!player.customHudData.alwaysShowAir && !player.customHudData.alwaysShowArmor)
+                    || ((player.getAttribute(Attribute.GENERIC_ARMOR)?.value ?: 0.0) > 0.0) || (player.remainingAir < player.maximumAir)
 
-    private val Player.mineinabyssPlaceholders: Set<Placeholder> get() = setOf(
-        Placeholder("orthbanking_coins", playerData.orthCoinsHeld),
-        Placeholder("orthbanking_tokens", playerData.mittyTokensHeld),
+            "layer" -> player.location.layer?.name
+            "layer_simple" -> player.simpleLayerName
+            "whistle" -> player.getLayerWhistleForHud()
+            "section" -> player.location.section?.name ?: "Unmanaged Section"
+            "depth" -> player.getDepth()
 
-        Placeholder("hud_orthbanking", playerData.showPlayerBalance),
-        Placeholder("hud_depthmeter", toGeary().has<ShowDepthMeterHud>()),
-        Placeholder("hud_starcompass", toGeary().has<ShowStarCompassHud>()),
-        Placeholder("hud_always_air", customHudData.alwaysShowAir),
-        Placeholder("hud_always_armor", customHudData.alwaysShowArmor),
-        Placeholder("hud_show_top_bar", toGeary().apply { has<ShowDepthMeterHud>() && has<ShowStarCompassHud>() }),
-        Placeholder("hud_hide_armor_air_background", ((!customHudData.alwaysShowAir && !customHudData.alwaysShowArmor)
-                || ((getAttribute(Attribute.GENERIC_ARMOR)?.value ?: 0.0) > 0.0) || (remainingAir < maximumAir))
-        ),
-
-        Placeholder("layer", (location.layer?.name ?: "")),
-        Placeholder("layer_simple", simpleLayerName),
-        Placeholder("whistle", getLayerWhistleForHud()),
-        Placeholder("section", (location.section?.name ?: "Unmanaged Section")),
-        Placeholder("depth", getDepth()),
-        Placeholder("starcompass_unicode", getCompassAngle().unicode),
-        Placeholder("starcompass_angle", getCompassAngle().angle ?: "null"),
-
-        Placeholder("temperature", location.block.temperature.times(10).roundToInt()),
-        Placeholder("humidity", location.block.humidity.times(10).roundToInt()),
-        Placeholder("time", world.time),
-        Placeholder("fulltime", world.fullTime),
-    )
+            "compass" -> player.getCompassAngle().unicode
+            "compass_angle" -> player.getCompassAngle().angle
+            else -> null
+        }.toString()
 
     private class CompassAngle(val unicode: String, val angle: String? = null)
 
