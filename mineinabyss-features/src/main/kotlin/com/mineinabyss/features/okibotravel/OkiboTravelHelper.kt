@@ -4,6 +4,7 @@ import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.messaging.broadcastVal
+import com.mineinabyss.idofront.messaging.logVal
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
 import net.kyori.adventure.key.Key
@@ -35,7 +36,6 @@ fun spawnOkiboMaps() {
     okiboLine.config.okiboMaps.forEach { mapText ->
         val station = okiboLine.config.okiboStations.firstOrNull { it.name == mapText.station } ?: return@forEach
         val entityId = mapEntities.computeIfAbsent(mapText) { Entity.nextEntityId() }
-
         val textLoc = station.location.clone().add(mapText.offset)
         val spawnMapPacket = ClientboundAddEntityPacket(
             entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw,
@@ -43,7 +43,7 @@ fun spawnOkiboMaps() {
         )
         Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(spawnMapPacket).sendTo(it) }
 
-        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.broadcastVal().miniMsg().font(mapText.font)))
+        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.miniMsg()))
         val metaPacket = ClientboundSetEntityDataPacket(
             entityId, listOf(
                 SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, mapText.scale),

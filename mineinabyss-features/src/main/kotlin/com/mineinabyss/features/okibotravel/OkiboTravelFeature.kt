@@ -1,5 +1,6 @@
 package com.mineinabyss.features.okibotravel
 
+import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -11,6 +12,10 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import com.mineinabyss.protocolburrito.dsl.sendTo
+import korlibs.datastructure.toIntList
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
+import org.bukkit.Bukkit
 
 class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
     class Context : Configurable<OkiboTravelConfig> {
@@ -74,5 +79,11 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
                 else -> null
             }
         }
+    }
+
+    override fun FeatureDSL.disable() {
+        val packet = ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())
+        Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(packet).sendTo(it) }
+        mapEntities.clear()
     }
 }

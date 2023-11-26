@@ -16,8 +16,7 @@ import org.joml.Vector3f
 data class OkiboMap(
     val station: String,
     @EncodeDefault(NEVER) val offset: @Serializable(VectorSerializer::class) Vector = Vector(0, 0, 0),
-    @EncodeDefault(NEVER) val text: String = ":orth_1::orth_2::orth_3::orth_4::orth_5::orth_6::orth_7::orth_8::orth_9::orth_10:",
-    @EncodeDefault(NEVER) val font: @Serializable(KeySerializer::class) Key = Key.key("mineinabyss:orth_map"),
+    @EncodeDefault(NEVER) val text: String = ":orth_1:",
     @EncodeDefault(NEVER) val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
     val hitboxes: Set<OkiboMapHitbox>
 ) {
