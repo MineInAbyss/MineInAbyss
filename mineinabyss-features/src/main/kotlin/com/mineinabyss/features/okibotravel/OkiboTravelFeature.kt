@@ -82,8 +82,13 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
     }
 
     override fun FeatureDSL.disable() {
-        val packet = ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())
-        Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(packet).sendTo(it) }
+        val textPacket = ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())
+        val hitboxPacket = ClientboundRemoveEntitiesPacket(*hitboxEntities.values.toIntArray())
+        Bukkit.getOnlinePlayers().forEach {
+            PacketContainer.fromPacket(textPacket).sendTo(it)
+            PacketContainer.fromPacket(hitboxPacket).sendTo(it)
+        }
         mapEntities.clear()
+        hitboxEntities.clear()
     }
 }

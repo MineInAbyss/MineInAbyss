@@ -11,6 +11,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import kotlinx.coroutines.delay
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -57,5 +58,6 @@ class OkiboTravelListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
         player.toGeary().remove<OkiboTraveler>()
+        player.sendOkiboMaps()
     }
 }
