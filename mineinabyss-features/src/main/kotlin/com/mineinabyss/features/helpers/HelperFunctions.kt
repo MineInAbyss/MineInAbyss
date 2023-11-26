@@ -27,7 +27,7 @@ fun Player.getLayerWhistleForHud(): String {
         "edge_of_the_abyss" -> "\uEBB0"
         "forest_of_temptation" -> "\uEBB1"
         "great_fault" -> "\uEBB2"
-        "the_goblets_of_giants" -> "\uEBB2"
+        "goblets_of_giants" -> "\uEBB2"
         "sea_of_corpses" -> "\uEBB3"
         else -> ""
     }

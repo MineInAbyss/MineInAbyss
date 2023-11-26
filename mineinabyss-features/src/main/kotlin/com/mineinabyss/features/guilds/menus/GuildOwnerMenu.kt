@@ -64,7 +64,7 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
             nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
-                        .title("${Space.of(-61)}:guild_name_menu:")
+                        .title(":space_-61::guild_name_menu:")
                         .itemLeft(renameItem)
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }

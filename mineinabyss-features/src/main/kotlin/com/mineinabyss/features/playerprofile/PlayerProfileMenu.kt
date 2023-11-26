@@ -21,6 +21,7 @@ import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -32,12 +33,12 @@ import org.bukkit.inventory.ItemStack
 fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon = player.toGeary().has<Patreon>()
-    val titleName = Component.text(player.name).font(Key.key("playerprofile")).color(TextColor.color(0xFFFFFF))
-    val titleComponent = Component.text(":space_-11::player_profile" +
+    val titleName = Component.text(player.name).font(Key.key("default")).color(NamedTextColor.WHITE)
+    val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
-            ":space_-178:")
-    val rankComponent = Component.text(":space_-42:${DisplayRanks(player)}")
+            ":space_-170:")
+    val rankComponent = Component.text(":space_-32:${DisplayRanks(player)}")
 
     Chest(setOf(viewer),
         titleComponent.append(titleName).append(rankComponent),
@@ -191,10 +192,10 @@ fun DiscordButton(player: Player) {
 
 @Composable
 fun DisplayRanks(player: Player): String {
-    var group = player.luckpermGroups.filter { sortedRanks.contains(it) }.sortedBy { sortedRanks[it] }.firstOrNull()
+    var group = player.luckpermGroups.filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.firstOrNull()
     val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it }
-    group = if (group != null) "${Space.of(34)}:player_profile_rank_$group:" else Space.of(34)
-    if (!patreon.isNullOrBlank()) group += ":${Space.of(-6)}:player_profile_rank_$patreon:"
+    group = group?.let { ":space_34::player_profile_rank_$group:" } ?: ":space_34:"
+    if (!patreon.isNullOrBlank()) group += ":space_-4::player_profile_rank_$patreon:"
 
     return group
 }

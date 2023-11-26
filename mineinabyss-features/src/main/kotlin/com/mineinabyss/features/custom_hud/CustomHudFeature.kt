@@ -32,7 +32,7 @@ class CustomHudFeature(
             when (args.size) {
                 1 -> listOf("custom_hud").filter { it.startsWith(args[0]) }
                 2 -> if (args[0] == "custom_hud") listOf("toggle").filter { it.startsWith(args[1]) } else null
-                3 -> if (args[1] == "toggle") listOf("backgrounds", "air", "armor").filter { it.startsWith(args[2]) } else null
+                3 -> if (args[1] == "toggle") listOf("backgrounds").filter { it.startsWith(args[2]) } else null
                 else -> null
             }
         }

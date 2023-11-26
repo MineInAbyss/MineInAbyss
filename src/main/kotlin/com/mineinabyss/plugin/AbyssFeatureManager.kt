@@ -11,11 +11,13 @@ import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureManager
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.plugin.actions
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.statements.StatementContext
+import org.jetbrains.exposed.sql.statements.expandArgs
 import org.jetbrains.exposed.sql.transactions.transaction
 
 internal val featureManager by DI.observe<AbyssFeatureManager>()
@@ -24,7 +26,7 @@ internal val featureManager by DI.observe<AbyssFeatureManager>()
 class AbyssFeatureManager(val plugin: JavaPlugin) : FeatureManager<AbyssContext>({ AbyssContext(plugin) }) {
     override fun FeatureDSL.enable() = actions {
         transaction(abyss.db) {
-            addLogger(StdOutSqlLogger)
+            //addLogger(StdOutSqlLogger)
 
             SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue, LootedChests)
         }
