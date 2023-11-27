@@ -77,20 +77,22 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
         )
         PacketContainer.fromPacket(metadataPacket).sendTo(this)
 
-        mapHitbox.icon?.let {
+        okiboMap.icon?.let {
+            val iconLoc = loc.clone().add(it.offset)
             val iconPacket = ClientboundAddEntityPacket(
                 iconEntityId, UUID.randomUUID(),
-                loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
+                iconLoc.x, iconLoc.y, iconLoc.z, iconLoc.pitch, iconLoc.yaw,
                 EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
             )
             PacketContainer.fromPacket(iconPacket).sendTo(this)
 
             val iconMetaPacket = ClientboundSetEntityDataPacket(
                 iconEntityId, listOf(
-                    SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(it.miniMsg())) ?: Component.empty()),
+                    SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(it.text.miniMsg())) ?: Component.empty()),
                     SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
                 )
             )
+            PacketContainer.fromPacket(iconMetaPacket).sendTo(this)
         }
     }
 }
