@@ -1,23 +1,19 @@
 package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
-import com.hibiscusmc.hmccosmetics.config.Wardrobe
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
-import com.mineinabyss.components.cosmetics.PersonalWardrobe
 import com.mineinabyss.features.helpers.cosmeticUser
 import com.mineinabyss.features.helpers.hmcCosmetics
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
-import org.bukkit.block.BlockFace
 
 class CosmeticsFeature(val config: Config) : Feature() {
     @Serializable
@@ -39,7 +35,8 @@ class CosmeticsFeature(val config: Config) : Feature() {
         mainCommand {
             "cosmetics" {
                 "wardrobe" {
-                    "personal" {
+                    action { sender.warn("This command is not fully implemented yet!") }
+                    /*"personal" {
                         //TODO Add distance checks for difference between existing, non-null locations, and set locations
                         "viewer" {
                             playerAction {
@@ -124,7 +121,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
                             }
 
                         }
-                    }
+                    }*/
                 }
                 "menu" {
                     playerAction {
@@ -147,26 +144,20 @@ class CosmeticsFeature(val config: Config) : Feature() {
         tabCompletion {
             when (args.size) {
                 1 -> listOf("cosmetics").filter { it.startsWith(args[0]) }
-                2 -> {
-                    when (args[0]) {
-                        "cosmetics" -> listOf("menu", "wardrobe", "dye").filter { it.startsWith(args[1]) }
-                        else -> listOf()
-                    }
+                2 -> when (args[0]) {
+                    "cosmetics" -> listOf("menu", "wardrobe", "dye").filter { it.startsWith(args[1]) }
+                    else -> listOf()
                 }
 
-                3 -> {
-                    when (args[1]) {
-                        "wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
-                        "dye" -> CosmeticSlot.values().map { it.name }.filter { it.uppercase().startsWith(args[2]) }
-                        else -> listOf()
-                    }
+                3 -> when (args[1]) {
+                    //"wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
+                    "dye" -> CosmeticSlot.entries.map { it.name }.filter { it.uppercase().startsWith(args[2]) }
+                    else -> listOf()
                 }
 
-                4 -> {
-                    when (args[2]) {
-                        "personal" -> listOf("leave", "npc", "viewer").filter { it.startsWith(args[3]) }
-                        else -> listOf()
-                    }
+                4 -> when (args[2]) {
+                    "personal" -> listOf("leave", "npc", "viewer").filter { it.startsWith(args[3]) }
+                    else -> listOf()
                 }
 
                 else -> listOf()
