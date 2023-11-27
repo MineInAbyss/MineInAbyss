@@ -1,13 +1,11 @@
 package com.mineinabyss.components.okibotravel
 
-import com.mineinabyss.idofront.serialization.KeySerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import com.mineinabyss.idofront.serialization.VectorSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.key.Key
 import org.bukkit.util.Vector
 import org.joml.Vector3f
 
@@ -24,6 +22,7 @@ data class OkiboMap(
     @SerialName("mineinabyss:okibo_map_hitbox")
     data class OkiboMapHitbox(
         val destStation: String,
+        val icon: String? = null,
         val offset: @Serializable(VectorSerializer::class) Vector,
         @EncodeDefault(NEVER) val hitbox: Hitbox = Hitbox()
     )

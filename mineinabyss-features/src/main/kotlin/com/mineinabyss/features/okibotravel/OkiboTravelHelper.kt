@@ -3,11 +3,8 @@ package com.mineinabyss.features.okibotravel
 import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
-import com.mineinabyss.idofront.messaging.broadcastVal
-import com.mineinabyss.idofront.messaging.logVal
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
-import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -25,6 +22,7 @@ import java.util.*
 
 val mapEntities = mutableMapOf<OkiboMap, Int>()
 val hitboxEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
+val hitboxIconEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
 
 val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
 val OkiboMap.OkiboMapHitbox.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == destStation }
@@ -62,6 +60,7 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
 
     okiboMap.hitboxes.forEach { mapHitbox ->
         val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
+        val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
         val loc = textLoc.clone().add(mapHitbox.offset)
         val interactionPacket = ClientboundAddEntityPacket(
             hitboxEntityId, UUID.randomUUID(),
@@ -77,5 +76,21 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
             )
         )
         PacketContainer.fromPacket(metadataPacket).sendTo(this)
+
+        mapHitbox.icon?.let {
+            val iconPacket = ClientboundAddEntityPacket(
+                iconEntityId, UUID.randomUUID(),
+                loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
+                EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
+            )
+            PacketContainer.fromPacket(iconPacket).sendTo(this)
+
+            val iconMetaPacket = ClientboundSetEntityDataPacket(
+                iconEntityId, listOf(
+                    SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(it.miniMsg())) ?: Component.empty()),
+                    SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
+                )
+            )
+        }
     }
 }
