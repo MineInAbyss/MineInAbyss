@@ -25,7 +25,7 @@ class CosmeticListener(private val config: CosmeticsFeature.Config) : Listener {
         if (cosmetic.slot != CosmeticSlot.BACKPACK) return
         val player = user.player ?: return
         player.toGeary().setPersisting(CosmeticComponent(player.cosmeticComponent.gesture, cosmetic.id))
-        if (player.toGeary().has<BackpackStorage>()) return
+        if (!config.equipBackpacks || player.toGeary().has<BackpackStorage>()) return
         player.error("Equip a backpack (Shift + Right Click) to show the cosmetic")
         user.userBackpackManager?.despawnBackpack()
     }

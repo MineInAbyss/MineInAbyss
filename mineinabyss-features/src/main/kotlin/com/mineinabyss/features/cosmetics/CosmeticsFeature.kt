@@ -6,7 +6,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
 import com.mineinabyss.components.cosmetics.PersonalWardrobe
-import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.cosmeticUser
 import com.mineinabyss.features.helpers.hmcCosmetics
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -30,14 +29,12 @@ class CosmeticsFeature(val config: Config) : Feature() {
 
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
-        if (!abyss.isHMCCosmeticsEnabled) return
-        plugin.listeners(CosmeticListener(config))
+        if (config.equipBackpacks) plugin.listeners(CosmeticListener(config))
         HMCCosmeticsPlugin.setup()
 
         // Makes backpacks equip/unequipable via player interaction
         // Make sure everything works before enabling it
-        if (config.equipBackpacks)
-            plugin.listeners(VendorListener())
+        plugin.listeners(VendorListener())
 
         mainCommand {
             "cosmetics" {
