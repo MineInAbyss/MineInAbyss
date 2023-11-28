@@ -4,8 +4,8 @@ import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.chattyData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.chatty.listeners.RendererExtension
-import com.mineinabyss.features.guilds.extensions.getGuildChatId
 import com.mineinabyss.features.guilds.extensions.getGuildName
+import com.mineinabyss.features.guilds.extensions.guildChatId
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.Bukkit
@@ -24,7 +24,7 @@ class ChattyGuildListener : Listener {
             player.toGeary().setPersisting(player.chattyData.copy(channelId = getDefaultChat().key))
             return
         }
-        if (player.chattyData.channelId != player.getGuildChatId()) return
+        if (player.chattyData.channelId != player.guildChatId()) return
 
         viewers().clear()
         viewers().addAll(Bukkit.getOnlinePlayers().filter {
@@ -40,7 +40,7 @@ class ChattyGuildListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
         if (player.chattyData.channelId.endsWith(guildChannelId)) {
-            player.toGeary().setPersisting(player.chattyData.copy(channelId = player.getGuildChatId().takeIf { it.isNotBlank() } ?: getDefaultChat().key))
+            player.toGeary().setPersisting(player.chattyData.copy(channelId = player.guildChatId().takeIf { it.isNotBlank() } ?: getDefaultChat().key))
         }
     }
 }

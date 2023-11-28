@@ -100,7 +100,7 @@ fun Player.deleteGuild() {
         if (owner.isOnline) (owner as Player).playerData.orthCoinsHeld += getGuildBalance()
         else playerData.orthCoinsHeld += getGuildBalance()
 
-        val guildChatId = getGuildChatId()
+        val guildChatId = guildChatId()
         chatty.config.channels -= guildChatId
 
         // Rest will be reset when they join
@@ -132,7 +132,7 @@ fun Player.deleteGuild() {
 //TODO Make sure guild chatname is properly updated when guild name is changed
 fun Player.changeStoredGuildName(newGuildName: String) {
     transaction(abyss.db) {
-
+        val oldGuildName = getGuildName()
         val guild = Guilds.select {
             Guilds.name.lowerCase() eq newGuildName.lowercase()
         }.firstOrNull()
@@ -149,10 +149,11 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         }
 
         // Update the guildchat ID on online players, rest handled on join
-        this@changeStoredGuildName.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {
-            it as Player
-            if (it.chattyData.channelId == getGuildName().getGuildChatId())
-                it.toGeary().setPersisting(it.chattyData.copy(channelId = newGuildName.getGuildChatId()))
+        this@changeStoredGuildName.getGuildMembers().mapNotNull { it.player.player }.forEach {
+            if (it.chattyData.channelId == oldGuildName.guildChatId())
+                it.toGeary().setPersisting(it.chattyData.copy(channelId = newGuildName.guildChatId()))
+            chatty.config.channels.remove(oldGuildName.guildChatId())
+            chatty.config.channels[newGuildName.guildChatId()] = Features.guilds.config.guildChattyChannel
         }
 
         Guilds.update({ Guilds.id eq guildId }) {
@@ -431,12 +432,8 @@ private fun String.updateGuildBalance(amount: Int) {
     }
 }
 
-fun String.getGuildChatId(): String {
-    return "$this $guildChannelId"
-}
+fun String.guildChatId() = "$this $guildChannelId"
+fun Player.guildChatId() = "${getGuildName()} $guildChannelId"
 
-fun Player.getGuildChatId(): String {
-    return "${getGuildName()} $guildChannelId"
-}
 data class GuildJoin(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int)
 data class GuildMember(val rank: GuildRank, val player: OfflinePlayer)
