@@ -5,10 +5,10 @@ import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
-import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
@@ -17,10 +17,12 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Color
+import org.bukkit.entity.Player
 import java.util.*
 
 val mapEntities = mutableMapOf<OkiboMap, Int>()
 val hitboxEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
+val hitboxIconEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
 
 val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
 val OkiboMap.OkiboMapHitbox.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == destStation }
@@ -30,45 +32,67 @@ fun getHitboxStation(entityId: Int) =
 fun getMapEntityFromCollisionHitbox(id: Int) =
     hitboxEntities.entries.firstOrNull { it.value == id }?.key?.first
 
-fun spawnOkiboMaps() {
-    okiboLine.config.okiboMaps.forEach { mapText ->
-        val station = okiboLine.config.okiboStations.firstOrNull { it.name == mapText.station } ?: return@forEach
-        val entityId = mapEntities.computeIfAbsent(mapText) { Entity.nextEntityId() }
+internal fun spawnOkiboMaps() = Bukkit.getOnlinePlayers().forEach { it.sendOkiboMaps() }
+internal fun Player.sendOkiboMaps() = okiboLine.config.okiboMaps.forEach(::sendOkiboMap)
+internal fun Player.clearOkiboMaps() {
+    PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())).sendTo(this)
+    PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*hitboxEntities.values.toIntArray())).sendTo(this)
+}
+private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
+    val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset) ?: return
+    val entityId = mapEntities.computeIfAbsent(okiboMap) { Entity.nextEntityId() }
+    val spawnMapPacket = ClientboundAddEntityPacket(
+        entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw,
+        EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
+    )
+    PacketContainer.fromPacket(spawnMapPacket).sendTo(this)
 
-        val textLoc = station.location.clone().add(mapText.offset)
-        val spawnMapPacket = ClientboundAddEntityPacket(
-            entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw,
-            EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
+    val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(okiboMap.text.miniMsg()))
+    val metaPacket = ClientboundSetEntityDataPacket(
+        entityId, listOf(
+            SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
+            SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, txt ?: Component.empty()),
+            SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
         )
-        Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(spawnMapPacket).sendTo(it) }
+    )
 
-        val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(mapText.text.miniMsg().font(Key.key(mapText.font))))
-        val metaPacket = ClientboundSetEntityDataPacket(
-            entityId, listOf(
-                SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, mapText.scale),
-                SynchedEntityData.DataValue(22, EntityDataSerializers.COMPONENT, txt ?: Component.empty()),
-                SynchedEntityData.DataValue(24, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
+    PacketContainer.fromPacket(metaPacket).sendTo(this)
+
+    okiboMap.hitboxes.forEach { mapHitbox ->
+        val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
+        val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
+        val loc = textLoc.clone().add(mapHitbox.offset)
+        val interactionPacket = ClientboundAddEntityPacket(
+            hitboxEntityId, UUID.randomUUID(),
+            loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
+            EntityType.INTERACTION, 0, Vec3.ZERO, 0.0
+        )
+        PacketContainer.fromPacket(interactionPacket).sendTo(this)
+
+        val metadataPacket = ClientboundSetEntityDataPacket(
+            hitboxEntityId, listOf(
+                SynchedEntityData.DataValue(8, EntityDataSerializers.FLOAT, mapHitbox.hitbox.width.toFloat()),
+                SynchedEntityData.DataValue(9, EntityDataSerializers.FLOAT, mapHitbox.hitbox.height.toFloat()),
             )
         )
-        Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(metaPacket).sendTo(it) }
+        PacketContainer.fromPacket(metadataPacket).sendTo(this)
 
-        mapText.hitboxes.forEach { mapHitbox ->
-            val hitboxEntityId = hitboxEntities.computeIfAbsent(mapText to mapHitbox) { Entity.nextEntityId() }
-            val loc = textLoc.clone().add(mapHitbox.offset)
-            val interactionPacket = ClientboundAddEntityPacket(
-                hitboxEntityId, UUID.randomUUID(),
-                loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
-                EntityType.INTERACTION, 0, Vec3.ZERO, 0.0
+        okiboMap.icon?.let {
+            val iconLoc = loc.clone().add(it.offset)
+            val iconPacket = ClientboundAddEntityPacket(
+                iconEntityId, UUID.randomUUID(),
+                iconLoc.x, iconLoc.y, iconLoc.z, iconLoc.pitch, iconLoc.yaw,
+                EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
             )
-            Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(interactionPacket).sendTo(it) }
+            PacketContainer.fromPacket(iconPacket).sendTo(this)
 
-            val metadataPacket = ClientboundSetEntityDataPacket(
-                hitboxEntityId, listOf(
-                    SynchedEntityData.DataValue(8, EntityDataSerializers.FLOAT, mapHitbox.hitbox.width.toFloat()),
-                    SynchedEntityData.DataValue(9, EntityDataSerializers.FLOAT, mapHitbox.hitbox.height.toFloat()),
+            val iconMetaPacket = ClientboundSetEntityDataPacket(
+                iconEntityId, listOf(
+                    SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(it.text.miniMsg())) ?: Component.empty()),
+                    SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
                 )
             )
-            Bukkit.getOnlinePlayers().forEach { PacketContainer.fromPacket(metadataPacket).sendTo(it) }
+            PacketContainer.fromPacket(iconMetaPacket).sendTo(this)
         }
     }
 }

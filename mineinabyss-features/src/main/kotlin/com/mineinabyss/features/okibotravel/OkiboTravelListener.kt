@@ -57,5 +57,9 @@ class OkiboTravelListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
         player.toGeary().remove<OkiboTraveler>()
+        abyss.plugin.launch {
+            delay(1.seconds)
+            player.sendOkiboMaps()
+        }
     }
 }

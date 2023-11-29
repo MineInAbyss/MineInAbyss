@@ -331,7 +331,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         }
 
         // Remove player from guild-chat. Offline members handled when they join
-        if (member.isOnline && member.player!!.chattyData.channelId == getGuildName().getGuildChatId()) {
+        if (member.isOnline && member.player!!.chattyData.channelId == getGuildName().guildChatId()) {
             member.player!!.toGeary().setPersisting(member.player!!.chattyData.copy(channelId = getDefaultChat().key))
         }
 
@@ -377,7 +377,7 @@ fun Player.leaveGuild() {
             return@transaction
         }
 
-        if (this@leaveGuild.chattyData.channelId == guildName.getGuildChatId()) {
+        if (this@leaveGuild.chattyData.channelId == guildName.guildChatId()) {
             this@leaveGuild.toGeary().setPersisting(this@leaveGuild.chattyData.copy(channelId = getDefaultChat().key))
         }
 

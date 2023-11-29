@@ -8,7 +8,6 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.components.players.patreon
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -24,8 +23,6 @@ import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
 import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.serialization.ItemStackSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,7 +30,6 @@ import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import java.time.Month
 import java.util.*
 import kotlin.io.path.readLines
@@ -43,14 +39,7 @@ class PatreonFeature(val config: Config) : Feature() {
     override val dependsOn = setOf("LuckPerms")
 
     @Serializable
-    class Config(
-        val enabled: Boolean = false,
-        @Serializable(ItemStackSerializer::class)
-        @SerialName("token")
-        private val _token: ItemStack? = null
-    ) {
-        val token: ItemStack by lazy { _token ?: CoinFactory.mittyToken ?: error("No mitty token prefab defined!") }
-    }
+    class Config(val enabled: Boolean = false)
 
     override fun FeatureDSL.enable() {
         plugin.listeners(PatreonListener())

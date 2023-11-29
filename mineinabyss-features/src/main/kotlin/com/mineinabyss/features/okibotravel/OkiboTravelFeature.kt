@@ -1,5 +1,6 @@
 package com.mineinabyss.features.okibotravel
 
+import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -11,6 +12,10 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import com.mineinabyss.protocolburrito.dsl.sendTo
+import korlibs.datastructure.toIntList
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
+import org.bukkit.Bukkit
 
 class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
     class Context : Configurable<OkiboTravelConfig> {
@@ -21,7 +26,7 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
         val okiboTravelListener = OkiboTravelListener()
     }
 
-    override val dependsOn = setOf("Train_Carts", "TCCoasters")
+    override val dependsOn = setOf("Train_Carts", "TCCoasters", "BKCommonLib", "ProtocolBurrito")
 
     override fun FeatureDSL.enable() {
         plugin.listeners(context.okiboTravelListener)
@@ -74,5 +79,16 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
                 else -> null
             }
         }
+    }
+
+    override fun FeatureDSL.disable() {
+        val textPacket = ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())
+        val hitboxPacket = ClientboundRemoveEntitiesPacket(*hitboxEntities.values.toIntArray())
+        Bukkit.getOnlinePlayers().forEach {
+            PacketContainer.fromPacket(textPacket).sendTo(it)
+            PacketContainer.fromPacket(hitboxPacket).sendTo(it)
+        }
+        mapEntities.clear()
+        hitboxEntities.clear()
     }
 }

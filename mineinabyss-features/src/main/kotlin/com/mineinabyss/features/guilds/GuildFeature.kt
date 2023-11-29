@@ -6,7 +6,6 @@ import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
-import com.mineinabyss.deeperworld.DeeperContext
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
@@ -32,18 +31,6 @@ import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-val guildChannel =
-    ChattyConfig.ChattyChannel(
-        channelType = ChannelType.PRIVATE,
-        proxy = false,
-        discordsrv = false,
-        isDefaultChannel = false,
-        isStaffChannel = false,
-        format = ":survival:<shift:-8>:guildchat: <chatty_nickname>: ",
-        _messageColor = "gold",
-        channelRadius = 0,
-        channelAliases = emptyList()
-    )
 const val guildChannelId: String = "Guild Chat"
 
 
@@ -53,7 +40,17 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
     @Serializable
     class Config {
         val enabled = false
-        val guildChattyChannel: ChattyConfig.ChattyChannel = guildChannel
+        val guildChattyChannel: ChattyConfig.ChattyChannel = ChattyConfig.ChattyChannel(
+            channelType = ChannelType.PRIVATE,
+            proxy = false,
+            discordsrv = false,
+            isDefaultChannel = false,
+            isStaffChannel = false,
+            format = ":survival::space_-8::guildchat: <chatty_nickname>: ",
+            _messageColor = "gold",
+            channelRadius = 0,
+            channelAliases = emptyList()
+        )
         val guildNameMaxLength: Int = 20
         val guildNameBannedWords: List<String> = emptyList()
         //TODO Eventually move to a per-guild config
@@ -77,10 +74,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
         if (abyss.isChattyLoaded) {
             getAllGuilds().forEach {
-                chatty.config.channels.putIfAbsent(
-                    "${it.guildName} $guildChannelId",
-                    context.config.guildChattyChannel
-                )
+                chatty.config.channels["${it.guildName} $guildChannelId"] = context.config.guildChattyChannel
             }
         }
 
