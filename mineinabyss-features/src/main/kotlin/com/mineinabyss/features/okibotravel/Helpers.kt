@@ -5,7 +5,7 @@ import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup
 import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.features.helpers.di.Features.okiboLine
-import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.idofront.messaging.logInfo
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
 
@@ -25,7 +25,7 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
     train.properties.collision = CollisionOptions.CANCEL
     train.properties.isPlayerTakeable = false
 
-    broadcast("A train has been spawned at ${station.name} and is heading to ${destination.name}!")
+    logInfo("A train has been spawned at ${station.name} and is heading to ${destination.name}!")
 }
 
 //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
