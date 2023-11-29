@@ -37,6 +37,7 @@ internal fun Player.sendOkiboMaps() = okiboLine.config.okiboMaps.forEach(::sendO
 internal fun Player.clearOkiboMaps() {
     PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())).sendTo(this)
     PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*hitboxEntities.values.toIntArray())).sendTo(this)
+    PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*hitboxIconEntities.values.toIntArray())).sendTo(this)
 }
 private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset) ?: return
