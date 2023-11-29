@@ -5,7 +5,6 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
-import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.FeatureDSL
@@ -123,7 +122,7 @@ class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFea
                 1 -> listOf("lock").filter { it.startsWith(args[0]) }
 
                 2 -> when (args[0]) {
-                    "lock" -> listOf("add", "remove", "clear", "check", "toggle")
+                    "lock" -> listOf("add", "remove", "clear", "toggle", "default_state")
                     else -> null
                 }?.filter { it.startsWith(args[1]) }
 

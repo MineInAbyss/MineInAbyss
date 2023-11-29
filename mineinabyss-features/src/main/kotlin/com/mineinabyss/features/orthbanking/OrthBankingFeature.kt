@@ -6,15 +6,12 @@ import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.commands.arguments.intArg
-import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
@@ -27,11 +24,11 @@ class OrthBankingFeature(val config: Config) : Feature() {
     }
 
     override fun FeatureDSL.enable() {
-        plugin.listeners(OrthBankingListener())
+        //plugin.listeners(OrthBankingListener())
 
         mainCommand {
             "bank"(desc = "Orthbanking related commands") {
-                "balance"(desc = "Toggles whether or not the balance should be shown.") {
+                /*"balance"(desc = "Toggles whether or not the balance should be shown.") {
                     playerAction {
                         val player = sender as Player
                         player.info("Balance is now ${if (player.playerData.showPlayerBalance) "hidden" else "shown"}.")
@@ -43,7 +40,7 @@ class OrthBankingFeature(val config: Config) : Feature() {
                             false -> player.error("Balance-HUD toggled off.")
                         }
                     }
-                }
+                }*/
                 "deposit"(desc = "Dev command until Guiy can take items") {
                     val amount by intArg { default = 1 }
                     ensureSenderIsPlayer()
@@ -64,7 +61,6 @@ class OrthBankingFeature(val config: Config) : Feature() {
                     }
                 }
                 "withdraw"(desc = "Dev command until Guiy can take items") {
-                    val type by optionArg(listOf("orthcoin", "mittytoken")) { default = "orthcoin" }
                     var amount by intArg { default = 1 }
                     playerAction {
                         val player = sender as? Player ?: return@playerAction
@@ -81,7 +77,7 @@ class OrthBankingFeature(val config: Config) : Feature() {
 
                         amount = minOf(amount, 64)
 
-                        player.playerData.orthCoinsHeld
+                        player.playerData.orthCoinsHeld = heldAmount - amount
 
                         player.inventory.addItem(item.asQuantity(amount))
                         player.success("You withdrew $amount Orth Coins from your balance.")
@@ -92,12 +88,10 @@ class OrthBankingFeature(val config: Config) : Feature() {
         tabCompletion {
             when (args.size) {
                 1 -> listOf("bank").filter { it.startsWith(args[0]) }
-                2 -> {
-                    when (args[0]) {
-                        "bank" -> listOf("withdraw", "deposit", "balance")
-                        else -> listOf()
-                    }.filter { it.startsWith(args[1]) }
-                }
+                2 -> when (args[0]) {
+                    "bank" -> listOf("withdraw", "deposit"/*, "balance"*/)
+                    else -> listOf()
+                }.filter { it.startsWith(args[1]) }
 
                 else -> listOf()
             }
