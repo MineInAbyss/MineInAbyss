@@ -31,7 +31,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 
 class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     fun PlayerInteractEvent.onChestInteract() {
         val chest = clickedBlock?.state as? Chest ?: return
         val pdc = chest.persistentDataContainer
