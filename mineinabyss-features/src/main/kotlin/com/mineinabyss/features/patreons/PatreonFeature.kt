@@ -98,21 +98,21 @@ class PatreonFeature(val config: Config) : Feature() {
 
                             if (loc == "global") {
                                 listOf(
-                                    PrefixNode.builder("§eOrth :$emote: §e-", 10)
+                                    PrefixNode.builder(":space_6:<#feac3b>Orth:space_2::$emote::space_2:>", 10)
                                         .context(ImmutableContextSet.of("worldguard:region", "orth")).build(),
-                                    PrefixNode.builder("§cEdge :$emote: §c-", 11)
+                                    PrefixNode.builder(":space_6:<#c83038>Edge:space_2::redw::space_2:>", 11)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerone")).build(),
-                                    PrefixNode.builder("§9Forest :$emote: §9-", 12)
+                                    PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::bluew::space_2:>", 12)
                                         .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build(),
-                                    PrefixNode.builder("§dFault :$emote: §d-", 13)
+                                    PrefixNode.builder(":space_6:<#852d66>Fault:space_2::$emote::space_2:>", 13)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build(),
-                                    PrefixNode.builder("§5Goblets :$emote: §5-", 14)
+                                    PrefixNode.builder(":space_6:<#852d66>Goblets:space_2::$emote::space_2:>", 14)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build(),
-                                    PrefixNode.builder("§8Sea :$emote: §8-", 15)
+                                    PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build(),
-                                    PrefixNode.builder("§8Nazarick :$emote: §8-", 16)
+                                    PrefixNode.builder(":space_6:<dark_gray>Nazarick:space_2::$emote::space_2:>", 16)
                                         .context(ImmutableContextSet.of("world", "nazarick")).build(),
-                                    PrefixNode.builder("§3Camelot :$emote: §3-", 17)
+                                    PrefixNode.builder(":space_6:<dark_aqua>Camelot:space_2:>", 17)
                                         .context(ImmutableContextSet.of("world", "camelot")).build()
                                 ).forEach { node ->
                                     luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(node)
@@ -120,28 +120,28 @@ class PatreonFeature(val config: Config) : Feature() {
 
                             } else {
                                 val c: PrefixNode = when (loc) {
-                                    "orth" -> PrefixNode.builder("§eOrth :$emote: §e-", 10)
+                                    "orth" -> PrefixNode.builder(":space_6:<#feac3b>Orth:space_2::$emote::space_2:>", 10)
                                         .context(ImmutableContextSet.of("worldguard:region", "orth")).build()
 
-                                    "layerone" -> PrefixNode.builder("§cEdge :$emote: §c-", 11)
+                                    "layerone" -> PrefixNode.builder(":space_6:<#c83038>Edge:space_2::redw::space_2:>", 11)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerone")).build()
 
-                                    "layertwo" -> PrefixNode.builder("§9Forest :$emote: §9-", 12)
+                                    "layertwo" -> PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::bluew::space_2:>", 12)
                                         .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build()
 
-                                    "layerthree" -> PrefixNode.builder("§dFault :$emote: §d-", 13)
+                                    "layerthree" -> PrefixNode.builder(":space_6:<#852d66>Fault:space_2::$emote::space_2:>", 13)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build()
 
-                                    "layerfour" -> PrefixNode.builder("§5Goblets :$emote: §5-", 14)
+                                    "layerfour" -> PrefixNode.builder(":space_6:<#852d66>Goblets:space_2::$emote::space_2:>", 14)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build()
 
-                                    "layerfive" -> PrefixNode.builder("§8Sea :$emote: §8-", 15)
+                                    "layerfive" -> PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build()
 
-                                    "nazarick" -> PrefixNode.builder("§8Nazarick :$emote: §8-", 16)
+                                    "nazarick" -> PrefixNode.builder(":space_6:<dark_gray>Nazarick:space_2::$emote::space_2:>", 16)
                                         .context(ImmutableContextSet.of("world", "nazarick")).build()
 
-                                    "camelot" -> PrefixNode.builder("§3Camelot :$emote: §3-", 17)
+                                    "camelot" -> PrefixNode.builder(":space_6:<dark_aqua>Camelot:space_2:>", 17)
                                         .context(ImmutableContextSet.of("world", "camelot")).build()
 
                                     else -> PrefixNode.builder().build()
