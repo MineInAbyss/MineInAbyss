@@ -28,7 +28,7 @@ class ChattyGuildListener : Listener {
 
         viewers().clear()
         viewers().addAll(Bukkit.getOnlinePlayers().filter {
-            it.getGuildName() == player.getGuildName() && it != player
+            it.getGuildName() == player.getGuildName()
         })
 
         if (chatty.config.chat.disableChatSigning) {
