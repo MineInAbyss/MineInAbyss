@@ -1,6 +1,5 @@
 package com.mineinabyss.features.guilds
 
-import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
@@ -10,6 +9,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.bukkit.event.EventHandler
@@ -29,10 +29,12 @@ class GuildListener : Listener {
         guiy { GuildMainMenu(player, true) }
     }
 
+    private val databaseDispatcher = Dispatchers.IO.limitedParallelism(1)
+
     @EventHandler
     suspend fun PlayerJoinEvent.onJoin() {
         delay(1.seconds)
-        withContext(abyss.plugin.asyncDispatcher) {
+        withContext(databaseDispatcher) {
             transaction(abyss.db) {
                 GuildMessageQueue.select { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.info(it[content].miniMsg())
