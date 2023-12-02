@@ -6,10 +6,13 @@ import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.services.PlayerManager
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.helpers.layer
+import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.title.Title
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
@@ -45,6 +48,11 @@ class LayerListener : Listener {
         val section = player.location.section ?: return
         val layerOfDeath = section.layer ?: return
         deathMessage(deathMessage()?.append(" ${layerOfDeath.deathMessage}".miniMsg()))
+    }
+
+    @EventHandler
+    fun FoodLevelChangeEvent.onFoodChange() {
+        if ((entity as? Player)?.isInHub() == true) isCancelled = true
     }
 
 //    @EventHandler(priority = EventPriority.MONITOR)
