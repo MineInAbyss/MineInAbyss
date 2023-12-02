@@ -57,16 +57,12 @@ fun harvestPlant(block: Block, player: Player): Boolean {
     if (data is Ageable) {
         if (data.age != data.maximumAge) return false
 
-        val breakCrop = BlockBreakEvent(block, player)
-        Bukkit.getPluginManager().callEvent(breakCrop)
-        if (breakCrop.isCancelled) return false
+        if (!BlockBreakEvent(block, player).callEvent()) return false
 
         data.age = 0
         block.blockData = data
     } else {
-        val breakBlock = BlockBreakEvent(block, player)
-        Bukkit.getPluginManager().callEvent(breakBlock)
-        if (breakBlock.isCancelled) return false
+        if (!BlockBreakEvent(block, player).callEvent()) return false
 
         block.type = Material.AIR // Break block
     }

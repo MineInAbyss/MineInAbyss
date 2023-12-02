@@ -9,6 +9,7 @@ import com.mineinabyss.geary.systems.accessors.Pointers
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 class HarvestListener : GearyListener() {
     val Pointers.player by get<Player>().on(source)
@@ -23,12 +24,8 @@ class HarvestListener : GearyListener() {
         // Harvest surroundings
         BlockUtil.NEAREST_RELATIVE_BLOCKS_FOR_RADIUS[sickle.radius].forEach { relativePos ->
             if (harvestPlant(BlockUtil.relative(block, relativePos), player)) {
-                if (item.damage(1, player).type.isAir) {
-                    player.playSound(player.location, Sound.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f)
-                    return@forEach
-                }
-
-                ++totalHarvested
+                if (!item.damage(1, player).isEmpty)
+                    ++totalHarvested
             }
         }
 
