@@ -5,19 +5,29 @@ import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.papermc.datastore.decodeComponents
+import com.mineinabyss.geary.papermc.datastore.decodePrefabs
+import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
+import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.prefabs.configuration.components.Prefab
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.Pointer
 import com.mineinabyss.geary.systems.accessors.Pointers
 import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.messaging.broadcast
+import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.time.ticks
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.PrepareGrindstoneEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.CompassMeta
 
@@ -66,5 +76,13 @@ class ToggleStarCompassHud : RepeatingSystem(5.ticks) {
             starCompasses.any { it.hasItemFlag(ItemFlag.HIDE_ENCHANTS) } -> player.toGeary().remove<ShowStarCompassHud>()
             else -> player.toGeary().setPersisting(ShowStarCompassHud(player.location.section))
         }
+    }
+}
+
+class StarCompassBukkitListener : Listener {
+    @EventHandler
+    fun PrepareGrindstoneEvent.onGrindStarCompass() {
+        if (this.result?.itemMeta?.persistentDataContainer?.decodePrefabs()?.contains(PrefabKey.of("mineinabyss:star_compass")) == true)
+            result = null
     }
 }
