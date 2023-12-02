@@ -22,13 +22,10 @@ class PreventSignEditListener : Listener {
         if (player.hasPermission(BYPASS_PERMISSION)) return
 
         // Make people without bypass perm not be able to edit signs that don't have the component
-        when {
-            signOwner == null -> setUseInteractedBlock(Event.Result.DENY)
-            signOwner.owner != player.uniqueId -> setUseInteractedBlock(Event.Result.DENY)
-            else -> return
+        signOwner?.takeIf { it.owner != player.uniqueId }?.let {
+            setUseInteractedBlock(Event.Result.DENY)
+            player.error("You do not have permission to edit this sign.")
         }
-
-        player.error("You do not have permission to edit this sign.")
     }
 
     @EventHandler

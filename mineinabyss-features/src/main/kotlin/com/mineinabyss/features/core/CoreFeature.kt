@@ -7,8 +7,6 @@ import com.mineinabyss.idofront.plugin.listeners
 class CoreFeature : Feature() {
 
     override fun FeatureDSL.enable() {
-        /*if (Plugins.isEnabled("ProtocolLib"))
-            ProtocolLibrary.getProtocolManager().addPacketListener(ChestGuiPacket())*/
 
         plugin.listeners(CoreListener(), PreventSignEditListener())
     }
