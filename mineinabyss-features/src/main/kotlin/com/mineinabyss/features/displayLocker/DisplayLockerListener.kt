@@ -3,7 +3,6 @@ package com.mineinabyss.features.displayLocker
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.displaylocker.lockedDisplay
 import com.mineinabyss.components.playerData
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
@@ -83,16 +82,15 @@ class DisplayLockerListener : Listener {
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractLockedArmorStand() {
-        val armorStand = rightClicked.lockedDisplay ?: return
+        val lockedDisplay = rightClicked.lockedDisplay ?: return
 
         if (rightClicked !is ArmorStand) return
-        if (armorStand.owner == player.uniqueId && player.isSneaking)
+        if (lockedDisplay.owner == player.uniqueId && player.isSneaking)
             player.playerData.recentInteractEntity = rightClicked.uniqueId
-        if (!armorStand.lockState || player.uniqueId in armorStand.allowedAccess || player.hasPermission(Features.displayLocker.config.bypassPermission)) return
+        if (lockedDisplay.hasAccess(player)) return
 
         player.error("You do not have access to interact with this ${rightClicked.name}!")
         isCancelled = true
-        return
     }
 
     @EventHandler
@@ -104,10 +102,7 @@ class DisplayLockerListener : Listener {
 
     @EventHandler
     fun PlayerItemFrameChangeEvent.onChangingLockedItemFrame() {
-        val frame = itemFrame.lockedDisplay ?: return
-
-        if (!frame.lockState) return
-        if (player.uniqueId !in frame.allowedAccess && !player.hasPermission("mineinabyss.lockdisplay.bypass")) {
+        if (itemFrame.lockedDisplay?.hasAccess(player) == false) {
             player.error("You do not have access to interact with this ${itemFrame.name}!")
             isCancelled = true
             return
@@ -116,12 +111,11 @@ class DisplayLockerListener : Listener {
 
     @EventHandler
     fun ProjectileHitEvent.onBreakingItemFrame() {
-        val frame = hitEntity?.lockedDisplay ?: return
+        val lockedDisplay = (hitEntity as? ItemFrame)?.lockedDisplay ?: return
         val attacker = entity.shooter ?: return
 
-        if (!frame.lockState || hitEntity !is ItemFrame) return
         if (attacker !is Player) isCancelled = true
-        else if (attacker.uniqueId !in frame.allowedAccess && !attacker.hasPermission("mineinabyss.lockdisplay.bypass")) {
+        else if (lockedDisplay.hasAccess(attacker)) {
             attacker.error("You do not have access to interact with this ${hitEntity?.name}")
             isCancelled = true
         }
@@ -129,18 +123,16 @@ class DisplayLockerListener : Listener {
 
     @EventHandler
     fun HangingBreakEvent.onBreakLockedFrame() {
-        val frame = entity.lockedDisplay ?: return
-        if (!frame.lockState || entity !is ItemFrame) return
+        if ((entity as? ItemFrame)?.lockedDisplay?.lockState != true) return
         if (cause != HangingBreakEvent.RemoveCause.ENTITY) isCancelled = true
     }
 
     @EventHandler
     fun HangingBreakByEntityEvent.onBreakLockedFrame() {
-        val frame = entity.lockedDisplay ?: return
+        val frame = (entity as? ItemFrame)?.lockedDisplay ?: return
         val player = remover as? Player ?: return
 
-        if (!frame.lockState || entity !is ItemFrame) return
-        if (!frame.allowedAccess.contains(player.uniqueId)) {
+        if (!frame.hasAccess(player)) {
             player.error("You do not have access to interact with this ${entity.name}")
             isCancelled = true
         }
@@ -158,7 +150,7 @@ class DisplayLockerListener : Listener {
 
         // Prevent non-players from breaking armor stands
         if (attacker !is Player) isCancelled = true
-        else if (attacker.uniqueId !in armorStand.allowedAccess && !attacker.hasPermission("mineinabyss.lockdisplay.bypass")) {
+        else if (!armorStand.hasAccess(attacker)) {
             attacker.error("You do not have access to interact with this ${entity.name}")
             isCancelled = true
         }
@@ -175,11 +167,10 @@ class DisplayLockerListener : Listener {
     @EventHandler
     fun PlayerFishEvent.onFishArmorstand() {
         val armorStandBukkit = caught as? ArmorStand ?: return
-        val armorStandGeary = armorStandBukkit.lockedDisplay ?: return
+        val lockedDisplay = armorStandBukkit.lockedDisplay ?: return
 
         if (state != PlayerFishEvent.State.CAUGHT_ENTITY) return
-        if (!armorStandGeary.lockState) return
-        if (player.uniqueId !in armorStandGeary.allowedAccess && !player.hasPermission("mineinabyss.lockdisplay.bypass")) {
+        if (!lockedDisplay.hasAccess(player)) {
             player.error("You do not have access to this ${(caught as ArmorStand).name}")
             hook.remove()
             isCancelled = true

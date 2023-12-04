@@ -21,8 +21,7 @@ import org.bukkit.entity.Player
 class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFeature.Context>({ Context(config) }) {
     @Serializable
     class Config(
-        val enabled: Boolean = false,
-        val bypassPermission: String = "mineinabyss.lockdisplay.bypass",
+        val enabled: Boolean = false
     )
 
     class Context(val config: Config) {
@@ -30,7 +29,7 @@ class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFea
     }
 
     override fun FeatureDSL.enable() {
-        plugin.listeners(context.listener)
+        plugin.listeners(context.listener, BookshelfLocker())
 
         mainCommand {
             "lock"(desc = "Protection related commands") {
