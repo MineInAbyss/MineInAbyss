@@ -1,7 +1,8 @@
 package com.mineinabyss.features.guilds.extensions
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.chatty
-import com.mineinabyss.chatty.components.chattyData
+import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
@@ -104,10 +105,15 @@ fun Player.deleteGuild() {
         chatty.config.channels -= guildChatId
 
         // Rest will be reset when they join
-        this@deleteGuild.getGuildMembers().map { it.player }.filter { it.isOnline }.forEach {
-            it as Player
-            if (it.chattyData.channelId == guildChatId)
-                it.toGeary().setPersisting(it.chattyData.copy(channelId = getDefaultChat().key))
+        abyss.plugin.launch {
+            this@deleteGuild.getGuildMembers().map { it.player }
+                .filterIsInstance<Player>()
+                .forEach {
+                    val gearyPlayer = it.toGeary()
+                    val channelData = gearyPlayer.get<ChannelData>() ?: return@forEach
+                    if (channelData.channelId == guildChatId)
+                        gearyPlayer.setPersisting(channelData.copy(channelId = getDefaultChat().key))
+                }
         }
 
         /* Delete join-requests & invites if the guild is deleted */
@@ -149,11 +155,15 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         }
 
         // Update the guildchat ID on online players, rest handled on join
-        this@changeStoredGuildName.getGuildMembers().mapNotNull { it.player.player }.forEach {
-            if (it.chattyData.channelId == oldGuildName.guildChatId())
-                it.toGeary().setPersisting(it.chattyData.copy(channelId = newGuildName.guildChatId()))
-            chatty.config.channels.remove(oldGuildName.guildChatId())
-            chatty.config.channels[newGuildName.guildChatId()] = Features.guilds.config.guildChattyChannel
+        abyss.plugin.launch {
+            this@changeStoredGuildName.getGuildMembers().mapNotNull { it.player.player }.forEach {
+                val gearyPlayer = it.toGeary()
+                val channelData = gearyPlayer.get<ChannelData>() ?: return@forEach
+                if (channelData.channelId == oldGuildName.guildChatId())
+                    gearyPlayer.setPersisting(channelData.copy(channelId = newGuildName.guildChatId()))
+                chatty.config.channels.remove(oldGuildName.guildChatId())
+                chatty.config.channels[newGuildName.guildChatId()] = Features.guilds.config.guildChattyChannel
+            }
         }
 
         Guilds.update({ Guilds.id eq guildId }) {
@@ -247,7 +257,7 @@ fun getAllGuildNames(): List<String> {
     }
 }
 
-fun String.getGuildId() : Int {
+fun String.getGuildId(): Int {
     return transaction(abyss.db) {
         return@transaction Guilds.select {
             Guilds.name.lowerCase() eq this@getGuildId.lowercase()

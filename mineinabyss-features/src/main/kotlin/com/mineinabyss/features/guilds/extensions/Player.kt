@@ -1,6 +1,7 @@
 package com.mineinabyss.features.guilds.extensions
 
-import com.mineinabyss.chatty.components.chattyData
+import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
@@ -137,7 +138,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
     }
 }
 
-fun OfflinePlayer.verifyGuildName(guildName: String) : String? {
+fun OfflinePlayer.verifyGuildName(guildName: String): String? {
     return transaction(abyss.db) {
 
         val guild = Guilds.select {
@@ -236,10 +237,12 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
                 player?.error("You cannot be promoted to a higher rank!")
                 return@transaction
             }
+
             GuildRank.CAPTAIN -> {
                 player?.error("You cannot be promoted to Owner, as there is already one.")
                 return@transaction
             }
+
             GuildRank.STEWARD -> GuildRank.CAPTAIN
             GuildRank.MEMBER -> GuildRank.STEWARD
             else -> return@transaction
@@ -330,9 +333,13 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
             return@transaction false
         }
 
-        // Remove player from guild-chat. Offline members handled when they join
-        if (member.isOnline && member.player!!.chattyData.channelId == getGuildName().guildChatId()) {
-            member.player!!.toGeary().setPersisting(member.player!!.chattyData.copy(channelId = getDefaultChat().key))
+        abyss.plugin.launch {
+            val gearyPlayer = member.player?.toGeary() ?: return@launch
+            val channelData = gearyPlayer.get<ChannelData>() ?: return@launch
+            // Remove player from guild-chat. Offline members handled when they join
+            if (member.isOnline && channelData.channelId == getGuildName().guildChatId()) {
+                gearyPlayer.setPersisting(channelData.copy(channelId = getDefaultChat().key))
+            }
         }
 
         Players.deleteWhere {
@@ -377,8 +384,12 @@ fun Player.leaveGuild() {
             return@transaction
         }
 
-        if (this@leaveGuild.chattyData.channelId == guildName.guildChatId()) {
-            this@leaveGuild.toGeary().setPersisting(this@leaveGuild.chattyData.copy(channelId = getDefaultChat().key))
+        abyss.plugin.launch {
+            val gearyPlayer = this@leaveGuild.player?.toGeary() ?: return@launch
+            val channelData = gearyPlayer.get<ChannelData>() ?: return@launch
+            if (channelData.channelId == guildName.guildChatId()) {
+                gearyPlayer.setPersisting(channelData.copy(channelId = getDefaultChat().key))
+            }
         }
 
         Players.deleteWhere {
@@ -386,8 +397,9 @@ fun Player.leaveGuild() {
         }
         val leftMessage = "<i>${player?.name}</i> has left your guild!"
         player?.success("You have left <i>${guildName}")
-        owner.player?.warn(leftMessage) ?:
-        GuildMessageQueue.insert { it[content] = leftMessage; it[playerUUID] = owner.uniqueId }
+        owner.player?.warn(leftMessage) ?: GuildMessageQueue.insert {
+            it[content] = leftMessage; it[playerUUID] = owner.uniqueId
+        }
     }
 
 }
@@ -424,7 +436,7 @@ fun OfflinePlayer.getGuildName(): String {
     }
 }
 
-fun OfflinePlayer.getGuildOwner() : UUID {
+fun OfflinePlayer.getGuildOwner(): UUID {
     return transaction(abyss.db) {
         val playerGuild = Players.select {
             Players.playerUUID eq uniqueId
@@ -441,11 +453,11 @@ fun OfflinePlayer.getGuildOwner() : UUID {
     }
 }
 
-fun OfflinePlayer.isGuildOwner() : Boolean {
+fun OfflinePlayer.isGuildOwner(): Boolean {
     return player?.getGuildOwner() == player?.uniqueId
 }
 
-fun OfflinePlayer.getGuildOwnerFromInvite() : UUID {
+fun OfflinePlayer.getGuildOwnerFromInvite(): UUID {
     return transaction(abyss.db) {
         val guilds = GuildJoinQueue.select {
             (GuildJoinQueue.playerUUID eq player!!.uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.INVITE)
@@ -502,8 +514,8 @@ fun String.getGuildBalance(): Int {
 
 fun String.setGuildBalance(newBalance: Int) {
     transaction(abyss.db) {
-        Guilds.update({Guilds.name.lowerCase() eq this@setGuildBalance.lowercase()}) {
-           it[balance] = newBalance
+        Guilds.update({ Guilds.name.lowerCase() eq this@setGuildBalance.lowercase() }) {
+            it[balance] = newBalance
         }
     }
 }
@@ -580,7 +592,7 @@ fun OfflinePlayer.hasGuildRequest(): Boolean {
     }
 }
 
-fun  OfflinePlayer.getNumberOfGuildRequests() : Int {
+fun OfflinePlayer.getNumberOfGuildRequests(): Int {
     var requestCount = 0
     val amount = transaction(abyss.db) {
         val playerGuild = Players.select {
@@ -606,21 +618,20 @@ fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAl
         if (removeAll) {
             GuildJoinQueue.deleteWhere {
                 (joinType eq guildJoinType) and
-                (guildId eq id)
+                        (guildId eq id)
             }
-        }
-        else {
+        } else {
             GuildJoinQueue.deleteWhere {
                 (playerUUID eq uniqueId) and
-                (joinType eq guildJoinType) and
-                (guildId eq id)
+                        (joinType eq guildJoinType) and
+                        (guildId eq id)
             }
         }
     }
 }
 
 fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
-    val joinType =  transaction(abyss.db) {
+    val joinType = transaction(abyss.db) {
         val guildId = Players.select {
             Players.playerUUID eq uniqueId
         }.single()[Players.guildId]

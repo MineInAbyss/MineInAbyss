@@ -1,13 +1,13 @@
 [versions]
-gearyPaper = "0.27.0"
-guiy = "0.9.0"
-deeperworld = "0.8.0"
-chatty = "0.6.6"
-mobzy = "0.21-SNAPSHOT"
-looty = "0.11.0"
-protocolburrito = "0.7.0"
+gearyPaper = "0.27.5"
+guiy = "0.9.2"
+deeperworld = "0.9.1"
+chatty = "0.7.5"
+mobzy = "0.22.9"
+looty = "0.12.2"
+protocolburrito = "0.8.2"
 eternalfortune = "0.2.2"
-packy = "0.2-SNAPSHOT"
+packy = "0.3.17"
 
 
 [libraries]
@@ -19,7 +19,7 @@ mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
 looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
 eternalfortune = { module = "com.mineinabyss:eternalfortune", version.ref = "eternalfortune" }
-packy = { module = "com.mineinabyss:Packy", version.ref = "packy" }
+packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.4.10"
