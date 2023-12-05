@@ -1,9 +1,10 @@
 package com.mineinabyss.features.guilds
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.chatty
-import com.mineinabyss.chatty.components.chattyData
+import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.getDefaultChat
-import com.mineinabyss.chatty.listeners.RendererExtension
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.getGuildName
 import com.mineinabyss.features.guilds.extensions.guildChatId
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -18,29 +19,33 @@ class ChattyGuildListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun AsyncChatEvent.onGuildChat() {
-        val channelId = player.chattyData.channelId
+        val channelData = player.toGeary().get<ChannelData>()?.withChannelVerified() ?: return
+        val channelId = channelData.channelId
 
         if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chatty.config.channels.keys) {
-            player.toGeary().setPersisting(player.chattyData.copy(channelId = getDefaultChat().key))
+            abyss.plugin.launch {
+                player.toGeary().setPersisting(channelData.copy(channelId = getDefaultChat().key))
+            }
             return
         }
-        if (player.chattyData.channelId != player.guildChatId()) return
+
+        if (channelId != player.guildChatId()) return
 
         viewers().clear()
         viewers().addAll(Bukkit.getOnlinePlayers().filter {
             it.getGuildName() == player.getGuildName()
         })
-
-        if (chatty.config.chat.disableChatSigning) {
-            viewers().forEach { a -> RendererExtension.render(player, player.displayName(), message(), a) }
-            viewers().clear()
-        }
     }
 
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
-        if (player.chattyData.channelId.endsWith(guildChannelId)) {
-            player.toGeary().setPersisting(player.chattyData.copy(channelId = player.guildChatId().takeIf { it.isNotBlank() } ?: getDefaultChat().key))
+        val channelData = player.toGeary().get<ChannelData>()?.withChannelVerified() ?: return
+        if (channelData.channelId.endsWith(guildChannelId)) {
+            abyss.plugin.launch {
+                player.toGeary()
+                    .setPersisting(channelData.copy(channelId = player.guildChatId().takeIf { it.isNotBlank() }
+                        ?: getDefaultChat().key))
+            }
         }
     }
 }

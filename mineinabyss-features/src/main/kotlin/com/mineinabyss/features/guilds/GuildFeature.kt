@@ -1,10 +1,10 @@
 package com.mineinabyss.features.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.mineinabyss.chatty.ChattyConfig
+import com.mineinabyss.chatty.ChattyChannel
+import com.mineinabyss.chatty.ChattyCommands
 import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelType
-import com.mineinabyss.chatty.helpers.swapChannelCommand
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
@@ -40,7 +40,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
     @Serializable
     class Config {
         val enabled = false
-        val guildChattyChannel: ChattyConfig.ChattyChannel = ChattyConfig.ChattyChannel(
+        val guildChattyChannel: ChattyChannel = ChattyChannel(
             channelType = ChannelType.PRIVATE,
             proxy = false,
             discordsrv = false,
@@ -138,7 +138,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                                 "$name $guildChannelId",
                                 context.config.guildChattyChannel
                             )
-                            player.swapChannelCommand("$name $guildChannelId")
+                            ChattyCommands.swapChannel(player, context.config.guildChattyChannel)
                         } else player.error("You cannot use guild chat without a guild")
                     }
                 }
