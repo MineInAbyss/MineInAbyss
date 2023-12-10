@@ -15,6 +15,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.meta.ArmorMeta
 import kotlin.math.atan2
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.toKotlinDuration
 
 class Placeholders : PlaceholderExpansion() {
 
@@ -26,6 +28,7 @@ class Placeholders : PlaceholderExpansion() {
 
     override fun onPlaceholderRequest(player: Player, identifier: String) =
         when (identifier) {
+            "afk" -> player.idleDuration.toKotlinDuration() >= 5.minutes
             "orthbanking_coins" -> player.playerData.orthCoinsHeld
             "orthbanking_tokens" -> player.playerData.mittyTokensHeld
 
