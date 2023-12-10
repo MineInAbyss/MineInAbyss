@@ -52,7 +52,8 @@ class LayerListener : Listener {
 
     @EventHandler
     fun FoodLevelChangeEvent.onFoodChange() {
-        if ((entity as? Player)?.isInHub() == true) isCancelled = true
+        val player = entity as? Player ?: return
+        if (player.isInHub() && player.foodLevel > foodLevel) isCancelled = true
     }
 
 //    @EventHandler(priority = EventPriority.MONITOR)
