@@ -25,7 +25,6 @@ class Placeholders : PlaceholderExpansion() {
 
     override fun onPlaceholderRequest(player: Player, identifier: String) =
         when (identifier) {
-            "afk" -> if (player.idleDuration.toKotlinDuration() >= 5.minutes) ":space_-2::afk:" else ""
             "orthbanking_coins" -> player.playerData.orthCoinsHeld
             "orthbanking_tokens" -> player.playerData.mittyTokensHeld
 
