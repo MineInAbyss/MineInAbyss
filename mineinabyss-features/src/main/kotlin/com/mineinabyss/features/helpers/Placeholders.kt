@@ -2,19 +2,16 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.custom_hud.customHudData
 import com.mineinabyss.components.playerData
-import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.components.relics.ShowStarCompassHud
+import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.tools.depthmeter.getDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.attribute.Attribute
-import org.bukkit.attribute.AttributeModifier
 import org.bukkit.entity.Player
-import org.bukkit.inventory.meta.ArmorMeta
 import kotlin.math.atan2
-import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toKotlinDuration
 
@@ -28,7 +25,7 @@ class Placeholders : PlaceholderExpansion() {
 
     override fun onPlaceholderRequest(player: Player, identifier: String) =
         when (identifier) {
-            "afk" -> if (player.idleDuration.toKotlinDuration() >= 5.minutes) ":afk:" else ""
+            "afk" -> if (player.idleDuration.toKotlinDuration() >= 5.minutes) "%\uE101\uE101\uE101\uE101\uE00F" else ""
             "orthbanking_coins" -> player.playerData.orthCoinsHeld
             "orthbanking_tokens" -> player.playerData.mittyTokensHeld
 
