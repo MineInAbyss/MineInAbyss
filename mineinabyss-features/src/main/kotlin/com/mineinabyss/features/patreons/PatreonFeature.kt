@@ -19,6 +19,7 @@ import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.logSuccess
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
 import com.mineinabyss.idofront.plugin.listeners
@@ -75,6 +76,7 @@ class PatreonFeature(val config: Config) : Feature() {
                             val player = sender as Player
                             val console = Bukkit.getServer().consoleSender
                             Bukkit.dispatchCommand(console, "luckperms user ${player.name} meta clear prefix")
+                            player.success("Removed prefix")
                         }
                     }
                     "set" {
@@ -132,6 +134,7 @@ class PatreonFeature(val config: Config) : Feature() {
                                 }
                             }
                             luckPerms.userManager.saveUser(luckPerms.userManager.getUser(player.uniqueId)!!)
+                            sender.success("Set prefix to $emote")
                         }
                     }
                 }
