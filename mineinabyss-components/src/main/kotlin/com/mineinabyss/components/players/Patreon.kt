@@ -12,5 +12,3 @@ data class Patreon(
     var tier: Int = 1,
     var kitUsedMonth: Month? = null
 )
-
-val Player.patreon get() = toGeary().get<Patreon>()

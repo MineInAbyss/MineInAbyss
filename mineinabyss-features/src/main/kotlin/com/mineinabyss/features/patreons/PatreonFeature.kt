@@ -6,7 +6,6 @@ import com.mineinabyss.components.PlayerData
 import com.mineinabyss.components.PreResetPatreon
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
-import com.mineinabyss.components.players.patreon
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.datastore.decode
@@ -37,6 +36,8 @@ import kotlin.io.path.writeLines
 
 class PatreonFeature(val config: Config) : Feature() {
     override val dependsOn = setOf("LuckPerms")
+
+    val prefixContexts = listOf("global", "orth", "layerone", "layertwo", "layerthree", "layerfour", "layerfive")
 
     @Serializable
     class Config(val enabled: Boolean = false)
@@ -78,21 +79,7 @@ class PatreonFeature(val config: Config) : Feature() {
                     }
                     "set" {
                         val emote by stringArg()
-                        val locs = listOf(
-                            "global",
-                            "orth",
-                            "layerone",
-                            "layertwo",
-                            "layerthree",
-                            "layerfour",
-                            "layerfive",
-                            "nazarick",
-                            "camelot"
-                        )
-                        val loc by optionArg(locs) {
-                            default = "global"
-                            parseErrorMessage = { "No such enchantment: $passed. \nAvailable ones are: \n$locs" }
-                        }
+                        val loc by optionArg(prefixContexts) { default = "global" }
                         playerAction {
                             val player = sender as Player
 
@@ -110,12 +97,11 @@ class PatreonFeature(val config: Config) : Feature() {
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build(),
                                     PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build(),
-                                    PrefixNode.builder(":space_6:<dark_gray>Nazarick:space_2::$emote::space_2:>", 16)
-                                        .context(ImmutableContextSet.of("world", "nazarick")).build(),
-                                    PrefixNode.builder(":space_6:<dark_aqua>Camelot:space_2:>", 17)
-                                        .context(ImmutableContextSet.of("world", "camelot")).build()
                                 ).forEach { node ->
-                                    luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(node)
+                                    luckPerms.userManager.getUser(player.uniqueId)?.data()?.let {  nodeMap ->
+                                        nodeMap.toCollection().find { it.key == node.key }?.let { node -> nodeMap.remove(node) }
+                                        nodeMap.add(node)
+                                    }
                                 }
 
                             } else {
@@ -138,15 +124,12 @@ class PatreonFeature(val config: Config) : Feature() {
                                     "layerfive" -> PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build()
 
-                                    "nazarick" -> PrefixNode.builder(":space_6:<dark_gray>Nazarick:space_2::$emote::space_2:>", 16)
-                                        .context(ImmutableContextSet.of("world", "nazarick")).build()
-
-                                    "camelot" -> PrefixNode.builder(":space_6:<dark_aqua>Camelot:space_2:>", 17)
-                                        .context(ImmutableContextSet.of("world", "camelot")).build()
-
                                     else -> PrefixNode.builder().build()
                                 }
-                                luckPerms.userManager.getUser(player.uniqueId)?.data()?.add(c)
+                                luckPerms.userManager.getUser(player.uniqueId)?.data()?.let {  nodeMap ->
+                                    nodeMap.toCollection().find { it.key == c.key }?.let { node -> nodeMap.remove(node) }
+                                    nodeMap.add(c)
+                                }
                             }
                             luckPerms.userManager.saveUser(luckPerms.userManager.getUser(player.uniqueId)!!)
                         }
@@ -164,7 +147,7 @@ class PatreonFeature(val config: Config) : Feature() {
                                     runCatching {
                                         val offlinePdc = offlinePlayer.getOfflinePDC() ?: return@map null
                                         val heldTokens = (offlinePlayer.player?.playerData ?: offlinePdc.decode<PlayerData>())?.mittyTokensHeld ?: 0
-                                        val wasPatreon = ((offlinePlayer.player?.patreon ?: offlinePdc.decode<Patreon>())?.tier ?: 0) > 0
+                                        val wasPatreon = ((offlinePlayer.player?.toGeary()?.get<Patreon>() ?: offlinePdc.decode<Patreon>())?.tier ?: 0) > 0
                                         PreResetPatreon(offlinePlayer.name.toString(), offlinePlayer.uniqueId, heldTokens, wasPatreon)
                                     }.getOrNull()
                                 }.filterNotNull().toSet()
@@ -198,17 +181,6 @@ class PatreonFeature(val config: Config) : Feature() {
                 }
             }
         }
-        val locs = listOf(
-            "global",
-            "orth",
-            "layerone",
-            "layertwo",
-            "layerthree",
-            "layerfour",
-            "layerfive",
-            "nazarick",
-            "camelot",
-        )
         tabCompletion {
             when (args.size) {
                 1 -> listOf("patreon").filter { it.startsWith(args[0]) }
@@ -228,7 +200,7 @@ class PatreonFeature(val config: Config) : Feature() {
                 }
 
                 5 -> when (args[2]) {
-                    "set" -> locs.filter { it.startsWith(args[4]) }
+                    "set" -> prefixContexts.filter { it.startsWith(args[4]) }
                     else -> null
                 }
 
