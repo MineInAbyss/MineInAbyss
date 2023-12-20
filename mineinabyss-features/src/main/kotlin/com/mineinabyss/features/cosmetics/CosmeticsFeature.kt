@@ -26,6 +26,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
         if (config.equipBackpacks) plugin.listeners(CosmeticListener(config))
+        TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
         // Makes backpacks equip/unequipable via player interaction
