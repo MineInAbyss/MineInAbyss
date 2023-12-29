@@ -3,6 +3,7 @@ package com.mineinabyss.features.guilds
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelData
+import com.mineinabyss.chatty.events.ChattyPlayerChatEvent
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.getGuildName
@@ -18,23 +19,12 @@ import org.bukkit.event.player.PlayerJoinEvent
 class ChattyGuildListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun AsyncChatEvent.onGuildChat() {
-        val channelData = player.toGeary().get<ChannelData>()?.withChannelVerified() ?: return
-        val channelId = channelData.channelId
+    fun ChattyPlayerChatEvent.onGuildChat() {
+        val guildName = player.getGuildName()
+        if (channel.key != player.guildChatId()) return
 
-        if ((!channelId.startsWith(player.getGuildName()) && channelId.endsWith(guildChannelId)) || channelId !in chatty.config.channels.keys) {
-            abyss.plugin.launch {
-                player.toGeary().setPersisting(channelData.copy(channelId = getDefaultChat().key))
-            }
-            return
-        }
-
-        if (channelId != player.guildChatId()) return
-
-        viewers().clear()
-        viewers().addAll(Bukkit.getOnlinePlayers().filter {
-            it.getGuildName() == player.getGuildName()
-        })
+        viewers.clear()
+        viewers.addAll(Bukkit.getOnlinePlayers().filter { it.getGuildName() == guildName })
     }
 
     @EventHandler
