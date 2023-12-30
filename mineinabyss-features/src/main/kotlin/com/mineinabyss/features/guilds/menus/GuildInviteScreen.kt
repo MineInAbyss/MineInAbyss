@@ -27,10 +27,10 @@ fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
 fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
     Item(owner.head(
         "<gold><b>Current Guild Info</b>".miniMsg(),
-        "<yellow><b>Guild Name:</b> <yellow><i>${owner.getGuildName()}".miniMsg(),
-        "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
-        "<yellow><b>Guild Level:</b> <yellow><i>${owner.getGuildLevel()}".miniMsg(),
-        "<yellow><b>Guild Members:</b> <yellow><i>${owner.getGuildMemberCount()}".miniMsg(),
+        "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}".miniMsg(),
+        "<yellow><b>Guild Owner:</b> <i>${owner.name}".miniMsg(),
+        "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
+        "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
         isCenterOfInv = true, isLarge = true
     ), modifier = modifier)
 }
@@ -68,7 +68,7 @@ fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifi
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.INVITE)
         if (owner.hasGuild())
-            player.info("<gold><b>❌ <yellow>You denied the invite from <gold><i>${owner.getGuildName()}")
+            player.info("<gold><b>❌</b> <yellow>You denied the invite from </yellow><i>${owner.getGuildName()}")
         nav.back()
     }
 ) {

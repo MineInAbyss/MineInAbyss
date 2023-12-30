@@ -5,7 +5,9 @@ import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
+import com.mineinabyss.features.guilds.menus.GuildUIScope
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.guiy.inventory.GuiyInventoryHolder
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -348,8 +350,10 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
 
         /* Message to actual kicked player online or offline */
         val kickMessage = "<red>You have been kicked from <i>${getGuildName()}"
-        if (member.isOnline) member.player?.error(kickMessage)
-        else {
+        if (member.isOnline) {
+            member.player?.error(kickMessage)
+            if (member.player!!.openInventory.topInventory.holder is GuiyInventoryHolder) member.player?.closeInventory()
+        } else {
             GuildMessageQueue.insert {
                 it[content] = kickMessage
                 it[playerUUID] = member.uniqueId
