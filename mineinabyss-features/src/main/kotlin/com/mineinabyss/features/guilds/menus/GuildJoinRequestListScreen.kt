@@ -23,7 +23,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Composable
 fun GuildUIScope.GuildJoinRequestListScreen() {
     GuildJoinRequestButton(Modifier.at(1, 1))
-    DenyAllInvitesButton(Modifier.at(8, 4))
+    DeclineAllGuildRequestsButton(Modifier.at(8, 4))
     BackButton(Modifier.at(2, 4))
 }
 
@@ -57,7 +57,4 @@ fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
             }
         }
     }
-    DeclineAllGuildRequestsButton(Modifier.at(8, 4))
-
-    BackButton(Modifier.at(2, 4))
 }

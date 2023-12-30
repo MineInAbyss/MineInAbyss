@@ -56,7 +56,7 @@ fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: Offline
 fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     modifier = modifier,
     onClick = {
-        newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
+        guildName?.removeGuildQueueEntries(newMember, GuildJoinType.REQUEST)
         player.info("<yellow><b>❌ <yellow>You denied the join-request from ${newMember.name}")
         val requestDeniedMessage =
             "<red>Your request to join <i>${guildName} has been denied!"
@@ -86,5 +86,5 @@ fun GuildUIScope.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
         nav.back()
     }
 ) {
-    Text("<red>Decline All GuildJoin-REQUEST".miniMsg())
+    Text("<red>Decline All Requests".miniMsg())
 }
