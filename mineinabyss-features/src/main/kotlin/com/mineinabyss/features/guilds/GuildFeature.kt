@@ -169,7 +169,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                             else if (member.getGuildRank() == newRank)
                                 sender.error("<b>${player}</b> is already a <i>$rank.")
                             else {
-                                member.getGuildName().getOwnerFromGuildName().setGuildRank(member, newRank)
+                                member.getGuildName()?.getOwnerFromGuildName()?.setGuildRank(member, newRank)
                                 sender.success("Set <b>${player}</b> to <i>$rank.")
                             }
 
@@ -180,7 +180,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                         val player by stringArg()
                         action {
                             val member = Bukkit.getOfflinePlayer(player)
-                            if (member.hasGuild() && member.getGuildName().lowercase() == guild.lowercase())
+                            if (member.hasGuild() && member.getGuildName()?.lowercase() == guild.lowercase())
                                 sender.error("$player is already in the guild.")
                             else if (member.hasGuild())
                                 sender.error("<b>${player}</b> already has a guild.")
@@ -196,7 +196,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                             val member = Bukkit.getOfflinePlayer(player)
                             if (!member.hasGuild())
                                 sender.error("<b>${player}</b> does not have a guild.")
-                            else if (member.hasGuild() && member.getGuildName().lowercase() != guild.lowercase())
+                            else if (member.hasGuild() && member.getGuildName()?.lowercase() != guild.lowercase())
                                 sender.error("<b>${player}</b> is not in this guild.")
                             else {
                                 guild.getOwnerFromGuildName().kickPlayerFromGuild(member)
@@ -307,7 +307,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                             .map { it.name }.filter { it.startsWith(args[4]) }
 
                         "removeGuildMember" -> Bukkit.getOnlinePlayers()
-                            .filter { it.hasGuild() && it.getGuildName().lowercase() == args[3].lowercase() }
+                            .filter { it.hasGuild() && it.getGuildName()?.lowercase() == args[3].lowercase() }
                             .map { it.name }
 
                         else -> null

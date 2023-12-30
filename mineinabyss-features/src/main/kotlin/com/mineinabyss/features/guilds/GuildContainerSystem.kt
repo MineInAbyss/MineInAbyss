@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 class GuildContainerSystem : GroupSystem() {
 
     override fun isInGroup(player: Player, guildName: String): Boolean {
-        val name = player.getGuildName().replace(" ", "_")
+        val name = player.getGuildName()?.replace(" ", "_")
         return name.equals(guildName, true) && player.hasGuild()
     }
 

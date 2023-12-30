@@ -36,7 +36,8 @@ fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
 }
 
 @Composable
-fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
+fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
+    modifier = modifier,
     onClick = {
         if (!owner.hasGuild()) {
             nav.reset()
@@ -58,13 +59,13 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
         player.removeGuildQueueEntries(GuildJoinType.REQUEST)
         nav.back()
     },
-    modifier = modifier
 ) {
     Text("<green>Accept INVITE".miniMsg(), modifier = Modifier.size(3, 3))
 }
 
 @Composable
-fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier = Modifier) = Button(
+fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
+    modifier = modifier,
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.INVITE)
         if (owner.hasGuild())
@@ -72,5 +73,5 @@ fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifi
         nav.back()
     }
 ) {
-    Text("<red>Decline INVITE".miniMsg(), modifier = modifier.size(3, 3))
+    Text("<red>Decline INVITE".miniMsg(), modifier = Modifier.size(3, 3))
 }

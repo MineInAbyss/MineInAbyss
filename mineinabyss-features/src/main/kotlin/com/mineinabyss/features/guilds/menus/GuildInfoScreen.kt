@@ -38,7 +38,7 @@ fun GuildUIScope.CurrentGuildInfoButton(modifier: Modifier = Modifier) {
         Text(
             "<gold><b>Current Guild Info</b>".miniMsg(),
             "<yellow><b>Guild Name:</b> <yellow><i>${guildName}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <yellow><i>${guildOwner.name}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${guildOwner?.name}".miniMsg(),
             "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
             "<yellow><b>Guild Members:</b> <yellow><i>${memberCount}".miniMsg(),
             modifier = Modifier.size(2, 2)

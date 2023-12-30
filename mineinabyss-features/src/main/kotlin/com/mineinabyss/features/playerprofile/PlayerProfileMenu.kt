@@ -163,12 +163,12 @@ fun MittyTokenBalance(player: Player) {
 @Composable
 fun GuildButton(player: Player, viewer: Player) {
     Button(enabled = player.hasGuild() && !viewer.hasGuild(), onClick = {
-        guiy { GuildScreen.GuildLookupMembers(player.getGuildName()) }
+        guiy { player.getGuildName()?.let { GuildScreen.GuildLookupMembers(it) } }
     }) {
         if (player.hasGuild()) {
             Text(
                 "<gold><b><i>${player.getGuildName()}".miniMsg(),
-                "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()).name}".miniMsg(),
+                "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()!!).name}".miniMsg(),
                 "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
                 "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
             )

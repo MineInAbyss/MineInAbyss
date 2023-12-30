@@ -44,7 +44,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
     object Owner : GuildScreen(":space_-8::guild_owner_menu:", 6)
 
     class GuildList (val pageNumber: Int): GuildScreen(":space_-8::guild_list_menu:", 6)
-    class GuildLookupMembers(val guildName: String) :
+    class GuildLookupMembers(val guildName: GuildName) :
         GuildScreen(":space_-8:${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
     // Forgot to add to pack so this is fine for now
@@ -71,7 +71,7 @@ class GuildUIScope(
     //TODO cache more than just guild level here
     val guildName get() = player.getGuildName()
     val guildLevel get() = player.getGuildLevel()
-    val guildOwner get() = player.getGuildOwner().toOfflinePlayer()
+    val guildOwner get() = player.getGuildOwner()?.toOfflinePlayer()
     val memberCount get() = player.getGuildMemberCount()
     val guildBalance get() = player.getGuildBalance()
     val nav = GuildNav { Default(player) }
