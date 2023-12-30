@@ -67,10 +67,12 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
 fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
-        player.removeGuildQueueEntries(GuildJoinType.INVITE)
+        val guildName = owner.getGuildName() ?: ""
+        guildName.removeGuildQueueEntries(player, GuildJoinType.INVITE)
         if (owner.hasGuild())
-            player.info("<gold><b>❌</b> <yellow>You denied the invite from </yellow><i>${owner.getGuildName()}")
-        nav.back()
+            player.info("<gold><b>❌</b> <yellow>You denied the invite from </yellow><i>$guildName")
+        if (player.getNumberOfGuildRequests() > 1) nav.back()
+        else nav.reset()
     }
 ) {
     Text("<red>Decline INVITE".miniMsg(), modifier = Modifier.size(3, 3))
