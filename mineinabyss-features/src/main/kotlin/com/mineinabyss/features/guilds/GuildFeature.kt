@@ -3,12 +3,15 @@ package com.mineinabyss.features.guilds
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.ChattyCommands
-import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
+import com.mineinabyss.features.guilds.listeners.ChattyGuildListener
+import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
+import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
+import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.inventory.guiy
@@ -40,7 +43,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
     @Serializable
     class Config {
         val enabled = false
-        val guildChattyChannel: ChattyChannel = ChattyChannel(
+        val guildChannelTemplate: ChattyChannel = ChattyChannel(
             channelType = ChannelType.PRIVATE,
             proxy = false,
             discordsrv = false,
@@ -54,15 +57,16 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         )
         val guildNameMaxLength: Int = 20
         val guildNameBannedWords: List<String> = emptyList()
+
         //TODO Eventually move to a per-guild config
         val canOpenGuildMemberGraves: Boolean = true
     }
 
-    class Context: Configurable<Config> {
+    class Context : Configurable<Config> {
         override val configManager = config("guilds", abyss.dataPath, Config())
         val listeners = buildList {
-            if(abyss.isChattyLoaded) add(ChattyGuildListener())
-            if(abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
+            if (abyss.isChattyLoaded) add(ChattyGuildListener())
+            if (abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
         }.toTypedArray()
     }
 
@@ -73,11 +77,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
 
-        if (abyss.isChattyLoaded) {
-            getAllGuilds().forEach {
-                chatty.config.channels["${it.guildName} $guildChannelId"] = context.config.guildChattyChannel
-            }
-        }
+        if (abyss.isChattyLoaded) getAllGuildChats()
 
         // Generate the guild-list
         displayGuildList()
@@ -128,19 +128,9 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                     playerAction {
                         val player = sender as? Player ?: return@playerAction
 
-                        if (!abyss.isChattyLoaded) {
-                            player.error("Chatty is not loaded.")
-                            return@playerAction
-                        }
-
-                        if (player.hasGuild()) {
-                            val name = player.getGuildName()
-                            chatty.config.channels.putIfAbsent(
-                                "$name $guildChannelId",
-                                context.config.guildChattyChannel
-                            )
-                            ChattyCommands.swapChannel(player, context.config.guildChattyChannel)
-                        } else player.error("You cannot use guild chat without a guild")
+                        if (!abyss.isChattyLoaded) return@playerAction player.error("Chatty is not loaded")
+                        player.guildChat()?.let { ChattyCommands.swapChannel(player, it) }
+                            ?: return@playerAction player.error("You cannot use guild chat without a guild")
                     }
                 }
                 "menu"(desc = "Open Guild Menu") {
@@ -159,7 +149,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                     }
                     "setGuildMemberRank" {
                         val player by stringArg()
-                        val rank by optionArg(GuildRank.values().map { it.name })
+                        val rank by optionArg(GuildRank.entries.map { it.name })
                         action {
                             val member = Bukkit.getOfflinePlayer(player)
                             val newRank = GuildRank.valueOf(rank)

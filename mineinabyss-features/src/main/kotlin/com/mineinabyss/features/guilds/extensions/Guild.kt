@@ -1,6 +1,7 @@
 package com.mineinabyss.features.guilds.extensions
 
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.getDefaultChat
@@ -165,8 +166,8 @@ fun Player.changeStoredGuildName(newGuildName: String) {
                 val channelData = gearyPlayer.get<ChannelData>() ?: return@forEach
                 if (channelData.channelId == oldGuildName.guildChatId())
                     gearyPlayer.setPersisting(channelData.copy(channelId = newGuildName.guildChatId()))
-                chatty.config.channels.remove(oldGuildName.guildChatId())
-                chatty.config.channels[newGuildName.guildChatId()] = Features.guilds.config.guildChattyChannel
+                chatty.config.channels -= oldGuildName.guildChatId()
+                newGuildName.guildChat()
             }
         }
 
@@ -273,7 +274,7 @@ fun GuildName.clearGuildJoinRequests() {
     val guildId = getGuildId() ?: return
     transaction(abyss.db) {
         GuildJoinQueue.deleteWhere {
-            (this.guildId eq  guildId) and (joinType eq GuildJoinType.REQUEST)
+            (this.guildId eq guildId) and (joinType eq GuildJoinType.REQUEST)
         }
     }
 }
@@ -282,7 +283,7 @@ fun GuildName.clearGuildInvites() {
     val guildId = getGuildId() ?: return
     transaction(abyss.db) {
         GuildJoinQueue.deleteWhere {
-            (this.guildId eq  guildId) and (joinType eq GuildJoinType.INVITE)
+            (this.guildId eq guildId) and (joinType eq GuildJoinType.INVITE)
         }
     }
 }
@@ -376,7 +377,7 @@ fun GuildName.canLevelUpGuild(): Boolean {
 }
 
 fun Player.levelUpGuild() {
-    val guildName =  getGuildName() ?: return
+    val guildName = getGuildName() ?: return
     val cost = guildName.getGuildLevelUpCost() ?: return
     val guildMembers = getGuildMembers().filter { it.player.uniqueId != uniqueId }.map { it.player }
     updateGuildBalance(-cost)
@@ -446,6 +447,38 @@ private fun GuildName.updateGuildBalance(amount: Int) {
         }
     }
 }
+
+/**
+ * If a Guild does not have a ChattyChannel registered, this will do so
+ * @return All ChattyChannels for guilds
+ */
+fun getAllGuildChats(): List<ChattyChannel> = getAllGuildNames().map { guildName ->
+    chatty.config.channels.computeIfAbsent("$guildName $guildChannelId") {
+        guildName.createChattyChannel()
+    }
+}
+
+/**
+ * If a Guild does not have a ChattyChannel registered, this will do so
+ * @return ChattyChannel for a given guild
+ */
+fun GuildName.guildChat(): ChattyChannel =
+    chatty.config.channels.computeIfAbsent("$this $guildChannelId") {
+        createChattyChannel()
+    }
+
+/**
+ * Note: If a guild does not have a registered ChattyChannel, this will register one
+ * @return ChattyChannel of a players guild, or null if they are not in a guild
+ */
+fun Player.guildChat(): ChattyChannel? {
+    val guildName = getGuildName() ?: return null
+    return chatty.config.channels.computeIfAbsent("$guildName $guildChannelId") {
+        guildName.createChattyChannel()
+    }
+}
+
+private fun GuildName.createChattyChannel() = Features.guilds.config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
 
 fun GuildName.guildChatId() = "$this $guildChannelId"
 fun Player.guildChatId() = "${getGuildName()} $guildChannelId"

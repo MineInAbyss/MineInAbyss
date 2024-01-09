@@ -1,4 +1,4 @@
-package com.mineinabyss.features.guilds
+package com.mineinabyss.features.guilds.listeners
 
 import com.mineinabyss.eternalfortune.api.events.PlayerOpenGraveEvent
 import com.mineinabyss.features.guilds.extensions.getGuildName

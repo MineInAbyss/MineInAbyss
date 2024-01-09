@@ -1,4 +1,4 @@
-package com.mineinabyss.features.guilds
+package com.mineinabyss.features.guilds.listeners
 
 import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.features.abyss
