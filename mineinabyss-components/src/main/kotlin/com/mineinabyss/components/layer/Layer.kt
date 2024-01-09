@@ -27,6 +27,7 @@ class Layer(
     @SerialName("effects")
     val ascensionEffects: List<AscensionEffect> = emptyList(),
     val hasPvpDefault: Boolean = false,
+    val liquidFlowLimit: Int = -1,
     val blockBlacklist: List<Material> = emptyList(),
     @SerialName("songs")
     val _songs: List<String> = emptyList(),

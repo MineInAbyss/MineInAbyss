@@ -9,9 +9,12 @@ import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.title.Title
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockFromToEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import kotlin.time.Duration.Companion.seconds
@@ -54,6 +57,14 @@ class LayerListener : Listener {
     fun FoodLevelChangeEvent.onFoodChange() {
         val player = entity as? Player ?: return
         if (player.isInHub() && player.foodLevel > foodLevel) isCancelled = true
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun BlockFromToEvent.onLiquidFlow() {
+        val liquidFlowLimit = block.location.section?.layer?.liquidFlowLimit?.takeIf { it > -1 } ?: return
+        var height = 0
+        while (block.getRelative(BlockFace.UP, height).type == block.type) height++
+        if (height >= liquidFlowLimit) isCancelled = true
     }
 
 //    @EventHandler(priority = EventPriority.MONITOR)
