@@ -77,7 +77,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
 
-        if (abyss.isChattyLoaded) getAllGuildChats()
+        if (abyss.isChattyLoaded) refreshGuildChats()
 
         // Generate the guild-list
         displayGuildList()

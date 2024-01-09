@@ -448,6 +448,12 @@ private fun GuildName.updateGuildBalance(amount: Int) {
     }
 }
 
+fun refreshGuildChats() {
+    getAllGuildNames().forEach { guildName ->
+        chatty.config.channels[guildName.guildChatId()] = guildName.createChattyChannel()
+    }
+}
+
 /**
  * If a Guild does not have a ChattyChannel registered, this will do so
  * @return All ChattyChannels for guilds
