@@ -50,7 +50,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
             isDefaultChannel = false,
             isStaffChannel = false,
             messageDeletion = ChattyChannel.MessageDeletion(),
-            format = ":survival::space_-8::guildchat: <chatty_nickname>: ",
+            format = ":survival::space_-4::guildchat: <chatty_nickname>: ",
             _messageColor = "gold",
             channelRadius = 0,
             channelAliases = emptyList()
