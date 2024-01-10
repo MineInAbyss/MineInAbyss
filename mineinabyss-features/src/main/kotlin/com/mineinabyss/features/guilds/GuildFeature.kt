@@ -8,15 +8,14 @@ import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.guilds.listeners.ChattyGuildListener
-import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
-import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
-import com.mineinabyss.features.guilds.listeners.GuildListener
+import com.mineinabyss.features.guilds.listeners.*
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
+import com.mineinabyss.features.helpers.mythicDungeons
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
+import com.mineinabyss.idofront.commands.arguments.playerArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -65,8 +64,9 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
     class Context : Configurable<Config> {
         override val configManager = config("guilds", abyss.dataPath, Config())
         val listeners = buildList {
-            if (abyss.isChattyLoaded) add(ChattyGuildListener())
-            if (abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
+            if (abyss.isChattyEnabled) add(ChattyGuildListener())
+            if (abyss.isEternalFortuneEnabled) add(EternalFortuneGuildListener())
+            if (abyss.isMythicDungeonsEnabled) add(GuildDungeonListener())
         }.toTypedArray()
     }
 
@@ -77,13 +77,70 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
 
-        if (abyss.isChattyLoaded) refreshGuildChats()
+        if (abyss.isChattyEnabled) refreshGuildChats()
 
         // Generate the guild-list
         displayGuildList()
 
         mainCommand {
             "guild"(desc = "Guild related commands") {
+                if (abyss.isMythicDungeonsEnabled) {
+                    "dungeon" {
+                        "party" {
+                            "create" {
+                                playerAction {
+                                    if (!player.isGuildOwner()) return@playerAction player.error("You must be the owner of a guild to create a dungeon party.")
+                                    if (mythicDungeons.isPlayerInDungeon(player)) return@playerAction player.error("You are already in a dungeon party.")
+                                    if (mythicDungeons.getParty(player) != null) return@playerAction player.error("You are already in a dungeon party.")
+
+                                    GuildDungeonParty(player.uniqueId)
+                                    player.success("Created a dungeon party.")
+                                }
+                            }
+                            "disband" {
+                                playerAction {
+                                    if (!player.isGuildOwner()) return@playerAction player.error("You must be the owner of a guild to disband a dungeon party.")
+                                    if (!player.hasGuildParty()) return@playerAction player.error("You are not in a dungeon party.")
+
+                                    if (mythicDungeons.disbandParty(player)) player.success("Disbanded the dungeon party.")
+                                    else player.error("Failed to disband the dungeon party.")
+                                }
+                            }
+                            "invite" {
+                                val invite by playerArg()
+                                playerAction {
+                                    if (!player.isGuildOwner()) return@playerAction player.error("You must be the owner of a guild to invite to a dungeon party.")
+                                    if (mythicDungeons.isPlayerInDungeon(player)) return@playerAction player.error("You are not in a dungeon party.")
+                                    if (mythicDungeons.getParty(player) == null) return@playerAction player.error("You are not in a dungeon party.")
+
+                                    if (mythicDungeons.inviteToParty(player, invite)) player.success("Invited <b>${invite.name}</b> to the dungeon party.")
+                                    else player.error("Failed to invite <b>${invite.name}</b> to the dungeon party.")
+                                }
+                            }
+                            "join" {
+                                val invite by playerArg()
+                                playerAction {
+                                    if (mythicDungeons.isPlayerInDungeon(player)) return@playerAction player.error("You are already in a dungeon party.")
+                                    if (mythicDungeons.getParty(player) != null) return@playerAction player.error("You are already in a dungeon party.")
+
+                                    if (mythicDungeons.acceptPartyInvite(invite)) player.success("Joined the dungeon party.")
+                                    else player.error("Failed to join the dungeon party.")
+                                }
+                            }
+                            "decline" {
+                                val invite by playerArg()
+                                playerAction {
+                                    if (mythicDungeons.isPlayerInDungeon(player)) return@playerAction player.error("You are already in a dungeon party.")
+                                    if (mythicDungeons.getParty(player) != null) return@playerAction player.error("You are already in a dungeon party.")
+
+                                    if (mythicDungeons.declinePartyInvite(invite)) player.success("Declined the dungeon party invite.")
+                                    else player.error("Failed to decline the dungeon party invite.")
+                                }
+                            }
+                        }
+
+                    }
+                }
                 "balance"(desc = "Guild Balance related commands") {
                     "view"(desc = "View your guilds balance") {
                         playerAction {
@@ -128,7 +185,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                     playerAction {
                         val player = sender as? Player ?: return@playerAction
 
-                        if (!abyss.isChattyLoaded) return@playerAction player.error("Chatty is not loaded")
+                        if (!abyss.isChattyEnabled) return@playerAction player.error("Chatty is not loaded")
                         player.guildChat()?.let { ChattyCommands.swapChannel(player, it) }
                             ?: return@playerAction player.error("You cannot use guild chat without a guild")
                     }

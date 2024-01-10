@@ -7,7 +7,7 @@ import com.mineinabyss.idofront.plugin.listeners
 
 class AntiCheeseFeature : Feature() {
     override fun FeatureDSL.enable() {
-        if (abyss.isGSitLoaded) plugin.listeners(GSitListener())
+        if (abyss.isGSitEnabled) plugin.listeners(GSitListener())
         plugin.listeners(AntiCheeseListener())
     }
 }

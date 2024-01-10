@@ -23,7 +23,7 @@ class KeepInvFeature(config: Config) : FeatureWithContext<KeepInvFeature.Context
     class Context(val config: Config) {
         val listeners = buildList {
             add(KeepInvListener(config))
-            if (abyss.isEternalFortuneLoaded) KeepInvGraveListener(config)
+            if (abyss.isEternalFortuneEnabled) KeepInvGraveListener(config)
         }.toTypedArray()
     }
 

@@ -45,14 +45,15 @@ class AbyssContext(
     override val features get() = config.features
 
 
-    val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
-    val isEternalFortuneLoaded get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")
-    val isGSitLoaded get() = plugin.server.pluginManager.isPluginEnabled("GSit")
-    val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
+    val isChattyEnabled get() = plugin.server.pluginManager.isPluginEnabled("chatty")
+    val isEternalFortuneEnabled get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")
+    val isGSitEnabled get() = plugin.server.pluginManager.isPluginEnabled("GSit")
+    val isPlaceholderApiEnabled get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
     val isMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("MCCosmetics")
     val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
     val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
+    val isMythicDungeonsEnabled get() = plugin.server.pluginManager.isPluginEnabled("MythicDungeons")
 
     val econ: Economy? = Services.getOrNull<Economy>()
 

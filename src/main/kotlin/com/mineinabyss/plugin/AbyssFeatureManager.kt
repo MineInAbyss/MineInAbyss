@@ -27,7 +27,7 @@ class AbyssFeatureManager(val plugin: JavaPlugin) : FeatureManager<AbyssContext>
             SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue, LootedChests)
         }
 
-        if (abyss.isPlaceholderApiLoaded) {
+        if (abyss.isPlaceholderApiEnabled) {
             Placeholders().register()
         }
     }

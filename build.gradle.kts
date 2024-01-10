@@ -30,6 +30,7 @@ allprojects {
         //maven("https://repo.skyslycer.de/releases/") // HMCWraps
         maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
+        maven("https://maven.aestrus.io/releases") // MythicDungeons
         mavenLocal()
     }
 
@@ -89,6 +90,7 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.openinv)
         compileOnly(miaLibs.minecraft.plugin.crazyadvancements)
         compileOnly(miaLibs.minecraft.plugin.happyhud)
+        compileOnly(miaLibs.minecraft.plugin.mythicdungeons)
     }
 }
 
