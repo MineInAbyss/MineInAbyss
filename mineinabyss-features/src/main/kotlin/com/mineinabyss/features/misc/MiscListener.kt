@@ -73,7 +73,21 @@ class MiscListener : Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    fun BlockFertilizeEvent.onGrowGrass() {
+        val rareFlowers = setOf(Material.SPORE_BLOSSOM, Material.WITHER_ROSE)
+        blocks.removeIf { (it.blockData as? Bisected)?.half == Bisected.Half.TOP }
+        blocks.forEach { state ->
+            val newPlant = Tag.FLOWERS.values.filter { if (state.blockData is Bisected) it.createBlockData() is Bisected else it.createBlockData() !is Bisected }.random().createBlockData()
+            if ((Random.nextDouble() > (if (newPlant.material in rareFlowers) 0.05 else 0.7))) return@forEach
 
+            (newPlant as? Bisected)?.also { it.half = Bisected.Half.BOTTOM }?.let {
+                state.block.getRelative(BlockFace.UP).state.blockData = it.apply { it.half = Bisected.Half.TOP }
+            }
+            state.blockData = newPlant
+            state.update(true, true)
+        }
+    }
 
     @EventHandler
     fun PrepareAnvilEvent.removeAnvilMaxRepairCost() {
