@@ -1,25 +1,38 @@
 package com.mineinabyss.features.misc
 
+import com.destroystokyo.paper.MaterialSetTag
+import com.destroystokyo.paper.MaterialTags
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
+import korlibs.datastructure.iterators.fastForEachWithIndex
+import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.Tag
+import org.bukkit.block.BlockFace
 import org.bukkit.block.Lectern
+import org.bukkit.block.data.Bisected
+import org.bukkit.block.data.BlockData
+import org.bukkit.block.data.Directional
 import org.bukkit.block.data.type.RespawnAnchor
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
 import org.bukkit.entity.ThrownPotion
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockFertilizeEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.inventory.PrepareAnvilEvent
 import org.bukkit.event.player.PlayerEggThrowEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
+import kotlin.random.Random
 
 class MiscListener : Listener {
     @EventHandler
@@ -41,6 +54,26 @@ class MiscListener : Listener {
         if (action != Action.RIGHT_CLICK_BLOCK) return
         if (data.charges >= data.maximumCharges || item?.type != Material.GLOWSTONE) isCancelled = true
     }
+
+    @EventHandler
+    fun PlayerInteractEvent.onBoneMealDirt() {
+        val (block, item) = (clickedBlock ?: return) to (item ?: return)
+        if (action != Action.RIGHT_CLICK_BLOCK || useInteractedBlock() == Event.Result.DENY) return
+        if (block.type != Material.DIRT || item.type != Material.BONE_MEAL) return
+
+        if (player.gameMode != GameMode.CREATIVE) item.subtract()
+        setUseInteractedBlock(Event.Result.DENY)
+        for (x in -7..7) for (y in 0..5) for (z in -7..7) {
+            val newBlock = block.location.clone().add(x.toDouble(), y.toDouble(), z.toDouble()).block
+            if (newBlock.type != Material.DIRT) continue
+            newBlock.type = Material.GRASS_BLOCK
+            if (Random.nextDouble() < 0.5) newBlock.location.getNearbyPlayers(16.0).forEach { p ->
+                p.playEffect(newBlock.location, org.bukkit.Effect.BONE_MEAL_USE, 1)
+            }
+        }
+    }
+
+
 
     @EventHandler
     fun PrepareAnvilEvent.removeAnvilMaxRepairCost() {
