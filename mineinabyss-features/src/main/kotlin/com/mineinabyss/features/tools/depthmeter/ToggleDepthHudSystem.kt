@@ -12,8 +12,7 @@ import org.bukkit.inventory.ItemFlag
 
 class ToggleDepthHudSystem : GearyListener() {
     private val Pointers.player by get<Player>().on(target)
-    private val Pointers.depthMeter by get<DepthMeter>().on(source)
-    private val Pointers.hasDepth by family { has<ToggleDepthHud>() }.on(event)
+    private val Pointers.hasDepth by family { has<ToggleDepthHud>() }.on(source)
 
     override fun Pointers.handle() {
         val item = player.inventory.itemInMainHand

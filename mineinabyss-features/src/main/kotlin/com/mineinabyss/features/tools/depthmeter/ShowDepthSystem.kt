@@ -17,8 +17,7 @@ import kotlin.math.roundToInt
 
 class ShowDepthSystem : GearyListener() {
     private val Pointers.player by get<Player>().on(target)
-    private val Pointers.depthMeter by get<DepthMeter>().on(source)
-    private val Pointers.hasDepth by family { has<ShowDepth>() }.on(event)
+    private val Pointers.hasDepth by family { has<ShowDepth>() }.on(source)
 
     override fun Pointers.handle() {
         if (player.toGeary().has<ShowDepthMeterHud>()) return

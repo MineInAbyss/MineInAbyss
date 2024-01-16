@@ -17,10 +17,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareGrindstoneEvent
 
-@Serializable
-@SerialName("mineinabyss:toggle_depth_hud")
-class ToggleDepthHud
-
 class DepthHudSystem : RepeatingSystem(5.ticks) {
     private val Pointer.player by get<Player>()
 

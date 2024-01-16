@@ -4,7 +4,6 @@ import com.mineinabyss.features.tools.depthmeter.DepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.DepthMeterBukkitListener
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.ToggleDepthHudSystem
-import com.mineinabyss.features.tools.grapplinghook.GearyHookListener
 import com.mineinabyss.features.tools.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.tools.sickle.HarvestListener
 import com.mineinabyss.features.tools.sickle.SickleListener
@@ -31,8 +30,11 @@ class ToolsFeature : Feature() {
             ToggleDepthHudSystem(),
             DepthHudSystem(),
             HarvestListener(),
-            GearyHookListener()
         )
-        plugin.listeners(SickleListener(), GrapplingHookListener(), DepthMeterBukkitListener())
+        plugin.listeners(
+            SickleListener(),
+            GrapplingHookListener(),
+            DepthMeterBukkitListener(),
+        )
     }
 }

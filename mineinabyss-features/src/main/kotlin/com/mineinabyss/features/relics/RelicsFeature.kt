@@ -9,7 +9,7 @@ class RelicsFeature : Feature() {
     override fun FeatureDSL.enable() {
         geary.pipeline.addSystems(
             ToggleStarCompassHudSystem(),
-            ToggleStarCompassHud(),
+            ToggleStarCompassHudRepeatingSystem(),
         )
         plugin.listeners(StarCompassBukkitListener())
     }

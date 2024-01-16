@@ -5,23 +5,16 @@ import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.papermc.datastore.decodeComponents
 import com.mineinabyss.geary.papermc.datastore.decodePrefabs
-import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.geary.prefabs.configuration.components.Prefab
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.RepeatingSystem
 import com.mineinabyss.geary.systems.accessors.Pointer
 import com.mineinabyss.geary.systems.accessors.Pointers
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.broadcast
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.time.ticks
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -31,14 +24,9 @@ import org.bukkit.event.inventory.PrepareGrindstoneEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.CompassMeta
 
-@Serializable
-@SerialName("mineinabyss:toggle_starcompass_hud")
-class ToggleDepthHud
-
 class ToggleStarCompassHudSystem : GearyListener() {
     private val Pointers.player by get<Player>().on(target)
-    private val Pointers.starCompass by get<StarCompass>().on(source)
-    private val Pointers.hasStarCompass by family { has<ToggleDepthHud>() }.on(event)
+    private val Pointers.hasStarCompass by family { has<ToggleStarCompassHud>() }.on(source)
 
     override fun Pointers.handle() {
         val item = player.inventory.itemInMainHand
@@ -66,7 +54,7 @@ class ToggleStarCompassHudSystem : GearyListener() {
     }
 }
 
-class ToggleStarCompassHud : RepeatingSystem(5.ticks) {
+class ToggleStarCompassHudRepeatingSystem : RepeatingSystem(5.ticks) {
     private val Pointer.player by get<Player>()
 
     override fun Pointer.tick() {
