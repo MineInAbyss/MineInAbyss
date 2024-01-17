@@ -23,7 +23,6 @@ import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.features.orthbanking.OrthBankingFeature
 import com.mineinabyss.features.patreons.PatreonFeature
-import com.mineinabyss.features.pins.PinsFeature
 import com.mineinabyss.features.playerprofile.PlayerProfileFeature
 import com.mineinabyss.features.pvp.adventure.AdventurePvpFeature
 import com.mineinabyss.features.pvp.survival.SurvivalPvpFeature
@@ -107,7 +106,6 @@ class AbyssFeatureConfig(
             add(okiboTravel.enabled) { OkiboTravelFeature() }
             add(orthBanking.enabled) { OrthBankingFeature(orthBanking) }
             add(patreon.enabled) { PatreonFeature(patreon) }
-            add(pins.enabled) { PinsFeature() }
             add(playerProfile.enabled) { PlayerProfileFeature() }
             add(survivalPvp.enabled) { SurvivalPvpFeature() }
             add(adventurePvp.enabled) { AdventurePvpFeature() }

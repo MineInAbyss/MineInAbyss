@@ -1,8 +1,6 @@
 package com.mineinabyss.features.descent
 
 import com.mineinabyss.components.descent.DescentContext
-import com.mineinabyss.components.pins.ActivePins
-import com.mineinabyss.components.pins.OrthPins
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.features.helpers.di.Features
@@ -28,9 +26,6 @@ class DescentListener : Listener {
         if (fromSection != Features.layers.config.hubSection) return
         player.toGeary().apply {
             setPersisting(DescentContext())
-
-            val addPins = get<OrthPins>()?.selected ?: setOf()
-            set<ActivePins>(ActivePins(addPins.toMutableSet()))
         }
     }
 }
@@ -46,9 +41,4 @@ fun Player.removeDescentContext() {
             """.trimIndent().miniMsg()
     )
     gearyPlayer.remove<DescentContext>()
-
-    gearyPlayer.get<ActivePins>()?.let {
-        it.clear()
-        gearyPlayer.remove<ActivePins>()
-    }
 }

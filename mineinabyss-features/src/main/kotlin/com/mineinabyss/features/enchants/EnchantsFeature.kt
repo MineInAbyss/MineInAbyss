@@ -1,7 +1,10 @@
 package com.mineinabyss.features.enchants
 
 import com.mineinabyss.features.enchants.enchantments.*
+import com.mineinabyss.geary.helpers.component
 import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
+import com.mineinabyss.geary.serialization.dsl.serializableComponents
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.execution.stopCommand
@@ -40,27 +43,23 @@ class EnchantsFeature : Feature() {
 
                 playerAction {
                     val player = sender as Player
-                    val parsedEnchant =
-                        CustomEnchants.enchantmentList.firstOrNull {
-                            it.key.toString().lowercase() == availableEnchantment.lowercase()
-                        } ?: (command.stopCommand(""))
+                    // TODO send error if not found
+                    val parsedEnchantClass = serializableComponents.serializers.getClassFor(availableEnchantment)
+                    val parsedEnchant = component(parsedEnchantClass).get<CustomEnchants.Type>() ?: return@playerAction
+                    val gearyItem = player.inventory.toGeary()?.itemInMainHand ?: return@playerAction
 
-                    val levelRange = (parsedEnchant.startLevel until parsedEnchant.maxLevel + 1)
-                    val parsedKey = parsedEnchant.key.key
+                    val levelRange = (parsedEnchant.minLevel until parsedEnchant.maxLevel + 1)
+                    val parsedKey = availableEnchantment
 
                     if (enchantmentLevel == 0) {
-                        player.inventory.itemInMainHand.removeCustomEnchant(parsedEnchant)
+                        CustomEnchants.remove(parsedEnchantClass, gearyItem)
                         sender.success("Removed <b>${parsedKey}</b> from this item.")
-                    } else if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.startLevel) {
+                    } else if (enchantmentLevel <= parsedEnchant.maxLevel && enchantmentLevel >= parsedEnchant.minLevel) {
                         if (levelRange.first == levelRange.last)
                             sender.success("Applied <b>${parsedKey}</b> to this item.")
                         else
                             sender.success("Applied <b>${parsedKey} $enchantmentLevel</b> to this item.")
-
-                        player.inventory.itemInMainHand.addCustomEnchant(
-                            parsedEnchant as EnchantmentWrapper,
-                            enchantmentLevel
-                        )
+                        CustomEnchants.set(parsedEnchantClass, CustomEnchants.Data(enchantmentLevel), gearyItem)
                     }
 
                     if (enchantmentLevel > levelRange.last)

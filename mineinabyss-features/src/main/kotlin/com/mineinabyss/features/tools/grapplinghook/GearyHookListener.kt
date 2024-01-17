@@ -1,8 +1,6 @@
 package com.mineinabyss.features.tools.grapplinghook
 
 import com.mineinabyss.components.tools.grappling.*
-import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.papermc.bridge.components.RightClicked
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.Pointers
@@ -11,10 +9,9 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 class GearyHookListener : GearyListener() {
-
-    val Pointers.player by get<Player>().on(source)
-    private val Pointers.grapplingHook by get<GrapplingHook>().on(target)
-    val Pointers.rightClicked by family { has<RightClicked>() }.on(event)
+    //TODO reimplement for new geary
+    val Pointers.player by get<Player>().on(target)
+    private val Pointers.grapplingHook by get<GrapplingHook>().on(source)
 
     override fun Pointers.handle() {
         player.swingMainHand()

@@ -1,8 +1,11 @@
 package com.mineinabyss.features.enchants.enchantments
 
 import com.mineinabyss.components.mobs.Bird
+import com.mineinabyss.features.enchants.BaneOfKuongatari
+import com.mineinabyss.features.enchants.BirdSwatter
 import com.mineinabyss.features.enchants.CustomEnchants
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,11 +16,11 @@ class BirdSwatterListener : Listener {
     @EventHandler
     fun EntityDamageByEntityEvent.onBirdHit() {
         val player = damager as? Player ?: return
-        val item = player.inventory.itemInMainHand
+        val item = player.inventory.toGeary()?.itemInMainHand ?: return
         entity.toGearyOrNull()?.get<Bird>() ?: return
 
         // Ideally this would use getDamageIncrease function
-        if (CustomEnchants.BIRD_SWATTER in item.enchantments)
-            damage += item.getEnchantmentLevel(CustomEnchants.BIRD_SWATTER) * 2
+        val enchant = CustomEnchants.get<BirdSwatter>(item) ?: return
+        damage += enchant.level * 2
     }
 }

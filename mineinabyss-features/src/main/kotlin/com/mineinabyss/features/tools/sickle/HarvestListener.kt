@@ -2,19 +2,15 @@ package com.mineinabyss.features.tools.sickle
 
 import com.mineinabyss.components.tools.Sickle
 import com.mineinabyss.features.helpers.BlockUtil
-import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.papermc.bridge.components.RightClicked
 import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.Pointers
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class HarvestListener : GearyListener() {
-    val Pointers.player by get<Player>().on(source)
-    private val Pointers.sickle by get<Sickle>().on(target)
-    val Pointers.rightClicked by family { has<RightClicked>() }.on(event)
+    val Pointers.player by get<Player>().on(target)
+    private val Pointers.sickle by get<Sickle>().on(source)
 
     override fun Pointers.handle() {
         val block = player.getTargetBlockExact(3) ?: return
