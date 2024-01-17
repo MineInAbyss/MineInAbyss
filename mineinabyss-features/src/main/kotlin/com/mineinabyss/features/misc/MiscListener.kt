@@ -75,6 +75,7 @@ class MiscListener : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun BlockFertilizeEvent.onGrowGrass() {
+        if (block.type != Material.GRASS_BLOCK) return
         val rareFlowers = setOf(Material.SPORE_BLOSSOM, Material.WITHER_ROSE)
         blocks.removeIf { (it.blockData as? Bisected)?.half == Bisected.Half.TOP }
         blocks.forEach { state ->
