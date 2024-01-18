@@ -89,9 +89,9 @@ class PatreonFeature(val config: Config) : Feature() {
                                 listOf(
                                     PrefixNode.builder(":space_6:<#feac3b>Orth:space_2::$emote::space_2:>", 10)
                                         .context(ImmutableContextSet.of("worldguard:region", "orth")).build(),
-                                    PrefixNode.builder(":space_6:<#c83038>Edge:space_2::redw::space_2:>", 11)
+                                    PrefixNode.builder(":space_6:<#c83038>Edge:space_2::$emote::space_2:>", 11)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerone")).build(),
-                                    PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::bluew::space_2:>", 12)
+                                    PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::$emote::space_2:>", 12)
                                         .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build(),
                                     PrefixNode.builder(":space_6:<#852d66>Fault:space_2::$emote::space_2:>", 13)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build(),
@@ -111,10 +111,10 @@ class PatreonFeature(val config: Config) : Feature() {
                                     "orth" -> PrefixNode.builder(":space_6:<#feac3b>Orth:space_2::$emote::space_2:>", 10)
                                         .context(ImmutableContextSet.of("worldguard:region", "orth")).build()
 
-                                    "layerone" -> PrefixNode.builder(":space_6:<#c83038>Edge:space_2::redw::space_2:>", 11)
+                                    "layerone" -> PrefixNode.builder(":space_6:<#c83038>Edge:space_2::$emote::space_2:>", 11)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerone")).build()
 
-                                    "layertwo" -> PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::bluew::space_2:>", 12)
+                                    "layertwo" -> PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::$emote::space_2:>", 12)
                                         .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build()
 
                                     "layerthree" -> PrefixNode.builder(":space_6:<#852d66>Fault:space_2::$emote::space_2:>", 13)
