@@ -2,12 +2,17 @@ package com.mineinabyss.features.okibotravel
 
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.blocky.api.events.furniture.BlockyFurnitureBreakEvent
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features.okiboLine
+import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.helpers.with
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.prefabs.helpers.prefabs
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import kotlinx.coroutines.delay
@@ -61,5 +66,13 @@ class OkiboTravelListener : Listener {
             delay(1.seconds)
             player.sendOkiboMaps()
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun BlockyFurnitureBreakEvent.onBreakNoticeBoard() {
+        val prefabKey = entity.toGearyOrNull()?.prefabs?.firstOrNull()?.get<PrefabKey>() ?: return
+        if (!entity.isInHub() || prefabKey !in okiboLine.config.okiboMaps.mapNotNull { it.noticeBoardFurniture?.prefabKey }) return
+
+        isCancelled = true
     }
 }
