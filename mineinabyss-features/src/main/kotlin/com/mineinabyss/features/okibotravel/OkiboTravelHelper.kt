@@ -1,10 +1,13 @@
 package com.mineinabyss.features.okibotravel
 
 import com.comphenix.protocol.events.PacketContainer
+import com.mineinabyss.blocky.api.BlockyFurnitures
+import com.mineinabyss.blocky.helpers.GenericHelpers.toEntity
 import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
+import korlibs.datastructure.intArrayListOf
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -17,12 +20,15 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Color
+import org.bukkit.Location
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import java.util.*
 
 val mapEntities = mutableMapOf<OkiboMap, Int>()
 val hitboxEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
 val hitboxIconEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
+val noticeBoardFurnitures = mutableMapOf<OkiboMap, Pair<UUID, Location>>()
 
 val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
 val OkiboMap.OkiboMapHitbox.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == destStation }
@@ -38,8 +44,30 @@ internal fun Player.clearOkiboMaps() {
     PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*mapEntities.values.toIntArray())).sendTo(this)
     PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*hitboxEntities.values.toIntArray())).sendTo(this)
     PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(*hitboxIconEntities.values.toIntArray())).sendTo(this)
+    noticeBoardFurnitures.values.forEach {
+        it.second.world?.getChunkAtAsync(location)?.thenRun {
+            if (BlockyFurnitures.removeFurniture(it.second) == true) return@thenRun
+            else (it.first.toEntity() as? ItemDisplay)?.let(BlockyFurnitures::removeFurniture)
+        }
+    }
 }
 private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
+
+    PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(
+        *intArrayListOf().toMutableList().apply {
+            mapEntities.entries.firstOrNull { it.key.station == okiboMap.station }?.value?.let(::add)
+            hitboxEntities.entries.firstOrNull { it.key.first.station == okiboMap.station }?.value?.let(::add)
+            hitboxIconEntities.entries.firstOrNull { it.key.first.station == okiboMap.station }?.value?.let(::add)
+        }.toIntArray()
+    )).sendTo(this)
+
+    noticeBoardFurnitures.entries.firstOrNull { it.key.station == okiboMap.station }?.value?.let {
+        it.second.world?.getChunkAtAsync(it.second)?.thenRun {
+            if (BlockyFurnitures.removeFurniture(it.second) == true) return@thenRun
+            else (it.first.toEntity() as? ItemDisplay)?.let(BlockyFurnitures::removeFurniture)
+        }
+    }
+
     val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset)?.apply { yaw = okiboMap.yaw } ?: return
     val entityId = mapEntities.computeIfAbsent(okiboMap) { Entity.nextEntityId() }
     val spawnMapPacket = ClientboundAddEntityPacket(
@@ -95,5 +123,13 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
             )
             PacketContainer.fromPacket(iconMetaPacket).sendTo(this)
         }
+    }
+
+    okiboMap.noticeBoardFurniture?.let { noticeBoard ->
+        val boardLoc = textLoc.clone().add(noticeBoard.offset)
+        val entity = BlockyFurnitures.placeFurniture(noticeBoard.prefabKey, boardLoc, noticeBoard.yaw) ?: return@let
+        noticeBoardFurnitures[okiboMap]?.let { (it.first.toEntity() as? ItemDisplay)?.let(BlockyFurnitures::removeFurniture) }
+        noticeBoardFurnitures[okiboMap] = entity.uniqueId to boardLoc
+        entity.isPersistent = false
     }
 }

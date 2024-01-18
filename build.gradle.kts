@@ -74,6 +74,7 @@ allprojects {
         compileOnly(miaLibs.protocolburrito)
         compileOnly(miaLibs.eternalfortune)
         compileOnly(miaLibs.packy)
+        compileOnly(miaLibs.blocky)
 
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
         compileOnly(miaLibs.minecraft.plugin.gsit)

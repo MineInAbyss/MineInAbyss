@@ -8,6 +8,7 @@ looty = "0.12.2"
 protocolburrito = "0.8.2"
 eternalfortune = "0.2.2"
 packy = "0.3.17"
+blocky = "0.8.17"
 
 
 [libraries]
@@ -20,6 +21,7 @@ looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
 eternalfortune = { module = "com.mineinabyss:eternalfortune", version.ref = "eternalfortune" }
 packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
+blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.4.10"

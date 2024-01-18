@@ -88,8 +88,5 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
 
     override fun FeatureDSL.disable() {
         Bukkit.getOnlinePlayers().forEach { it.clearOkiboMaps() }
-        mapEntities.clear()
-        hitboxEntities.clear()
-        hitboxIconEntities.clear()
     }
 }

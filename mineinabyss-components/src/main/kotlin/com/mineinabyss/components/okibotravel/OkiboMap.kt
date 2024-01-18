@@ -1,11 +1,13 @@
 package com.mineinabyss.components.okibotravel
 
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import com.mineinabyss.idofront.serialization.VectorSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.bukkit.util.Vector
 import org.joml.Vector3f
 
@@ -13,6 +15,7 @@ import org.joml.Vector3f
 @SerialName("mineinabyss:okibo_map")
 data class OkiboMap(
     val station: String,
+    val noticeBoardFurniture: NoticeBoardFurniture? = NoticeBoardFurniture(),
     @EncodeDefault(NEVER) val offset: @Serializable(VectorSerializer::class) Vector = Vector(0, 0, 0),
     @EncodeDefault(NEVER) val yaw: Float = 0f,
     @EncodeDefault(NEVER) val text: String = ":orthmap|1::space_-1::orthmap|2:<newline><newline><newline>:orthmap|3::space_-1::orthmap|4:",
@@ -20,6 +23,15 @@ data class OkiboMap(
     val hitboxes: Set<OkiboMapHitbox>,
     val icon: Icon? = Icon()
 ) {
+
+    @Serializable
+    data class NoticeBoardFurniture(
+        private val prefab: String = "mineinabyss:noticeboard_okibo",
+        val offset: @Serializable(VectorSerializer::class) Vector = Vector(0, 0, 0),
+        val yaw: Float = 0f,
+    ) {
+        @Transient val prefabKey = PrefabKey.of(prefab)
+    }
     @Serializable
     @SerialName("mineinabyss:okibo_map_hitbox")
     data class OkiboMapHitbox(

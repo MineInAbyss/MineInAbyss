@@ -93,4 +93,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
-
+    Blocky:
+      required: false
+      load: BEFORE
+      join-classpath: true
