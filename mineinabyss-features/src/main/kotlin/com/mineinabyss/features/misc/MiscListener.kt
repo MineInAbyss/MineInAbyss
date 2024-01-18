@@ -1,12 +1,9 @@
 package com.mineinabyss.features.misc
 
 import com.destroystokyo.paper.MaterialSetTag
-import com.destroystokyo.paper.MaterialTags
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
-import korlibs.datastructure.iterators.fastForEachWithIndex
-import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -14,8 +11,6 @@ import org.bukkit.Tag
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Lectern
 import org.bukkit.block.data.Bisected
-import org.bukkit.block.data.BlockData
-import org.bukkit.block.data.Directional
 import org.bukkit.block.data.type.RespawnAnchor
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
