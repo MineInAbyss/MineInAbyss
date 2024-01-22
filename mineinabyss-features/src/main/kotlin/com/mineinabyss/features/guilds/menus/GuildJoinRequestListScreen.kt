@@ -16,8 +16,8 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
@@ -32,13 +32,11 @@ fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(abyss.db) {
-            val id = Players.select {
-                Players.playerUUID eq player.uniqueId
-            }.first()[Players.guildId]
+            val id = Players.selectAll().where { Players.playerUUID eq player.uniqueId }.first()[Players.guildId]
 
-            GuildJoinQueue.select {
-                (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST)
-            }.map { row -> row[GuildJoinQueue.playerUUID] }
+            GuildJoinQueue.selectAll()
+                .where { (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) }
+                .map { row -> row[GuildJoinQueue.playerUUID] }
         }
     }
     Grid(modifier.size(9, 4)) {

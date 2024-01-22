@@ -10,15 +10,15 @@ import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.time.Duration.Companion.seconds
 
@@ -29,6 +29,7 @@ class GuildListener : Listener {
         guiy { GuildMainMenu(player, true) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val databaseDispatcher = Dispatchers.IO.limitedParallelism(1)
 
     @EventHandler
@@ -36,7 +37,7 @@ class GuildListener : Listener {
         delay(1.seconds)
         withContext(databaseDispatcher) {
             transaction(abyss.db) {
-                GuildMessageQueue.select { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
+                GuildMessageQueue.selectAll().where { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
                     player.info(it[content].miniMsg())
                 }
                 GuildMessageQueue.deleteWhere { playerUUID eq player.uniqueId }

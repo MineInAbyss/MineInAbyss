@@ -23,10 +23,8 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 
@@ -62,9 +60,9 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
         }
 
         val lastLootDate = transaction(abyss.db) {
-            LootedChests.select {
-                (LootedChests.playerUUID eq player.uniqueId) and locationEq(chest.location)
-            }.singleOrNull()?.getOrNull(LootedChests.dateLooted)
+            LootedChests.selectAll()
+                .where { (LootedChests.playerUUID eq player.uniqueId) and locationEq(chest.location) }.singleOrNull()
+                ?.getOrNull(LootedChests.dateLooted)
         }
         if (lastLootDate == null) {
             transaction(abyss.db) {

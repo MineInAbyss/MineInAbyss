@@ -5,10 +5,12 @@ package com.mineinabyss.features.curse.effects
 import com.mineinabyss.idofront.serialization.DurationSerializer
 import com.mineinabyss.idofront.time.inWholeTicks
 import com.mineinabyss.idofront.time.ticks
+import com.mineinabyss.idofront.util.toMCKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import org.bukkit.Registry
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -25,7 +27,7 @@ data class PotionAscensionEffect(
     private val _effectsToApply: List<String>
 ) : AbstractAscensionEffect() {
     @Transient
-    val effectsToApply = _effectsToApply.mapNotNull { PotionEffectType.getByName(it) }
+    val effectsToApply = _effectsToApply.mapNotNull { Registry.POTION_EFFECT_TYPE.get(it.toMCKey()) }
 
     override fun applyEffect(player: Player) {
         for (potionEffectType in effectsToApply) {

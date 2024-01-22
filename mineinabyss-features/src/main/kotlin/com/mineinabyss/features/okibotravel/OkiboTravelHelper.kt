@@ -7,7 +7,6 @@ import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
-import korlibs.datastructure.intArrayListOf
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -54,7 +53,7 @@ internal fun Player.clearOkiboMaps() {
 private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
 
     PacketContainer.fromPacket(ClientboundRemoveEntitiesPacket(
-        *intArrayListOf().toMutableList().apply {
+        *intArrayOf().toMutableList().apply {
             mapEntities.entries.firstOrNull { it.key.station == okiboMap.station }?.value?.let(::add)
             hitboxEntities.entries.firstOrNull { it.key.first.station == okiboMap.station }?.value?.let(::add)
             hitboxIconEntities.entries.firstOrNull { it.key.first.station == okiboMap.station }?.value?.let(::add)

@@ -15,8 +15,8 @@ import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
@@ -32,7 +32,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
     val owner = player.getGuildOwnerFromInvite().toOfflinePlayer()
     val memberCount = owner.getGuildMemberCount()
     val invites = transaction(abyss.db) {
-        GuildJoinQueue.select {
+        GuildJoinQueue.selectAll().where {
             (GuildJoinQueue.joinType eq GuildJoinType.INVITE) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)
         }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
