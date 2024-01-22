@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.mia.copyjar)
     alias(libs.plugins.mia.publication)
     alias(libs.plugins.mia.autoversion)
-    alias(libs.plugins.mia.nms)
     alias(libs.plugins.mia.papermc)
 }
 

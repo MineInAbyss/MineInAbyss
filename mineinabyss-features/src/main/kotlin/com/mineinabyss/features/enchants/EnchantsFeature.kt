@@ -17,8 +17,6 @@ import org.bukkit.entity.Player
 
 class EnchantsFeature : Feature() {
     override fun FeatureDSL.enable() {
-        CustomEnchants.register()
-
         plugin.listeners(
             SoulBoundListener(),
             FrostAspectListener(),
