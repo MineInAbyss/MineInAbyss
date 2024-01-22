@@ -3,8 +3,6 @@ gearyPaper = "0.29.0"
 guiy = "0.9.2"
 deeperworld = "0.9.1"
 chatty = "0.7.23"
-mobzy = "0.22.9"
-looty = "0.12.2"
 protocolburrito = "0.8.2"
 eternalfortune = "0.2.2"
 packy = "0.3.17"
@@ -16,8 +14,6 @@ geary-papermc = { module = "com.mineinabyss:geary-papermc", version.ref = "geary
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
-mobzy = { module = "com.mineinabyss:mobzy", version.ref = "mobzy" }
-looty = { module = "com.mineinabyss:looty", version.ref = "looty" }
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
 eternalfortune = { module = "com.mineinabyss:eternalfortune", version.ref = "eternalfortune" }
 packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
