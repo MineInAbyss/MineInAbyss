@@ -69,8 +69,6 @@ allprojects {
         compileOnly(miaLibs.guiy)
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
-        compileOnly(miaLibs.mobzy)
-        compileOnly(miaLibs.looty)
         compileOnly(miaLibs.protocolburrito)
         compileOnly(miaLibs.eternalfortune)
         compileOnly(miaLibs.packy)
