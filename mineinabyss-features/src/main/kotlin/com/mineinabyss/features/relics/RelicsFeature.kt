@@ -8,8 +8,8 @@ import com.mineinabyss.idofront.plugin.listeners
 class RelicsFeature : Feature() {
     override fun FeatureDSL.enable() {
         geary.pipeline.addSystems(
-            ToggleStarCompassHudSystem(),
-            ToggleStarCompassHudRepeatingSystem(),
+            DoToggleStarCompassHud(),
+            TrackStarCompassHudOnPlayers(),
         )
         plugin.listeners(StarCompassBukkitListener())
     }

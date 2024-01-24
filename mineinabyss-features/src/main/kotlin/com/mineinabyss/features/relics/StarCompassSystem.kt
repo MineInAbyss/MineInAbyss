@@ -1,68 +1,48 @@
 package com.mineinabyss.features.relics
 
 import com.mineinabyss.components.relics.ShowStarCompassHud
-import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.geary.annotations.optin.UnsafeAccessors
 import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.papermc.datastore.decodePrefabs
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.RepeatingSystem
-import com.mineinabyss.geary.systems.accessors.Pointer
 import com.mineinabyss.geary.systems.accessors.Pointers
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.time.ticks
-import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareGrindstoneEvent
 import org.bukkit.inventory.ItemFlag
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 
-class ToggleStarCompassHudSystem : GearyListener() {
-    private val Pointers.player by get<Player>().on(target)
-    private val Pointers.hasStarCompass by family { has<ToggleStarCompassHud>() }.on(source)
+class DoToggleStarCompassHud : GearyListener() {
+    private val Pointers.item by get<ItemStack>().on(target)
+    private val Pointers.action by family { has<ToggleStarCompassHud>() }.on(source)
 
+    @OptIn(UnsafeAccessors::class)
     override fun Pointers.handle() {
-        val item = player.inventory.itemInMainHand
-        item.type = Material.COMPASS
-        player.toGeary().let {
-            if (it.has<ShowStarCompassHud>()) {
-                item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
-                item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                item.editItemMeta<CompassMeta> {
-                    lodestone = player.toGeary().get<ShowStarCompassHud>()?.lastSection?.centerLocation
-                    isLodestoneTracked = false
-                }
-                it.remove<ShowStarCompassHud>()
+        val player = target.entity.parent?.get<Player>() ?: return
+        if (target.entity.has<ShowStarCompassHud>()) {
+            item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+            item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+            item.editItemMeta<CompassMeta> {
+                lodestone = player.location.section?.centerLocation
+                isLodestoneTracked = false
             }
-            else {
-                it.setPersisting(ShowStarCompassHud(player.location.section))
-                item.removeEnchantment(Enchantment.ARROW_INFINITE)
-                item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
-                item.editItemMeta<CompassMeta> {
-                    lodestone = null
-                    isLodestoneTracked = false
-                }
+            target.entity.remove<ShowStarCompassHud>()
+        } else {
+            target.entity.setPersisting(ShowStarCompassHud())
+            item.removeEnchantment(Enchantment.ARROW_INFINITE)
+            item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+            item.editItemMeta<CompassMeta> {
+                lodestone = null
+                isLodestoneTracked = false
             }
-        }
-    }
-}
-
-class ToggleStarCompassHudRepeatingSystem : RepeatingSystem(5.ticks) {
-    private val Pointer.player by get<Player>()
-
-    override fun Pointer.tick() {
-        if (!player.isConnected) return
-        val starCompasses = player.inventory.withIndex().filter { player.inventory.toGeary()?.get(it.index)?.has<StarCompass>() == true }.mapNotNull { it.value }
-        when {
-            starCompasses.any { it.hasItemFlag(ItemFlag.HIDE_ENCHANTS) } -> player.toGeary().remove<ShowStarCompassHud>()
-            else -> player.toGeary().setPersisting(ShowStarCompassHud(player.location.section))
         }
     }
 }
@@ -70,7 +50,9 @@ class ToggleStarCompassHudRepeatingSystem : RepeatingSystem(5.ticks) {
 class StarCompassBukkitListener : Listener {
     @EventHandler
     fun PrepareGrindstoneEvent.onGrindStarCompass() {
-        if (this.result?.itemMeta?.persistentDataContainer?.decodePrefabs()?.contains(PrefabKey.of("mineinabyss:star_compass")) == true)
+        if (this.result?.itemMeta?.persistentDataContainer?.decodePrefabs()
+                ?.contains(PrefabKey.of("mineinabyss:star_compass")) == true
+        )
             result = null
     }
 }

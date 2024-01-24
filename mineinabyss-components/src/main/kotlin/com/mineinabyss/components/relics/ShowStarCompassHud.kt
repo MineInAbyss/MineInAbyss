@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("mineinabyss:show_starcompass_hud")
-class ShowStarCompassHud(val lastSection: Section? = null)
+class ShowStarCompassHud()
