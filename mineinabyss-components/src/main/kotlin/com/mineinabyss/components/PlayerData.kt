@@ -24,7 +24,8 @@ class PlayerData(
     var showPlayerBalance: Boolean = true,
     var displayProfileArmor: Boolean = true,
     var defaultDisplayLockState: Boolean = false,
-    var recentInteractEntity: @Serializable(with = UUIDSerializer::class) UUID? = null
+    var recentInteractEntity: @Serializable(with = UUIDSerializer::class) UUID? = null,
+    var replant: Boolean = true,
 ) {
     val level: Int get() = exp.toInt() / 10 //TODO write a proper formula
 

@@ -1,11 +1,13 @@
 package com.mineinabyss.features.tools.sickle
 
 import com.destroystokyo.paper.MaterialTags
+import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.shynixn.mccoroutine.bukkit.ticks
+import com.mineinabyss.components.playerData
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.ItemDrop
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.Sound
-import org.bukkit.SoundCategory
+import kotlinx.coroutines.delay
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.block.data.Ageable
 import org.bukkit.enchantments.Enchantment
@@ -15,6 +17,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -30,6 +33,15 @@ class SickleListener : Listener {
             player.swingMainHand()
             block.world.playSound(block.location, Sound.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0f, 2.0f)
         }
+    }
+
+    @EventHandler
+    fun BlockDropItemEvent.onBreakCrop() {
+        if (items.isEmpty() || !player.playerData.replant) return
+        if (blockState.type !in Tag.CROPS.values || (blockState.blockData as? Ageable)?.let { it.age == it.maximumAge } != true ) return
+
+        items.firstOrNull { it?.itemStack?.type in Tag.ITEMS_VILLAGER_PLANTABLE_SEEDS.values }?.let { it.itemStack = it.itemStack.subtract() } ?: return
+        block.type = blockState.type
     }
 }
 
@@ -68,7 +80,7 @@ fun harvestPlant(block: Block, player: Player): Boolean {
     }
 
     fun applyFortune(count: Int): Int {
-        if (!MaterialTags.HOES.isTagged(handItem)) return count
+        if (handItem.type !in Tag.ITEMS_HOES.values) return count
         val level = handItem.itemMeta?.getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS) ?: return count
 
         // Do we have bonus drops?

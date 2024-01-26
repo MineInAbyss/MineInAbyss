@@ -7,7 +7,6 @@ import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.GameMode
 import org.bukkit.Material
-import org.bukkit.Tag
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Lectern
 import org.bukkit.block.data.Bisected
