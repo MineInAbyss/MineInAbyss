@@ -12,7 +12,8 @@ import com.mineinabyss.idofront.time.ticks
 import org.bukkit.entity.Player
 
 class TrackStarCompassHudOnPlayers : RepeatingSystem(5.ticks) {
-    private val Pointer.compass by get<StarCompass>()
+    private val Pointer.hudShown by get<ShowStarCompassHud>()
+
     private val hudEnabledQuery = object: GearyQuery() {
         val Pointer.player by get<Player>()
         val Pointer.hudShown by get<ShowStarCompassHud>()

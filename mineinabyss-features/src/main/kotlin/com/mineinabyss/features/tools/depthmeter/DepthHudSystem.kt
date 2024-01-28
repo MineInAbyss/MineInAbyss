@@ -17,7 +17,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareGrindstoneEvent
 
 class DepthHudSystem : RepeatingSystem(5.ticks) {
-    private val Pointer.depthMeter by get<DepthMeter>()
+    private val Pointer.hudShown by get<ShowDepthMeterHud>()
 
     private val hudEnabledQuery = object : GearyQuery() {
         val Pointer.player by get<Player>()
