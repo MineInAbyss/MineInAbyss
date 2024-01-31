@@ -49,6 +49,6 @@ fun OfflinePlayer?.head(
         if (isLarge) setCustomModelData(2)
         if (isCenterOfInv && !isLarge) setCustomModelData(3)
         if (isCenterOfInv && isLarge) setCustomModelData(4)
-        owningPlayer = this@head
+        this@head.takeUnless { it?.playerProfile?.name.isNullOrEmpty() }?.let { owningPlayer = this@head }
     }
 }

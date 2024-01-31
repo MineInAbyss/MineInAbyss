@@ -300,13 +300,13 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
                 5 -> {
                     when (args[2]) {
-                        "guildBalance" -> getAllGuildNames().filter { it.startsWith(args[4]) }
+                        "guildBalance" -> Bukkit.getOnlinePlayers().filter { it.hasGuild() }
+                            .map { it.name }.filter { it.startsWith(args[4], true) }
                         "addGuildMember" -> Bukkit.getOnlinePlayers().filter { !it.hasGuild() }
-                            .map { it.name }.filter { it.startsWith(args[4]) }
+                            .map { it.name }.filter { it.startsWith(args[4], true) }
 
-                        "removeGuildMember" -> Bukkit.getOnlinePlayers()
-                            .filter { it.hasGuild() && it.getGuildName()?.startsWith(args[4], true) == true }
-                            .map { it.name }
+                        "removeGuildMember" -> Bukkit.getOfflinePlayer(args[3]).getGuildName()?.getGuildMembers()
+                            ?.map { it.player.name.toString() }?.filter { it.startsWith(args[4], true) }
 
                         else -> null
                     }
