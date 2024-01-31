@@ -22,7 +22,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 typealias GuildName = String
@@ -51,10 +50,12 @@ fun OfflinePlayer.createGuild(guildName: String) {
 
     transaction(abyss.db) {
 
-        Guilds.selectAll().where { Guilds.name.lowerCase() eq guildName.lowercase() }.firstOrNull()
-            ?: return@transaction player?.error("There is already a guild registered with the name <i>$guildName</i>!")
+        val guild = Guilds.selectAll().where { Guilds.name.lowerCase() eq guildName.lowercase() }.firstOrNull()
 
-        player?.success("Your Guild has been registered with the name <i>$guildName")
+        if (guild != null)
+            return@transaction player?.error("There is already a guild registered with the name <i>$guildName</i>!")
+        else player?.success("Your Guild has been registered with the name <i>$guildName")
+
         val rowID = Guilds.insert {
             it[name] = guildName
             it[balance] = 0
