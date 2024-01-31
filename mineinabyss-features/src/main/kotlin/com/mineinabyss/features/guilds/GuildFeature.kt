@@ -16,6 +16,7 @@ import com.mineinabyss.features.guilds.menus.GuildMainMenu
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
+import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -165,38 +166,39 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
                         }
                     }
-                    val guild by stringArg()
+                    val guildOwner by offlinePlayerArg()
                     "addGuildMember" {
-                        val player by stringArg()
+                        val member by offlinePlayerArg()
                         action {
-                            val member = Bukkit.getOfflinePlayer(player)
+                            val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
                             if (member.hasGuild() && member.getGuildName()?.lowercase() == guild.lowercase())
-                                sender.error("$player is already in the guild.")
+                                sender.error("${member.name} is already in the guild.")
                             else if (member.hasGuild())
-                                sender.error("<b>${player}</b> already has a guild.")
+                                sender.error("<b>${member.name}</b> already has a guild.")
                             else {
                                 guild.getOwnerFromGuildName().addMemberToGuild(member)
-                                sender.success("Added <b>${player}</b> to <i>$guild.")
+                                sender.success("Added <b>${member.name}</b> to <i>$guild.")
                             }
                         }
                     }
                     "removeGuildMember" {
-                        val player by stringArg()
+                        val member by offlinePlayerArg()
                         action {
-                            val member = Bukkit.getOfflinePlayer(player)
+                            val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
                             if (!member.hasGuild())
-                                sender.error("<b>${player}</b> does not have a guild.")
+                                sender.error("<b>${member.name}</b> does not have a guild.")
                             else if (member.hasGuild() && member.getGuildName()?.lowercase() != guild.lowercase())
-                                sender.error("<b>${player}</b> is not in this guild.")
+                                sender.error("<b>${member.name}</b> is not in this guild.")
                             else {
                                 guild.getOwnerFromGuildName().kickPlayerFromGuild(member)
-                                sender.success("Removed <b>${player}</b> from <i>$guild.")
+                                sender.success("Removed <b>${member.name}</b> from <i>$guild.")
                             }
                         }
                     }
                     "clearJoinRequests" {
                         action {
-                            if ((guild == "all")) {
+                            val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
+                            if (guild == "all") {
                                 getAllGuildNames().forEach { it.clearGuildJoinRequests() }
                                 sender.success("Cleared all join requests for all guilds.")
                             } else {
@@ -207,7 +209,8 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                     }
                     "clearGuildInvites" {
                         action {
-                            if ((guild == "all")) {
+                            val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
+                            if (guild == "all") {
                                 getAllGuildNames().forEach { it.clearGuildInvites() }
                                 sender.success("Cleared all guild invites for all guilds.")
                             } else {
@@ -220,12 +223,14 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                         val amount by intArg { default = 0 }
                         "set" {
                             action {
+                                val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
                                 guild.setGuildBalance(amount)
                                 sender.success("Set guild balance for <i>$guild</i> to $amount")
                             }
                         }
                         "add" {
                             action {
+                                val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
                                 if (amount <= 0) {
                                     sender.error("You can't add 0 or less coins!")
                                     return@action
@@ -236,6 +241,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                         }
                         "take" {
                             action {
+                                val guild = guildOwner.getGuildName() ?: return@action sender.error("This player does not have a guild.")
                                 if (amount > guild.getGuildBalance()) {
                                     sender.error("This guild doesnt have that many coins!")
                                     return@action
@@ -281,10 +287,11 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                     when (args[2]) {
                         "guildBalance" -> listOf("set", "add", "take").filter { it.startsWith(args[3]) }
                         "setGuildMemberRank" ->
-                            Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[3]) }
+                            Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[3], true) }
 
                         "clearJoinRequests", "clearGuildInvites", "addGuildMember", "removeGuildMember" ->
-                            getAllGuildNames().filter { it.startsWith(args[3]) }
+                            getAllGuilds().map { it.guildName.getOwnerFromGuildName().name.toString() }
+                                .filter { it.startsWith(args[3], true) }
 
                         else -> null
                     }
@@ -297,7 +304,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                             .map { it.name }.filter { it.startsWith(args[4]) }
 
                         "removeGuildMember" -> Bukkit.getOnlinePlayers()
-                            .filter { it.hasGuild() && it.getGuildName()?.lowercase() == args[3].lowercase() }
+                            .filter { it.hasGuild() && it.getGuildName()?.startsWith(args[4], true) == true }
                             .map { it.name }
 
                         else -> null
@@ -307,7 +314,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                 6 -> {
                     when (args[2]) {
                         "guildBalance" ->
-                            listOf("0", args[4].getGuildBalance().toString()).filter { it.startsWith(args[5]) }
+                            listOf("0", Bukkit.getOfflinePlayer(args[4]).getGuildBalance().toString()).filter { it.startsWith(args[5]) }
 
                         else -> null
                     }
