@@ -2,6 +2,7 @@ package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.database.GuildJoinType
+import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.head
@@ -29,12 +30,18 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
 
 @Composable
 fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
-    Item(owner.head("<yellow><i>${owner.name}".miniMsg(), isCenterOfInv = true, isLarge = true), modifier = modifier)
+    Item(
+        owner.head(
+            "<gold><i>${owner.name}".miniMsg(),
+            "<yellow><b>Guild Rank: <yellow><i>${owner.getGuildRank()}".miniMsg(),
+            isCenterOfInv = true, isLarge = true
+        ), modifier = modifier
+    )
 }
 
 @Composable
 fun GuildMembersButton(modifier: Modifier, guildName: String, guildLevel: Int) {
-    val members = guildName.getGuildMembers().sortedWith(compareBy {  it.player.name; it.rank.ordinal })
+    val members = guildName.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER }
     Grid(modifier.size(5, guildLevel + 1)) {
         members.forEach { (rank, member) ->
             Button {
@@ -59,15 +66,15 @@ fun GuildUIScope.RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, g
     }) {
         if (!inviteOnly && !player.hasGuild()) {
             Text("<green>REQUEST to join <dark_green><i>$guildName".miniMsg())
-        }
-        else if (inviteOnly) {
-            Text("<red><st>REQUEST to join <i>$guildName".miniMsg(),
+        } else if (inviteOnly) {
+            Text(
+                "<red><st>REQUEST to join <i>$guildName".miniMsg(),
                 "<dark_red><i>This guild can currently only".miniMsg(),
                 "<dark_red><i>be joined via an invite.".miniMsg()
             )
-        }
-        else if (player.hasGuild()) {
-            Text("<red><st>REQUEST to join <i>$guildName".miniMsg(),
+        } else if (player.hasGuild()) {
+            Text(
+                "<red><st>REQUEST to join <i>$guildName".miniMsg(),
                 "<dark_red><i>You have to leave your Guild".miniMsg(),
                 "<dark_red><i>before requesting to join another.".miniMsg()
             )

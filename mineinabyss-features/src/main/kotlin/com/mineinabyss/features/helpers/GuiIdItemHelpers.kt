@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.SkullMeta
 object TitleItem {
     fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
         displayName(name.miniMsg())
-        setLore(lore.toList())
+        lore(lore.toList().map { it.miniMsg() })
         setCustomModelData(1)
     }
     fun of(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {

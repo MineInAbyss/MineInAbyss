@@ -18,7 +18,6 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -38,8 +37,9 @@ fun GuildUIScope.GuildMemberListScreen() {
 
 @Composable
 fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
-    Grid(modifier.size(5, guildLevel)) {
-        player.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal }).forEach { (rank, member) ->
+    val members = player.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal })
+    Grid(modifier.size(5, guildLevel + 1)) {
+        members.forEach { (rank, member) ->
             Button(onClick = {
                 if (member != player && player.isCaptainOrAbove())
                     nav.open(GuildScreen.MemberOptions(member))
