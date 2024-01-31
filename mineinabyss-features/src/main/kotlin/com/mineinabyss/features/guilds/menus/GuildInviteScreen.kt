@@ -55,7 +55,7 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
             return@Button
         }
 
-        owner.addMemberToGuild(player)
+        if (!owner.addMemberToGuild(player)) return@Button player.error("Failed to join ${guildName}.")
         player.removeGuildQueueEntries(GuildJoinType.REQUEST)
         nav.back()
     },

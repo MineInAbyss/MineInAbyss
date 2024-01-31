@@ -176,7 +176,8 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                             else if (member.hasGuild())
                                 sender.error("<b>${member.name}</b> already has a guild.")
                             else {
-                                guild.getOwnerFromGuildName().addMemberToGuild(member)
+                                if (!guild.getOwnerFromGuildName().addMemberToGuild(member))
+                                    return@action sender.error("Failed to add <b>${member.name}</b> to <i>$guild.")
                                 sender.success("Added <b>${member.name}</b> to <i>$guild.")
                             }
                         }

@@ -40,7 +40,7 @@ fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: Offline
             player.error("Change it to 'ANY' or 'REQUEST-only' mode to accept requests.")
             return@Button
         }
-        player.addMemberToGuild(newMember)
+        if (!player.addMemberToGuild(newMember))  return@Button player.error("Failed to add ${newMember.name} to guild.")
         newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
         if (player.getGuildMemberCount() < guildLevel * 5) {
             newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)

@@ -5,7 +5,6 @@ import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.getDefaultChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
-import com.mineinabyss.features.guilds.menus.GuildUIScope
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.inventory.GuiyInventoryHolder
 import com.mineinabyss.idofront.entities.toPlayer
@@ -24,7 +23,8 @@ import java.util.*
 
 fun UUID.toOfflinePlayer(): OfflinePlayer = Bukkit.getOfflinePlayer(this)
 
-fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
+fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
+    var added = false
     transaction(abyss.db) {
         val guild = Players.selectAll().where { Players.playerUUID eq uniqueId }.firstOrNull()?.get(Players.guildId)
 
@@ -66,6 +66,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
             it[guildRank] = GuildRank.MEMBER
         }
         player?.success("${member.name} joined your Guild!")
+        added = true
 
         val joinMessage = "<green>You have been accepted into ${player?.getGuildName()}"
         if (member.isOnline) member.player?.success(joinMessage)
@@ -81,6 +82,8 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer) {
             (playerUUID eq member.uniqueId) and (guildId eq guild)
         }
     }
+
+    return added
 }
 
 fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
