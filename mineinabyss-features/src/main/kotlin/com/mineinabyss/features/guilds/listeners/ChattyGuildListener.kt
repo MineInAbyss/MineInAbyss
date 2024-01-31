@@ -4,13 +4,13 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.events.ChattyPlayerChatEvent
 import com.mineinabyss.chatty.helpers.getDefaultChat
+import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.getGuildName
 import com.mineinabyss.features.guilds.extensions.guildChat
 import com.mineinabyss.features.guilds.extensions.guildChatId
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -24,7 +24,7 @@ class ChattyGuildListener : Listener {
         if (channel.key != player.guildChatId()) return
 
         viewers.clear()
-        viewers.addAll(player.server.onlinePlayers.filter { it.getGuildName() == guildName })
+        viewers.addAll(player.server.onlinePlayers.filter { it.getGuildName() == guildName || it.toGeary().has<SpyOnGuildChat>() })
     }
 
     @EventHandler
