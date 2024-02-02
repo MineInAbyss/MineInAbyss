@@ -1,5 +1,6 @@
 package com.mineinabyss.features.helpers
 
+import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.discordSRV
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -37,25 +38,18 @@ private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
 fun handleCurse(player: Player, from: Location, to: Location) {
     //Arbitrary range with the purpose of preventing curse on section change
     if (from.distanceSquared(to) > 32 * 32) return
-
-    if (recentlyMovedPlayers.contains(player.uniqueId)) {
-        recentlyMovedPlayers.remove(player.uniqueId)
-        return
-    }
-
-    if (!player.world.isAbyssWorld) return
+    if (recentlyMovedPlayers.remove(player.uniqueId) || !player.world.isAbyssWorld) return
 
     val changeY = to.y - from.y
 
     player.playerData.apply {
-        if (player.isInvulnerable) {
-            curseAccrued = 0.0
-        } else if (player.playerData.isAffectedByCurse) {
+        if (player.isInvulnerable) curseAccrued = 0.0
+        else if (player.playerData.isAffectedByCurse) {
             val layer = to.layer ?: return
 
             val dist = curseAccrued
             curseAccrued = (dist + changeY).coerceAtLeast(0.0)
-            if (dist >= 10) {
+            if (dist >= 10 && PlayerCurseEvent(player, layer.ascensionEffects).callEvent()) {
                 layer.ascensionEffects.forEach {
                     it.clone().applyEffect(player, 10)
                 }
