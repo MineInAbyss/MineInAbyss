@@ -3,11 +3,14 @@ package com.mineinabyss.features.tutorial
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
+import com.mineinabyss.idofront.serialization.MiniMessageSerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TranslatableComponent
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.entity.Display
@@ -21,7 +24,7 @@ interface TutorialContext {
 
 @Serializable
 @SerialName("mineinabyss:tutorial_entity")
-data class TutorialEntity constructor(
+data class TutorialEntity(
     val location: @Serializable(LocationSerializer::class) Location,
     val text: String,
     @EncodeDefault(NEVER) val backgroundColor: @Serializable(ColorSerializer::class) Color = Color.fromARGB(0, 0, 0, 0),
