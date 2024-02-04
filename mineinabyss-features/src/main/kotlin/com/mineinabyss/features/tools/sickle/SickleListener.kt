@@ -38,9 +38,10 @@ class SickleListener : Listener {
     @EventHandler
     fun BlockDropItemEvent.onBreakCrop() {
         if (items.isEmpty() || !player.playerData.replant) return
-        if (blockState.type !in Tag.CROPS.values || (blockState.blockData as? Ageable)?.let { it.age == it.maximumAge } != true ) return
+        if (blockState.type !in Tag.CROPS.values || (blockState.blockData as? Ageable)?.let { it.age == it.maximumAge } != true) return
 
-        items.firstOrNull { it?.itemStack?.type in Tag.ITEMS_VILLAGER_PLANTABLE_SEEDS.values }?.let { it.itemStack = it.itemStack.subtract() } ?: return
+        items.firstOrNull { it?.itemStack?.type in Tag.ITEMS_VILLAGER_PLANTABLE_SEEDS.values }
+            ?.let { it.itemStack = it.itemStack.subtract() } ?: return
         block.type = blockState.type
     }
 }

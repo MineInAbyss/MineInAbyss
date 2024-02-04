@@ -6,14 +6,16 @@ import com.mineinabyss.geary.systems.GearyListener
 import com.mineinabyss.geary.systems.accessors.Pointers
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
+import org.bukkit.Tag
 import org.bukkit.entity.Player
+import org.bukkit.event.block.BlockBreakEvent
 
 class HarvestListener : GearyListener() {
     val Pointers.player by get<Player>().on(target)
     private val Pointers.sickle by get<Sickle>().on(source)
 
     override fun Pointers.handle() {
-        val block = player.getTargetBlockExact(3) ?: return
+        val block = player.getTargetBlockExact(5) ?: return
         val item = player.inventory.itemInMainHand
 
         var totalHarvested = 0
@@ -22,6 +24,15 @@ class HarvestListener : GearyListener() {
             if (harvestPlant(BlockUtil.relative(block, relativePos), player)) {
                 if (!item.damage(1, player).isEmpty)
                     ++totalHarvested
+            }
+            val range = sickle.radius.let { -it..it }
+            for (x in range) for (y in range) for (z in range) {
+                val leaf = block.getRelative(x, y, z).takeIf { it.type in Tag.LEAVES.values } ?: continue
+                if (!BlockBreakEvent(leaf, player).callEvent()) continue
+                if (!item.damage(1, player).isEmpty) {
+                    leaf.breakNaturally(item, true)
+                    ++totalHarvested
+                }
             }
         }
 
