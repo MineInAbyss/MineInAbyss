@@ -2,7 +2,7 @@ package com.mineinabyss.features.guilds.extensions
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.components.ChannelData
-import com.mineinabyss.chatty.helpers.getDefaultChat
+import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -325,7 +325,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
             val channelData = gearyPlayer.get<ChannelData>() ?: return@launch
             // Remove player from guild-chat. Offline members handled when they join
             if (member.isOnline && channelData.channelId == getGuildName()?.guildChatId()) {
-                gearyPlayer.setPersisting(channelData.copy(channelId = getDefaultChat().key))
+                gearyPlayer.setPersisting(channelData.copy(channelId = defaultChannel().key))
             }
         }
 
@@ -375,7 +375,7 @@ fun Player.leaveGuild() {
             val gearyPlayer = this@leaveGuild.player?.toGeary() ?: return@launch
             val channelData = gearyPlayer.get<ChannelData>() ?: return@launch
             if (channelData.channelId == guildName.guildChatId()) {
-                gearyPlayer.setPersisting(channelData.copy(channelId = getDefaultChat().key))
+                gearyPlayer.setPersisting(channelData.copy(channelId = defaultChannel().key))
             }
         }
 

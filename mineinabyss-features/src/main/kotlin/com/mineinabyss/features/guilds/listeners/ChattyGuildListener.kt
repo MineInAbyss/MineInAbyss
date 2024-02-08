@@ -3,7 +3,7 @@ package com.mineinabyss.features.guilds.listeners
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.events.ChattyPlayerChatEvent
-import com.mineinabyss.chatty.helpers.getDefaultChat
+import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.getGuildName
@@ -30,7 +30,7 @@ class ChattyGuildListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
         val channelData = player.toGeary().get<ChannelData>()?.withChannelVerified() ?: return
-        val channelId = player.guildChat()?.key ?: getDefaultChat().key
+        val channelId = player.guildChat()?.key ?: defaultChannel().key
         if (!channelData.channelId.endsWith(guildChannelId)) return
         abyss.plugin.launch { player.toGeary().setPersisting(channelData.copy(channelId = channelId)) }
     }

@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelData
-import com.mineinabyss.chatty.helpers.getDefaultChat
+import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.abyss
@@ -112,7 +112,7 @@ fun Player.deleteGuild() {
                     val gearyPlayer = it.toGeary()
                     val channelData = gearyPlayer.get<ChannelData>() ?: return@forEach
                     if (channelData.channelId == guildChatId)
-                        gearyPlayer.setPersisting(channelData.copy(channelId = getDefaultChat().key))
+                        gearyPlayer.setPersisting(channelData.copy(channelId = defaultChannel().key))
                 }
         }
 
