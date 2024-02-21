@@ -54,7 +54,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
         val maxGuildMemberCount = level * 5 // Members per level
 
         /* > and not >= to not count Guild Owner */
-        if (player!!.getGuildMemberCount() > maxGuildMemberCount) {
+        if (getGuildMemberCount() > maxGuildMemberCount) {
             player?.error("Your guild is full!")
             return@transaction
         }
