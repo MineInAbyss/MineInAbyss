@@ -3,6 +3,7 @@ package com.mineinabyss.features.helpers
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers
 import com.mineinabyss.geary.papermc.tracking.items.gearyItems
@@ -30,9 +31,11 @@ fun CosmeticUser.equipWhistleCosmetic() {
     val player = player ?: return
     val layerWhistle = player.layerWhistleCosmetic() ?: return
     val viewers = player.world.getNearbyPlayers(player.location, 16.0).toMutableList()
+    if ((getCosmetic(CosmeticSlot.BACKPACK) as CosmeticBackpackType).isFirstPersonCompadible) {
+        viewers.remove(player)
+        PacketManager.equipmentSlotUpdate(userBackpackManager.firstArmorStandId, EquipmentSlot.OFF_HAND, layerWhistle, mutableListOf(player))
+    }
     PacketManager.equipmentSlotUpdate(userBackpackManager.firstArmorStandId, EquipmentSlot.HAND, layerWhistle, viewers)
-    //TODO Implement layerWhistleCosmeticFirstPerson for player and remove from viewers
-    // This above doesnt consider firstperson logic in HMCC so needs to replicate this
 }
 
 fun Player.layerWhistleCosmetic(): ItemStack? {
