@@ -39,10 +39,6 @@ class CosmeticsFeature(val config: Config) : Feature() {
         TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
-        // Makes backpacks equip/unequipable via player interaction
-        // Make sure everything works before enabling it
-        plugin.listeners(VendorListener())
-
         mainCommand {
             "cosmetics" {
                 "wardrobe" {
