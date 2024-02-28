@@ -22,7 +22,7 @@ blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.10.4-SNAPSHOT"
 minecraft-plugin-gsit = "com.github.Gecolay.GSit:core:1.4.10"
 minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.2.3"
-minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.1"
+minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.2-MIA"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.27.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.4"

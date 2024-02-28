@@ -1,7 +1,9 @@
 package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
+import com.hibiscusmc.hmccosmetics.api.events.CosmeticTypeRegisterEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
 import com.mineinabyss.features.helpers.cosmeticUser
@@ -14,6 +16,8 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 
 class CosmeticsFeature(val config: Config) : Feature() {
     @Serializable
@@ -26,7 +30,12 @@ class CosmeticsFeature(val config: Config) : Feature() {
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
         if (config.equipBackpacks) plugin.listeners(CosmeticBackpackListener(config))
-        plugin.listeners(CosmeticWhistleListener())
+        plugin.listeners(object : Listener {
+            @EventHandler
+            fun CosmeticTypeRegisterEvent.equipWhistleCosmetic() {
+                config.node("slot-parent").string?.takeIf { it == "MIA_BACKPACK" }?.let { MiaCosmeticBackpackType(id, config) }
+            }
+        })
         TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
