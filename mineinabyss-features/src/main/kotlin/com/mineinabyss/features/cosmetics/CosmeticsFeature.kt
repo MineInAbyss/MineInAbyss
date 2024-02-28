@@ -25,7 +25,8 @@ class CosmeticsFeature(val config: Config) : Feature() {
 
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
-        if (config.equipBackpacks) plugin.listeners(CosmeticListener(config))
+        if (config.equipBackpacks) plugin.listeners(CosmeticBackpackListener(config))
+        plugin.listeners(CosmeticWhistleListener())
         TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
@@ -131,7 +132,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
                     }
                 }
                 "dye" {
-                    val cosmeticSlot by optionArg(CosmeticSlot.values().map { it.name })
+                    val cosmeticSlot by optionArg(CosmeticSlot.entries.map { it.name })
                     playerAction {
                         player.cosmeticUser?.let { user ->
                             user.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot))?.let { cosmetic ->

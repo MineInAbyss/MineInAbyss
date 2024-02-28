@@ -3,12 +3,15 @@ package com.mineinabyss.features.helpers
 import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.discordSRV
+import com.mineinabyss.geary.papermc.tracking.items.gearyItems
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.util.*
 
 
@@ -27,11 +30,23 @@ fun Player.getLayerWhistleForHud(): String {
         "orth" -> "\uEBAF"
         "edge_of_the_abyss" -> "\uEBB0"
         "forest_of_temptation" -> "\uEBB1"
-        "great_fault" -> "\uEBB2"
-        "goblets_of_giants" -> "\uEBB2"
+        "great_fault", "the_goblets_of_giants" -> "\uEBB2"
         "sea_of_corpses" -> "\uEBB3"
         else -> ""
     }
+}
+
+fun Player.layerWhistleCosmetic(): ItemStack? {
+    val whistle = when (simpleLayerName) {
+        "orth" -> "bell_cosmetic"
+        "edge_of_the_abyss" -> "red_whistle"
+        "forest_of_temptation" -> "blue_whistle"
+        "great_fault", "the_goblets_of_giants" -> "moon_whistle"
+        "sea_of_corpses" -> "black_whistle"
+        else -> return null
+    }
+    val prefab = PrefabKey.ofOrNull("cosmetics:$whistle") ?: return null
+    return gearyItems.itemProvider.serializePrefabToItemStack(prefab).takeIf { it != ItemStack.empty() }
 }
 
 private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
