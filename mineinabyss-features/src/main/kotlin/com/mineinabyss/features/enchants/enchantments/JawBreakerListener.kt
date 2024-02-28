@@ -1,7 +1,6 @@
 package com.mineinabyss.features.enchants.enchantments
 
 import com.mineinabyss.components.mobs.Splitjaw
-import com.mineinabyss.features.enchants.BaneOfKuongatari
 import com.mineinabyss.features.enchants.CustomEnchants
 import com.mineinabyss.features.enchants.JawBreaker
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull

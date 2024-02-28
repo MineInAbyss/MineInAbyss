@@ -9,7 +9,6 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.*
 import com.mineinabyss.guiy.navigation.rememberNavigation
-import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player
 

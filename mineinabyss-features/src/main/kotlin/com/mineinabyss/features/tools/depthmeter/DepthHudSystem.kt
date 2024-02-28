@@ -1,6 +1,5 @@
 package com.mineinabyss.features.tools.depthmeter
 
-import com.mineinabyss.components.tools.DepthMeter
 import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.geary.annotations.optin.UnsafeAccessors
 import com.mineinabyss.geary.datatypes.GearyEntity

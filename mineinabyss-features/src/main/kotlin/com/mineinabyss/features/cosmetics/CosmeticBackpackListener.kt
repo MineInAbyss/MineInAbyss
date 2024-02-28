@@ -7,7 +7,9 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.mineinabyss.components.cosmetics.BackpackStorage
 import com.mineinabyss.components.cosmetics.CosmeticComponent
 import com.mineinabyss.components.cosmetics.cosmeticComponent
-import com.mineinabyss.features.helpers.*
+import com.mineinabyss.features.helpers.equipCosmeticBackPack
+import com.mineinabyss.features.helpers.isInventoryFull
+import com.mineinabyss.features.helpers.unequipCosmeticBackpack
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error

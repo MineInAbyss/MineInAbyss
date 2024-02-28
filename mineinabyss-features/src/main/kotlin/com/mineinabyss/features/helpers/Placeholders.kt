@@ -12,8 +12,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import kotlin.math.atan2
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.toKotlinDuration
 
 class Placeholders : PlaceholderExpansion() {
 

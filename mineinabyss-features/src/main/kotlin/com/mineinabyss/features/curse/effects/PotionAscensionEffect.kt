@@ -13,7 +13,6 @@ import kotlinx.serialization.UseSerializers
 import org.bukkit.Registry
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import kotlin.time.Duration
 
 @Serializable

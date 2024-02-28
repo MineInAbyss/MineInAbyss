@@ -6,8 +6,6 @@ import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.luckPerms
-import com.mineinabyss.idofront.messaging.broadcast
-import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import me.lojosho.shaded.configurate.ConfigurationNode

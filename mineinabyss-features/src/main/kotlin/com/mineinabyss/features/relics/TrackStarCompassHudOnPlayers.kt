@@ -1,7 +1,6 @@
 package com.mineinabyss.features.relics
 
 import com.mineinabyss.components.relics.ShowStarCompassHud
-import com.mineinabyss.components.relics.StarCompass
 import com.mineinabyss.geary.annotations.optin.UnsafeAccessors
 import com.mineinabyss.geary.datatypes.GearyEntity
 import com.mineinabyss.geary.helpers.parent

@@ -5,5 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("mineinabyss:orthbound")
-class Orthbound {
-}
+class Orthbound

@@ -2,9 +2,9 @@ package com.mineinabyss.features.anticheese
 
 import com.destroystokyo.paper.MaterialTags
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent
+import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.features.helpers.layer
 import org.bukkit.Material
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional

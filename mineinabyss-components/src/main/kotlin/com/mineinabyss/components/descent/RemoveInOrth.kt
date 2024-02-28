@@ -11,5 +11,4 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @SerialName("mineinabyss:remove_in_orth")
-class RemoveInOrth {
-}
+class RemoveInOrth

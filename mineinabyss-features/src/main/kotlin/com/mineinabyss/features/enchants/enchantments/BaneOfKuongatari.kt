@@ -3,7 +3,6 @@ package com.mineinabyss.features.enchants.enchantments
 import com.mineinabyss.components.mobs.Insect
 import com.mineinabyss.features.enchants.BaneOfKuongatari
 import com.mineinabyss.features.enchants.CustomEnchants
-import com.mineinabyss.features.enchants.FrostAspect
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import org.bukkit.entity.Player

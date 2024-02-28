@@ -1,6 +1,5 @@
 package com.mineinabyss.features.displayLocker
 
-import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.displaylocker.lockedDisplay
@@ -10,35 +9,24 @@ import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.spawning.spawn
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
-import org.bukkit.GameMode
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPistonRetractEvent
-import org.bukkit.event.entity.EntityDamageByBlockEvent
-import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.event.entity.EntityPlaceEvent
-import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.event.entity.*
 import org.bukkit.event.hanging.HangingBreakByEntityEvent
 import org.bukkit.event.hanging.HangingBreakEvent
 import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.EquipmentSlot
 
 
 class DisplayLockerListener : Listener {

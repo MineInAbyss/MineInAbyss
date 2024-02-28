@@ -1,8 +1,6 @@
 package com.mineinabyss.features.advancements
 
-import com.mineinabyss.components.advancements.CustomAdvancement
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.di.Features.advancements
 import com.mineinabyss.idofront.commands.arguments.playerArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -17,8 +15,6 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import eu.endercentral.crazy_advancements.CrazyAdvancementsAPI
 import eu.endercentral.crazy_advancements.NameKey
-import eu.endercentral.crazy_advancements.advancement.Advancement
-import eu.endercentral.crazy_advancements.advancement.AdvancementDisplay
 import eu.endercentral.crazy_advancements.manager.AdvancementManager
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

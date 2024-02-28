@@ -1,13 +1,11 @@
 package com.mineinabyss.features.tools.sickle
 
-import com.destroystokyo.paper.MaterialTags
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.github.shynixn.mccoroutine.bukkit.ticks
 import com.mineinabyss.components.playerData
-import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.ItemDrop
-import kotlinx.coroutines.delay
-import org.bukkit.*
+import org.bukkit.Material
+import org.bukkit.Sound
+import org.bukkit.SoundCategory
+import org.bukkit.Tag
 import org.bukkit.block.Block
 import org.bukkit.block.data.Ageable
 import org.bukkit.enchantments.Enchantment

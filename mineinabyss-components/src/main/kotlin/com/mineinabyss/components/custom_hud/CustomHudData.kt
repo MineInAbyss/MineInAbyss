@@ -1,9 +1,6 @@
 package com.mineinabyss.components.custom_hud
 
-import com.mineinabyss.components.relics.ShowStarCompassHud
-import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player

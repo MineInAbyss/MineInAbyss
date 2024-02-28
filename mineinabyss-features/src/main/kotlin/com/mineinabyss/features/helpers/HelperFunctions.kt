@@ -3,15 +3,12 @@ package com.mineinabyss.features.helpers
 import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.discordSRV
-import com.mineinabyss.geary.papermc.tracking.items.gearyItems
-import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import java.util.*
 
 

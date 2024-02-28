@@ -3,8 +3,8 @@ package com.mineinabyss.features.tools
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.tools.depthmeter.DepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.DepthMeterBukkitListener
-import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.DoToggleDepthHud
+import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.tools.sickle.HarvestListener
 import com.mineinabyss.features.tools.sickle.SickleListener

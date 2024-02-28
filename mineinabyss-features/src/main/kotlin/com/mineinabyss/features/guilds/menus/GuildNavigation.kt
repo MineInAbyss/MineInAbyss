@@ -22,7 +22,6 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.Navigator
 import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.font.Space
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.wesjd.anvilgui.AnvilGUI

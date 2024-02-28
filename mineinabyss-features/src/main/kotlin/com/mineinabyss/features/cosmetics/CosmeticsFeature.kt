@@ -1,9 +1,7 @@
 package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
-import com.hibiscusmc.hmccosmetics.api.events.CosmeticTypeRegisterEvent
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
-import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
 import com.mineinabyss.features.helpers.cosmeticUser
@@ -16,8 +14,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 
 class CosmeticsFeature(val config: Config) : Feature() {
     @Serializable
