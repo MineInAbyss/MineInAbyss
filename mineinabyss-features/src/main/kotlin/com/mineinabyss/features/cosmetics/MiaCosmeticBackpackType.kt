@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.mineinabyss.features.helpers.cosmeticUser
+import com.mineinabyss.features.helpers.equipWhistleCosmetic
 import com.mineinabyss.features.helpers.layerWhistleCosmetic
 import com.mineinabyss.idofront.messaging.broadcast
 import me.lojosho.hibiscuscommons.util.packets.PacketManager
@@ -21,12 +22,5 @@ class MiaCosmeticBackpackType(id: String, config: ConfigurationNode) : CosmeticB
     override fun update(user: CosmeticUser) {
         super.update(user)
         user.equipWhistleCosmetic()
-    }
-
-    private fun CosmeticUser.equipWhistleCosmetic() {
-        val player = player ?: return
-        val outsideViewers = player.world.getNearbyPlayers(player.location, 32.0).toMutableList()
-        val layerWhistle = player.layerWhistleCosmetic() ?: return
-        PacketManager.equipmentSlotUpdate(userBackpackManager.firstArmorStandId, EquipmentSlot.HAND, layerWhistle, outsideViewers)
     }
 }

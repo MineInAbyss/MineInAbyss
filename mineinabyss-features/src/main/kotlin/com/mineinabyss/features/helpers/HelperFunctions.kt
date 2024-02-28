@@ -36,19 +36,6 @@ fun Player.getLayerWhistleForHud(): String {
     }
 }
 
-fun Player.layerWhistleCosmetic(): ItemStack? {
-    val whistle = when (simpleLayerName) {
-        "orth" -> "bell_cosmetic"
-        "edge_of_the_abyss" -> "red_whistle"
-        "forest_of_temptation" -> "blue_whistle"
-        "great_fault", "the_goblets_of_giants" -> "moon_whistle"
-        "sea_of_corpses" -> "black_whistle"
-        else -> return null
-    }
-    val prefab = PrefabKey.ofOrNull("cosmetics:$whistle") ?: return null
-    return gearyItems.itemProvider.serializePrefabToItemStack(prefab).takeIf { it != ItemStack.empty() }
-}
-
 private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
 fun handleCurse(player: Player, from: Location, to: Location) {
     //Arbitrary range with the purpose of preventing curse on section change

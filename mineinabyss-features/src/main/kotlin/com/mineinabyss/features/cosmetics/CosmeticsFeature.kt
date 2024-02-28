@@ -30,12 +30,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
         if (config.equipBackpacks) plugin.listeners(CosmeticBackpackListener(config))
-        plugin.listeners(object : Listener {
-            @EventHandler
-            fun CosmeticTypeRegisterEvent.equipWhistleCosmetic() {
-                config.node("slot-parent").string?.takeIf { it == "MIA_BACKPACK" }?.let { MiaCosmeticBackpackType(id, config) }
-            }
-        })
+        plugin.listeners(CosmeticWhistleListener())
         TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
