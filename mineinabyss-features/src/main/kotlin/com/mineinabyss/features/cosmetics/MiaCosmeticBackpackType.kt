@@ -6,7 +6,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.mineinabyss.features.helpers.equipWhistleCosmetic
 import me.lojosho.shaded.configurate.ConfigurationNode
 
-class MiaCosmeticBackpackType(id: String, config: ConfigurationNode) : CosmeticBackpackType(id, config) {
+class MiaCosmeticBackpackType(id: String, config: ConfigurationNode, val isWhistlesEnabled: Boolean) : CosmeticBackpackType(id, config) {
 
     // Since Slot is originally CUSTOM, we change it here to BACKPACK
     init {
@@ -15,6 +15,6 @@ class MiaCosmeticBackpackType(id: String, config: ConfigurationNode) : CosmeticB
 
     override fun update(user: CosmeticUser) {
         super.update(user)
-        user.equipWhistleCosmetic()
+        if (isWhistlesEnabled) user.equipWhistleCosmetic()
     }
 }

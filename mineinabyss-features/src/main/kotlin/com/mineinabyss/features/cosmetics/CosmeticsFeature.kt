@@ -27,7 +27,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
         if (config.equipBackpacks) plugin.listeners(CosmeticBackpackListener(config))
-        if (config.equipWhistleCosmetic) plugin.listeners(CosmeticWhistleListener())
+        plugin.listeners(CosmeticWhistleListener(config))
         TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
