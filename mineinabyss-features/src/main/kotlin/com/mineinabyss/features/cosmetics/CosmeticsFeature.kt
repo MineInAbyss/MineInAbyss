@@ -19,6 +19,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
     @Serializable
     class Config {
         val enabled = false
+        val equipWhistleCosmetic = false
         val equipBackpacks: Boolean = false
         val defaultBackpack: String = "backpack"
     }
@@ -26,7 +27,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
         if (config.equipBackpacks) plugin.listeners(CosmeticBackpackListener(config))
-        plugin.listeners(CosmeticWhistleListener())
+        if (config.equipWhistleCosmetic) plugin.listeners(CosmeticWhistleListener())
         TypeMiaCosmetic()
         HMCCosmeticsPlugin.setup()
 
