@@ -27,6 +27,7 @@ fun Player.unequipCosmeticHat() = this.cosmeticUser?.removeCosmeticSlot(Cosmetic
 internal val Player.cosmeticUser get() = CosmeticUsers.getUser(this)
 
 fun CosmeticUser.equipWhistleCosmetic() {
+    if (this.isHidden) return
     if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) addPlayerCosmetic(Cosmetics.getCosmetic("empty_backpack"))
     val player = player ?: return
     val layerWhistle = player.layerWhistleCosmetic() ?: return
