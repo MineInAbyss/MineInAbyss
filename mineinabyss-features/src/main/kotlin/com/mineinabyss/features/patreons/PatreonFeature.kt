@@ -10,6 +10,7 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -179,6 +180,13 @@ class PatreonFeature(val config: Config) : Feature() {
                                     }
                                 }
                             }
+                        }
+                    }
+                    "give_token" {
+                        val amount by intArg()
+                        playerAction {
+                            player.playerData.mittyTokensHeld += amount
+                            sender.success("Gave $amount tokens to ${player.name}")
                         }
                     }
                 }
