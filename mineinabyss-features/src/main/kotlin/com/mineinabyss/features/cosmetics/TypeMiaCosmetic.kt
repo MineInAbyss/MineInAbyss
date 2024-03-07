@@ -35,7 +35,7 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
             }
 
             ClickType.RIGHT ->
-                if (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic)) {
+                if (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) {
                     if (cosmetic.isDyable) DyeMenu.openMenu(user, cosmetic)
                     else return super.run(user, config, clickType)
                 } else when (currency) {
