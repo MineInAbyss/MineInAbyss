@@ -25,13 +25,17 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
 
         when (clickType) {
             ClickType.LEFT -> {
-                if (!cosmetic.requiresPermission() || player.hasPermission(cosmetic.permission))
-                    if (cosmetic != currentCosmetic) user.addPlayerCosmetic(cosmetic)
-                    else user.removeCosmeticSlot(cosmetic.slot)
+                if (cosmetic == currentCosmetic) user.removeCosmeticSlot(cosmetic.slot)
+                else if (user.canEquipCosmetic(cosmetic)) {
+                    user.removeCosmeticSlot(cosmetic.slot)
+                    user.addPlayerCosmetic(cosmetic)
+                    if (cosmetic.requiresPermission() && !player.hasPermission(cosmetic.permission))
+                        player.closeInventory()
+                }
             }
 
             ClickType.RIGHT ->
-                if (cosmetic == currentCosmetic || !cosmetic.requiresPermission() || player.hasPermission(cosmetic.permission)) {
+                if (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic)) {
                     if (cosmetic.isDyable) DyeMenu.openMenu(user, cosmetic)
                     else return super.run(user, config, clickType)
                 } else when (currency) {
