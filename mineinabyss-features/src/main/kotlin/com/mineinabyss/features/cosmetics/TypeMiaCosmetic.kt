@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.luckPerms
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import me.lojosho.shaded.configurate.ConfigurationNode
@@ -35,26 +36,27 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
             }
 
             ClickType.RIGHT ->
-                if (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) {
-                    if (cosmetic.isDyable) DyeMenu.openMenu(user, cosmetic)
-                    else return super.run(user, config, clickType)
-                } else when (currency) {
-                    "mitty_token" -> {
-                        if (data.mittyTokensHeld < cost) return player.error("You don't have enough Mitty Tokens!")
-                        data.mittyTokensHeld -= cost
-                        player.success("You have purchased the cosmetic for $cost Mitty Tokens!")
-                    }
+                when {
+                    cosmetic.isDyable && (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) ->
+                        DyeMenu.openMenu(user, cosmetic)
+                    else -> when (currency) {
+                        "mitty_token" -> {
+                            if (data.mittyTokensHeld < cost) return player.error("You don't have enough :cosmetic_mitty_token:!")
+                            data.mittyTokensHeld -= cost
+                            player.success("You have purchased the cosmetic for $cost :cosmetic_mitty_token:!")
+                        }
 
-                    else -> {
-                        if (data.orthCoinsHeld < cost) return player.error("You don't have enough Orth Coins!")
-                        data.orthCoinsHeld -= cost
-                        player.success("You have purchased the cosmetic for $cost Orth Coins!")
+                        else -> {
+                            if (data.orthCoinsHeld < cost) return player.error("You don't have enough :cosmetic_orth_coin:!")
+                            data.orthCoinsHeld -= cost
+                            player.success("You have purchased the cosmetic for $cost :cosmetic_orth_coin:!")
+                        }
+                    }.apply {
+                        luckPerms.userManager.modifyUser(player.uniqueId) {
+                            it.data().add(Node.builder(cosmetic.permission).build())
+                        }
+                        super.run(user, config, clickType)
                     }
-                }.apply {
-                    luckPerms.userManager.modifyUser(player.uniqueId) {
-                        it.data().add(Node.builder(cosmetic.permission).build())
-                    }
-                    super.run(user, config, clickType)
                 }
 
             else -> super.run(user, config, clickType)
