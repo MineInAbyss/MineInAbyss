@@ -35,7 +35,7 @@ our [Setup and Contribution guide](https://github.com/MineInAbyss/MineInAbyss/wi
 - [Our shared platform](https://github.com/MineInAbyss/Idofront/releases/latest)
 - [DeeperWorld](https://github.com/MineInAbyss/DeeperWorld/releases/latest)
 - [Guiy-compose](https://github.com/MineInAbyss/guiy-compose/releases/latest)
-- [Geary](https://github.com/MineInAbyss/Geary/releases/latest)
+- [Geary](https://github.com/MineInAbyss/Geary-papermc/releases/latest)
 
 #### Optional:
 
