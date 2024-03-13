@@ -1,10 +1,10 @@
 plugins {
-    alias(libs.plugins.mia.kotlin.jvm)
-    alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.mia.copyjar)
-    alias(libs.plugins.mia.publication)
-    alias(libs.plugins.mia.autoversion)
-    alias(libs.plugins.mia.papermc)
+    alias(idofrontLibs.plugins.mia.kotlin.jvm)
+    alias(idofrontLibs.plugins.kotlinx.serialization)
+    alias(idofrontLibs.plugins.mia.copyjar)
+    alias(idofrontLibs.plugins.mia.publication)
+    alias(idofrontLibs.plugins.mia.autoversion)
+    alias(idofrontLibs.plugins.mia.papermc)
 }
 
 val mavenUser = if (project.hasProperty("mavenUser")) project.property("mavenUser") as String else System.getenv("MAVEN_USERNAME") ?: ""
@@ -33,37 +33,37 @@ allprojects {
     }
 
     dependencies {
-        val libs = rootProject.libs
+        val idofrontLibs = rootProject.idofrontLibs
         val miaLibs = rootProject.miaLibs
 
         // Shaded
-        compileOnly(libs.idofront.features)
-        compileOnly(libs.idofront.nms)
+        compileOnly(idofrontLibs.idofront.features)
+        compileOnly(idofrontLibs.idofront.nms)
 
         // Geary platform
         compileOnly(miaLibs.geary.papermc)
 
         // MineInAbyss platform
-        compileOnly(libs.bundles.idofront.core)
-        compileOnly(libs.kotlin.stdlib)
-        compileOnly(libs.kotlinx.serialization.json)
-        compileOnly(libs.kotlinx.serialization.kaml)
-        compileOnly(libs.kotlinx.coroutines)
-        compileOnly(libs.minecraft.mccoroutine)
-        compileOnly(libs.reflections)
-        compileOnly(libs.exposed.core) { isTransitive = false }
-        compileOnly(libs.exposed.dao) { isTransitive = false }
-        compileOnly(libs.exposed.jdbc) { isTransitive = false }
-        compileOnly(libs.exposed.javatime) { isTransitive = false }
-        compileOnly(libs.sqlite.jdbc)
-        compileOnly(libs.minecraft.anvilgui)
+        compileOnly(idofrontLibs.bundles.idofront.core)
+        compileOnly(idofrontLibs.kotlin.stdlib)
+        compileOnly(idofrontLibs.kotlinx.serialization.json)
+        compileOnly(idofrontLibs.kotlinx.serialization.kaml)
+        compileOnly(idofrontLibs.kotlinx.coroutines)
+        compileOnly(idofrontLibs.minecraft.mccoroutine)
+        compileOnly(idofrontLibs.reflections)
+        compileOnly(idofrontLibs.exposed.core) { isTransitive = false }
+        compileOnly(idofrontLibs.exposed.dao) { isTransitive = false }
+        compileOnly(idofrontLibs.exposed.jdbc) { isTransitive = false }
+        compileOnly(idofrontLibs.exposed.javatime) { isTransitive = false }
+        compileOnly(idofrontLibs.sqlite.jdbc)
+        compileOnly(idofrontLibs.minecraft.anvilgui)
 
         // Plugin libs
-        compileOnly(libs.minecraft.plugin.vault) { exclude(group = "org.bukkit") }
-        compileOnly(libs.minecraft.plugin.fawe.core)
-        compileOnly(libs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
-        compileOnly(libs.minecraft.plugin.protocollib)
-        compileOnly(libs.minecraft.plugin.modelengine)
+        compileOnly(idofrontLibs.minecraft.plugin.vault) { exclude(group = "org.bukkit") }
+        compileOnly(idofrontLibs.minecraft.plugin.fawe.core)
+        compileOnly(idofrontLibs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
+        compileOnly(idofrontLibs.minecraft.plugin.protocollib)
+        compileOnly(idofrontLibs.minecraft.plugin.modelengine)
 
         compileOnly(miaLibs.guiy)
         compileOnly(miaLibs.chatty)
