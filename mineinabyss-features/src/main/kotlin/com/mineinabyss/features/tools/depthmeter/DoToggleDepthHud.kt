@@ -1,31 +1,29 @@
 package com.mineinabyss.features.tools.depthmeter
 
 import com.mineinabyss.components.tools.ShowDepthMeterHud
-import com.mineinabyss.geary.annotations.optin.UnsafeAccessors
-import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.modules.GearyModule
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
-import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.accessors.Pointers
+import com.mineinabyss.geary.systems.builders.listener
+import com.mineinabyss.geary.systems.query.ListenerQuery
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
-class DoToggleDepthHud : GearyListener() {
-    private val Pointers.item by get<ItemStack>().on(target)
-    private val Pointers.action by family { has<ToggleDepthHud>() }.on(source)
+fun GearyModule.createToggleDepthHudAction() = listener(object : ListenerQuery() {
+    val item by get<ItemStack>()
+    override fun ensure() = source { has<ToggleDepthHud>() }
 
-    @OptIn(UnsafeAccessors::class)
-    override fun Pointers.handle() {
-        val item = item
-        if (target.entity.has<ShowDepthMeterHud>()) {
-            item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
-            item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-            target.entity.remove<ShowDepthMeterHud>()
-        } else {
-            item.removeEnchantment(Enchantment.ARROW_INFINITE)
-            item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
-            target.entity.setPersisting(ShowDepthMeterHud())
-        }
-        target.entity.encodeComponentsTo(item)
+}).exec {
+    val item = item
+    if (entity.has<ShowDepthMeterHud>()) {
+        item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1)
+        item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        entity.remove<ShowDepthMeterHud>()
+    } else {
+        item.removeEnchantment(Enchantment.ARROW_INFINITE)
+        item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+        entity.setPersisting(ShowDepthMeterHud())
     }
+    entity.encodeComponentsTo(item)
+
 }

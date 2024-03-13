@@ -12,11 +12,9 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 
 class GondolaFeature : Feature() {
-    override fun FeatureDSL.enable() {
-        geary.pipeline.addSystems(
-            LoadedGondolas,
-            GondolaTracker()
-        )
+    override fun FeatureDSL.enable() = geary.run {
+        LoadedGondolas
+        createGondolaTracker()
 
         mainCommand {
             "gondola"(desc = "Commands for gondolas") {

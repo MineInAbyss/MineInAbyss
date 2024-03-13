@@ -2,7 +2,6 @@ package com.mineinabyss.features.enchants
 
 import com.mineinabyss.features.enchants.enchantments.*
 import com.mineinabyss.geary.helpers.component
-import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.serialization.dsl.serializableComponents
 import com.mineinabyss.idofront.commands.arguments.intArg
@@ -24,10 +23,6 @@ class EnchantsFeature : Feature() {
             JawBreakerListener(),
             BaneOfKuongatariListener(),
             MagnetismListener(),
-        )
-
-        geary.pipeline.addSystems(
-            SoulSystem()
         )
 
         mainCommand {

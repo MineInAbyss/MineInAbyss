@@ -5,22 +5,24 @@ import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.modules.GearyModule
+import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.accessors.Pointers
+import com.mineinabyss.geary.systems.builders.listener
+import com.mineinabyss.geary.systems.query.ListenerQuery
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
 
-class ShowDepthSystem : GearyListener() {
-    private val Pointers.player by get<Player>().on(target)
-    private val Pointers.action by family { has<ShowDepth>() }.on(source)
 
-    override fun Pointers.handle() {
-        if (player.toGeary().has<ShowDepthMeterHud>()) return
+object ShowDepthSystem {
+    fun register() = geary.listener(object : ListenerQuery() {
+        val player by get<Player>()
+        override fun ensure() = source { has<ShowDepth>() }
+    }).exec {
+        if (player.toGeary().has<ShowDepthMeterHud>()) return@exec
         player.sendDepthMessage()
     }
 
@@ -70,7 +72,7 @@ class ShowDepthSystem : GearyListener() {
 }
 
 fun Location.getDepth(depthMeter: DepthMeter = DepthMeter()): Int {
-    return ShowDepthSystem().calculateDepth(
+    return ShowDepthSystem.calculateDepth(
         depthMeter.sectionXOffset,
         depthMeter.sectionYOffset,
         depthMeter.abyssStartingHeightInOrth,

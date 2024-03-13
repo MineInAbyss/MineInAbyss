@@ -1,16 +1,14 @@
 package com.mineinabyss.features.gondolas
 
 import com.mineinabyss.components.gondolas.UnlockedGondolas
-import com.mineinabyss.geary.annotations.optin.UnsafeAccessors
-import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.accessors.Pointers
+import com.mineinabyss.geary.modules.GearyModule
+import com.mineinabyss.geary.systems.builders.listener
+import com.mineinabyss.geary.systems.query.ListenerQuery
 import org.bukkit.entity.Player
 
-@OptIn(UnsafeAccessors::class)
-class GondolaTracker : GearyListener() {
-    val Pointers.player by get<Player>().whenSetOnTarget()
-
-    override fun Pointers.handle() {
-        event.entity.getOrSetPersisting { UnlockedGondolas() }
-    }
+fun GearyModule.createGondolaTracker() = listener(object : ListenerQuery() {
+    val player by get<Player>()
+    override fun ensure() = event.anySet(::player)
+}).exec {
+    event.entity.getOrSetPersisting { UnlockedGondolas() }
 }

@@ -1,16 +1,18 @@
 package com.mineinabyss.features.gondolas
 
 import com.mineinabyss.components.gondolas.Gondola
-import com.mineinabyss.geary.systems.GearyListener
-import com.mineinabyss.geary.systems.accessors.Pointers
+import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.systems.builders.listener
+import com.mineinabyss.geary.systems.query.ListenerQuery
 import kotlin.collections.set
 
-object LoadedGondolas : GearyListener() {
-    val Pointers.gondola by get<Gondola>().whenSetOnTarget()
-
-    val loaded = mutableMapOf<String, Gondola>()
-
-    override fun Pointers.handle() {
+object LoadedGondolas {
+    private val tracker = geary.listener(object : ListenerQuery() {
+        val gondola by get<Gondola>()
+        override fun ensure() = event.anySet(::gondola)
+    }).exec {
         loaded[gondola.name] = gondola
     }
+
+    val loaded = mutableMapOf<String, Gondola>()
 }

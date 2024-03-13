@@ -1,7 +1,6 @@
 package com.mineinabyss.features.npc.shopkeeping
 
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
-import com.mineinabyss.features.npc.shopkeeping.ShopKeeperQuery.key
 import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.inventory.guiy
@@ -18,7 +17,7 @@ class ShopKeepingFeature : Feature() {
 
         mainCommand {
             "shops" {
-                val shopKey by optionArg(options = ShopKeeperQuery.getKeys().map { it.toString() }) {
+                val shopKey by optionArg(options = ShopKeepers.getKeys().map { it.toString() }) {
                     parseErrorMessage = { "No such shopkeeper: $passed" }
                 }
                 playerAction {
@@ -33,10 +32,10 @@ class ShopKeepingFeature : Feature() {
                 1 -> listOf("shops").filter { it.startsWith(args[0]) }
                 2 -> {
                     when (args[0]) {
-                        "shops" -> ShopKeeperQuery.toList { it }.filter {
+                        "shops" -> ShopKeepers.getKeys().filter { key ->
                             val arg = args[1].lowercase()
-                            it.key.key.startsWith(arg) || it.key.full.startsWith(arg)
-                        }.map { it.key.toString() }
+                            key.key.startsWith(arg) || key.full.startsWith(arg)
+                        }.map { it.key }
 
                         else -> null
                     }
