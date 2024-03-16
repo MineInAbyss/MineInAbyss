@@ -10,7 +10,6 @@ import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import eu.endercentral.crazy_advancements.CrazyAdvancementsAPI
@@ -24,7 +23,7 @@ class AdvancementsFeature : FeatureWithContext<AdvancementsFeature.Context>(::Co
     class Context : Configurable<AdvancementConfig> {
         override val configManager = config("advancements", abyss.plugin.dataFolder.toPath(), AdvancementConfig(), onReload = {
             advancements.advancementManager.updateAdvancement()
-            logSuccess("Advancements reloaded")
+            abyss.logger.iSuccess("Advancements reloaded")
         })
         val advancementsListener = AdvancementsListener()
         val advancementManager: AdvancementManager get() = AdvancementManager.getAccessibleManager(ADVANCEMENT_NAMEKEY) ?: run { AdvancementManager(ADVANCEMENT_NAMEKEY).makeAccessible(); advancementManager }

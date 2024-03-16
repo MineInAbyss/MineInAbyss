@@ -19,7 +19,6 @@ import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
@@ -101,36 +100,56 @@ class PatreonFeature(val config: Config) : Feature() {
                                     PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build(),
                                 ).forEach { node ->
-                                    luckPerms.userManager.getUser(player.uniqueId)?.data()?.let {  nodeMap ->
-                                        nodeMap.toCollection().find { it.key == node.key }?.let { node -> nodeMap.remove(node) }
+                                    luckPerms.userManager.getUser(player.uniqueId)?.data()?.let { nodeMap ->
+                                        nodeMap.toCollection().find { it.key == node.key }
+                                            ?.let { node -> nodeMap.remove(node) }
                                         nodeMap.add(node)
                                     }
                                 }
 
                             } else {
                                 val c: PrefixNode = when (loc) {
-                                    "orth" -> PrefixNode.builder(":space_6:<#feac3b>Orth:space_2::$emote::space_2:>", 10)
+                                    "orth" -> PrefixNode.builder(
+                                        ":space_6:<#feac3b>Orth:space_2::$emote::space_2:>",
+                                        10
+                                    )
                                         .context(ImmutableContextSet.of("worldguard:region", "orth")).build()
 
-                                    "layerone" -> PrefixNode.builder(":space_6:<#c83038>Edge:space_2::$emote::space_2:>", 11)
+                                    "layerone" -> PrefixNode.builder(
+                                        ":space_6:<#c83038>Edge:space_2::$emote::space_2:>",
+                                        11
+                                    )
                                         .context(ImmutableContextSet.of("worldguard:region", "layerone")).build()
 
-                                    "layertwo" -> PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::$emote::space_2:>", 12)
+                                    "layertwo" -> PrefixNode.builder(
+                                        ":space_6:<#4c92ac>Forest:space_2::$emote::space_2:>",
+                                        12
+                                    )
                                         .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build()
 
-                                    "layerthree" -> PrefixNode.builder(":space_6:<#852d66>Fault:space_2::$emote::space_2:>", 13)
+                                    "layerthree" -> PrefixNode.builder(
+                                        ":space_6:<#852d66>Fault:space_2::$emote::space_2:>",
+                                        13
+                                    )
                                         .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build()
 
-                                    "layerfour" -> PrefixNode.builder(":space_6:<#852d66>Goblets:space_2::$emote::space_2:>", 14)
+                                    "layerfour" -> PrefixNode.builder(
+                                        ":space_6:<#852d66>Goblets:space_2::$emote::space_2:>",
+                                        14
+                                    )
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build()
 
-                                    "layerfive" -> PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
+                                    "layerfive" -> PrefixNode.builder(
+                                        ":space_6:<#434868>Sea:space_2::$emote::space_2:>",
+                                        15
+                                    )
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build()
 
                                     else -> PrefixNode.builder().build()
                                 }
-                                luckPerms.userManager.getUser(player.uniqueId)?.data()?.let {  nodeMap ->
-                                    nodeMap.toCollection().find { it.key == c.key }?.let { node -> nodeMap.remove(node) }
+                                luckPerms.userManager.getUser(player.uniqueId)?.data()?.let { nodeMap ->
+                                    nodeMap.toCollection().find { it.key == c.key }
+                                        ?.let { node -> nodeMap.remove(node) }
                                     nodeMap.add(c)
                                 }
                             }
@@ -150,9 +169,16 @@ class PatreonFeature(val config: Config) : Feature() {
                                 val preResetDatas = abyss.plugin.server.offlinePlayers.map { offlinePlayer ->
                                     runCatching {
                                         val offlinePdc = offlinePlayer.getOfflinePDC() ?: return@map null
-                                        val heldTokens = (offlinePlayer.player?.playerData ?: offlinePdc.decode<PlayerData>())?.mittyTokensHeld ?: 0
-                                        val wasPatreon = ((offlinePlayer.player?.toGeary()?.get<Patreon>() ?: offlinePdc.decode<Patreon>())?.tier ?: 0) > 0
-                                        PreResetPatreon(offlinePlayer.name.toString(), offlinePlayer.uniqueId, heldTokens, wasPatreon)
+                                        val heldTokens = (offlinePlayer.player?.playerData
+                                            ?: offlinePdc.decode<PlayerData>())?.mittyTokensHeld ?: 0
+                                        val wasPatreon = ((offlinePlayer.player?.toGeary()?.get<Patreon>()
+                                            ?: offlinePdc.decode<Patreon>())?.tier ?: 0) > 0
+                                        PreResetPatreon(
+                                            offlinePlayer.name.toString(),
+                                            offlinePlayer.uniqueId,
+                                            heldTokens,
+                                            wasPatreon
+                                        )
                                     }.getOrNull()
                                 }.filterNotNull().toSet()
                                     .sortedWith(compareByDescending(PreResetPatreon::wasActivePatreon)
@@ -160,10 +186,11 @@ class PatreonFeature(val config: Config) : Feature() {
 
                                 abyss.dataPath
                                     .resolve("preResetPatreons.txt")
-                                    .writeLines(preResetDatas.map { runCatching { json.encodeToString(it) }.getOrNull() ?: it.toString() })
-                                logSuccess("done!")
+                                    .writeLines(preResetDatas.map {
+                                        runCatching { json.encodeToString(it) }.getOrNull() ?: it.toString()
+                                    })
+                                abyss.logger.iSuccess("done!")
                             }
-
                         }
                     }
                     "reset_extra_token" {

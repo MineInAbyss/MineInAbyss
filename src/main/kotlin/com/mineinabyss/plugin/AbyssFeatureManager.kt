@@ -19,7 +19,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 internal val featureManager by DI.observe<AbyssFeatureManager>()
 
 // very meta
-class AbyssFeatureManager(val plugin: JavaPlugin) : FeatureManager<AbyssContext>({ AbyssContext(plugin) }) {
+class AbyssFeatureManager(plugin: JavaPlugin) : FeatureManager<AbyssContext>(plugin, { AbyssContext(plugin) }) {
     override fun FeatureDSL.enable() = actions {
         transaction(abyss.db) {
             //addLogger(StdOutSqlLogger)

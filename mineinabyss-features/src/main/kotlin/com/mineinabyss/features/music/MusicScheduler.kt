@@ -7,7 +7,6 @@ import com.mineinabyss.components.music.ScheduledMusicJob
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.idofront.messaging.logInfo
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import kotlinx.coroutines.delay
@@ -31,7 +30,7 @@ object MusicScheduler {
     fun scheduleMusicPlaying(player: Player) {
         val musicPlayingJob = abyss.plugin.launch {
             val waitOnLogin = chooseTimeBetween(conf.minWaitTimeOnLogin, conf.maxWaitTimeOnLogin)
-            logInfo("Starting music scheduler for ${player.name}, waiting $waitOnLogin before playing.")
+            abyss.logger.i("Starting music scheduler for ${player.name}, waiting $waitOnLogin before playing.")
             delay(waitOnLogin)
             while (player.isConnected) {
                 val playable = getPlayableSongsAtLocation(player.location)
@@ -39,23 +38,23 @@ object MusicScheduler {
                 else {
                     val recentlyPlayed = player.toGeary().getOrSet { RecentlyPlayed(setOf()) }
                     val notRecentlyPlayed = playable.filter { it !in recentlyPlayed.songs }
-                    logInfo("Recently played: $recentlyPlayed")
-                    logInfo("Playable: $playable")
+                    abyss.logger.i("Recently played: $recentlyPlayed")
+                    abyss.logger.i("Playable: $playable")
                     val chooseFrom = notRecentlyPlayed.takeIf { notRecentlyPlayed.isEmpty() }?.apply {
                         player.toGeary().set(RecentlyPlayed(setOf()))
                     } ?: playable
                     val song = chooseFrom.randomOrNull()
-                    logInfo("Playing $song")
+                    abyss.logger.i("Playing $song")
 
                     delay(song?.let {
                         playSongIfNotPlaying(song, player)
 
                         // Choose a random wait time as defined in config
                         val wait = chooseTimeBetween(conf.minSongWaitTime, conf.maxSongWaitTime)
-                        logInfo("Finished playing $song, waiting $wait before playing another.")
+                        abyss.logger.i("Finished playing $song, waiting $wait before playing another.")
                         wait
                     } ?: run {
-                        logInfo("No songs to play, waiting ${conf.maxSongWaitTime} before trying again.")
+                        abyss.logger.i("No songs to play, waiting ${conf.maxSongWaitTime} before trying again.")
                         conf.maxSongWaitTime
                     })
                 }

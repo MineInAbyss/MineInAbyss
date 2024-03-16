@@ -8,7 +8,6 @@ import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.logSuccess
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
@@ -17,7 +16,7 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
     class Context : Configurable<OkiboTravelConfig> {
         override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
             spawnOkiboMaps()
-            logSuccess("Okibo-Context reloaded")
+            abyss.logger.iSuccess("Okibo-Context reloaded")
         })
         val okiboTravelListener = OkiboTravelListener()
     }

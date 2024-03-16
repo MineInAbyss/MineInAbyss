@@ -9,6 +9,7 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.messaging.observeLogger
 import com.mineinabyss.idofront.plugin.Services
 import github.scarsz.discordsrv.DiscordSRV
 import net.milkbowl.vault.economy.Economy
@@ -26,6 +27,7 @@ class AbyssContext(
     override val plugin: JavaPlugin,
 ) : FeatureDSL(mainCommandProvider = { ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss", it) }),
     Configurable<AbyssFeatureConfig> {
+    val logger by plugin.observeLogger()
     val dataPath: Path = plugin.dataFolder.toPath()
 
     override val configManager = config<AbyssFeatureConfig>(
