@@ -12,18 +12,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug Environment Variables
-        run: |
-          echo "MAVEN_USERNAME: $MAVEN_USERNAME"
-          echo "MAVEN_PASSWORD: $MAVEN_PASSWORD"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - uses: actions/checkout@v3
-
-      - uses: MineInAbyss/publish-action@master
+      - uses: MineInAbyss/publish-action@develop
         with:
           maven-metadata-url: https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml
-          pages-path: build/dokka/htmlMultiModule/
-          dokka: dokkaHtmlMultiModule
+#          pages-path: build/dokka/htmlMultiModule/
+#          dokka: dokkaHtmlMultiModule
           maven-username: ${{ secrets.MAVEN_USERNAME }}
           maven-password: ${{ secrets.MAVEN_PASSWORD }}
           release-files: |
