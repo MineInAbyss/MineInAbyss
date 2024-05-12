@@ -6,6 +6,7 @@ import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.guiy.inventory.GuiyInventoryHolder
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.messaging.error

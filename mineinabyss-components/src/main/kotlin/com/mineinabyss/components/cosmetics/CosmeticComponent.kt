@@ -1,6 +1,7 @@
 package com.mineinabyss.components.cosmetics
 
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.getOrSetPersisting
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player

@@ -2,7 +2,7 @@ package com.mineinabyss.features
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
-import com.mineinabyss.geary.serialization.dsl.serializableComponents
+import com.mineinabyss.geary.serialization.serializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config

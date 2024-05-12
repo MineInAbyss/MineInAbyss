@@ -31,7 +31,7 @@ data class ParticleAscensionEffect(
     private fun addParticlesAroundHead(player: Player, particle: Particle) {
         val (x, y, z) = player.eyeLocation
         val particleData: Any = when (particle) {
-            Particle.REDSTONE -> Particle.DustOptions(Color.RED, 1f)
+            Particle.DUST -> Particle.DustOptions(Color.RED, 1f)
             else -> Unit
         }
         if (particleData == Unit)

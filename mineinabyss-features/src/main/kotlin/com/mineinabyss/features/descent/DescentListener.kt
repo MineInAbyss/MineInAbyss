@@ -5,6 +5,7 @@ import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player

@@ -9,7 +9,6 @@ import com.mineinabyss.features.curse.CurseFeature
 import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
-import com.mineinabyss.features.enchants.EnchantsFeature
 import com.mineinabyss.features.exp.ExpFeature
 import com.mineinabyss.features.gondolas.GondolaFeature
 import com.mineinabyss.features.guilds.GuildFeature
@@ -57,7 +56,6 @@ class AbyssFeatureConfig(
     val custom_hud: Toggle = Toggle(),
     val descent: Toggle = Toggle(),
     val displayLocker: DisplayLockerFeature.Config = DisplayLockerFeature.Config(),
-    val enchants: Toggle = Toggle(),
     val exp: Toggle = Toggle(),
     val gondolas: Toggle = Toggle(),
     val guilds: Toggle = Toggle(),
@@ -92,7 +90,6 @@ class AbyssFeatureConfig(
             add(custom_hud.enabled) { CustomHudFeature() }
             add(descent.enabled) { DescentFeature() }
             add(displayLocker.enabled) { DisplayLockerFeature(displayLocker) }
-            add(enchants.enabled) { EnchantsFeature() }
             add(exp.enabled) { ExpFeature() }
             add(gondolas.enabled) { GondolaFeature() }
             add(guilds.enabled) { GuildFeature() }

@@ -11,6 +11,7 @@ import com.mineinabyss.features.helpers.equipCosmeticBackPack
 import com.mineinabyss.features.helpers.isInventoryFull
 import com.mineinabyss.features.helpers.unequipCosmeticBackpack
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.event.Event

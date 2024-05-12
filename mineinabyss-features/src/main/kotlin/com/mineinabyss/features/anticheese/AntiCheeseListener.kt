@@ -45,7 +45,7 @@ class AntiCheeseListener : Listener {
     fun EntityPotionEffectEvent.onPlayerHit() {
         val player = entity as? Player ?: return
         if (cause != Cause.PLUGIN && cause != Cause.COMMAND) {
-            if (newEffect?.type == PotionEffectType.DAMAGE_RESISTANCE) {
+            if (newEffect?.type == PotionEffectType.RESISTANCE) {
                 isCancelled = true
                 player.error("The <b>Resistance Effect</b> has been disabled")
             } else if (newEffect?.type == PotionEffectType.SLOW_FALLING) {

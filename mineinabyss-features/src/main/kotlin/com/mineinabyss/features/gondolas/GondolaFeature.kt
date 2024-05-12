@@ -3,6 +3,7 @@ package com.mineinabyss.features.gondolas
 import com.mineinabyss.components.gondolas.UnlockedGondolas
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction

@@ -4,6 +4,7 @@ import com.mineinabyss.chatty.components.chattyNickname
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.helpers.luckpermGroups
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

@@ -11,6 +11,7 @@ import com.mineinabyss.features.guilds.extensions.guildChat
 import com.mineinabyss.features.guilds.extensions.guildChatId
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

@@ -7,6 +7,7 @@ import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.protocolburrito.dsl.sendTo
+import io.papermc.paper.adventure.PaperAdventure
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
@@ -75,11 +76,11 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     )
     PacketContainer.fromPacket(spawnMapPacket).sendTo(this)
 
-    val txt = Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(okiboMap.text.miniMsg()))
+    val txt = PaperAdventure.asVanilla(okiboMap.text.miniMsg())  ?: Component.empty()
     val metaPacket = ClientboundSetEntityDataPacket(
         entityId, listOf(
             SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
-            SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, txt ?: Component.empty()),
+            SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, txt),
             SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
         )
     )
@@ -116,7 +117,7 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
 
             val iconMetaPacket = ClientboundSetEntityDataPacket(
                 iconEntityId, listOf(
-                    SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, Component.Serializer.fromJson(GsonComponentSerializer.gson().serialize(it.text.miniMsg())) ?: Component.empty()),
+                    SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(it.text.miniMsg()) ?: Component.empty()),
                     SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
                 )
             )

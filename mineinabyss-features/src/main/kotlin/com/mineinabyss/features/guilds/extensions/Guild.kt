@@ -14,6 +14,7 @@ import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success

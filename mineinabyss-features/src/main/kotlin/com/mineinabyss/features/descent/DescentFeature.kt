@@ -2,6 +2,7 @@ package com.mineinabyss.features.descent
 
 import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature

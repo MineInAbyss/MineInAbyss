@@ -14,6 +14,7 @@ import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg

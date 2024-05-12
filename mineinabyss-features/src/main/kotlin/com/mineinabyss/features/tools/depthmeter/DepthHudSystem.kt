@@ -1,27 +1,22 @@
 package com.mineinabyss.features.tools.depthmeter
 
 import com.mineinabyss.components.tools.ShowDepthMeterHud
-import com.mineinabyss.geary.datatypes.GearyEntity
-import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.modules.GearyModule
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.datastore.decodePrefabs
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.geary.systems.builders.cachedQuery
+import com.mineinabyss.geary.systems.builders.cache
 import com.mineinabyss.geary.systems.builders.system
 import com.mineinabyss.geary.systems.query.GearyQuery
-import com.mineinabyss.geary.systems.query.ListenerQuery
+import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.time.ticks
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareGrindstoneEvent
 
-fun GearyModule.createDepthHudSystem() = system(object : ListenerQuery() {
-    val hudShown by get<ShowDepthMeterHud>()
-
-}).every(5.ticks).execOnAll {
-    val oldPlayersWithHud = hudEnabledQuery.entities().toSet()
+fun GearyModule.createDepthHudSystem() = system(query<ShowDepthMeterHud>()).every(5.ticks).execOnAll {
+    /*val oldPlayersWithHud = hudEnabledQuery.entities().toSet()
     val newPlayersWithHud = mutableSetOf<GearyEntity>()
     forEach {
         val player = entity.parent ?: return@forEach
@@ -34,10 +29,10 @@ fun GearyModule.createDepthHudSystem() = system(object : ListenerQuery() {
     }
     newPlayersWithHud.minus(oldPlayersWithHud).forEach {
         it.set(ShowDepthMeterHud())
-    }
+    }*/
 }
 
-private val hudEnabledQuery = geary.cachedQuery(object : GearyQuery() {
+private val hudEnabledQuery = geary.cache(object : GearyQuery() {
     override fun ensure() = this {
         has<Player>()
         has<ShowDepthMeterHud>()

@@ -12,7 +12,7 @@ import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.tracking.entities.helpers.GearyMobPrefabQuery
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.configuration.components.Prefab
-import com.mineinabyss.geary.systems.builders.cachedQuery
+import com.mineinabyss.geary.systems.builders.cache
 import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
@@ -34,9 +34,9 @@ class ShopKeeperQuery : GearyQuery() {
 }
 
 object ShopKeepers {
-    val query = geary.cachedQuery(ShopKeeperQuery())
+    val query = geary.cache(ShopKeeperQuery())
 
-    fun getKeys(): List<PrefabKey> = query.map { key }
+    fun getKeys(): List<PrefabKey> = query.mapWithEntity { key }.map { it.data }
 }
 
 

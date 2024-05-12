@@ -1,11 +1,11 @@
 [versions]
-gearyPaper = "0.30.0"
-guiy = "0.9.3"
-deeperworld = "0.10.0"
-chatty = "0.7.39"
+gearyPaper = "0.30-dev"
+guiy = "0.9.4"
+deeperworld = "0.11.0"
+chatty = "0.8-dev"
 protocolburrito = "0.9.0"
 eternalfortune = "0.4-SNAPSHOT"
-packy = "0.3.20"
+packy = "0.4.3"
 blocky = "0.9.9"
 
 

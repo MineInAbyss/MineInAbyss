@@ -7,6 +7,7 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import io.papermc.paper.event.player.PlayerItemFrameChangeEvent

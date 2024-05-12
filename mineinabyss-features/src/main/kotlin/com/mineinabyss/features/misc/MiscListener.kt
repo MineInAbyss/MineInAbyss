@@ -34,7 +34,7 @@ class MiscListener : Listener {
         val entity = entity as? ThrownPotion ?: return
         val player = entity.shooter as? Player ?: return
         if (hitEntity !is ItemFrame) return
-        if (PotionEffectType.INVISIBILITY !in entity.potionMeta.basePotionType.potionEffects.map { it.type }) return
+        if (PotionEffectType.INVISIBILITY !in (entity.potionMeta.basePotionType?.potionEffects?.map { it.type } ?: emptyList())) return
         hitEntity?.location?.getNearbyEntitiesByType(ItemFrame::class.java, 1.0)?.forEach { frame ->
             val lockable = frame.toGeary().get<LockDisplayItem>()
             if (lockable?.lockState == true && player.uniqueId !in lockable.allowedAccess) return@forEach

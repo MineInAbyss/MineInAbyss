@@ -2,19 +2,16 @@ package com.mineinabyss.features.tools.grapplinghook
 
 import com.mineinabyss.components.tools.grappling.*
 import com.mineinabyss.geary.modules.GearyModule
+import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.systems.builders.listener
-import com.mineinabyss.geary.systems.query.ListenerQuery
+import com.mineinabyss.geary.systems.builders.observeWithData
+import com.mineinabyss.geary.systems.query.query
 import org.bukkit.entity.*
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 
-fun GearyModule.createHookAction() = listener(object : ListenerQuery() {
-    val player by get<Player>()
-    val grapplingHook by source.get<GrapplingHook>()
-
-}).exec {
+fun GearyModule.createHookAction() = geary.observeWithData<GrapplingHook>().exec(query<Player>()) { (player) ->
     player.swingMainHand()
     if (player.uniqueId in hookMap) {
         val playerHook = hookMap[player.uniqueId]!!
@@ -28,7 +25,7 @@ fun GearyModule.createHookAction() = listener(object : ListenerQuery() {
     val lookDir = player.eyeLocation.direction
     val hook = player.world.spawn(player.eyeLocation.add(lookDir), Arrow::class.java) { hook ->
         hook.isPersistent = false
-        hook.velocity = lookDir.multiply(grapplingHook.hookSpeed * 2.0)
+        hook.velocity = lookDir.multiply(event.hookSpeed * 2.0)
         hook.isSilent = true
         hook.shooter = player
     }
@@ -38,7 +35,7 @@ fun GearyModule.createHookAction() = listener(object : ListenerQuery() {
     val bat = summonBat(player)
     bat.toGeary().add<GrapplingHookEntity>()
     player.addPassenger(bat)
-    val playerHook = PlayerGrapple(hook, grapplingHook, player, bat)
+    val playerHook = PlayerGrapple(hook, event, player, bat)
     playerHook.sendGrappleLeash()
     hookMap[player.uniqueId] = playerHook
 

@@ -2,24 +2,23 @@ package com.mineinabyss.features.relics
 
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.geary.datatypes.GearyEntity
+import com.mineinabyss.geary.helpers.entity
 import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.modules.GearyModule
 import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.systems.builders.cachedQuery
+import com.mineinabyss.geary.systems.builders.cache
 import com.mineinabyss.geary.systems.builders.system
 import com.mineinabyss.geary.systems.query.GearyQuery
-import com.mineinabyss.geary.systems.query.ListenerQuery
+import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.time.ticks
 import org.bukkit.entity.Player
 
-fun GearyModule.trackStarCompassHudOnPlayersSystem() = system(object : ListenerQuery() {
-    private val hudShown by get<ShowStarCompassHud>()
-}).every(5.ticks).execOnAll {
-    val oldPlayersWithHud = hudEnabledQuery.entities().toSet()
+fun GearyModule.trackStarCompassHudOnPlayersSystem() = system(query<ShowStarCompassHud>()).every(5.ticks).execOnAll {
+    /*val oldPlayersWithHud = hudEnabledQuery.entities().toSet()
     val newPlayersWithHud = mutableSetOf<GearyEntity>()
 
     forEach {
-        val player = entity.parent ?: return@forEach
+        val player = this. . parent ?: return@forEach
         newPlayersWithHud += player
     }
 
@@ -29,11 +28,11 @@ fun GearyModule.trackStarCompassHudOnPlayersSystem() = system(object : ListenerQ
     }
     newPlayersWithHud.minus(oldPlayersWithHud).forEach {
         it.set(ShowStarCompassHud())
-    }
+    }*/
 
 }
 
-private val hudEnabledQuery = geary.cachedQuery(object : GearyQuery() {
+private val hudEnabledQuery = geary.cache(object : GearyQuery() {
     val player by get<Player>()
     val hudShown by get<ShowStarCompassHud>()
 })
