@@ -5,6 +5,7 @@ import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.EntityEffect
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.block.BlockFace

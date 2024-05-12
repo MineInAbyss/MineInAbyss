@@ -34,7 +34,7 @@ fun createAdvancementTree(id: String, advancement: CustomAdvancement): Array<Adv
 
     val rootAdvancement = Advancement(NameKey("mineinabyss", id), display, *advancement.flags)
     val children = advancement.children.map { createChildAdvancements(rootAdvancement, it.key, it.value) }.flatten().toSet()
-    abyss.logger.iSuccess("Created advancement $id")
+    abyss.logger.s("Created advancement $id")
     return (setOf(rootAdvancement) + children).toTypedArray()
 }
 

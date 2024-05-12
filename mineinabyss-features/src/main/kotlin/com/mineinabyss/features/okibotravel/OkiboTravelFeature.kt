@@ -16,7 +16,7 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
     class Context : Configurable<OkiboTravelConfig> {
         override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
             spawnOkiboMaps()
-            abyss.logger.iSuccess("Okibo-Context reloaded")
+            abyss.logger.s("Okibo-Context reloaded")
         })
         val okiboTravelListener = OkiboTravelListener()
     }

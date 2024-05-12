@@ -189,7 +189,7 @@ class PatreonFeature(val config: Config) : Feature() {
                                     .writeLines(preResetDatas.map {
                                         runCatching { json.encodeToString(it) }.getOrNull() ?: it.toString()
                                     })
-                                abyss.logger.iSuccess("done!")
+                                abyss.logger.s("done!")
                             }
                         }
                     }

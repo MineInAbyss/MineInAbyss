@@ -23,7 +23,7 @@ class AdvancementsFeature : FeatureWithContext<AdvancementsFeature.Context>(::Co
     class Context : Configurable<AdvancementConfig> {
         override val configManager = config("advancements", abyss.plugin.dataFolder.toPath(), AdvancementConfig(), onReload = {
             advancements.advancementManager.updateAdvancement()
-            abyss.logger.iSuccess("Advancements reloaded")
+            abyss.logger.s("Advancements reloaded")
         })
         val advancementsListener = AdvancementsListener()
         val advancementManager: AdvancementManager get() = AdvancementManager.getAccessibleManager(ADVANCEMENT_NAMEKEY) ?: run { AdvancementManager(ADVANCEMENT_NAMEKEY).makeAccessible(); advancementManager }
