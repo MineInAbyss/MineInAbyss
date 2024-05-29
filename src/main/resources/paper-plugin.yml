@@ -97,3 +97,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    PlaceholderAPI:
+      required: false
+      load: BEFORE
+      join-classpath: true
