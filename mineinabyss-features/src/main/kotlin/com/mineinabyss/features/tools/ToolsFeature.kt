@@ -1,7 +1,6 @@
 package com.mineinabyss.features.tools
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.features.tools.depthmeter.DepthMeterBukkitListener
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.createDepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.createToggleDepthHudAction
@@ -57,7 +56,6 @@ class ToolsFeature : Feature() {
         plugin.listeners(
             SickleListener(),
             GrapplingHookListener(),
-            DepthMeterBukkitListener(),
         )
     }
 }

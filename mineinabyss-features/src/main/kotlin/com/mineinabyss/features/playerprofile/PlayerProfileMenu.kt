@@ -12,6 +12,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
+import com.mineinabyss.guiy.inventory.LocalGuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -28,7 +29,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Composable
-fun GuiyOwner.PlayerProfile(viewer: Player, player: Player) {
+fun PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon = player.toGeary().has<Patreon>()
     val titleName = Component.text(player.name).font(Key.key("default")).color(NamedTextColor.WHITE)

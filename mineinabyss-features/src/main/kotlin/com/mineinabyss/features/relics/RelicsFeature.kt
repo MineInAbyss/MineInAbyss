@@ -10,6 +10,6 @@ class RelicsFeature : Feature() {
         toggleStarCompassHudAction()
         trackStarCompassHudOnPlayersSystem()
 
-        plugin.listeners(StarCompassBukkitListener())
+        Unit
     }
 }

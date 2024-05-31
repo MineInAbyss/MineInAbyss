@@ -10,30 +10,25 @@ import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.geary.systems.builders.observe
 import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.items.editItemMeta
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 
 
 fun GearyModule.toggleStarCompassHudAction() = observe<ToggleStarCompassHud>()
     .exec(query<ItemStack>()) { (item) ->
-        val item = item
         val player = entity.parent?.get<Player>() ?: return@exec
         if (entity.has<ShowStarCompassHud>()) {
-            item.addUnsafeEnchantment(Enchantment.INFINITY, 1)
-            item.addItemFlags(ItemFlag.HIDE_ENCHANTS)
             item.editItemMeta<CompassMeta> {
+                setEnchantmentGlintOverride(true)
                 lodestone = player.location.section?.centerLocation
                 isLodestoneTracked = false
             }
             entity.remove<ShowStarCompassHud>()
         } else {
             entity.setPersisting(ShowStarCompassHud())
-            item.removeEnchantment(Enchantment.INFINITY)
-            item.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
             item.editItemMeta<CompassMeta> {
+                setEnchantmentGlintOverride(false)
                 lodestone = null
                 isLodestoneTracked = false
             }

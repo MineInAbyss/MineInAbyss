@@ -18,8 +18,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import java.nio.file.Path
 
-/** A reference to the MineInAbyss plugin */
-//val mineInAbyss: MineInAbyssPlugin by lazy { Bukkit.getPluginManager().getPlugin("MineInAbyss") as MineInAbyssPlugin }
 val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 val abyss by DI.observe<AbyssContext>()
 
@@ -52,9 +50,7 @@ class AbyssContext(
     val isGSitLoaded get() = plugin.server.pluginManager.isPluginEnabled("GSit")
     val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
-    val isMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("MCCosmetics")
     val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
-    val isMobzyEnabled get() = plugin.server.pluginManager.isPluginEnabled("Mobzy")
 
     val econ: Economy? = Services.getOrNull<Economy>()
 

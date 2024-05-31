@@ -7,6 +7,7 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
+import com.mineinabyss.guiy.inventory.LocalGuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.navigation.Navigator
@@ -58,10 +59,11 @@ fun PreviousPageButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuiyOwner.ShopMainMenu(player: Player, shopKeeper: ShopKeeper) {
-    val scope = remember { ShopUIScope(player, this, shopKeeper) }
+fun ShopMainMenu(player: Player, shopKeeper: ShopKeeper) {
+    val owner = LocalGuiyOwner.current
+    val scope = remember { ShopUIScope(player, owner, shopKeeper) }
     scope.apply {
-        nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
+        nav.withScreen(setOf(player), onEmpty = owner::exit) { screen ->
             Chest(
                 setOf(player),
                 screen.title,

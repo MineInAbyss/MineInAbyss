@@ -68,7 +68,6 @@ allprojects {
         compileOnly(miaLibs.guiy)
         compileOnly(miaLibs.chatty)
         compileOnly(miaLibs.deeperworld)
-        compileOnly(miaLibs.protocolburrito)
         compileOnly(miaLibs.eternalfortune)
         compileOnly(miaLibs.packy)
         compileOnly(miaLibs.blocky)

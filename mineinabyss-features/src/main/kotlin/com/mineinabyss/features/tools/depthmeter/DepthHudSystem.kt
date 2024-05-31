@@ -38,13 +38,3 @@ private val hudEnabledQuery = geary.cache(object : GearyQuery() {
         has<ShowDepthMeterHud>()
     }
 })
-
-class DepthMeterBukkitListener : Listener {
-    @EventHandler
-    fun PrepareGrindstoneEvent.onGrindDepthMeter() {
-        if (this.result?.itemMeta?.persistentDataContainer?.decodePrefabs()
-                ?.contains(PrefabKey.of("mineinabyss:depth_meter")) == true
-        )
-            result = null
-    }
-}

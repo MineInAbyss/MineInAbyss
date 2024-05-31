@@ -14,6 +14,7 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.GuiyOwner
+import com.mineinabyss.guiy.inventory.LocalGuiyOwner
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -77,10 +78,11 @@ class GuildUIScope(
 }
 
 @Composable
-fun GuiyOwner.GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
-    val scope = remember { GuildUIScope(player, this) }
+fun GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
+    val owner = LocalGuiyOwner.current
+    val scope = remember { GuildUIScope(player, owner) }
     scope.apply {
-        nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
+        nav.withScreen(setOf(player), onEmpty = owner::exit) { screen ->
             Chest(
                 setOf(player),
                 screen.title,

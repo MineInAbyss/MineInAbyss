@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.canvases.LocalInventory
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.clickable
+import com.mineinabyss.guiy.modifiers.click.clickable
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 

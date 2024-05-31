@@ -3,7 +3,7 @@ plugins {
     id("com.mineinabyss.conventions.papermc")
     id("com.mineinabyss.conventions.nms")
     kotlin("plugin.serialization")
-    alias(idofrontLibs.plugins.compose)
+    alias(idofrontLibs.plugins.compose.compiler)
 }
 
 dependencies {

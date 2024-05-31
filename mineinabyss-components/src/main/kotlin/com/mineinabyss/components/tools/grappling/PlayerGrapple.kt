@@ -1,8 +1,8 @@
 package com.mineinabyss.components.tools.grappling
 
 import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.PacketContainer
-import com.mineinabyss.protocolburrito.dsl.sendTo
 import kotlinx.coroutines.Job
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -42,7 +42,7 @@ data class PlayerGrapple(
     private val leashPacket = PacketContainer(PacketType.Play.Server.ATTACH_ENTITY).apply {
         integers.write(0, bat.entityId).write(1, hook.entityId)
     }
-    fun sendGrappleLeash() = Bukkit.getOnlinePlayers().forEach { leashPacket.sendTo(it) }
+    fun sendGrappleLeash() = Bukkit.getOnlinePlayers().forEach { ProtocolLibrary.getProtocolManager().sendServerPacket(it, leashPacket) }
 
     fun isBeneathHook() = abs(hook.location.x - player.location.x) < 1 && abs(hook.location.z - player.location.z) < 1 && hook.location.y > player.eyeLocation.y
     fun isOverHook() = hook.location.y < player.eyeLocation.y

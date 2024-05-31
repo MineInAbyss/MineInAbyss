@@ -1,12 +1,12 @@
 [versions]
-gearyPaper = "0.30.1-dev.10"
-guiy = "0.9.4"
+gearyPaper = "0.30.1"
+guiy = "0.10.0"
 deeperworld = "0.11.0"
-chatty = "0.8-dev"
-protocolburrito = "0.9.0"
+chatty = "0.8.0"
+protocolburrito = "0.10.0"
 eternalfortune = "0.4-SNAPSHOT"
-packy = "0.4.3"
-blocky = "0.9.9"
+packy = "0.5.2"
+blocky = "0.9.13-dev.22"
 
 
 [libraries]
@@ -15,6 +15,7 @@ deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperwor
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
 protocolburrito = { module = "com.mineinabyss:protocolburrito", version.ref = "protocolburrito" }
+
 eternalfortune = { module = "com.mineinabyss:eternalfortune", version.ref = "eternalfortune" }
 packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
 blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
