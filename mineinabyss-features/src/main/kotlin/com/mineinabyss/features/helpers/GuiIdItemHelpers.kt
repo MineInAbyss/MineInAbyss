@@ -13,12 +13,12 @@ import org.bukkit.inventory.meta.SkullMeta
 
 object TitleItem {
     fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
-        displayName(name.miniMsg())
+        itemName(name.miniMsg())
         lore(lore.toList().map { it.miniMsg() })
         setCustomModelData(1)
     }
     fun of(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
-        displayName(name)
+        itemName(name)
         lore(lore.toList())
         setCustomModelData(1)
     }
@@ -41,9 +41,8 @@ fun OfflinePlayer?.head(
     isLarge: Boolean = false,
     isCenterOfInv: Boolean = false,
 ): ItemStack {
-    return ItemStack(Material.PLAYER_HEAD).editItemMeta {
-        this as SkullMeta
-        displayName(title)
+    return ItemStack(Material.PLAYER_HEAD).editItemMeta<SkullMeta> {
+        itemName(title)
         lore(lore.toList())
         if (isFlat) setCustomModelData(1)
         if (isLarge) setCustomModelData(2)

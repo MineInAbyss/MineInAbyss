@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
+import com.mineinabyss.idofront.util.to
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
 import com.mineinabyss.features.helpers.*
@@ -19,6 +20,7 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.idofront.util.toList
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -31,8 +33,8 @@ import org.bukkit.inventory.ItemStack
 @Composable
 fun PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
-    val isPatreon = player.toGeary().has<Patreon>()
-    val titleName = Component.text(player.name).font(Key.key("default")).color(NamedTextColor.WHITE)
+    val isPatreon by remember { mutableStateOf(player.toGeary().has<Patreon>()) }
+    val titleName = Component.text(player.name, NamedTextColor.WHITE)
     val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
@@ -40,19 +42,19 @@ fun PlayerProfile(viewer: Player, player: Player) {
     val rankComponent = Component.text(":space_-32:${DisplayRanks(player)}")
 
     Chest(setOf(viewer),
-        titleComponent.append(titleName).append(rankComponent),
+        Component.textOfChildren(titleComponent, titleName, rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
         ToggleArmorVisibility {
             if (player == viewer) {
                 player.playerData.displayProfileArmor = !hideArmorIcons
-                hideArmorIcons = player.playerData.displayProfileArmor
+                hideArmorIcons = !hideArmorIcons
             }
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
-            if (isPatreon) MittyTokenBalance(player)
+            if (!isPatreon) MittyTokenBalance(player)
             GuildButton(player, viewer)
             DiscordButton(player)
         }
@@ -60,11 +62,16 @@ fun PlayerProfile(viewer: Player, player: Player) {
             CosmeticHat(player)
             CosmeticBackpack(player)
         }
+
+        val helmet = player.equipment.helmet.takeUnless { hideArmorIcons }
+        val chestPlate = player.equipment.chestplate.takeUnless { hideArmorIcons }
+        val leggings = player.equipment.leggings.takeUnless { hideArmorIcons }
+        val boots = player.equipment.boots.takeUnless { hideArmorIcons }
         Column(Modifier.at(8, 0)) {
-            HelmetSlot(player, hideArmorIcons)
-            ChestplateSlot(player, hideArmorIcons)
-            LeggingsSlot(player, hideArmorIcons)
-            BootsSlot(player, hideArmorIcons)
+            Item(helmet)
+            Item(chestPlate)
+            Item(leggings)
+            Item(boots)
         }
     }
 }
@@ -105,25 +112,6 @@ fun PlayerHead(player: Player, modifier: Modifier) {
         ), modifier = modifier.at(1, 2)
     )
 }
-
-@Composable
-fun HelmetSlot(player: Player, hideArmorIcons: Boolean) =
-    if (hideArmorIcons) Item(player.equipment.helmet) else Item(null)
-
-
-@Composable
-fun ChestplateSlot(player: Player, hideArmorIcons: Boolean) =
-    if (hideArmorIcons) Item(player.equipment.chestplate) else Item(null)
-
-
-@Composable
-fun LeggingsSlot(player: Player, hideArmorIcons: Boolean) =
-    if (hideArmorIcons) Item(player.equipment.leggings) else Item(null)
-
-
-@Composable
-fun BootsSlot(player: Player, hideArmorIcons: Boolean) =
-    if (hideArmorIcons) Item(player.equipment.boots) else Item(null)
 
 
 @Composable
