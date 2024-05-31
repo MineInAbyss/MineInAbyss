@@ -70,7 +70,7 @@ class AbyssFeatureConfig(
     val orthBanking: OrthBankingFeature.Config = OrthBankingFeature.Config(),
     val patreon: PatreonFeature.Config = PatreonFeature.Config(),
     val pins: Toggle = Toggle(),
-    val playerProfile: Toggle = Toggle(),
+    val playerProfile: PlayerProfileFeature.Config = PlayerProfileFeature.Config(),
     val survivalPvp: Toggle = Toggle(),
     val adventurePvp: Toggle = Toggle(),
     val relics: Toggle = Toggle(),
@@ -103,7 +103,7 @@ class AbyssFeatureConfig(
             add(okiboTravel.enabled) { OkiboTravelFeature() }
             add(orthBanking.enabled) { OrthBankingFeature(orthBanking) }
             add(patreon.enabled) { PatreonFeature(patreon) }
-            add(playerProfile.enabled) { PlayerProfileFeature() }
+            add(playerProfile.enabled) { PlayerProfileFeature(playerProfile) }
             add(survivalPvp.enabled) { SurvivalPvpFeature() }
             add(adventurePvp.enabled) { AdventurePvpFeature() }
             add(relics.enabled) { RelicsFeature() }

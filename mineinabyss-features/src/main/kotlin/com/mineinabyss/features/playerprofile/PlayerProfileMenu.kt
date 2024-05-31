@@ -2,26 +2,23 @@ package com.mineinabyss.features.playerprofile
 
 import androidx.compose.runtime.*
 import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerprofile.PlayerProfile
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
-import com.mineinabyss.idofront.util.to
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
 import com.mineinabyss.features.helpers.*
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.inventory.GuiyOwner
-import com.mineinabyss.guiy.inventory.LocalGuiyOwner
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.idofront.util.toList
-import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -34,15 +31,17 @@ import org.bukkit.inventory.ItemStack
 fun PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon by remember { mutableStateOf(player.toGeary().has<Patreon>()) }
-    val titleName = Component.text(player.name, NamedTextColor.WHITE)
+    val backgroundId by remember { mutableStateOf(player.toGeary().getOrSetPersisting { PlayerProfile() }.background) }
     val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
-            ":space_-170:")
-    val rankComponent = Component.text(":space_-32:${DisplayRanks(player)}")
+            ":space_-172:")
+    val background = Component.text(":${backgroundId}:")
+    val titleName = Component.text(":space_-92:${player.name}", NamedTextColor.WHITE)
+    val rankComponent = Component.text(":survival::space_-40::${DisplayRanks(player)}")
 
     Chest(setOf(viewer),
-        Component.textOfChildren(titleComponent, titleName, rankComponent),
+        Component.textOfChildren(titleComponent, background, titleName, rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
@@ -180,9 +179,9 @@ fun DiscordButton(player: Player) {
 @Composable
 fun DisplayRanks(player: Player): String {
     var group = player.luckpermGroups.filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.firstOrNull()
-    val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it }
-    group = group?.let { ":space_34::player_profile_rank_$group:" } ?: ":space_34:"
-    if (!patreon.isNullOrBlank()) group += ":space_-4::player_profile_rank_$patreon:"
+    val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it } ?: ""
+    group = ":space_34:" + group?.let { ":player_profile_rank_$group:" }
+    if (patreon.isNotEmpty()) group += ":space_-4::player_profile_rank_$patreon:"
 
     return group
 }

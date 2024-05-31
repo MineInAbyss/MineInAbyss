@@ -20,6 +20,7 @@ allprojects {
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.org/repository/maven-public/")
+        maven("https://repo.spaceio.xyz/repository/maven-public/")
         maven("https://mvn.lumine.io/repository/maven-public/")
         maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
 //        maven("https://m2.dv8tion.net/releases") // DiscordSRV
