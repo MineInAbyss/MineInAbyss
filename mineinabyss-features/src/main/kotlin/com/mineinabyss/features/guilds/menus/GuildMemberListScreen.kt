@@ -12,12 +12,14 @@ import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Grid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.canvases.LocalInventory
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
+import com.mineinabyss.idofront.entities.title
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -118,14 +120,19 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 @Composable
 private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
-    val item = if (joinType == GuildJoinType.ANY) any else if (joinType == GuildJoinType.INVITE) invite else request
+    val title = ":space_-8:${DecideMenus.decideMemberMenu(player, joinType)}".miniMsg()
+    val item = when (joinType) {
+        GuildJoinType.ANY -> any
+        GuildJoinType.INVITE -> invite
+        else -> request
+    }
     Button(
         modifier = modifier,
         onClick = {
-            if (player.isCaptainOrAbove()) {
-                player.changeGuildJoinType()
-                joinType = player.getGuildJoinType()
-            }
+            if (!player.isCaptainOrAbove()) return@Button
+            player.changeGuildJoinType()
+            joinType = player.getGuildJoinType()
+            player.openInventory.title(title)
         }
     ) {
         Item(item)
@@ -134,20 +141,20 @@ private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
 
 private object JoinTypeIcon {
     val any = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(4)
-        displayName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
+        setCustomModelData(1)
+        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> ANY".miniMsg()))
     }
 
     val invite = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(5)
-        displayName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
+        setCustomModelData(1)
+        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> INVITE".miniMsg()))
     }
 
     val request = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(6)
-        displayName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
+        setCustomModelData(1)
+        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> REQUEST".miniMsg()))
     }
 }
