@@ -1,7 +1,10 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMainMenu
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMemberMenu
@@ -59,7 +62,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
         GuildScreen(":space_-8::guild_member_action_menu:", 5)
 
     class MemberList(val guildLevel: Int, player: Player) :
-        GuildScreen(":space_-8:${decideMemberMenu(player)}", minOf(guildLevel + 2, MAX_CHEST_HEIGHT))
+        GuildScreen(":space_-8:${decideMemberMenu(player, player.getGuildJoinType())}", minOf(guildLevel + 2, MAX_CHEST_HEIGHT))
 }
 
 typealias GuildNav = Navigator<GuildScreen>
@@ -110,9 +113,10 @@ fun GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
 
 @Composable
 fun GuildUIScope.HomeScreen(openedFromHQ: Boolean) {
+    val guildOwner by remember { mutableStateOf(player.isGuildOwner()) }
+    val screen = if (guildOwner) Owner else GuildInfo
     Row(Modifier.at(2, 1)) {
-        if (player.hasGuild() && player.isGuildOwner()) CurrentGuildButton(onClick = { nav.open(Owner) })
-        else if (player.hasGuild() && !player.isGuildOwner()) CurrentGuildButton(onClick = { nav.open(GuildInfo) })
+        if (player.hasGuild()) CurrentGuildButton(onClick = { nav.open(screen) })
         else CreateGuildButton(openedFromHQ = openedFromHQ)
 
         Spacer(1)
@@ -166,15 +170,11 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
             if (player.hasGuild()) {
                 player.error("You already have a guild.")
                 nav.back()
-                return@Button
-            }
-            if (!openedFromHQ) {
+            } else if (!openedFromHQ) {
                 player.error("You need to register your guild")
                 player.error("with the Guild Master at Orth GuildHQ.")
                 player.closeInventory()
-                return@Button
-            }
-            nav.open(UniversalScreens.Anvil(
+            } else nav.open(UniversalScreens.Anvil(
                 AnvilGUI.Builder()
                     .title(":space_-61::guild_name_menu:")
                     .itemLeft(guildRenamePaper)
@@ -206,13 +206,9 @@ fun GuildUIScope.GuildInvitesButton() {
         onClick = { nav.open(InviteList) },
     ) { enabled ->
         /* Icon that notifies player there are new invites */
-        if (enabled) {
-            Text("<dark_green>Manage Guild Invites".miniMsg())
-        }
+        if (enabled) Text("<dark_green>Manage Guild Invites".miniMsg())
         /* Custom Icon for "darkerened" out icon indicating no invites */
-        else {
-            Text("<dark_green><st>Manage Guild Invites".miniMsg())
-        }
+        else Text("<dark_green><st>Manage Guild Invites".miniMsg())
     }
 }
 
@@ -248,9 +244,13 @@ object DecideMenus {
     }
 
     //TODO Implement lists for guilds, making one able to have more than 5(25) members
-    fun decideMemberMenu(player: Player): String {
+    fun decideMemberMenu(player: Player, joinType: GuildJoinType): String {
         val menuHeight = minOf(player.getGuildLevel(), 4)
-        return if (player.hasGuildRequests()) ":guild_member_management_menu_${menuHeight}_has_request:"
-        else ":guild_member_management_menu_${menuHeight}_no_request:"
+        return buildString {
+            append(":guild_member_management_menu_${menuHeight}:")
+            append(":space_-172:")
+            append(":guild_member_management_jointype_${joinType.name.lowercase()}:")
+            if (player.hasGuildRequests()) append(":space_135::guild_member_management_notification:")
+        }
     }
 }

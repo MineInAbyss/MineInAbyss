@@ -188,8 +188,8 @@ fun Player.changeStoredGuildName(newGuildName: String) {
     }
 }
 
-fun Player.changeGuildJoinType() {
-    transaction(abyss.db) {
+fun Player.changeGuildJoinType(): GuildJoinType {
+    return transaction(abyss.db) {
         val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
 
         val type = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.joinType]
@@ -203,6 +203,8 @@ fun Player.changeGuildJoinType() {
         Guilds.update({ Guilds.id eq guildId }) {
             it[joinType] = newType
         }
+
+        return@transaction newType
     }
 }
 
