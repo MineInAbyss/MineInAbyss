@@ -3,9 +3,6 @@ package com.mineinabyss.features.guilds.menus
 import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.guilds.menus.JoinTypeIcon.any
-import com.mineinabyss.features.guilds.menus.JoinTypeIcon.invite
-import com.mineinabyss.features.guilds.menus.JoinTypeIcon.request
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.head
@@ -119,10 +116,10 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 @Composable
 private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
-    val item = when (joinType) {
-        GuildJoinType.ANY -> any
-        GuildJoinType.INVITE -> invite
-        else -> request
+    val item = ItemStack(Material.PAPER).editItemMeta {
+        setCustomModelData(1)
+        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
+        lore(listOf("<yellow>Currently players can join via:<gold><i> ${joinType.name}".miniMsg()))
     }
     Button(
         modifier = modifier,
@@ -133,25 +130,5 @@ private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
         }
     ) {
         Item(item)
-    }
-}
-
-private object JoinTypeIcon {
-    val any = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(1)
-        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
-        lore(listOf("<yellow>Currently players can join via:<gold><i> ANY".miniMsg()))
-    }
-
-    val invite = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(1)
-        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
-        lore(listOf("<yellow>Currently players can join via:<gold><i> INVITE".miniMsg()))
-    }
-
-    val request = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(1)
-        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
-        lore(listOf("<yellow>Currently players can join via:<gold><i> REQUEST".miniMsg()))
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
+import com.mineinabyss.features.guilds.menus.DecideMenus.decideInfoMenu
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMainMenu
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMemberMenu
 import com.mineinabyss.features.guilds.menus.GuildScreen.*
@@ -34,29 +35,23 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 sealed class GuildScreen(var title: String, val height: Int) {
-    class Default(player: Player) :
-        GuildScreen(
-            title = ":space_-8:${decideMainMenu(player)}",
-            height = 4
-        )
+    class Default(player: Player) : GuildScreen(title = ":space_-8:${decideMainMenu(player)}", height = 4)
 
-    object GuildInfo : GuildScreen(":space_-8::guild_member_menu:", 6)
+    class GuildInfo(isGuildOwner: Boolean) : GuildScreen(":space_-8:${decideInfoMenu(isGuildOwner)}", 6)
 
     object Leave : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
     object Disband : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
-    object Owner : GuildScreen(":space_-8::guild_owner_menu:", 6)
 
     class GuildList (val pageNumber: Int): GuildScreen(":space_-8::guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: GuildName) :
         GuildScreen(":space_-8:${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
     // Forgot to add to pack so this is fine for now
-    object InviteList : GuildScreen(":space_-8::guild_join_requests_menu:", 5)
-    class Invite(val owner: OfflinePlayer) : GuildScreen(":space_-8::handle_guild_invites:", 5)
+    object InviteList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
+    class Invite(val owner: OfflinePlayer) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)
 
-    object JoinRequestList : GuildScreen(":space_-8::guild_join_requests_menu:", 5)
-    class JoinRequest(val from: OfflinePlayer) :
-        GuildScreen(":space_-8::handle_guild_join_requests:", 5)
+    object JoinRequestList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
+    class JoinRequest(val from: OfflinePlayer) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)
 
     class MemberOptions(val member: OfflinePlayer) :
         GuildScreen(":space_-8::guild_member_action_menu:", 5)
@@ -93,8 +88,7 @@ fun GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
                 onClose = { player.closeInventory() }) {
                 when (screen) {
                     is Default -> HomeScreen(openedFromHQ)
-                    GuildInfo -> GuildInfoScreen()
-                    Owner -> GuildOwnerScreen()
+                    is GuildInfo -> GuildInfoScreen()
                     Leave -> GuildLeaveScreen()
                     is GuildList -> GuildLookupListScreen(screen.pageNumber)
                     is GuildLookupMembers -> GuildLookupMembersScreen(screen.guildName)
@@ -114,9 +108,8 @@ fun GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
 @Composable
 fun GuildUIScope.HomeScreen(openedFromHQ: Boolean) {
     val guildOwner by remember { mutableStateOf(player.isGuildOwner()) }
-    val screen = if (guildOwner) Owner else GuildInfo
     Row(Modifier.at(2, 1)) {
-        if (player.hasGuild()) CurrentGuildButton(onClick = { nav.open(screen) })
+        if (player.hasGuild()) CurrentGuildButton(onClick = { nav.open(GuildInfo(guildOwner)) })
         else CreateGuildButton(openedFromHQ = openedFromHQ)
 
         Spacer(1)
@@ -229,17 +222,27 @@ fun GuildUIScope.GuildLookupListButton() {
 }
 
 object DecideMenus {
-    private const val hasGuildAndInvites = ":guild_main_menu_has_guild_and_has_invites:"
-    private const val hasGuildAndNoInvites = ":guild_main_menu_has_guild_and_no_invites:"
-    private const val noGuildAndInvites = ":guild_main_menu_no_guild_and_has_invites:"
-    private const val noGuildAndNoInvites = ":guild_main_menu_no_guild_and_no_invites:"
-
     fun decideMainMenu(player: Player): String {
-        return when {
-            (player.hasGuild() && player.hasGuildInvites()) -> hasGuildAndInvites
-            (player.hasGuild() && !player.hasGuildInvites()) -> hasGuildAndNoInvites
-            (!player.hasGuild() && player.hasGuildInvites()) -> noGuildAndInvites
-            else -> noGuildAndNoInvites
+        return buildString {
+            append(":guild_main_menu:")
+            append(":space_-138:")
+            if (player.hasGuild()) append(":guild_main_menu_info:")
+            else append(":guild_main_menu_create:")
+            append(":space_66:")
+            if (player.hasGuildInvites()) append(":guild_inbox_unread:")
+            else append(":guild_inbox_read:")
+        }
+    }
+
+    fun decideInfoMenu(isGuildOwner: Boolean): String {
+        return buildString {
+            append(":guild_info_menu:")
+            append(":space_-28:")
+            if (isGuildOwner) {
+                append(":guild_disband_button:")
+                append(":space_-18:")
+                append(":guild_level_up_button:")
+            } else append(":guild_leave_button:")
         }
     }
 
@@ -248,9 +251,11 @@ object DecideMenus {
         val menuHeight = minOf(player.getGuildLevel(), 4)
         return buildString {
             append(":guild_member_management_menu_${menuHeight}:")
-            append(":space_-172:")
+            append(":space_-171:")
             append(":guild_member_management_jointype_${joinType.name.lowercase()}:")
-            if (player.hasGuildRequests()) append(":space_135::guild_member_management_notification:")
+            append(":space_125:")
+            if (player.hasGuildRequests()) append(":guild_inbox_unread:")
+            else append(":guild_inbox_read:")
         }
     }
 }
