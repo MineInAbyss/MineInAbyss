@@ -7,12 +7,12 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.entities.title
@@ -36,7 +36,7 @@ fun GuildUIScope.GuildMemberListScreen() {
 @Composable
 fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
     val members = player.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal })
-    Grid(modifier.size(5, guildLevel + 1)) {
+    HorizontalGrid(modifier.size(5, guildLevel + 1)) {
         members.forEach { (rank, member) ->
             Button(onClick = {
                 if (member != player && player.isCaptainOrAbove())

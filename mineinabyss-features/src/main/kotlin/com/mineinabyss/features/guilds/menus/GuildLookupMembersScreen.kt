@@ -7,11 +7,11 @@ import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
@@ -42,7 +42,7 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
 @Composable
 fun GuildMembersButton(modifier: Modifier, guildName: String, guildLevel: Int) {
     val members = guildName.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER }
-    Grid(modifier.size(5, guildLevel + 1)) {
+    HorizontalGrid(modifier.size(5, guildLevel + 1)) {
         members.forEach { (rank, member) ->
             Button {
                 Item(

@@ -8,10 +8,10 @@ import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -38,7 +38,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
         }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
 
     }
-    Grid(modifier.size(9, 4)) {
+    HorizontalGrid(modifier.size(9, 4)) {
         invites.sortedBy { it.memberCount }.forEach { _ ->
             Button(onClick = {
                 nav.open(GuildScreen.Invite(owner))

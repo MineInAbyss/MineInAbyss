@@ -6,11 +6,11 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.messaging.error
@@ -48,7 +48,7 @@ private var queriedList: List<List<GuildJoin>>? = null
 @Composable
 fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: List<GuildJoin>) {
     queriedList = null
-    Grid(modifier.size(5, 5)) {
+    HorizontalGrid(modifier.size(5, 5)) {
         guildPageList.forEach { (guildName, joinType, guildLevel) ->
             val owner = guildName.getOwnerFromGuildName()
             Button(

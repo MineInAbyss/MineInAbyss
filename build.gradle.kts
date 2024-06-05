@@ -74,7 +74,6 @@ allprojects {
         compileOnly(miaLibs.blocky)
 
         compileOnly(miaLibs.minecraft.plugin.blocklocker)
-        compileOnly(miaLibs.minecraft.plugin.gsit)
         compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
         compileOnly(miaLibs.minecraft.plugin.hibiscuscommons)
         compileOnly(miaLibs.minecraft.plugin.discordsrv)

@@ -10,10 +10,10 @@ import com.mineinabyss.features.guilds.extensions.hasGuildRequests
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.at
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.jetbrains.exposed.sql.and
@@ -39,7 +39,7 @@ fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
                 .map { row -> row[GuildJoinQueue.playerUUID] }
         }
     }
-    Grid(modifier.size(9, 4)) {
+    HorizontalGrid(modifier.size(9, 4)) {
         requests.map { it.toOfflinePlayer() }.forEach { newMember ->
             Button(onClick = {
                 if (!player.hasGuildRequests()) player.closeInventory()

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.components.gondolas.Gondola
 import com.mineinabyss.components.gondolas.UnlockedGondolas
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.guiy.components.Grid
+import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
@@ -23,7 +23,7 @@ fun GondolaSelectionMenu(player: Player) {
     val gondolas = gearyPlayer.get<UnlockedGondolas>() ?: return
 
     Chest(setOf(player), title = "Choose Spawn Location", onClose = { owner.exit() }) {
-        Grid(Modifier.size(9, 6)) {
+        HorizontalGrid(Modifier.size(9, 6)) {
             gondolas.keys.forEach { GondolaSpawn(player, LoadedGondolas.loaded[it] ?: return@forEach) }
         }
     }

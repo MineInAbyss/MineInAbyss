@@ -2,7 +2,7 @@ package com.mineinabyss.features.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.chatty.ChattyChannel
-import com.mineinabyss.chatty.ChattyCommands
+import com.mineinabyss.chatty.commands.ChattyBrigadierCommands
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
@@ -131,7 +131,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                         val player = sender as? Player ?: return@playerAction
 
                         if (!abyss.isChattyLoaded) return@playerAction player.error("Chatty is not loaded")
-                        player.guildChat()?.let { ChattyCommands.swapChannel(player, it) }
+                        player.guildChat()?.let { ChattyBrigadierCommands.swapChannel(player, it) }
                             ?: return@playerAction player.error("You cannot use guild chat without a guild")
                     }
                 }

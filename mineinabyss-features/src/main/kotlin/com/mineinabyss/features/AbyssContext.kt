@@ -47,7 +47,6 @@ class AbyssContext(
 
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isEternalFortuneLoaded get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")
-    val isGSitLoaded get() = plugin.server.pluginManager.isPluginEnabled("GSit")
     val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
     val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
