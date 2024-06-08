@@ -83,7 +83,6 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.traincarts)
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
-        compileOnly(miaLibs.minecraft.plugin.openinv)
         compileOnly(miaLibs.minecraft.plugin.crazyadvancements)
         compileOnly(miaLibs.minecraft.plugin.happyhud)
     }

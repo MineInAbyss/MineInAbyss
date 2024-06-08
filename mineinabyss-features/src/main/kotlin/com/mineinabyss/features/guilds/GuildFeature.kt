@@ -1,8 +1,8 @@
 package com.mineinabyss.features.guilds
 
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.commands.ChattyBrigadierCommands
+import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
@@ -46,7 +46,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
     class Config {
         val enabled = false
         val guildChannelTemplate: ChattyChannel = ChattyChannel(
-            channelType = ChannelType.PRIVATE,
+            channelType = ChannelType.CUSTOM,
             proxy = false,
             discordsrv = false,
             isDefaultChannel = false,
