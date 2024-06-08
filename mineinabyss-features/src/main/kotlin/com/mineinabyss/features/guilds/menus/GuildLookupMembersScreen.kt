@@ -1,6 +1,6 @@
 package com.mineinabyss.features.guilds.menus
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
@@ -9,8 +9,12 @@ import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
+import com.mineinabyss.guiy.components.lists.NavbarPosition
+import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -21,9 +25,31 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
     val owner = guildName.getOwnerFromGuildName()
     val guildLevel = owner.getGuildLevel()
     val height = minOf(guildLevel.plus(2), MAX_CHEST_HEIGHT - 1)
+    var line by remember { mutableStateOf(0) }
+    val guildMembers = remember { guildName.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER } }
+
+    Scrollable(
+        guildMembers, line, 5, guildLevel + 1,
+        nextButton = { ScrollDownButton(Modifier.at(0, 3).clickable { line++ }) },
+        previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
+        NavbarPosition.START, null
+    ) { members ->
+        VerticalGrid(Modifier.size(5, guildLevel + 1)) {
+            members.forEach { (rank, member) ->
+                Button {
+                    Item(
+                        member.head(
+                            "<gold><i>${member.name}".miniMsg(),
+                            "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
+                            isFlat = true
+                        )
+                    )
+                }
+            }
+        }
+    }
 
     GuildLabel(Modifier.at(4, 0), owner)
-    GuildMembersButton(Modifier.at(2, 1), guildName, guildLevel)
     BackButton(Modifier.at(0, height))
     RequestToJoinButton(Modifier.at(4, height), owner, guildName)
 }
@@ -37,24 +63,6 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
             isCenterOfInv = true, isLarge = true
         ), modifier = modifier
     )
-}
-
-@Composable
-fun GuildMembersButton(modifier: Modifier, guildName: String, guildLevel: Int) {
-    val members = guildName.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER }
-    HorizontalGrid(modifier.size(5, guildLevel + 1)) {
-        members.forEach { (rank, member) ->
-            Button {
-                Item(
-                    member.head(
-                        "<gold><i>${member.name}".miniMsg(),
-                        "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
-                        isFlat = true
-                    )
-                )
-            }
-        }
-    }
 }
 
 @Composable

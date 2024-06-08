@@ -9,9 +9,13 @@ import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
+import com.mineinabyss.guiy.components.lists.NavbarPosition
+import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
@@ -25,7 +29,33 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun GuildUIScope.GuildMemberListScreen() {
-    ManageGuildMembersButton(Modifier.at(2, 1))
+    var line by remember { mutableStateOf(0) }
+    val guildMembers = remember { player.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }) }
+
+    Scrollable(
+        guildMembers, line, 5, minOf(guildLevel + 1, 4),
+        nextButton = { ScrollDownButton(Modifier.at(0, 3).clickable { line++ }) },
+        previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
+        NavbarPosition.START, null
+    ) { members ->
+        VerticalGrid(Modifier.at(1, 1).size(5, minOf(guildLevel + 1, 4))) {
+            members.forEach { (rank, member) ->
+                Button(onClick = {
+                    if (member != player && player.isCaptainOrAbove())
+                        nav.open(GuildScreen.MemberOptions(member))
+                }) {
+                    Item(
+                        member.head(
+                            "<gold><i>${member.name}".miniMsg(),
+                            "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
+                            isFlat = true
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
 
     InviteToGuildButton(Modifier.at(7, 0))
@@ -34,24 +64,19 @@ fun GuildUIScope.GuildMemberListScreen() {
 }
 
 @Composable
-fun GuildUIScope.ManageGuildMembersButton(modifier: Modifier) {
-    val members = player.getGuildMembers().sortedWith(compareBy { it.player.name; it.rank.ordinal })
-    HorizontalGrid(modifier.size(5, guildLevel + 1)) {
-        members.forEach { (rank, member) ->
-            Button(onClick = {
-                if (member != player && player.isCaptainOrAbove())
-                    nav.open(GuildScreen.MemberOptions(member))
-            }) {
-                Item(
-                    member.head(
-                        "<gold><i>${member.name}".miniMsg(),
-                        "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
-                        isFlat = true
-                    )
-                )
-            }
-        }
-    }
+fun ScrollDownButton(modifier: Modifier = Modifier) {
+    Item(ItemStack(Material.PAPER).editItemMeta {
+        itemName("<green><b>Scroll Down".miniMsg())
+        setCustomModelData(0)
+    }, modifier)
+}
+
+@Composable
+fun ScrollUpButton(modifier: Modifier = Modifier) {
+    Item(ItemStack(Material.PAPER).editItemMeta {
+        itemName("<blue><b>Scroll Up".miniMsg())
+        setCustomModelData(0)
+    }, modifier)
 }
 
 @Composable

@@ -42,7 +42,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
     object Leave : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
     object Disband : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
 
-    class GuildList (val pageNumber: Int): GuildScreen(":space_-8::guild_list_menu:", 6)
+    object GuildList : GuildScreen(":space_-8::guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: GuildName) :
         GuildScreen(":space_-8:${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
@@ -90,7 +90,7 @@ fun GuildMainMenu(player: Player, openedFromHQ: Boolean = false) {
                     is Default -> HomeScreen(openedFromHQ)
                     is GuildInfo -> GuildInfoScreen()
                     Leave -> GuildLeaveScreen()
-                    is GuildList -> GuildLookupListScreen(screen.pageNumber)
+                    is GuildList -> GuildLookupListScreen()
                     is GuildLookupMembers -> GuildLookupMembersScreen(screen.guildName)
                     InviteList -> GuildInviteListScreen()
                     is Invite -> GuildInviteScreen(screen.owner)
@@ -209,7 +209,7 @@ fun GuildUIScope.GuildInvitesButton() {
 fun GuildUIScope.GuildLookupListButton() {
     Button(
         enabled = getAllGuilds().isNotEmpty(),
-        onClick = { nav.open(GuildList(0)) }
+        onClick = { nav.open(GuildList) }
     ) { enabled ->
         if (enabled) {
             Text("<gold><b>Browse all Guilds".miniMsg(), modifier = Modifier.size(2, 2))

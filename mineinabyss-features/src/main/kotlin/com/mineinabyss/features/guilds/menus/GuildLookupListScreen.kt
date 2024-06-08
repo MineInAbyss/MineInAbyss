@@ -8,6 +8,8 @@ import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.lists.NavbarPosition
+import com.mineinabyss.guiy.components.lists.Paginated
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
@@ -18,67 +20,53 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
 
 @Composable
-fun GuildUIScope.GuildLookupListScreen(pageNumber: Int) {
-    val queriedGuildList = queriedList ?: defaultList
-    var pageNum by remember { mutableStateOf(pageNumber) }
-    var guildPageList by remember { mutableStateOf(queriedGuildList[pageNum]) }
+fun GuildUIScope.GuildLookupListScreen() {
+    var pageNum by remember { mutableStateOf(0) }
+    var guildPageList by remember { mutableStateOf(displayGuildList()) }
 
-    GuildListButton(Modifier.at(2, 0), guildPageList)
-    PreviousPageButton(Modifier.at(3, 5), pageNum) {
-        pageNum--
-        guildPageList = queriedGuildList[pageNum]
-        nav.refresh()
+    Paginated(
+        guildPageList, pageNum,
+        nextButton = { NextPageButton(Modifier.at(5, 0)) { pageNum++ } },
+        previousButton = { PreviousPageButton(Modifier.at(3, 0)) { pageNum-- } },
+        NavbarPosition.TOP, null
+    ) { pageItems ->
+        HorizontalGrid(Modifier.at(1,0).size(5, 4)) {
+            pageItems.forEach { (guildName, joinType, guildLevel) ->
+                val owner = guildName.getOwnerFromGuildName()
+                Button(
+                    onClick = {
+                        if (player.hasGuild() && player.getGuildName().equals(guildName, true))
+                            nav.open(GuildScreen.MemberList(guildLevel, player))
+                        else
+                            nav.open(GuildScreen.GuildLookupMembers(guildName))
+
+                    }) {
+                    Item(
+                        owner.head(
+                            "<gold><i>$guildName".miniMsg(),
+                            "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
+                            "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
+                            "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
+                            "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}".miniMsg(),
+                            isFlat = true
+                        )
+                    )
+                }
+            }
+        }
     }
-    NextPageButton(Modifier.at(5, 5), pageNum, queriedGuildList) {
-        pageNum++
-        guildPageList = queriedGuildList[pageNum]
-        nav.refresh()
-    }
-    LookForGuildButton(Modifier.at(7,5)) {
+
+    LookForGuildButton(Modifier.at(7,5)) { text ->
         pageNum = 0
-        guildPageList = queriedGuildList[pageNum]
-        nav.refresh()
+        guildPageList = displayGuildList(text)
     }
     BackButton(Modifier.at(0, 5))
 }
 
-private val defaultList = displayGuildList().chunked(20)
-private var queriedList: List<List<GuildJoin>>? = null
-
 @Composable
-fun GuildUIScope.GuildListButton(modifier: Modifier = Modifier, guildPageList: List<GuildJoin>) {
-    queriedList = null
-    HorizontalGrid(modifier.size(5, 5)) {
-        guildPageList.forEach { (guildName, joinType, guildLevel) ->
-            val owner = guildName.getOwnerFromGuildName()
-            Button(
-                onClick = {
-                    if (player.hasGuild() && player.getGuildName().equals(guildName, true))
-                        nav.open(GuildScreen.MemberList(guildLevel, player))
-                    else
-                        nav.open(GuildScreen.GuildLookupMembers(guildName))
-
-                }) {
-                Item(
-                    owner.head(
-                        "<gold><i>$guildName".miniMsg(),
-                        "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
-                        "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
-                        "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
-                        "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}".miniMsg(),
-                        isFlat = true
-                    )
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun PreviousPageButton(modifier: Modifier = Modifier, pageNum: Int, onClick: () -> Unit) {
+fun PreviousPageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
-        enabled = pageNum > 0,
-        modifier = modifier.at(3, 5),
+        modifier = modifier,
         onClick = onClick
     ) { Text("<yellow><b>Previous".miniMsg()) }
 }
@@ -86,19 +74,16 @@ fun PreviousPageButton(modifier: Modifier = Modifier, pageNum: Int, onClick: () 
 @Composable
 fun NextPageButton(
     modifier: Modifier,
-    pageNum: Int,
-    queriedGuildList: List<List<GuildJoin>>,
     onClick: () -> Unit
 ) {
     Button(
-        enabled = pageNum < (queriedGuildList.size - 1),
-        modifier = modifier.at(5, 5),
+        modifier = modifier,
         onClick = onClick
     ) { Text("<yellow><b>Next".miniMsg()) }
 }
 
 @Composable
-fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: () -> Unit) {
+fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Unit) {
     Button(
         modifier = modifier.at(7, 5),
         onClick = {
@@ -110,10 +95,7 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: () -> Unit) {
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
                         .onClick { _, snapshot ->
-                            val guilds = displayGuildList(snapshot.text)
-                            if (guilds.isEmpty()) snapshot.player.error("No guild found with that name")
-                            else queriedList = guilds.chunked(20)
-                            run(onClick)
+                            onClick.invoke(snapshot.text)
                             listOf(AnvilGUI.ResponseAction.close())
                         }
                 ))

@@ -393,6 +393,11 @@ fun GuildName.getGuildLevelUpCost(): Int? {
         2 -> 50
         3 -> 100
         4 -> 200
+        5 -> 400
+        6 -> 700
+        7 -> 1000
+        8 -> 1400
+        9 -> 2000
         else -> null
     }
 }
