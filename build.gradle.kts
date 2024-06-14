@@ -16,6 +16,12 @@ allprojects {
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
+        maven("https://repo.mineinabyss.com/private") {
+            credentials(PasswordCredentials::class) {
+                username = mavenUser
+                password = mavenPassword
+            }
+        }
         maven("https://repo.hibiscusmc.com/releases/")
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
@@ -84,7 +90,7 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
         compileOnly(miaLibs.minecraft.plugin.crazyadvancements)
-        compileOnly(miaLibs.minecraft.plugin.happyhud)
+        compileOnly(miaLibs.minecraft.plugin.mythichud)
     }
 }
 

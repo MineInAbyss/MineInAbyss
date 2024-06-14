@@ -73,7 +73,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
-    HappyHUD:
+    MythicHUD:
       required: false
       load: BEFORE
       join-classpath: true
@@ -86,10 +86,6 @@ dependencies:
       load: BEFORE
       join-classpath: true
     CustomAdvancementsAPI:
-      required: false
-      load: BEFORE
-      join-classpath: true
-    ProtocolBurrito:
       required: false
       load: BEFORE
       join-classpath: true

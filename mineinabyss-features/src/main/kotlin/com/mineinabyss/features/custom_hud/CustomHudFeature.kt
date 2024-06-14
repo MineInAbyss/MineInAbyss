@@ -11,7 +11,7 @@ class CustomHudFeature(
     val backgroundLayout: String = "backgrounds",
     val customHudTemplate: String = "custom_hud"
 ) : Feature() {
-    override val dependsOn: Set<String> get() = setOf("HappyHUD", "Packy")
+    override val dependsOn: Set<String> get() = setOf("MythicHUD", "Packy")
     override fun FeatureDSL.enable() {
         plugin.listeners(CustomHudListener(this@CustomHudFeature))
         mainCommand {
