@@ -20,6 +20,7 @@ import org.bukkit.Material
  */
 @Serializable
 class Layer(
+    val id: String,
     val name: String,
     val sub: String,
     val deathMessage: String = "in the depths of the abyss",
