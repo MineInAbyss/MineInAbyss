@@ -16,12 +16,6 @@ allprojects {
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
-        maven("https://repo.mineinabyss.com/private") {
-            credentials(PasswordCredentials::class) {
-                username = mavenUser
-                password = mavenPassword
-            }
-        }
         maven("https://repo.hibiscusmc.com/releases/")
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")

@@ -4,6 +4,7 @@ plugins {
     id("com.mineinabyss.conventions.nms")
     kotlin("plugin.serialization")
     alias(idofrontLibs.plugins.compose.compiler)
+    alias(idofrontLibs.plugins.mia.publication)
 }
 
 dependencies {
