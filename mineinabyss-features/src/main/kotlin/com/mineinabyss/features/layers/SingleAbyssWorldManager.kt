@@ -9,15 +9,16 @@ import org.bukkit.World
  * Abyss world manager that assumes a single abyss for the whole server.
  */
 class SingleAbyssWorldManager(
-    layers: Collection<Layer>
+    layers: Map<LayerKey, Layer>
 ) : AbyssWorldManager {
-    override val layers = layers.associateBy { it.key }
+
+    override val layers: Map<LayerKey, Layer> = layers
 
     private val sectionToLayer: Map<Section, Layer> = layers
-        .flatMap { layer -> layer.sections.map { it to layer } }
+        .flatMap { layer -> layer.value.sections.map { it to layer.value } }
         .toMap()
 
-    private val abyssWorlds = layers.flatMap { it.sections }
+    private val abyssWorlds = layers.flatMap { it.value.sections }
         .map { it.world }
         .distinct()
 

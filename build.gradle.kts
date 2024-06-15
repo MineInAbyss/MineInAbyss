@@ -90,6 +90,6 @@ allprojects {
 
 dependencies {
     // Shaded
-    implementation(project(":mineinabyss-features"))
+    api(project(":mineinabyss-features"))
     api(project(":mineinabyss-components"))
 }
