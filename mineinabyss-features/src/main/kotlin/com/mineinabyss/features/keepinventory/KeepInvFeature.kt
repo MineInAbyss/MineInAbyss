@@ -37,29 +37,15 @@ class KeepInvFeature(config: Config) : FeatureWithContext<KeepInvFeature.Context
                 playerAction {
                     val player = sender as Player
                     player.playerData.keepInvStatus = toggled
-                    if (toggled) {
-                        player.playerData.keepInvStatus = true
-                        player.success("Keep Inventory enabled for ${player.name}")
-                    } else {
-                        player.playerData.keepInvStatus = false
-                        sender.error("Keep Inventory disabled for ${player.name}")
-                    }
+                    if (toggled) player.success("Keep Inventory enabled for ${player.name}")
+                    else sender.error("Keep Inventory disabled for ${player.name}")
                 }
             }
         }
         tabCompletion {
             when (args.size) {
-                1 -> listOf(
-                    "keepinv"
-                ).filter { it.startsWith(args[0]) }
-
-                2 -> {
-                    when (args[0]) {
-                        "keepinv" -> listOf("on", "off")
-                        else -> null
-                    }
-                }
-
+                1 -> listOf("keepinv").filter { it.startsWith(args[0]) }
+                2 -> if (args[0] == "keepinv") listOf("on", "off") else null
                 else -> null
             }
         }

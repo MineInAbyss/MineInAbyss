@@ -65,7 +65,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
                         player.inventory.addItem(
                             SerializableItemStack(
                                 type = Material.STICK,
-                                displayName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
+                                itemName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
                             ).toItemStack().apply {
                                 editMeta {
                                     it.persistentDataContainer.encode(ContainsLoot(lootTable))

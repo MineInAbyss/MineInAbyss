@@ -7,7 +7,9 @@ import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.idofront.di.DI
 import org.bukkit.plugin.java.JavaPlugin
 
+
 class MineInAbyssPlugin : JavaPlugin() {
+
     override fun onLoad() {
         geary {
             autoscan(

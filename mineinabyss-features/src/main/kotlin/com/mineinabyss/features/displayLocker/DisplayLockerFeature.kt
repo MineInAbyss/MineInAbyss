@@ -7,6 +7,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
+import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
@@ -18,18 +19,12 @@ import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFeature.Context>({ Context(config) }) {
-    @Serializable
-    class Config(
-        val enabled: Boolean = false
-    )
+class DisplayLockerFeature : Feature() {
 
-    class Context(val config: Config) {
-        val listener = DisplayLockerListener()
-    }
+    private val listeners = listOf(DisplayLockerListener(), BookshelfLocker())
 
     override fun FeatureDSL.enable() {
-        plugin.listeners(context.listener, BookshelfLocker())
+        plugin.listeners(*listeners.toTypedArray())
 
         mainCommand {
             "lock"(desc = "Protection related commands") {
@@ -137,6 +132,6 @@ class DisplayLockerFeature(config: Config) : FeatureWithContext<DisplayLockerFea
     }
 
     override fun FeatureDSL.disable() {
-        plugin.unregisterListeners(context.listener)
+        plugin.unregisterListeners(*listeners.toTypedArray())
     }
 }

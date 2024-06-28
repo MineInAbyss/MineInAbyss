@@ -1,14 +1,11 @@
 package com.mineinabyss.features.okibotravel
 
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.events.PacketContainer
 import com.mineinabyss.blocky.api.BlockyFurnitures
 import com.mineinabyss.blocky.helpers.GenericHelpers.toEntity
 import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.adventure.PaperAdventure
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket

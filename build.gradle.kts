@@ -2,6 +2,7 @@ plugins {
     alias(idofrontLibs.plugins.mia.kotlin.jvm)
     alias(idofrontLibs.plugins.kotlinx.serialization)
     alias(idofrontLibs.plugins.mia.copyjar)
+    alias(idofrontLibs.plugins.mia.nms)
     alias(idofrontLibs.plugins.mia.publication)
     alias(idofrontLibs.plugins.mia.autoversion)
     alias(idofrontLibs.plugins.mia.papermc)
@@ -63,7 +64,6 @@ allprojects {
         compileOnly(idofrontLibs.minecraft.plugin.vault) { exclude(group = "org.bukkit") }
         compileOnly(idofrontLibs.minecraft.plugin.fawe.core)
         compileOnly(idofrontLibs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
-        compileOnly(idofrontLibs.minecraft.plugin.protocollib)
         compileOnly(idofrontLibs.minecraft.plugin.modelengine)
 
         compileOnly(miaLibs.guiy)
@@ -83,7 +83,6 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.traincarts)
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
         compileOnly(miaLibs.minecraft.plugin.shopkeepers)
-        compileOnly(miaLibs.minecraft.plugin.crazyadvancements)
         compileOnly(miaLibs.minecraft.plugin.mythichud)
     }
 }
@@ -92,4 +91,12 @@ dependencies {
     // Shaded
     api(project(":mineinabyss-features"))
     api(project(":mineinabyss-components"))
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+        )
+    }
 }
