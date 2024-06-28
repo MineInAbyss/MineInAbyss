@@ -87,7 +87,7 @@ fun TogglePvpPrompt(player: Player, modifier: Modifier) {
 object ToggleIcon {
     val enabled = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(2)
-        displayName("<blue><b>Toggle PvP Prompt".miniMsg())
+        itemName("<blue><b>Toggle PvP Prompt".miniMsg())
         lore(
             listOf(
                 "<red>Disable <dark_aqua>this prompt from showing".miniMsg(),
@@ -100,7 +100,7 @@ object ToggleIcon {
     val disabled =
         ItemStack(Material.PAPER).editItemMeta {
             setCustomModelData(3)
-            displayName("<blue><b>Toggle PvP Prompt".miniMsg())
+            itemName("<blue><b>Toggle PvP Prompt".miniMsg())
             lore(
                 listOf(
                     "<green>Enable <dark_aqua>this prompt from showing".miniMsg(),

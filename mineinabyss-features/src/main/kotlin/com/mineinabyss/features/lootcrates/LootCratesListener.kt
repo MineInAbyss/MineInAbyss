@@ -107,7 +107,7 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
                     player.error(Features.lootCrates.config.messages.tableNotFound.format(loot.table))
                     return
                 }
-                Bukkit.createInventory(null, 27, table.displayName ?: Component.text("Loot")).apply {
+                Bukkit.createInventory(null, 27, table.itemName ?: Component.text("Loot")).apply {
                     table.populateInventory(this)
                 }
             }

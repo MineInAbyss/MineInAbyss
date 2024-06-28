@@ -11,14 +11,11 @@ import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.observeLogger
 import com.mineinabyss.idofront.plugin.Services
-import github.scarsz.discordsrv.DiscordSRV
 import net.milkbowl.vault.economy.Economy
-import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import java.nio.file.Path
 
-val discordSRV: DiscordSRV by lazy { Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV }
 val abyss by DI.observe<AbyssContext>()
 
 class AbyssContext(

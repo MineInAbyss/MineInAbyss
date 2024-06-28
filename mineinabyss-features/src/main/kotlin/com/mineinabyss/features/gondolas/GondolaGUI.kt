@@ -31,7 +31,7 @@ fun GondolaSelectionMenu(player: Player) {
 
 @Composable
 fun GondolaSpawn(player: Player, gondola: Gondola) = Item(
-    gondola.displayItem.toItemStack().editItemMeta { displayName(gondola.name.miniMsg()) },
+    gondola.displayItem.toItemStack().editItemMeta { itemName(gondola.name.miniMsg()) },
     Modifier.clickable {
         player.teleport(gondola.location)
     }

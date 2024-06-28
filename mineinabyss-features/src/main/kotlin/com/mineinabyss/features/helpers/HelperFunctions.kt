@@ -2,10 +2,11 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.playerData
-import com.mineinabyss.features.discordSRV
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import github.scarsz.discordsrv.DiscordSRV
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -60,6 +61,7 @@ fun handleCurse(player: Player, from: Location, to: Location) {
 
 val Player.linkedDiscordAccount
     get() = runCatching {
+        val discordSRV = Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV
         discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
     }.getOrNull()
 

@@ -14,7 +14,7 @@ class LootTable(
     val pools: List<LootPool>,
     @Serializable(with = MiniMessageSerializer::class)
     @EncodeDefault(EncodeDefault.Mode.NEVER)
-    val displayName: Component? = null,
+    val itemName: Component? = null,
 ) {
     fun select(): List<ItemStack?> {
         return pools

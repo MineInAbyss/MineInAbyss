@@ -4,9 +4,12 @@ import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.components.music.Song
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.deeperworld.world.section.Section
+import com.mineinabyss.idofront.serialization.MiniMessageSerializer
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 
 /**
@@ -23,7 +26,7 @@ class Layer(
     val id: String,
     val name: String,
     val sub: String,
-    val deathMessage: String = "in the depths of the abyss",
+    val deathMessage: @Serializable(MiniMessageSerializer::class) Component = Component.text("in the depths of the abyss"),
     val depth: Depth = Depth(0, 0),
     @SerialName("effects")
     val ascensionEffects: List<AscensionEffect> = emptyList(),
@@ -35,10 +38,8 @@ class Layer(
     @SerialName("sections")
     val _sections: List<String> = emptyList(),
 ) {
-    @Transient
-    val songs: List<Song> = emptyList()
-    @Transient
-    val sections: List<Section> = _sections.mapNotNull { WorldManager.getSectionFor(it) }
+    @Transient val songs: List<Song> = emptyList()
+    @Transient val sections: List<Section> = _sections.mapNotNull { WorldManager.getSectionFor(it) }
     val startDepth: Int get() = depth.start
     val endDepth: Int get() = depth.end
     val key: LayerKey get() = LayerKey(name)

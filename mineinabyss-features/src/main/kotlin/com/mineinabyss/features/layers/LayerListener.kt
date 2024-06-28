@@ -12,6 +12,7 @@ import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.broadcastVal
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket
 import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket
@@ -32,10 +33,10 @@ import kotlin.time.toJavaDuration
 
 class LayerListener : Listener {
     @EventHandler
-    fun PlayerAscendEvent.onPlayerAscend() = sendTitleOnLayerChange()
+    fun PlayerAscendEvent.onPlayerAscend() { sendTitleOnLayerChange() }
 
     @EventHandler(ignoreCancelled = true)
-    fun PlayerDescendEvent.onPlayerDescend() = sendTitleOnLayerChange()
+    fun PlayerDescendEvent.onPlayerDescend() { sendTitleOnLayerChange() }
 
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
         if (PlayerManager.playerCanTeleport(player)) {
@@ -57,16 +58,16 @@ class LayerListener : Listener {
     }
 
     @EventHandler
-    fun PlayerAscendEvent.onPlayerChangeSection() = player.sendWorldBorderPackets(toSection)
+    fun PlayerAscendEvent.onPlayerChangeSection() { player.sendWorldBorderPackets(toSection) }
     @EventHandler
-    fun PlayerDescendEvent.onPlayerChangeSection() = player.sendWorldBorderPackets(toSection)
+    fun PlayerDescendEvent.onPlayerChangeSection() { player.sendWorldBorderPackets(toSection) }
 
     @EventHandler
-    fun PlayerTeleportEvent.onPlayerTeleport() = (to.section ?: from.section)?.let { player.sendWorldBorderPackets(it) }
+    fun PlayerTeleportEvent.onPlayerTeleport() { (to.section ?: from.section)?.let { player.sendWorldBorderPackets(it) } }
     @EventHandler
-    fun PlayerPostRespawnEvent.onPlayerRespawn() = respawnedLocation.section?.let { player.sendWorldBorderPackets(it) }
+    fun PlayerPostRespawnEvent.onPlayerRespawn() { respawnedLocation.section?.let { player.sendWorldBorderPackets(it) } }
     @EventHandler
-    fun PlayerJoinEvent.onPlayerJoin() = player.location.section?.let { player.sendWorldBorderPackets(it) }
+    fun PlayerJoinEvent.onPlayerJoin() { player.location.section?.let { player.sendWorldBorderPackets(it) } }
 
     private fun Player.sendWorldBorderPackets(section: Section) {
         val settings = WorldBorder()
@@ -82,7 +83,7 @@ class LayerListener : Listener {
     fun PlayerDeathEvent.appendLayerToDeathMessage() {
         val section = player.location.section ?: return
         val layerOfDeath = section.layer ?: return
-        deathMessage(deathMessage()?.append(" ${layerOfDeath.deathMessage}".miniMsg()))
+        deathMessage(deathMessage()?.let { Component.textOfChildren(it, Component.space(), layerOfDeath.deathMessage) })
     }
 
     @EventHandler

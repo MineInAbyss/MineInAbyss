@@ -9,6 +9,8 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 
 class CurseFeature : Feature() {
+    override val dependsOn = setOf("DeeperWorld")
+
     override fun FeatureDSL.enable() {
         plugin.listeners(CurseAscensionListener(), CurseEffectsListener())
 
