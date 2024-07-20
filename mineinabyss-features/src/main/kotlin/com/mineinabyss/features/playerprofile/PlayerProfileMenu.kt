@@ -31,7 +31,7 @@ import org.bukkit.inventory.ItemStack
 fun PlayerProfile(viewer: Player, player: Player) {
     var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
     val isPatreon by remember { mutableStateOf(player.toGeary().has<Patreon>()) }
-    val backgroundId by remember { mutableStateOf(player.toGeary().getOrSetPersisting { PlayerProfile() }.background) }
+    val backgroundId by remember { mutableStateOf(player.toGeary().getOrSetPersisting<PlayerProfile> { PlayerProfile() }.background) }
     val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +

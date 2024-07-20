@@ -10,5 +10,5 @@ import org.bukkit.entity.Player
 
 fun GearyModule.createGondolaTracker() = observe<OnSet>()
     .exec(query<Player>()) { player ->
-        entity.getOrSetPersisting { UnlockedGondolas() }
+        entity.getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
     }

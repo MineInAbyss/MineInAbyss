@@ -13,4 +13,4 @@ data class CosmeticComponent(
     val cosmeticBackpack: String? = null,
 )
 
-val Player.cosmeticComponent get() = toGeary().getOrSetPersisting { CosmeticComponent() }
+val Player.cosmeticComponent get() = toGeary().getOrSetPersisting<CosmeticComponent> { CosmeticComponent() }

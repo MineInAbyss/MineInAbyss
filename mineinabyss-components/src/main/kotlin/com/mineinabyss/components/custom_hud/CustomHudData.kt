@@ -15,4 +15,4 @@ data class CustomHudData(
     var showStarCompassHud: Boolean = true,
     var showDepthMeterHud: Boolean = true
 )
-val Player.customHudData get() = toGeary().getOrSetPersisting { CustomHudData() }
+val Player.customHudData get() = toGeary().getOrSetPersisting<CustomHudData> { CustomHudData() }

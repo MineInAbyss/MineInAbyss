@@ -145,7 +145,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                         playerAction {
                             val player = (sender as Player).toGeary()
                             if (player.has<SpyOnGuildChat>()) player.remove<SpyOnGuildChat>()
-                            else player.getOrSetPersisting { SpyOnGuildChat() }
+                            else player.getOrSetPersisting<SpyOnGuildChat> { SpyOnGuildChat() }
                             sender.success("You are ${if (player.has<SpyOnGuildChat>()) "spying" else "no longer spying"} on other guild chats!")
                         }
                     }

@@ -36,7 +36,7 @@ object MusicScheduler {
                 val playable = getPlayableSongsAtLocation(player.location)
                 if (playable.isEmpty()) delay(conf.maxSongWaitTime)
                 else {
-                    val recentlyPlayed = player.toGeary().getOrSet { RecentlyPlayed(setOf()) }
+                    val recentlyPlayed = player.toGeary().getOrSet<RecentlyPlayed> { RecentlyPlayed(setOf()) }
                     val notRecentlyPlayed = playable.filter { it !in recentlyPlayed.songs }
                     abyss.logger.i("Recently played: $recentlyPlayed")
                     abyss.logger.i("Playable: $playable")
@@ -76,7 +76,7 @@ object MusicScheduler {
         player.toGeary().apply {
             if (has<NowPlaying>()) return
             set(NowPlaying(song, System.currentTimeMillis()))
-            val recents = getOrSet { RecentlyPlayed(setOf()) }
+            val recents = getOrSet<RecentlyPlayed> { RecentlyPlayed(setOf()) }
             set(RecentlyPlayed(recents.songs + songName))
         }
         player.playSound(player, song.key, song.category, song.volume, song.pitch)

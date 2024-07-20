@@ -37,7 +37,7 @@ class DisplayLockerListener : Listener {
         val lockState = player.playerData.defaultDisplayLockState
         abyss.plugin.launch {
             yield()
-            frame.toGeary().getOrSetPersisting { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
+            frame.toGeary().getOrSetPersisting<LockDisplayItem> { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
             frame.toGeary().encodeComponentsTo(frame)
             player.playerData.recentInteractEntity = frame.uniqueId
             when (lockState) {
@@ -53,7 +53,7 @@ class DisplayLockerListener : Listener {
         val lockState = player.playerData.defaultDisplayLockState
         abyss.plugin.launch {
             yield()
-            entity.toGeary().getOrSetPersisting { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
+            entity.toGeary().getOrSetPersisting<LockDisplayItem> { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
             entity.toGeary().encodeComponentsTo(entity)
             player.playerData.recentInteractEntity = entity.uniqueId
             when (lockState) {

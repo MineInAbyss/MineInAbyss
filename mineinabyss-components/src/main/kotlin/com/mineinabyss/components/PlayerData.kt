@@ -39,4 +39,4 @@ class PlayerData(
     }
 }
 
-val Player.playerData get() = toGeary().getOrSetPersisting { PlayerData() }
+val Player.playerData get() = toGeary().getOrSetPersisting<PlayerData> { PlayerData() }
