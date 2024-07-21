@@ -21,8 +21,7 @@ import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.features.orthbanking.OrthBankingFeature
 import com.mineinabyss.features.patreons.PatreonFeature
 import com.mineinabyss.features.playerprofile.PlayerProfileFeature
-import com.mineinabyss.features.pvp.adventure.AdventurePvpFeature
-import com.mineinabyss.features.pvp.survival.SurvivalPvpFeature
+import com.mineinabyss.features.pvp.PvpFeature
 import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
@@ -65,8 +64,7 @@ class AbyssFeatureConfig(
     val orthBanking: OrthBankingFeature.Config = OrthBankingFeature.Config(),
     val patreon: PatreonFeature.Config = PatreonFeature.Config(),
     val playerProfile: PlayerProfileFeature.Config = PlayerProfileFeature.Config(),
-    val survivalPvp: Toggle = Toggle(),
-    val adventurePvp: Toggle = Toggle(),
+    val pvp: Toggle = Toggle(),
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
@@ -96,8 +94,7 @@ class AbyssFeatureConfig(
             add(orthBanking.enabled) { OrthBankingFeature(orthBanking) }
             add(patreon.enabled) { PatreonFeature(patreon) }
             add(playerProfile.enabled) { PlayerProfileFeature(playerProfile) }
-            add(survivalPvp.enabled) { SurvivalPvpFeature() }
-            add(adventurePvp.enabled) { AdventurePvpFeature() }
+            add(pvp.enabled) { PvpFeature() }
             add(relics.enabled) { RelicsFeature() }
             add(tools.enabled) { ToolsFeature() }
             add(tutorial.enabled) { TutorialFeature() }

@@ -1,4 +1,4 @@
-package com.mineinabyss.features.pvp.survival
+package com.mineinabyss.features.pvp
 
 import com.mineinabyss.components.playerData
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
@@ -7,7 +7,7 @@ import com.mineinabyss.idofront.messaging.error
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class SurvivalPvpListener : Listener {
+class PvpListener : Listener {
     @EventHandler
     fun PlayerDescendEvent.onEnterPvPLayer() {
         if (fromSection.layer?.hasPvpDefault == false && toSection.layer?.hasPvpDefault == true && !player.playerData.pvpStatus) {

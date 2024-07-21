@@ -1,28 +1,27 @@
-package com.mineinabyss.features.pvp.adventure
+package com.mineinabyss.features.pvp
 
-import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.features.pvp.PvpDamageListener
-import com.mineinabyss.features.pvp.PvpPrompt
+import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
+import org.bukkit.entity.Player
 
-class AdventurePvpFeature : Feature() {
+class PvpFeature : Feature() {
     override fun FeatureDSL.enable() {
         plugin.listeners(
             PvpDamageListener(),
-            AdventurePvpListener()
+            PvpListener()
         )
 
         mainCommand {
-            "pvp"(desc = "Opens PvP Selection menu") {
-                permission = "mineinabyss.pvp"
+            "pvp"(desc = "Commands to toggle pvp status") {
                 playerAction {
-                    if (!player.isInHub()) {
-                        player.error("Pvp can only be toggled in Orth")
+                    val player = sender as Player
+                    if (player.location.layer?.hasPvpDefault == true) {
+                        player.error("Pvp cannot be toggled in this layer.")
                         return@playerAction
                     }
                     guiy { PvpPrompt(player) }
@@ -31,11 +30,8 @@ class AdventurePvpFeature : Feature() {
         }
         tabCompletion {
             when (args.size) {
-                1 -> listOf(
-                    "pvp"
-                ).filter { it.startsWith(args[0]) }
-
-                else -> null
+                1 -> listOf("pvp").filter { it.startsWith(args.first()) }
+                else -> emptyList()
             }
         }
     }
