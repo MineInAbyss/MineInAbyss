@@ -18,8 +18,8 @@ import kotlin.math.roundToInt
 
 
 object ShowDepthSystem {
-    fun register() = geary.observe<ShowDepthMeterHud>().exec(query<Player>()) { (player) ->
-        if (player.toGeary().has<ShowDepthMeterHud>()) return@exec
+    fun register() = geary.observe<ShowDepth>().exec(query<Player>()) { (player) ->
+        if (entity.has<ShowDepthMeterHud>()) return@exec
         player.sendDepthMessage()
     }
 
