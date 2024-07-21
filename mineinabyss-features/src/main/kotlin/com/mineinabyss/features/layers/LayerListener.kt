@@ -8,6 +8,9 @@ import com.mineinabyss.deeperworld.services.PlayerManager
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.abyssFeatures
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.broadcastVal
@@ -17,6 +20,7 @@ import net.kyori.adventure.title.Title
 import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket
 import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket
 import net.minecraft.world.level.border.WorldBorder
+import org.bukkit.Bukkit
 import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
@@ -32,6 +36,16 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 class LayerListener : Listener {
+
+    init {
+        if (abyss.isEternalFortuneLoaded) Bukkit.getPluginManager().registerEvents(object : Listener {
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            fun PlayerCreateGraveEvent.onCreateGrave() {
+                if (player.isInHub()) isCancelled = true
+            }
+        }, abyss.plugin)
+    }
+
     @EventHandler
     fun PlayerAscendEvent.onPlayerAscend() { sendTitleOnLayerChange() }
 
@@ -41,19 +55,10 @@ class LayerListener : Listener {
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
         if (PlayerManager.playerCanTeleport(player)) {
             val fromLayer = fromSection.layer ?: return
-            val toLayer = toSection.layer ?: return
+            val toLayer = toSection.layer.takeUnless { it == fromLayer } ?: return
+            val times = Title.Times.times(2.5.seconds.toJavaDuration(), 0.5.seconds.toJavaDuration(), 1.seconds.toJavaDuration())
 
-            if (fromLayer != toLayer) {
-                player.showTitle(
-                    Title.title(
-                        toLayer.name.miniMsg(), toLayer.sub.miniMsg(), Title.Times.times(
-                            2.5.seconds.toJavaDuration(),
-                            0.5.seconds.toJavaDuration(),
-                            1.seconds.toJavaDuration()
-                        )
-                    )
-                )
-            }
+            player.showTitle(Title.title(toLayer.name.miniMsg(), toLayer.sub.miniMsg(), times))
         }
     }
 
@@ -99,9 +104,4 @@ class LayerListener : Listener {
         while (block.getRelative(BlockFace.UP, height).type == block.type) height++
         if (height >= liquidFlowLimit) isCancelled = true
     }
-
-//    @EventHandler(priority = EventPriority.MONITOR)
-//    fun PlayerCreateGraveEvent.onCreateGrave() {
-//        if (player.isInHub()) isCancelled = true
-//    }
 }

@@ -11,6 +11,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -37,7 +38,7 @@ data class MaxHealthChangeEffect(
         if (maxHealth > (minHealth ?: abs(addMaxHealth))) {
             val newMod = AttributeModifier(CURSE_MAX_HEALTH, addMaxHealth, AttributeModifier.Operation.ADD_NUMBER)
             modifier = newMod
-            activeEffects.add(newMod)
+            activeEffects += newMod
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.addModifier(newMod)
             val (x, y, z) = player.eyeLocation
             player.spawnParticle(Particle.SOUL, x, y, z, 6, 0.2, 0.5, 0.2, 0.02)
@@ -54,7 +55,7 @@ data class MaxHealthChangeEffect(
 
     companion object {
         val activeEffects = mutableSetOf<AttributeModifier>()
-        const val CURSE_MAX_HEALTH = "curse.max_health"
+        val CURSE_MAX_HEALTH = NamespacedKey.fromString("mineinabyss:curse.max_health")!!
     }
 
     override fun clone() = copy()

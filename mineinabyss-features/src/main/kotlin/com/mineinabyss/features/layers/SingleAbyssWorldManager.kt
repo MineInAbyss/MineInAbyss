@@ -13,13 +13,11 @@ class SingleAbyssWorldManager(
 ) : AbyssWorldManager {
     override val layers = layers.associateBy { it.key }
 
-    private val sectionToLayer: Map<Section, Layer> = layers
-        .flatMap { layer -> layer.sections.map { it to layer } }
-        .toMap()
+    private val sectionToLayer: Map<Section, Layer> =
+        layers.flatMap { layer -> layer.sections.map { it to layer } }.toMap()
 
-    private val abyssWorlds = layers.flatMap { it.sections }
-        .map { it.world }
-        .distinct()
+    private val abyssWorlds =
+        layers.flatMap { it.sections }.map { it.world }.distinct()
 
     override fun isAbyssWorld(world: World) = world in abyssWorlds
 

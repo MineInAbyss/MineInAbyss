@@ -8,7 +8,6 @@ import com.mineinabyss.features.curse.CurseFeature
 import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
-import com.mineinabyss.features.exp.ExpFeature
 import com.mineinabyss.features.gondolas.GondolaFeature
 import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.hubstorage.HubStorageFeature

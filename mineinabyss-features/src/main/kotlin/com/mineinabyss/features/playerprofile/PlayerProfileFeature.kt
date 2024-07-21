@@ -21,7 +21,6 @@ class PlayerProfileFeature(val config: Config) : Feature() {
         val validBackgroundIds = listOf("player_profile_background")
     }
 
-
     override fun FeatureDSL.enable() {
         mainCommand {
             "profile"(desc = "Opens a players profile") {
@@ -44,11 +43,11 @@ class PlayerProfileFeature(val config: Config) : Feature() {
                 1 -> listOf("profile").filter { it.startsWith(args[0]) }
                 2 -> {
                     when (args[0]) {
-                        "profile" -> onlinePlayers.plus("background").filter { it.startsWith(args[1]) }
+                        "profile" -> onlinePlayers.plus("background").filter { it.startsWith(args[1], true) }
                         else -> null
                     }
                 }
-                3 -> if (args[1] == "background") this@PlayerProfileFeature.config.validBackgroundIds.filter { it.startsWith(args[2]) } else null
+                3 -> if (args[1] == "background") this@PlayerProfileFeature.config.validBackgroundIds.filter { it.startsWith(args[2], true) } else null
 
                 else -> emptyList()
             }

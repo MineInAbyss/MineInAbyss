@@ -58,6 +58,7 @@ class MiscListener : Listener {
 
         if (player.gameMode != GameMode.CREATIVE) item.subtract()
         setUseInteractedBlock(Event.Result.DENY)
+
         for (x in -7..7) for (y in 0..5) for (z in -7..7) {
             val newBlock = block.location.clone().add(x.toDouble(), y.toDouble(), z.toDouble()).block
             if (newBlock.type != Material.DIRT) continue
@@ -96,8 +97,7 @@ class MiscListener : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun PlayerInteractEvent.onInteractPrivatedLectern() {
-        val block = clickedBlock ?: return
-        val state = block.state as? Lectern ?: return
+        val (block, state) = (clickedBlock ?: return) to (clickedBlock!!.state as? Lectern ?: return)
         if (!rightClicked || !BlockLockerAPIv2.isProtected(block)) return
 
         if (item?.type == Material.WRITABLE_BOOK || item?.type == Material.WRITTEN_BOOK) {
