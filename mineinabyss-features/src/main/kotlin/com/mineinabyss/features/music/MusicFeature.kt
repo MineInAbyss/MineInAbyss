@@ -7,7 +7,6 @@ import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 
 class MusicFeature : FeatureWithContext<MusicContext>(::MusicContext) {
-    override val dependsOn = setOf("WorldGuard")
 
     override fun FeatureDSL.enable() {
         plugin.listeners(context.queueMusicListener)

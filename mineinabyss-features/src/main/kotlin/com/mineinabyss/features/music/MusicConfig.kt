@@ -30,7 +30,7 @@ class MusicConfig(
         "category: The sound category to play the song in (default is MUSIC)",
         "volume: The volume of the song (default is 1)",
         "pitch: The pitch of the song (default is 1)",
-        "regions: WorldGuard regions this song can play in (can play anywhere if emtpy)"
+        "regions: Layers & sections this song can play in (can play anywhere if empty)"
     )
     val songs: List<Song> = listOf(
         Song(
@@ -44,9 +44,4 @@ class MusicConfig(
 ) {
     @Transient
     val songsByKey = songs.associateBy { it.key }
-
-    @Transient
-    val region2songs = songsByKey.flatMap { (name, song) ->
-        song.regions.map { region -> region to name }
-    }.toMap()
 }

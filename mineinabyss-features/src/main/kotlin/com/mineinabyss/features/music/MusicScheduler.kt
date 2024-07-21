@@ -4,10 +4,11 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.music.NowPlaying
 import com.mineinabyss.components.music.RecentlyPlayed
 import com.mineinabyss.components.music.ScheduledMusicJob
+import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import kotlinx.coroutines.delay
 import org.bukkit.Location
@@ -64,10 +65,9 @@ object MusicScheduler {
     }
 
     fun getPlayableSongsAtLocation(location: Location): List<String> {
-        return regionContainer
-            .createQuery()
-            .getApplicableRegions(BukkitAdapter.adapt(location))
-            .mapNotNull { conf.region2songs[it.id] }
+        return conf.songs.filter { location.layer?.id in it.regions || location.section?.name in it.regions }
+            .plus(conf.songs.filter { it.regions.isEmpty() })
+            .distinct().map { it.key }
     }
 
 
