@@ -23,7 +23,6 @@ allprojects {
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.spaceio.xyz/repository/maven-public/")
         maven("https://mvn.lumine.io/repository/maven-public/")
-        maven("https://repo.dmulloy2.net/nexus/repository/public/") //ProtocolLib
 //        maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
