@@ -27,8 +27,6 @@ allprojects {
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
         maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
-        //maven("https://repo.skyslycer.de/releases/") // HMCWraps
-        maven("https://nexus.lichtspiele.org/repository/releases/") // Shopkeepers
         maven("https://jitpack.io")
         mavenLocal()
     }
@@ -60,9 +58,6 @@ allprojects {
         compileOnly(idofrontLibs.minecraft.anvilgui)
 
         // Plugin libs
-        compileOnly(idofrontLibs.minecraft.plugin.vault) { exclude(group = "org.bukkit") }
-        compileOnly(idofrontLibs.minecraft.plugin.fawe.core)
-        compileOnly(idofrontLibs.minecraft.plugin.fawe.bukkit) { isTransitive = false }
         compileOnly(idofrontLibs.minecraft.plugin.modelengine)
 
         compileOnly(miaLibs.guiy)

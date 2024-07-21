@@ -47,14 +47,12 @@ class AbyssFeatureConfig(
     val enableAll: Boolean = false,
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),
-    val configManagement: Toggle = Toggle(),
     val core: Toggle = Toggle(),
     val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
     val curse: Toggle = Toggle(),
     val custom_hud: Toggle = Toggle(),
     val descent: Toggle = Toggle(),
     val displayLocker: Toggle = Toggle(),
-    val exp: Toggle = Toggle(),
     val gondolas: Toggle = Toggle(),
     val guilds: Toggle = Toggle(),
     val hubstorage: Toggle = Toggle(),
@@ -67,7 +65,6 @@ class AbyssFeatureConfig(
     val okiboTravel: Toggle = Toggle(),
     val orthBanking: OrthBankingFeature.Config = OrthBankingFeature.Config(),
     val patreon: PatreonFeature.Config = PatreonFeature.Config(),
-    val pins: Toggle = Toggle(),
     val playerProfile: PlayerProfileFeature.Config = PlayerProfileFeature.Config(),
     val survivalPvp: Toggle = Toggle(),
     val adventurePvp: Toggle = Toggle(),
@@ -87,7 +84,6 @@ class AbyssFeatureConfig(
             add(custom_hud.enabled) { CustomHudFeature() }
             add(descent.enabled) { DescentFeature() }
             add(displayLocker.enabled) { DisplayLockerFeature() }
-            add(exp.enabled) { ExpFeature() }
             add(gondolas.enabled) { GondolaFeature() }
             add(guilds.enabled) { GuildFeature() }
             add(hubstorage.enabled) { HubStorageFeature() }

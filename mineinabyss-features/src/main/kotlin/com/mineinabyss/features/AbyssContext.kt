@@ -11,7 +11,6 @@ import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.observeLogger
 import com.mineinabyss.idofront.plugin.Services
-import net.milkbowl.vault.economy.Economy
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import java.nio.file.Path
@@ -47,8 +46,6 @@ class AbyssContext(
     val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
     val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
     val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
-
-    val econ: Economy? = Services.getOrNull<Economy>()
 
     val db = Database.connect("jdbc:sqlite:" + plugin.dataFolder.path + "/data.db", "org.sqlite.JDBC")
 }
