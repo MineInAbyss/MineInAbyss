@@ -9,5 +9,4 @@ plugins {
 
 dependencies {
     api(project(":mineinabyss-components"))
-    compileOnly(idofrontLibs.minecraft.plugin.worldguard)
 }

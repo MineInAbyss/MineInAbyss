@@ -9,7 +9,6 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.sk89q.worldguard.WorldGuard
 import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -18,7 +17,6 @@ import kotlin.time.Duration.Companion.seconds
 
 object MusicScheduler {
     private val conf get() = Features.music.config
-    private val regionContainer = WorldGuard.getInstance().platform.regionContainer
 
     fun stopSchedulingMusic(player: Player) {
         player.toGeary().apply {
