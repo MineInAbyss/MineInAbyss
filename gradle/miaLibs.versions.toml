@@ -1,10 +1,10 @@
 [versions]
-gearyPaper = "0.30.7"
+gearyPaper = "0.30.8"
 guiy = "0.12.1"
 deeperworld = "0.11.0"
-chatty = "0.8.2"
+chatty = "0.8.6"
 eternalfortune = "0.4-SNAPSHOT"
-packy = "0.5.2"
+packy = "0.6.1"
 blocky = "0.10.2-dev.4"
 
 
@@ -19,13 +19,12 @@ packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
 blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.12.2"
-minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.4.3"
-minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics-MiA:2.7.3"
+minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.4.4"
+minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.3-DEV"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.27.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.6"
 minecraft-plugin-mythichud = "io.lumine:MythicHUD:1.0.0-SNAPSHOT"
-#minecraft-plugin-hmcwraps = "de.skyslycer.hmcwraps:api:1.0.0"
 minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.21-v1-SNAPSHOT"
 minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.21-v1-SNAPSHOT"
 minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.21-v1-SNAPSHOT"

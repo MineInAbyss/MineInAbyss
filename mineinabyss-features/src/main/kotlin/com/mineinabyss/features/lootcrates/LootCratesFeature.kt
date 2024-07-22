@@ -15,12 +15,14 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
 import com.mineinabyss.idofront.serialization.SerializableItemStack
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 
 class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Context) {
     @Serializable
@@ -63,13 +65,9 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
                     playerAction {
                         val (namespace, key) = PrefabKey.of(lootTable)
                         player.inventory.addItem(
-                            SerializableItemStack(
-                                type = Material.STICK,
-                                itemName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
-                            ).toItemStack().apply {
-                                editMeta {
-                                    it.persistentDataContainer.encode(ContainsLoot(lootTable))
-                                }
+                            ItemStack(Material.STICK).editItemMeta {
+                                itemName(context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg())
+                                persistentDataContainer.encode(ContainsLoot(lootTable))
                             }
                         )
                     }
