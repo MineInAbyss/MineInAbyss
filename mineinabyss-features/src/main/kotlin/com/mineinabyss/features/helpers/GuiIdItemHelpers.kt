@@ -12,15 +12,20 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 
 object TitleItem {
-    fun of(name: String, vararg lore: String) = ItemStack(Material.PAPER).editItemMeta {
+    fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).editItemMeta {
         itemName(name.miniMsg())
         lore(lore.toList().map { it.miniMsg() })
         setCustomModelData(1)
     }
-    fun of(name: Component, vararg lore: Component) = ItemStack(Material.PAPER).editItemMeta {
+    fun of(name: Component, vararg lore: Component) = ItemStack.of(Material.PAPER).editItemMeta {
         itemName(name)
         lore(lore.toList())
         setCustomModelData(1)
+    }
+
+    val transparentItem = ItemStack.of(Material.PAPER).editItemMeta {
+        setCustomModelData(1)
+        isHideTooltip = true
     }
 }
 

@@ -7,7 +7,6 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
@@ -81,7 +80,7 @@ fun ScrollUpButton(modifier: Modifier = Modifier) {
 
 @Composable
 fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
-    val guildInvitePaper = TitleItem.of("Player Name")
+    val guildInvitePaper = TitleItem.of("Player Name").editItemMeta { isHideTooltip = true }
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,
@@ -97,6 +96,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
                 AnvilGUI.Builder()
                     .title(":space_-61::guild_search_menu:")
                     .itemLeft(guildInvitePaper)
+                    .itemOutput(TitleItem.transparentItem)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
                     .onClick { _, snapshot ->

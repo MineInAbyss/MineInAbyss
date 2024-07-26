@@ -27,6 +27,7 @@ import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.Navigator
 import com.mineinabyss.guiy.navigation.UniversalScreens
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
@@ -159,7 +160,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
     Button(
         enabled = !player.hasGuild(),
         onClick = {
-            val guildRenamePaper = TitleItem.of("Guild Name")
+            val guildRenamePaper = TitleItem.of("Guild Name").editItemMeta { isHideTooltip = true }
             if (player.hasGuild()) {
                 player.error("You already have a guild.")
                 nav.back()
@@ -171,6 +172,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
                 AnvilGUI.Builder()
                     .title(":space_-61::guild_name_menu:")
                     .itemLeft(guildRenamePaper)
+                    .itemOutput(TitleItem.transparentItem)
                     .plugin(guiyPlugin)
                     .onClose { nav.back() }
                     .onClick { _, snapshot ->

@@ -15,7 +15,7 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
 
@@ -91,7 +91,8 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Uni
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
                         .title(":space_-61::guild_search_menu:")
-                        .itemLeft(TitleItem.of("Guild Name"))
+                        .itemLeft(TitleItem.of("Guild Name").editItemMeta { isHideTooltip = true })
+                        .itemOutput(TitleItem.transparentItem)
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }
                         .onClick { _, snapshot ->
