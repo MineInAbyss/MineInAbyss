@@ -34,7 +34,7 @@ class BlockLockerFeature: Feature() {
                     playerAction {
                         //if (!player.hasPlayedBefore()) return@playerAction
                         val targetBlock = this.player.getTargetBlockExact(5, FluidCollisionMode.NEVER) ?: return@playerAction sender.error("No container within distance...")
-                        val tileState = targetBlock.state as? TileState ?: return@playerAction sender.error("TargetBlock was not lockable container...")
+                        val tileState = BlockLockerHelpers.blockLockerTilestate(targetBlock) ?: return@playerAction sender.error("TargetBlock was not lockable container...")
                         val lock = BlockLockerHelpers.blockLockerLock(targetBlock) ?: BlockLockerLock(this.player.uniqueId)
 
                         lock.allowedPlayers += player.uniqueId
@@ -49,12 +49,12 @@ class BlockLockerFeature: Feature() {
                     playerAction {
                         //if (!player.hasPlayedBefore()) return@playerAction
                         val targetBlock = this.player.getTargetBlockExact(5, FluidCollisionMode.NEVER) ?: return@playerAction
-                        val tileState = targetBlock.state as? TileState ?: return@playerAction
+                        val tileState = BlockLockerHelpers.blockLockerTilestate(targetBlock) ?: return@playerAction
 
                         tileState.persistentDataContainer.decode<BlockLockerLock>()?.allowedPlayers?.remove(player.uniqueId)
                             ?: return@playerAction sender.success("No locked container within distance...")
-
                         tileState.update()
+
                         sender.success("Removed ${player.name} from locked container!")
                     }
                 }

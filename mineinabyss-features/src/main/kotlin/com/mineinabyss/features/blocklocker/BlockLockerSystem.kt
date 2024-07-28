@@ -47,7 +47,7 @@ fun GearyModule.createBlockLockerDebugTextSystem() = system(query<Player>()).eve
 
 typealias PlayerUUID = UUID
 object BlockLockerDebugText {
-    private val debugIdMap = mutableMapOf<PlayerUUID, Int>()
+    private val debugIdMap = mutableMapOf<PlayerUUID, Pair<Location, Int>>()
     private fun createDebugText(lock: BlockLockerLock) = PaperAdventure.asVanilla(
         """
             <yellow>Container-Owner: <gold>${lock.owner.toOfflinePlayer().name}
@@ -60,20 +60,21 @@ object BlockLockerDebugText {
         val targetBlock = player.getTargetBlockExact(5, FluidCollisionMode.NEVER) ?: return removeBlockLockerDebug(player)
         val tileState = BlockLockerHelpers.blockLockerTilestate(targetBlock) ?: return removeBlockLockerDebug(player)
         val lock = BlockLockerHelpers.blockLockerLock(targetBlock) ?: return removeBlockLockerDebug(player)
-
-        val loc = (((tileState as? Chest)?.inventory as? DoubleChestInventory)?.location?.let { Location(it.world, it.x.roundToInt().toDouble(), it.y, it.z.roundToInt().toDouble()) } ?: targetBlock.location.toBlockCenterLocation()).up(1)
+        val loc = tileState.debugTextLoc()
 
         var textEntityPacket: ClientboundAddEntityPacket? = null
-        val entityId = debugIdMap.getOrPut(player.uniqueId) {
+        val (tileLocation, entityId) = debugIdMap.getOrPut(player.uniqueId) {
             ClientboundAddEntityPacket(
                 Entity.nextEntityId(), UUID.randomUUID(),
                 loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
                 EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
             ).let {
                 textEntityPacket = it
-                it.id
+                tileState.location to it.id
             }
         }
+
+        if (tileLocation != tileState.location) return removeBlockLockerDebug(player)
 
         val textMetaPacket = ClientboundSetEntityDataPacket(
             entityId, listOf(
@@ -91,8 +92,14 @@ object BlockLockerDebugText {
 
     fun removeBlockLockerDebug(player: Player) {
         debugIdMap.remove(player.uniqueId)?.let {
-            (player as CraftPlayer).handle.connection.send(ClientboundRemoveEntitiesPacket(IntList.of(*intArrayOf(it))))
+            (player as CraftPlayer).handle.connection.send(ClientboundRemoveEntitiesPacket(IntList.of(*intArrayOf(it.second))))
         }
+    }
+
+    private fun TileState.debugTextLoc(): Location {
+        return (((this as? Chest)?.inventory as? DoubleChestInventory)?.location?.let {
+            Location(it.world, it.x.roundToInt().toDouble(), it.y, it.z.roundToInt().toDouble())
+        } ?: location.toBlockCenterLocation()).up(1)
     }
 
 
