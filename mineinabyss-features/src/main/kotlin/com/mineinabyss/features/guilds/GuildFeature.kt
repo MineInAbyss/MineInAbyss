@@ -7,13 +7,19 @@ import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
+import com.mineinabyss.features.guilds.database.Guilds
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.listeners.ChattyGuildListener
 import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
+import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.features.helpers.head
+import com.mineinabyss.geary.helpers.fastForEach
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.items.gearyItems
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
@@ -25,19 +31,61 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.nms.aliases.toNMS
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
+import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.adventure.PaperAdventure
 import kotlinx.serialization.Serializable
+import net.minecraft.core.component.DataComponentPredicate
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.npc.ClientSideMerchant
+import net.minecraft.world.inventory.MerchantMenu
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.trading.ItemCost
+import net.minecraft.world.item.trading.MerchantOffer
+import net.minecraft.world.item.trading.MerchantOffers
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.OfflinePlayer
+import org.bukkit.craftbukkit.entity.CraftHumanEntity
+import org.bukkit.craftbukkit.entity.CraftPlayer
+import org.bukkit.craftbukkit.inventory.CraftItemStack
+import org.bukkit.craftbukkit.inventory.CraftMerchantCustom
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Merchant
+import java.util.*
 
 const val guildChannelId: String = "Guild Chat"
 
+fun test(player: Player) {
+    val serverPlayer = player.toNMS() as? ServerPlayer ?: return
+    val clientMerchant = ClientSideMerchant(serverPlayer)
+    val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
+    val head = ItemStack.fromBukkitCopy((player as OfflinePlayer).head(player.name()).editItemMeta {
+        isHideTooltip = true
+    })
+    merchantMenu.title = PaperAdventure.asVanilla("<red>test:pog:<gradient:red:white>test again".miniMsg())
+    merchantMenu.offers = MerchantOffers().also { offers ->
+        val transparentItem = ItemStack.fromBukkitCopy(TitleItem.transparentItem)
+        displayGuildList().fastForEach { (guildName, guildJoinType, guildLevel) ->
+            val item = ItemStack.fromBukkitCopy(TitleItem.of("<gold>".plus(guildName).miniMsg(),
+                "<yellow><b>Guild Owner:</b> <yellow><i>${guildName.getOwnerFromGuildName().name}".miniMsg(),
+                "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
+                "<yellow><b>Guild Jointype:</b> <yellow><i>${guildJoinType}".miniMsg()))
+            offers.add(MerchantOffer(ItemCost(transparentItem.itemHolder, 1, DataComponentPredicate.allOf(transparentItem.components)), Optional.empty(), item, 0, 0, 0f))
+        }
+    }
+    merchantMenu.setShowProgressBar(false)
+
+    clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla("<red>test:pog:<gradient:red:white>test again".miniMsg()), 0)
+}
 
 class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
     override val dependsOn = setOf("Chatty")
@@ -86,6 +134,11 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
         mainCommand {
             "guild"(desc = "Guild related commands") {
+                "test" {
+                    playerAction {
+                        test(player)
+                    }
+                }
                 "balance"(desc = "Guild Balance related commands") {
                     "view"(desc = "View your guilds balance") {
                         playerAction {

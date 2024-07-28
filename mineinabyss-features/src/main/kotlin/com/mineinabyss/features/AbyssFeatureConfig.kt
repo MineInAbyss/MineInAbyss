@@ -9,6 +9,7 @@ import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
 import com.mineinabyss.features.gondolas.GondolaFeature
+import com.mineinabyss.features.guidebook.GuideBookFeature
 import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.hubstorage.HubStorageFeature
 import com.mineinabyss.features.keepinventory.KeepInvFeature
@@ -68,6 +69,7 @@ class AbyssFeatureConfig(
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
+    val guideBook: GuideBookFeature.Config = GuideBookFeature.Config()
 ) {
     val features by lazy {
         buildList<Feature> {
@@ -98,6 +100,7 @@ class AbyssFeatureConfig(
             add(relics.enabled) { RelicsFeature() }
             add(tools.enabled) { ToolsFeature() }
             add(tutorial.enabled) { TutorialFeature() }
+            add(guideBook.enabled) { GuideBookFeature(guideBook) }
         }
     }
 }
