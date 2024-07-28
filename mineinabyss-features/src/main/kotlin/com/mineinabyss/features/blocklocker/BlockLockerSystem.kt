@@ -97,9 +97,7 @@ object BlockLockerDebugText {
     }
 
     private fun TileState.debugTextLoc(): Location {
-        return (((this as? Chest)?.inventory as? DoubleChestInventory)?.location?.let {
-            Location(it.world, it.x.roundToInt().toDouble(), it.y, it.z.roundToInt().toDouble())
-        } ?: location.toBlockCenterLocation()).up(1)
+        return (((this as? Chest)?.inventory as? DoubleChestInventory)?.location?.add(0.5, 1.0, 0.5) ?: location.toBlockCenterLocation().up(1))
     }
 
 
