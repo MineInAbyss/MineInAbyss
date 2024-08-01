@@ -10,10 +10,13 @@ import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.abyssFeatures
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.idofront.messaging.broadcastVal
+import com.mineinabyss.geary.actions.ActionGroupContext
+import com.mineinabyss.geary.actions.execute
+import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldowns
+import com.mineinabyss.geary.papermc.features.common.cooldowns.StartCooldown
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
@@ -46,6 +49,8 @@ class LayerListener : Listener {
         }, abyss.plugin)
     }
 
+    private val titleCooldown = StartCooldown(2.seconds, null, "mineinabyss:layer_title")
+
     @EventHandler
     fun PlayerAscendEvent.onPlayerAscend() { sendTitleOnLayerChange() }
 
@@ -53,13 +58,15 @@ class LayerListener : Listener {
     fun PlayerDescendEvent.onPlayerDescend() { sendTitleOnLayerChange() }
 
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
-        if (PlayerManager.playerCanTeleport(player)) {
-            val fromLayer = fromSection.layer ?: return
-            val toLayer = toSection.layer.takeUnless { it == fromLayer } ?: return
-            val times = Title.Times.times(2.5.seconds.toJavaDuration(), 0.5.seconds.toJavaDuration(), 1.seconds.toJavaDuration())
+        if (!PlayerManager.playerCanTeleport(player)) return
+        val gearyPlayer = player.toGearyOrNull() ?: return
+        if (!Cooldowns.isComplete(gearyPlayer, "mineinabyss:layer_title")) return
+        val fromLayer = fromSection.layer ?: return
+        val toLayer = toSection.layer.takeUnless { it == fromLayer } ?: return
+        val times = Title.Times.times(2.5.seconds.toJavaDuration(), 0.5.seconds.toJavaDuration(), 1.seconds.toJavaDuration())
 
-            player.showTitle(Title.title(toLayer.name.miniMsg(), toLayer.sub.miniMsg(), times))
-        }
+        player.showTitle(Title.title(toLayer.name.miniMsg(), toLayer.sub.miniMsg(), times))
+        titleCooldown.execute(ActionGroupContext(gearyPlayer))
     }
 
     @EventHandler
@@ -86,8 +93,7 @@ class LayerListener : Listener {
 
     @EventHandler
     fun PlayerDeathEvent.appendLayerToDeathMessage() {
-        val section = player.location.section ?: return
-        val layerOfDeath = section.layer ?: return
+        val layerOfDeath =  player.location.section?.layer ?: return
         deathMessage(deathMessage()?.let { Component.textOfChildren(it, Component.space(), layerOfDeath.deathMessage) })
     }
 
