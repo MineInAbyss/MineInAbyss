@@ -76,7 +76,8 @@ allprojects {
         compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
         compileOnly(miaLibs.minecraft.plugin.traincarts)
         compileOnly(miaLibs.minecraft.plugin.tccoasters)
-        compileOnly(miaLibs.minecraft.plugin.mythichud)
+        //compileOnly(miaLibs.minecraft.plugin.mythichud)
+        compileOnly(miaLibs.minecraft.plugin.betterhud)
     }
 }
 
