@@ -8,6 +8,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.adventure.PaperAdventure
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.network.protocol.game.ClientboundBundlePacket
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -73,20 +74,21 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset)?.apply { yaw = okiboMap.yaw } ?: return
     val entityId = mapEntities.computeIfAbsent(okiboMap) { Entity.nextEntityId() }
 
-    connection.send(ClientboundAddEntityPacket(
+    val textEntityPacket = ClientboundAddEntityPacket(
         entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw,
         EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
-    ))
+    )
 
     val txt = PaperAdventure.asVanilla(okiboMap.text.miniMsg())  ?: Component.empty()
-
-    connection.send(ClientboundSetEntityDataPacket(
+    val textMetaPacket = ClientboundSetEntityDataPacket(
         entityId, listOf(
             SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
             SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, txt),
             SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
         )
-    ))
+    )
+
+    connection.send(ClientboundBundlePacket(listOf(textEntityPacket, textMetaPacket)))
 
     okiboMap.hitboxes.forEach { mapHitbox ->
         val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
@@ -94,37 +96,41 @@ private fun Player.sendOkiboMap(okiboMap: OkiboMap) {
         val loc = textLoc.clone().add(mapHitbox.offset)
 
         //interactionPacket
-        connection.send(ClientboundAddEntityPacket(
+        val hitboxEntityPacket = ClientboundAddEntityPacket(
             hitboxEntityId, UUID.randomUUID(),
             loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
             EntityType.INTERACTION, 0, Vec3.ZERO, 0.0
-        ))
+        )
 
         //metadataPacket
-        connection.send(ClientboundSetEntityDataPacket(
+        val hitboxMetaPacket = ClientboundSetEntityDataPacket(
             hitboxEntityId, listOf(
                 SynchedEntityData.DataValue(8, EntityDataSerializers.FLOAT, mapHitbox.hitbox.width.toFloat()),
                 SynchedEntityData.DataValue(9, EntityDataSerializers.FLOAT, mapHitbox.hitbox.height.toFloat()),
             )
-        ))
+        )
+
+        connection.send(ClientboundBundlePacket(listOf(hitboxEntityPacket, hitboxMetaPacket)))
 
         okiboMap.icon?.let {
             val iconLoc = loc.clone().add(it.offset)
 
             //iconPacket
-            connection.send(ClientboundAddEntityPacket(
+            val iconEntityPacket = ClientboundAddEntityPacket(
                 iconEntityId, UUID.randomUUID(),
                 iconLoc.x, iconLoc.y, iconLoc.z, iconLoc.pitch, iconLoc.yaw,
                 EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
-            ))
+            )
 
             //iconMetaPacket
-            connection.send(ClientboundSetEntityDataPacket(
+            val iconMetaPacket = ClientboundSetEntityDataPacket(
                 iconEntityId, listOf(
                     SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(it.text.miniMsg()) ?: Component.empty()),
                     SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
                 )
-            ))
+            )
+
+            connection.send(ClientboundBundlePacket(listOf(iconEntityPacket, iconMetaPacket)))
         }
     }
 
