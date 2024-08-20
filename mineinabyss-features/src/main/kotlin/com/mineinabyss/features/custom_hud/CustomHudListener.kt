@@ -12,15 +12,35 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status
 
 class CustomHudListener(private val feature: CustomHudFeature) : Listener {
 
+//    @EventHandler
+//    fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
+//        if (status == Status.ACCEPTED || status == Status.DOWNLOADED) return
+//        packy.plugin.launch {
+//            do {
+//                delay(1.ticks)
+//                if (player.isOnline) betterhud.getHudPlayer(player).isHudEnabled = feature.customHudTemplate in player.packyData.enabledPackIds
+//            } while (player.isConnected && !player.isOnline)
+//        }
+//    }
+
     @EventHandler
     fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
         if (status == Status.ACCEPTED || status == Status.DOWNLOADED) return
         packy.plugin.launch {
             do {
                 delay(1.ticks)
-                if (player.isOnline) betterhud.getHudPlayer(player).isHudEnabled = feature.customHudTemplate in player.packyData.enabledPackIds
+                if (player.isOnline) handleStatusEvent()
+                //if (player.isOnline) betterhud.getHudPlayer(player).isHudEnabled = feature.customHudTemplate in player.packyData.enabledPackIds
             } while (player.isConnected && !player.isOnline)
         }
+    }
+
+    private fun PlayerResourcePackStatusEvent.handleStatusEvent() {
+        if (status == Status.SUCCESSFULLY_LOADED && feature.customHudEnabled(player)) {
+            mythicHud.createBarHandler(player.hudHolder)
+            player.hudHolder.initialize()
+            toggleBackgroundLayouts(player, feature)
+        } else mythicHud.createBarHandler(player.hudHolder).disable()
     }
 
 }
