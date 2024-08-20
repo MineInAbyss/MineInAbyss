@@ -11,6 +11,7 @@ import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
+import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -32,7 +33,7 @@ fun GuildUIScope.GuildMemberListScreen() {
     val guildMembers = remember { player.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }) }
 
     Scrollable(
-        guildMembers, line, 5, minOf(guildLevel + 1, 4),
+        guildMembers, line, ScrollDirection.VERTICAL,
         nextButton = { ScrollDownButton(Modifier.at(0, 3).clickable { line++ }) },
         previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
         NavbarPosition.START, null
@@ -66,7 +67,7 @@ fun GuildUIScope.GuildMemberListScreen() {
 fun ScrollDownButton(modifier: Modifier = Modifier) {
     Item(ItemStack(Material.PAPER).editItemMeta {
         itemName("<green><b>Scroll Down".miniMsg())
-        setCustomModelData(0)
+        setCustomModelData(1)
     }, modifier)
 }
 
@@ -74,7 +75,7 @@ fun ScrollDownButton(modifier: Modifier = Modifier) {
 fun ScrollUpButton(modifier: Modifier = Modifier) {
     Item(ItemStack(Material.PAPER).editItemMeta {
         itemName("<blue><b>Scroll Up".miniMsg())
-        setCustomModelData(0)
+        setCustomModelData(1)
     }, modifier)
 }
 

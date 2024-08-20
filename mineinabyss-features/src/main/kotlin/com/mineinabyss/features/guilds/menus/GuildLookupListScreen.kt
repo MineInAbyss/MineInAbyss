@@ -28,9 +28,9 @@ fun GuildUIScope.GuildLookupListScreen() {
         guildPageList, pageNum,
         nextButton = { NextPageButton(Modifier.at(5, 0)) { pageNum++ } },
         previousButton = { PreviousPageButton(Modifier.at(3, 0)) { pageNum-- } },
-        NavbarPosition.TOP, null
+        NavbarPosition.BOTTOM, null
     ) { pageItems ->
-        HorizontalGrid(Modifier.at(1,0).size(5, 4)) {
+        HorizontalGrid(Modifier.at(1, 0).size(7, 5)) {
             pageItems.forEach { (guildName, joinType, guildLevel) ->
                 val owner = guildName.getOwnerFromGuildName()
                 Button(

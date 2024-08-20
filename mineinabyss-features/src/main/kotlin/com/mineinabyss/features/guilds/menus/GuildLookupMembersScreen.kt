@@ -7,11 +7,11 @@ import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
-import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
+import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.click.clickable
@@ -29,12 +29,12 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
     val guildMembers = remember { guildName.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER } }
 
     Scrollable(
-        guildMembers, line, 5, guildLevel + 1,
-        nextButton = { ScrollDownButton(Modifier.at(0, 3).clickable { line++ }) },
+        guildMembers, line, ScrollDirection.VERTICAL,
+        nextButton = { ScrollDownButton(Modifier.at(0, 4).clickable { line++; this.clickType }) },
         previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
-        NavbarPosition.START, null
+        NavbarPosition.END, null
     ) { members ->
-        VerticalGrid(Modifier.size(5, guildLevel + 1)) {
+        VerticalGrid(Modifier.at(2,1).size(5, minOf(guildLevel + 1, 4))) {
             members.forEach { (rank, member) ->
                 Button {
                     Item(
