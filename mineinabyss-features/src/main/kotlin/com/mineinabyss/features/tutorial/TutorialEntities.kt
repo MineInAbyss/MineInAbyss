@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
@@ -35,13 +36,13 @@ data class TutorialEntity(
     @EncodeDefault(NEVER) val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
     @EncodeDefault(NEVER) val billboard: Display.Billboard = Display.Billboard.VERTICAL,
     @EncodeDefault(NEVER) val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
-    @EncodeDefault(NEVER) val viewRange: Float? = null,
+    @EncodeDefault(NEVER) val seeThrough: Boolean = false,
 ) {
-    private fun TextDisplay.trackEntity() {
-        toGearyOrNull()?.add<TutorialEntity>() ?: run {
+    private fun TextDisplay.trackEntity(tutorial: TutorialEntity) {
+        toGearyOrNull()?.setPersisting(tutorial) ?: run {
             abyss.plugin.launch {
                 delay(10.ticks)
-                trackEntity()
+                trackEntity(tutorial)
             }
         }
     }
@@ -53,10 +54,10 @@ data class TutorialEntity(
             textDisplay.alignment = alignment
             textDisplay.isShadowed = shadow
             textDisplay.backgroundColor = backgroundColor
-            viewRange?.let { textDisplay.viewRange = it }
             textDisplay.transformation = textDisplay.transformation.apply { scale.set(scale) }
+            textDisplay.isSeeThrough = seeThrough
 
             textDisplay.isPersistent = false
-        }.trackEntity()
+        }.trackEntity(this)
     }
 }

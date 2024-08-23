@@ -9,7 +9,9 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
+import org.bukkit.World
 import org.bukkit.entity.Entity
+import org.bukkit.entity.TextDisplay
 
 class TutorialFeature : Feature() {
 
@@ -34,11 +36,31 @@ class TutorialFeature : Feature() {
             "tutorial"(desc = "Opens the tutorial") {
                 "reload" {
                     action {
-                        Bukkit.getWorlds().map { it.entities }.flatten()
-                            .filter { it.toGearyOrNull()?.has<TutorialEntity>() == true }.forEach(Entity::remove)
+                        Bukkit.getWorlds().flatMap { it.entities }
+                            .filter { it is TextDisplay && it.toGearyOrNull()?.has<TutorialEntity>() == true }
+                            .forEach(Entity::remove)
                         setTutorialContext()
                         spawnTutorialEntities()
                         sender.success("Tutorial reloaded")
+                    }
+                }
+                "save" {
+                    action {
+                        Bukkit.getWorlds().flatMap { it.entities.filterIsInstance<TextDisplay>() }
+                            .mapNotNull { it to (it.toGearyOrNull()?.get<TutorialEntity>() ?: return@mapNotNull null) }
+                            .map { (entity, tutorial) ->
+                                tutorial.copy(
+                                    location = entity.location,
+                                    backgroundColor = entity.backgroundColor ?: tutorial.backgroundColor,
+                                    shadow = entity.isShadowed,
+                                    alignment = entity.alignment,
+                                    billboard = entity.billboard,
+                                    scale = entity.transformation.scale,
+                                )
+                            }.let { config<List<TutorialEntity>>("tutorialEntities", abyss.dataPath, it).write(it) }
+
+                        setTutorialContext()
+                        sender.success("Successfully saved tutorial-entities")
                     }
                 }
             }
@@ -46,7 +68,11 @@ class TutorialFeature : Feature() {
         tabCompletion {
             when (args.size) {
                 1 -> listOf("tutorial").filter { it.startsWith(args[0]) }
-                2 -> if (args.first() == "tutorial") listOf("reload").filter { it.startsWith(args[1]) } else listOf()
+                2 -> if (args.first() == "tutorial") listOf(
+                    "reload",
+                    "save"
+                ).filter { it.startsWith(args[1]) } else listOf()
+
                 else -> emptyList()
             }
         }
