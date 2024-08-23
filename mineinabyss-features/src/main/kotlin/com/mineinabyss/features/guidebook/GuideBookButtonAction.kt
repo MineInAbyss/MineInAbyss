@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GuideBookButtonAction(
     val action: Action,
-    @EncodeDefault(EncodeDefault.Mode.NEVER) subPage: GuideBookPage? = null,
-    @EncodeDefault(EncodeDefault.Mode.NEVER) command: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val subPage: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val command: String? = null,
 ) {
 
     init {

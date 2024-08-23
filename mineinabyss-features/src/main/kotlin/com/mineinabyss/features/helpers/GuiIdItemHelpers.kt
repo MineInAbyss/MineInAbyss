@@ -25,7 +25,7 @@ object TitleItem {
 
     val transparentItem = ItemStack.of(Material.PAPER).editItemMeta {
         setCustomModelData(1)
-        isHideTooltip = true
+        isHideTooltip = false
     }
 }
 

@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GuideBookConfig(
-    val frontPage: GuideBookPage
+    val frontPage: String = ""
 )
