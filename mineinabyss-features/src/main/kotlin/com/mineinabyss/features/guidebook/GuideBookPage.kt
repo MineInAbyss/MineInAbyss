@@ -21,7 +21,7 @@ import net.minecraft.world.item.trading.MerchantOffer
 import net.minecraft.world.item.trading.MerchantOffers
 import org.bukkit.entity.Player
 
-@Serializable
+@Serializable(GuideBookPages.Serializer::class)
 data class GuideBookPages(val pages: List<GuideBookPage> = listOf()) {
 
     @Transient private val ids = pages.map { it.id }
@@ -44,9 +44,8 @@ data class GuideBookPage(
 ) {
     fun openMerchantMenu(player: Player) {
         //If no buttons, the page is only meant to change the title and doesnt have any sub-pages
-        if (buttons.isEmpty()) {
-            player.openInventory.title(title.miniMsg())
-        } else {
+        if (buttons.isEmpty()) player.openInventory.title(title.miniMsg())
+        else {
             val serverPlayer = player.toNMS() as ServerPlayer
             val clientMerchant = ClientSideMerchant(serverPlayer)
             val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
@@ -54,6 +53,7 @@ data class GuideBookPage(
             val offers = MerchantOffers()
             buttons.map(GuideBookHelpers::MerchantOffer).let(offers::addAll)
             merchantMenu.offers = offers
+            merchantMenu.setSelectionHint(0)
 
             clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla(title.miniMsg()), 0)
         }

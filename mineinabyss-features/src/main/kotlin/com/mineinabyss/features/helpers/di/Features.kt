@@ -1,6 +1,7 @@
 package com.mineinabyss.features.helpers.di
 
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
+import com.mineinabyss.features.guidebook.GuideBookFeature
 import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.layers.LayersContext
 import com.mineinabyss.features.lootcrates.LootCratesFeature
@@ -14,4 +15,5 @@ object Features {
     val music: MusicContext by DI.observe()
     val guilds: GuildFeature.Context by DI.observe()
     val lootCrates: LootCratesFeature.Context by DI.observe()
+    val guideBook: GuideBookFeature.Context by DI.observe()
 }
