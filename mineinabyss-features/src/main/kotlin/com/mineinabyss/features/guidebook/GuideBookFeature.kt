@@ -8,6 +8,7 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.nms.aliases.toNMS
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -28,7 +29,7 @@ import java.util.*
 
 class GuideBookFeature(val config: Config) : FeatureWithContext<GuideBookFeature.Context>(::Context) {
     class Context : Configurable<GuideBookConfig> {
-        override val configManager = config("guideBook", abyss.dataPath, GuideBookConfig(""))
+        override val configManager = config("guideBook", abyss.dataPath, GuideBookConfig(mapOf()))
     }
 
     @Serializable
@@ -50,6 +51,7 @@ class GuideBookFeature(val config: Config) : FeatureWithContext<GuideBookFeature
                     merchantMenu.title = PaperAdventure.asVanilla("<rainbow>test123321test:pog:".miniMsg())
                     merchantMenu.offers = MerchantOffers().also { offers ->
                         val transparentItem = ItemStack.fromBukkitCopy(TitleItem.transparentItem)
+                        val currentPageItem = ItemStack.fromBukkitCopy(TitleItem.transparentItem.editItemMeta { itemName("".miniMsg()) })
                         transparentItem.set(DataComponents.ITEM_NAME, Component.literal("Back").withColor(15277667))
                         offers.add(MerchantOffer(ItemCost(transparentItem.itemHolder, 1, DataComponentPredicate.allOf(transparentItem.components)), transparentItem, 0, 0, 0f))
                         for (x in 1..6) {

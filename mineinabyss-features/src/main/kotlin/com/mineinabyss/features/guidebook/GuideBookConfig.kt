@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GuideBookConfig(
-    val frontPage: String = ""
+    val pages: Map<String, GuideBookPage> = mutableMapOf()
 )
