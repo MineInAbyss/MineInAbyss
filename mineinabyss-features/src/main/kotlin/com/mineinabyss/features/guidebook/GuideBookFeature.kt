@@ -21,7 +21,7 @@ class GuideBookFeature : Feature() {
         mainCommand {
             "guidebook" {
                 playerAction {
-                    GuideBookFrontPage(player).open(":guidebook_front_page:".miniMsg())
+                    GuideBookFrontPage(player).open()
                 }
             }
             /*"guidebook_old" {

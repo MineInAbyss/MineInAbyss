@@ -26,13 +26,16 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.view.MerchantView
 
-abstract class GuideBookPage(player: Player) {
+abstract class GuideBookPage(player: Player, val title: Component) {
     private val serverPlayer = player.toNMS() as ServerPlayer
     private val clientMerchant = ClientSideMerchant(serverPlayer)
     val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
     open val buttons = listOf<GuideBookButton>()
+    open val backButton = GuideBookButton(TitleItem.of("<#E91E63>Back")) {
+        GuideBookFrontPage(player).open()
+    }
 
-    open fun open(title: Component) {
+    fun open(title: Component? = this.title) {
         clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla(title), 0)
     }
 
@@ -42,48 +45,53 @@ abstract class GuideBookPage(player: Player) {
             val merchant = GuideBookHelpers.MerchantMenuTrader.get(merchantView.handle) as Merchant
             val items = merchant.offers.map { it.itemCostA.itemStack.asBukkitCopy() }
 
-            return GuideBookFrontPage(player).takeIf { it.buttons.map { it.buttonItem }.let { buttons -> items.all { it in buttons } } } ?:
-            GuideBookRecipesPage(player).takeIf { it.buttons.map { it.buttonItem }.let { buttons -> items.all { it in buttons } } }// ?:
-//            GuideBookFrontPage(player).takeIf { it.buttons.map { it.buttonItem }.let { buttons -> items.all { it in buttons } } }
+            return GuideBookFrontPage(player).takeIf { page ->
+                page.buttons.map { it.buttonItem }.let { buttons -> items.all { it in buttons } }
+            } ?: GuideBookRecipesPage(player).takeIf { page ->
+                page.buttons.map { it.buttonItem }.let { buttons -> items.all { it in buttons } }
+            } ?: GuideBookBestiaryPage(player).takeIf { page ->
+                page.buttons.map { it.buttonItem }.let { buttons -> items.all { it in buttons } }
+            }
         }
     }
 }
 
-class GuideBookFrontPage(player: Player) : GuideBookPage(player) {
+class GuideBookFrontPage(player: Player) : GuideBookPage(player, ":guidebook_front_page:".miniMsg()) {
     override val buttons = listOf(
         GuideBookButton(TitleItem.of("<red>Recipes")) {
             logError("Clicked recipes")
-            GuideBookRecipesPage(player).open("recipes".miniMsg())
+            GuideBookRecipesPage(player).open()
         },
         GuideBookButton(TitleItem.of("<yellow>Bestiary")) {
             logWarn("Clicked bestiary")
+            GuideBookBestiaryPage(player).open()
         },
     )
+
     init {
-        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map { GuideBookHelpers.MerchantOffer(it.buttonItem) }) }
+        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
     }
 }
 
-class GuideBookRecipesPage(player: Player) : GuideBookPage(player) {
-    override val buttons = gearyItems.prefabs.map { it.key }.filter { it.toEntityOrNull()?.has<SetRecipes>() == true }
+class GuideBookRecipesPage(player: Player) : GuideBookPage(player, ":guidebook_recipes_page:".miniMsg()) {
+    override val buttons = backButton.plus(gearyItems.prefabs.map { it.key }
+        .filter { it.toEntityOrNull()?.has<SetRecipes>() == true }
         .mapNotNull { gearyItems.createItem(it)?.editItemMeta { itemName(it.full.miniMsg()) } }
-        .map { GuideBookButton(it) { view ->
-            logInfo("Clicked ${it.itemMeta.itemName().serialize()}")
-            view.title(it.itemMeta.itemName())
-        } }
+        .map { item -> GuideBookButton(item) { it.title(item.itemMeta.itemName()) } }
+    )
+
     init {
-        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map { GuideBookHelpers.MerchantOffer(it.buttonItem) }) }
+        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
     }
 }
 
-class GuideBookBestiaryPage(player: Player) : GuideBookPage(player) {
-    override val buttons = gearyMobs.query.prefabs.map { it.comp1 }.filter { it.toEntityOrNull()?.has<SetMythicMob>() == true }
-        .mapNotNull { ItemStack.of(Material.PAPER).editItemMeta { itemName(it.full.miniMsg()) } }
-        .map { GuideBookButton(it) { view ->
-            logInfo("Clicked ${it.itemMeta.itemName().serialize()}")
-            view.title(it.itemMeta.itemName())
-        } }
+class GuideBookBestiaryPage(player: Player) : GuideBookPage(player, ":guidebook_bestiary_page:".miniMsg()) {
+    override val buttons = backButton.plus(gearyMobs.query.prefabs.map { it.comp1 }
+        .filter { it.toEntityOrNull()?.has<SetMythicMob>() == true }
+        .map { ItemStack.of(Material.PAPER).editItemMeta { itemName(it.full.miniMsg()) } }
+        .map { item -> GuideBookButton(item) { it.title(item.itemMeta.itemName()) } })
+
     init {
-        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map { GuideBookHelpers.MerchantOffer(it.buttonItem) }) }
+        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
     }
 }
