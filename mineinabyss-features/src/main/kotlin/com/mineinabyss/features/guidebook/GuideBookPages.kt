@@ -1,5 +1,6 @@
 package com.mineinabyss.features.guidebook
 
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guidebook.GuideBookHelpers.toMerchantOffers
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.di.Features.layers
@@ -9,26 +10,24 @@ import com.mineinabyss.geary.papermc.tracking.entities.gearyMobs
 import com.mineinabyss.geary.papermc.tracking.items.gearyItems
 import com.mineinabyss.idofront.entities.title
 import com.mineinabyss.idofront.items.editItemMeta
-import com.mineinabyss.idofront.messaging.logError
-import com.mineinabyss.idofront.messaging.logInfo
-import com.mineinabyss.idofront.messaging.logWarn
+import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.nms.aliases.toNMS
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import com.mineinabyss.idofront.textcomponents.serialize
 import io.papermc.paper.adventure.PaperAdventure
 import net.kyori.adventure.text.Component
+import net.minecraft.core.NonNullList
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.npc.ClientSideMerchant
 import net.minecraft.world.inventory.MerchantMenu
 import net.minecraft.world.item.trading.Merchant
-import net.minecraft.world.item.trading.MerchantOffers
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.craftbukkit.inventory.view.CraftMerchantView
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.view.MerchantView
 
-abstract class GuideBookPage(player: Player, val title: Component) {
+abstract class GuideBookPage(val player: Player, val title: Component) {
     constructor(player: Player, title: String) : this(player, title.miniMsg())
 
     private val serverPlayer = player.toNMS() as ServerPlayer
@@ -42,6 +41,7 @@ abstract class GuideBookPage(player: Player, val title: Component) {
 
     fun open(title: Component? = this.title) {
         clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla(title), 0)
+        GuideBookHelpers.hideInventory(player)
     }
 
     companion object {
