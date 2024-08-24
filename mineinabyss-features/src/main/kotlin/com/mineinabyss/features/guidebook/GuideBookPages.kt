@@ -36,7 +36,9 @@ abstract class GuideBookPage(player: Player, val title: Component) {
 
     open val buttons = listOf<GuideBookButton>()
     open val backButton = GuideBookButton(TitleItem.of("<#E91E63>Back")) { FrontPage(player).open() }
-    open val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
+    open val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant).apply {
+        setCanRestock(false)
+    }
 
     fun open(title: Component? = this.title) {
         clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla(title), 0)

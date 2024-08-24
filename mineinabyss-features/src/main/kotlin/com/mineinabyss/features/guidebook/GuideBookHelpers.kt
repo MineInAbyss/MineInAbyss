@@ -32,19 +32,8 @@ object GuideBookHelpers {
     }
 
     fun MerchantOffer(buyItem: ItemStack, sellItemStack: ItemStack = ItemStack.fromBukkitCopy(TitleItem.transparentItem)): MerchantOffer {
-        //buyItem.set(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE)
         sellItemStack.set(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE)
-        return MerchantOffer(ItemCost(buyItem.itemHolder, 1, DataComponentPredicate.allOf(buyItem.components)), sellItemStack, 1, 1, 1f)
-    }
-
-    fun openMerchantMenu(player: Player, buttons: List<org.bukkit.inventory.ItemStack>, title: Component) {
-        val serverPlayer = player.toNMS() as? ServerPlayer ?: return
-        val clientMerchant = ClientSideMerchant(serverPlayer)
-        val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
-
-        merchantMenu.offers = MerchantOffers().apply { addAll(buttons.map(::MerchantOffer)) }
-
-        clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla(title), 0)
+        return MerchantOffer(ItemCost(buyItem.itemHolder, 1, DataComponentPredicate.allOf(buyItem.components)), sellItemStack, 0, 1, 1f)
     }
 
 }
