@@ -21,31 +21,9 @@ class GuideBookFeature : Feature() {
         mainCommand {
             "guidebook" {
                 playerAction {
-                    GuideBookFrontPage(player).open()
+                    GuideBookPage.FrontPage(player).open()
                 }
             }
-            /*"guidebook_old" {
-                playerAction {
-                    val serverPlayer = player.toNMS() as? ServerPlayer ?: return@playerAction
-                    val clientMerchant = ClientSideMerchant(serverPlayer)
-                    val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
-
-                    merchantMenu.title = PaperAdventure.asVanilla("<rainbow>test123321test:pog:".miniMsg())
-                    merchantMenu.offers = MerchantOffers().also { offers ->
-                        val transparentItem = ItemStack.fromBukkitCopy(TitleItem.transparentItem)
-                        val currentPageItem = ItemStack.fromBukkitCopy(TitleItem.transparentItem.editItemMeta { itemName("".miniMsg()) })
-                        transparentItem.set(DataComponents.ITEM_NAME, Component.literal("Back").withColor(15277667))
-                        offers.add(MerchantOffer(ItemCost(transparentItem.itemHolder, 1, DataComponentPredicate.allOf(transparentItem.components)), transparentItem, 0, 0, 0f))
-                        for (x in 1..6) {
-                            transparentItem.set(DataComponents.ITEM_NAME, Component.literal(x.toString()))
-                            offers.add(MerchantOffer(ItemCost(transparentItem.itemHolder, 1, DataComponentPredicate.allOf(transparentItem.components)), transparentItem, 0, 0, 0f))
-                        }
-                    }
-
-                    merchantMenu.setShowProgressBar(false)
-                    clientMerchant.openTradingScreen(serverPlayer, Component.literal(":guidebook_page1:"), 0)
-                }
-            }*/
         }
     }
 }
