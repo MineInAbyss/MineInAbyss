@@ -20,6 +20,9 @@ import org.bukkit.entity.Player
 object GuideBookHelpers {
     internal val MerchantMenuTrader = MerchantMenu::class.java.getDeclaredField("trader").apply { isAccessible = true }
 
+    fun Collection<GuideBookButton>.toMerchantOffers() =
+        MerchantOffers().apply { addAll(this@toMerchantOffers.map(GuideBookButton::merchantOffer)) }
+
     fun MerchantOffer(buyItem: SerializableItemStack): MerchantOffer {
         return MerchantOffer(ItemStack.fromBukkitCopy(buyItem.toItemStack()))
     }

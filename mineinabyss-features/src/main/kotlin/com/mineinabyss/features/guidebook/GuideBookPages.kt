@@ -1,5 +1,6 @@
 package com.mineinabyss.features.guidebook
 
+import com.mineinabyss.features.guidebook.GuideBookHelpers.toMerchantOffers
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.di.Features.layers
 import com.mineinabyss.geary.papermc.features.items.recipes.SetRecipes
@@ -32,16 +33,10 @@ abstract class GuideBookPage(player: Player, val title: Component) {
 
     private val serverPlayer = player.toNMS() as ServerPlayer
     private val clientMerchant = ClientSideMerchant(serverPlayer)
-    private val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
 
     open val buttons = listOf<GuideBookButton>()
     open val backButton = GuideBookButton(TitleItem.of("<#E91E63>Back")) { FrontPage(player).open() }
-
-    var offers
-        get() = merchantMenu.offers
-        set(offers) {
-            merchantMenu.offers = offers
-        }
+    open val merchantMenu = MerchantMenu(serverPlayer.nextContainerCounter(), serverPlayer.inventory, clientMerchant)
 
     fun open(title: Component? = this.title) {
         clientMerchant.openTradingScreen(serverPlayer, PaperAdventure.asVanilla(title), 0)
@@ -72,9 +67,7 @@ abstract class GuideBookPage(player: Player, val title: Component) {
             GuideBookButton(TitleItem.of("<aqua>Layers")) { LayersPage(player).open() },
         )
 
-        init {
-            offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
-        }
+        override val merchantMenu = super.merchantMenu.apply { offers = buttons.toMerchantOffers() }
     }
 
     class RecipesPage(player: Player) : GuideBookPage(player, ":guidebook_recipes_page:") {
@@ -84,9 +77,7 @@ abstract class GuideBookPage(player: Player, val title: Component) {
             .map { item -> GuideBookButton(item) { it.title(item.itemMeta.itemName()) } }
         )
 
-        init {
-            offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
-        }
+        override val merchantMenu = super.merchantMenu.apply { offers = buttons.toMerchantOffers() }
     }
 
     class BestiaryPage(player: Player) : GuideBookPage(player, ":guidebook_bestiary_page:") {
@@ -95,9 +86,7 @@ abstract class GuideBookPage(player: Player, val title: Component) {
             .map { ItemStack.of(Material.PAPER).editItemMeta { itemName(it.full.miniMsg()) } }
             .map { item -> GuideBookButton(item) { it.title(item.itemMeta.itemName()) } })
 
-        init {
-            offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
-        }
+        override val merchantMenu = super.merchantMenu.apply { offers = buttons.toMerchantOffers() }
     }
 
     class LayersPage(player: Player) : GuideBookPage(player, ":guidebook_layers_page:".miniMsg()) {
@@ -105,8 +94,6 @@ abstract class GuideBookPage(player: Player, val title: Component) {
             .map { TitleItem.of(it.name) }
             .map { item -> GuideBookButton(item) { it.title(item.itemMeta.itemName()) } })
 
-        init {
-            offers = MerchantOffers().apply { addAll(buttons.map(GuideBookButton::merchantOffer)) }
-        }
+        override val merchantMenu = super.merchantMenu.apply { offers = buttons.toMerchantOffers() }
     }
 }
