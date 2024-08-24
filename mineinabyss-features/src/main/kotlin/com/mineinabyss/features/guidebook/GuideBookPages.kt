@@ -64,9 +64,9 @@ abstract class GuideBookPage(val player: Player, val title: Component) {
 
     class FrontPage(player: Player) : GuideBookPage(player, ":guidebook_front_page:") {
         override val buttons = listOf(
-            GuideBookButton(TitleItem.of("<red>Recipes")) { RecipesPage(player).open() },
-            GuideBookButton(TitleItem.of("<yellow>Bestiary")) { BestiaryPage(player).open() },
-            GuideBookButton(TitleItem.of("<aqua>Layers")) { LayersPage(player).open() },
+            GuideBookButton(ItemStack.of(Material.CRAFTING_TABLE).editItemMeta { itemName("<red>Recipes".miniMsg()) }) { RecipesPage(player).open() },
+            GuideBookButton(ItemStack.of(Material.BOOK).editItemMeta { setCustomModelData(1);itemName("<yellow>Bestiary".miniMsg()) }) { BestiaryPage(player).open() },
+            GuideBookButton(ItemStack.of(Material.ENCHANTED_BOOK).editItemMeta { setEnchantmentGlintOverride(false); setCustomModelData(1); itemName("<aqua>Layers".miniMsg()) }) { LayersPage(player).open() },
         )
 
         override val merchantMenu = super.merchantMenu.apply { offers = buttons.toMerchantOffers() }
