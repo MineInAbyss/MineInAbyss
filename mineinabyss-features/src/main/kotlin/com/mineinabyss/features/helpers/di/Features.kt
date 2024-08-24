@@ -15,5 +15,4 @@ object Features {
     val music: MusicContext by DI.observe()
     val guilds: GuildFeature.Context by DI.observe()
     val lootCrates: LootCratesFeature.Context by DI.observe()
-    val guideBook: GuideBookFeature.Context by DI.observe()
 }

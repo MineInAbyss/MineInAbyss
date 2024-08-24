@@ -69,7 +69,7 @@ class AbyssFeatureConfig(
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
-    val guideBook: GuideBookFeature.Config = GuideBookFeature.Config()
+    val guideBook: Toggle = Toggle()
 ) {
     val features by lazy {
         buildList<Feature> {
@@ -100,7 +100,7 @@ class AbyssFeatureConfig(
             add(relics.enabled) { RelicsFeature() }
             add(tools.enabled) { ToolsFeature() }
             add(tutorial.enabled) { TutorialFeature() }
-            add(guideBook.enabled) { GuideBookFeature(guideBook) }
+            add(guideBook.enabled) { GuideBookFeature() }
         }
     }
 }

@@ -1,50 +1,19 @@
 package com.mineinabyss.features.guidebook
 
-import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.di.Features.guideBook
-import com.mineinabyss.geary.papermc.tracking.items.gearyItems
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.config.config
-import com.mineinabyss.idofront.features.Configurable
+import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.nms.aliases.toNMS
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import io.papermc.paper.adventure.PaperAdventure
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import net.minecraft.core.component.DataComponentPredicate
-import net.minecraft.core.component.DataComponents
-import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.npc.ClientSideMerchant
 import net.minecraft.world.inventory.MerchantMenu
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.trading.ItemCost
-import net.minecraft.world.item.trading.MerchantOffer
-import net.minecraft.world.item.trading.MerchantOffers
 import org.bukkit.Material
-import java.util.*
+import org.bukkit.inventory.ItemStack
 
-class GuideBookFeature(val config: Config) : FeatureWithContext<GuideBookFeature.Context>(::Context) {
-    class Context : Configurable<GuideBookConfig> {
-        override val configManager = config("guideBook", abyss.dataPath, GuideBookConfig(mapOf()))
-    }
-
-    @Serializable
-    class Config(
-        val enabled: Boolean = true,
-        @SerialName("frontPage") private val _frontPage: String,
-        inline val subPages: GuideBookPages = GuideBookPages()
-        //val pages: Map<String, @Contextual Any> = mutableMapOf()
-    ) {
-        @Transient val frontPage = guideBook.config.pages[_frontPage]
-    }
+class GuideBookFeature : Feature() {
 
     override fun FeatureDSL.enable() {
         plugin.listeners(GuideBookListener())
@@ -52,10 +21,10 @@ class GuideBookFeature(val config: Config) : FeatureWithContext<GuideBookFeature
         mainCommand {
             "guidebook" {
                 playerAction {
-                    config.frontPage?.openMerchantMenu(player)
+                    GuideBookFrontPage(player).open(":guidebook_front_page:".miniMsg())
                 }
             }
-            "guidebook_old" {
+            /*"guidebook_old" {
                 playerAction {
                     val serverPlayer = player.toNMS() as? ServerPlayer ?: return@playerAction
                     val clientMerchant = ClientSideMerchant(serverPlayer)
@@ -76,7 +45,7 @@ class GuideBookFeature(val config: Config) : FeatureWithContext<GuideBookFeature
                     merchantMenu.setShowProgressBar(false)
                     clientMerchant.openTradingScreen(serverPlayer, Component.literal(":guidebook_page1:"), 0)
                 }
-            }
+            }*/
         }
     }
 }
