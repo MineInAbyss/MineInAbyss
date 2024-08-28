@@ -11,6 +11,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import net.kyori.adventure.key.Key
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.Sound
@@ -29,8 +30,7 @@ data class MaxHealthChangeEffect(
     override val iterations: Int = 1,
     val minHealth: Double? = null,
 ) : AbstractAscensionEffect() {
-    @Transient
-    var modifier: AttributeModifier? = null
+    @Transient var modifier: AttributeModifier? = null
 
     override fun applyEffect(player: Player) {
         val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 0.0
@@ -38,8 +38,10 @@ data class MaxHealthChangeEffect(
         if (maxHealth > (minHealth ?: abs(addMaxHealth))) {
             val newMod = AttributeModifier(CURSE_MAX_HEALTH, addMaxHealth, AttributeModifier.Operation.ADD_NUMBER)
             modifier = newMod
-            activeEffects += newMod
+            activeEffects += newMod.key
+            cleanUp(player)
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.addModifier(newMod)
+
             val (x, y, z) = player.eyeLocation
             player.spawnParticle(Particle.SOUL, x, y, z, 6, 0.2, 0.5, 0.2, 0.02)
             player.playSound(player.location, Sound.PARTICLE_SOUL_ESCAPE, 10f, 1f)
@@ -47,14 +49,14 @@ data class MaxHealthChangeEffect(
     }
 
     override fun cleanUp(player: Player) {
-        activeEffects.remove(modifier)
         modifier?.let {
+            activeEffects.remove(it.key)
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.removeModifier(it)
         }
     }
 
     companion object {
-        val activeEffects = mutableSetOf<AttributeModifier>()
+        val activeEffects = mutableSetOf<Key>()
         val CURSE_MAX_HEALTH = NamespacedKey.fromString("mineinabyss:curse.max_health")!!
     }
 
