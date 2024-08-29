@@ -25,31 +25,29 @@ class PlayerProfileFeature(val config: Config) : Feature() {
     override fun FeatureDSL.enable() {
         mainCommand {
             "profile"(desc = "Opens a players profile") {
-                "background" {
-                    val backgroundId by optionArg(this@PlayerProfileFeature.config.validBackgroundIds)
-                    playerAction {
-                        player.toGeary().setPersisting(PlayerProfile(backgroundId))
-                        player.success("Changed your PlayerProfile-background!")
-                    }
-                }
-                val offlinePlayer by offlinePlayerArg()
+                val offlinePlayer by offlinePlayerArg { default = sender as? Player }
                 action {
                     guiy { PlayerProfile(sender as Player, offlinePlayer) }
                 }
             }
+            "profile_background"(desc = "Changes the background for your Player-Profile") {
+                val backgroundId by optionArg(this@PlayerProfileFeature.config.validBackgroundIds)
+                playerAction {
+                    player.toGeary().setPersisting(PlayerProfile(backgroundId))
+                    player.success("Changed your PlayerProfile-background!")
+                }
+            }
         }
         tabCompletion {
-            val onlinePlayers = abyss.plugin.server.onlinePlayers.filter { it != sender as? Player }.map { it.name }
-
             when (args.size) {
-                1 -> listOf("profile").filter { it.startsWith(args[0]) }
+                1 -> listOf("profile", "profile_background").filter { it.startsWith(args[0]) }
                 2 -> {
                     when (args[0]) {
-                        "profile" -> onlinePlayers.plus("background").filter { it.startsWith(args[1], true) }
+                        "profile" -> abyss.plugin.server.onlinePlayers.filter { it != sender as? Player }.map { it.name }
+                        "profile_background" -> config.validBackgroundIds
                         else -> null
-                    }
+                    }?.filter { it.startsWith(args[1], true) }
                 }
-                3 -> if (args[1] == "background") this@PlayerProfileFeature.config.validBackgroundIds.filter { it.startsWith(args[2], true) } else null
 
                 else -> emptyList()
             }
