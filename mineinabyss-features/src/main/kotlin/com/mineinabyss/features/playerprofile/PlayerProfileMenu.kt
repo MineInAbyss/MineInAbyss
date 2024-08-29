@@ -64,9 +64,9 @@ private inline fun <reified T : Any> OfflinePlayer.setComponent(component: T) {
 
 @Composable
 fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
-    var hideArmorIcons by remember { mutableStateOf(player.getComponent<PlayerProfile>()?.displayProfileArmor ?: false) }
+    var hideArmorIcons by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile()).displayProfileArmor) }
     val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
-    val backgroundId by remember { mutableStateOf(player.getComponent<PlayerProfile>()?.background) }
+    val backgroundId by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile()).background) }
     val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
@@ -215,7 +215,7 @@ fun DiscordButton(player: OfflinePlayer) {
 fun DisplayRanks(player: OfflinePlayer): String {
     var group = player.luckpermGroups.filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.firstOrNull()
     val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it } ?: ""
-    group = ":space_34:" + group?.let { ":player_profile_rank_$group:" }
+    group = ":space_34:" + (group?.let { ":player_profile_rank_$group:" } ?: "")
     if (patreon.isNotEmpty()) group += ":space_-4::player_profile_rank_$patreon:"
 
     return group
