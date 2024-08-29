@@ -11,7 +11,6 @@ import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.intArg
-import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -20,7 +19,6 @@ import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.logError
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
@@ -30,7 +28,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.luckperms.api.context.ImmutableContextSet
-import net.luckperms.api.model.group.Group
 import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -43,7 +40,7 @@ class PatreonFeature(val config: Config) : Feature() {
     override val dependsOn = setOf("LuckPerms", "DiscordSRV")
 
     val prefixContexts = listOf("global", "orth", "layerone", "layertwo", "layerthree", "layerfour", "layerfive")
-    private val listener = PatreonListener()
+    private val listener = PatreonListener(config)
 
     @Serializable
     class Config(val enabled: Boolean = false, val patreonRoles: Map<String, PatreonRoles> = emptyMap())
