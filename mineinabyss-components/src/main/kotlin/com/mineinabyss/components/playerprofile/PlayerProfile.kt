@@ -5,4 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("mineinabyss:player_profile")
-data class PlayerProfile(val background: String = "player_profile_background", val displayProfileArmor: Boolean = true)
+data class PlayerProfile(val background: String = "orth_background", val displayProfileArmor: Boolean = true)
