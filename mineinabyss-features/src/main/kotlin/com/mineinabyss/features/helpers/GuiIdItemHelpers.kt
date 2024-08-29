@@ -2,13 +2,11 @@ package com.mineinabyss.features.helpers
 
 import androidx.compose.runtime.Composable
 import com.destroystokyo.paper.profile.PlayerProfile
-import com.mineinabyss.features.abyss
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
@@ -55,13 +53,13 @@ object TitleItem {
                     item.editItemMeta<SkullMeta> { playerProfile = profile }
                     profileCache[player.uniqueId] = profile
                 }
+
                 player.uniqueId in profileCache -> item.editItemMeta<SkullMeta> { playerProfile = profileCache[player.uniqueId] }
-                else -> player.playerProfile.update().thenAcceptAsync(
-                    { profile ->
-                        profileCache[player.uniqueId] = profile
-                        item.editItemMeta<SkullMeta> { playerProfile = profile }
-                    }, Bukkit.getScheduler().getMainThreadExecutor(abyss.plugin)
-                )
+
+                else -> player.playerProfile.update().get()?.let { profile ->
+                    profileCache[player.uniqueId] = profile
+                    item.editItemMeta<SkullMeta> { playerProfile = profile }
+                }
             }
         }
     }
