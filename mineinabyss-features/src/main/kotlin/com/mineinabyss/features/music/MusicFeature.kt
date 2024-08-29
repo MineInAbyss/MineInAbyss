@@ -14,8 +14,6 @@ class MusicFeature : FeatureWithContext<MusicContext>(::MusicContext) {
 
     override fun FeatureDSL.disable() {
         HandlerList.unregisterAll(context.queueMusicListener)
-        Bukkit.getServer().onlinePlayers.forEach {
-            MusicScheduler.stopSchedulingMusic(it)
-        }
+        Bukkit.getServer().onlinePlayers.forEach(MusicScheduler::stopSchedulingMusic)
     }
 }

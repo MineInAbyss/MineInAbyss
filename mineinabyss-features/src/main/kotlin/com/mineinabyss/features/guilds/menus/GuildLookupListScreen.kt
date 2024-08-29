@@ -4,7 +4,6 @@ import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.head
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
@@ -42,8 +41,8 @@ fun GuildUIScope.GuildLookupListScreen() {
 
                     }) {
                     Item(
-                        owner.head(
-                            "<gold><i>$guildName".miniMsg(),
+                        TitleItem.head(
+                            owner, "<gold><i>$guildName".miniMsg(),
                             "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
                             "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
                             "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),

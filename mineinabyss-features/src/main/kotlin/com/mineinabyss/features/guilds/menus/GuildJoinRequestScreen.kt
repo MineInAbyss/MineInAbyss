@@ -6,7 +6,7 @@ import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.head
+import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -29,7 +29,7 @@ fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
 
 @Composable
 fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Item(newMember.head("<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
+    Item(TitleItem.head(newMember, "<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
 }
 
 @Composable

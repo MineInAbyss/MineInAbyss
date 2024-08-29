@@ -6,7 +6,7 @@ import com.mineinabyss.features.guilds.database.GuildJoinQueue
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.head
+import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
@@ -43,8 +43,8 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier) {
             Button(onClick = {
                 nav.open(GuildScreen.Invite(owner))
             }) {
-                Item(player.head(
-                    "<gold><b>Guildname: <yellow><i>${owner.getGuildName()}".miniMsg(),
+                Item(TitleItem.head(
+                    player, "<gold><b>Guildname: <yellow><i>${owner.getGuildName()}".miniMsg(),
                     "<blue>Click this to accept or deny invite.".miniMsg(),
                     "<blue>Info about the guild can also be found in here.".miniMsg(),
                     isFlat = true

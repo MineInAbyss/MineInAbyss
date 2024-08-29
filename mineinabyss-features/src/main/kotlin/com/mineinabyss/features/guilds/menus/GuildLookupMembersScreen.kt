@@ -5,7 +5,7 @@ import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.head
+import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.VerticalGrid
@@ -38,8 +38,8 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
             members.forEach { (rank, member) ->
                 Button {
                     Item(
-                        member.head(
-                            "<gold><i>${member.name}".miniMsg(),
+                        TitleItem.head(
+                            owner, "<gold><i>${member.name}".miniMsg(),
                             "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                             isFlat = true
                         )
@@ -57,8 +57,8 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) {
 @Composable
 fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
     Item(
-        owner.head(
-            "<gold><i>${owner.name}".miniMsg(),
+        TitleItem.head(
+            owner, "<gold><i>${owner.name}".miniMsg(),
             "<yellow><b>Guild Rank: <yellow><i>${owner.getGuildRank()}".miniMsg(),
             isCenterOfInv = true, isLarge = true
         ), modifier = modifier

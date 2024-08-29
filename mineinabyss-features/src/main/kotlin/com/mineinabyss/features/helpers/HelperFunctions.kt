@@ -9,6 +9,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -59,7 +60,7 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     }
 }
 
-val Player.linkedDiscordAccount
+val OfflinePlayer.linkedDiscordAccount
     get() = runCatching {
         val discordSRV = Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV
         discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name

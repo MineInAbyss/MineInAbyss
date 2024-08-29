@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.head
+import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -25,14 +25,17 @@ fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
 
 @Composable
 fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
-    Item(owner.head(
-        "<gold><b>Current Guild Info</b>".miniMsg(),
-        "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}".miniMsg(),
-        "<yellow><b>Guild Owner:</b> <i>${owner.name}".miniMsg(),
-        "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
-        "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
-        isCenterOfInv = true, isLarge = true
-    ), modifier = modifier)
+    Item(
+        TitleItem.head(
+            owner, "<gold><b>Current Guild Info</b>".miniMsg(),
+            "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <i>${owner.name}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
+            isLarge = true,
+            isCenterOfInv = true
+        ), modifier = modifier
+    )
 }
 
 @Composable

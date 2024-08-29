@@ -8,7 +8,7 @@ import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.guilds.extensions.hasGuildRequests
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
-import com.mineinabyss.features.helpers.head
+import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
@@ -46,8 +46,8 @@ fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
                 else nav.open(GuildScreen.JoinRequest(newMember))
             }) {
                 Item(
-                    newMember.head(
-                        "<yellow><i>${newMember.name}".miniMsg(),
+                    TitleItem.head(
+                        newMember, "<yellow><i>${newMember.name}".miniMsg(),
                         "<blue>Click this to accept or deny the join-request.".miniMsg(),
                         isFlat = true
                     )

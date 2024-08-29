@@ -1,7 +1,7 @@
 package com.mineinabyss.features.playerprofile
 
 import androidx.compose.runtime.*
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.PlayerData
 import com.mineinabyss.components.playerprofile.PlayerProfile
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
@@ -9,29 +9,64 @@ import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
 import com.mineinabyss.features.helpers.*
 import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.geary.papermc.datastore.decode
+import com.mineinabyss.geary.papermc.datastore.encode
+import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.height
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
+import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
+import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
+import com.mineinabyss.idofront.nms.nbt.saveOfflinePDC
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
+private inline fun <reified T : Any> OfflinePlayer.hasComponent(): Boolean {
+    return if (isOnline) player!!.toGeary().has<T>()
+    else getOfflinePDC()?.has<T>() ?: false
+}
+
+private inline fun <reified T : Any> OfflinePlayer.getComponent(): T? {
+    return if (isOnline) player!!.toGeary().get<T>()
+    else getOfflinePDC()?.decode<T>()
+}
+
+private inline fun <reified T : Any> OfflinePlayer.getOrSetComponent(default: T): T {
+    return if (isOnline) player!!.toGeary().getOrSetPersisting<T> { default }
+    else {
+        val pdc = getOfflinePDC() ?: return default
+        val t = pdc.decode<T>() ?: run { pdc.encode(default); default }
+        saveOfflinePDC(pdc)
+        return t
+    }
+}
+
+private inline fun <reified T : Any> OfflinePlayer.setComponent(component: T) {
+    if (isOnline) player!!.toGeary().setPersisting(component)
+    else editOfflinePDC {
+        encode(component)
+    }
+}
+
 @Composable
-fun PlayerProfile(viewer: Player, player: Player) {
-    var hideArmorIcons by remember { mutableStateOf(player.playerData.displayProfileArmor) }
-    val isPatreon by remember { mutableStateOf(player.toGeary().has<Patreon>()) }
-    val backgroundId by remember { mutableStateOf(player.toGeary().getOrSetPersisting<PlayerProfile> { PlayerProfile() }.background) }
+fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
+    var hideArmorIcons by remember { mutableStateOf(player.getComponent<PlayerProfile>()?.displayProfileArmor ?: false) }
+    val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
+    val backgroundId by remember { mutableStateOf(player.getComponent<PlayerProfile>()?.background) }
     val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
@@ -45,9 +80,9 @@ fun PlayerProfile(viewer: Player, player: Player) {
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
-        ToggleArmorVisibility {
+        if (player == viewer) ToggleArmorVisibility {
             if (player == viewer) {
-                player.playerData.displayProfileArmor = !hideArmorIcons
+                player.setComponent(player.getComponent<PlayerProfile>()!!.copy(displayProfileArmor = !hideArmorIcons))
                 hideArmorIcons = !hideArmorIcons
             }
         }
@@ -62,10 +97,10 @@ fun PlayerProfile(viewer: Player, player: Player) {
             CosmeticBackpack(player)
         }
 
-        val helmet = player.equipment.helmet.takeUnless { hideArmorIcons }
-        val chestPlate = player.equipment.chestplate.takeUnless { hideArmorIcons }
-        val leggings = player.equipment.leggings.takeUnless { hideArmorIcons }
-        val boots = player.equipment.boots.takeUnless { hideArmorIcons }
+        val helmet = player.player?.equipment?.helmet.takeUnless { hideArmorIcons }
+        val chestPlate = player.player?.equipment?.chestplate.takeUnless { hideArmorIcons }
+        val leggings = player.player?.equipment?.leggings.takeUnless { hideArmorIcons }
+        val boots = player.player?.equipment?.boots.takeUnless { hideArmorIcons }
         Column(Modifier.at(8, 0)) {
             Item(helmet)
             Item(chestPlate)
@@ -76,10 +111,10 @@ fun PlayerProfile(viewer: Player, player: Player) {
 }
 
 @Composable
-fun PlayerHead(player: Player, modifier: Modifier) {
+fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
     Item(
-        player.head(
-            "<light_purple><b>${player.name}".miniMsg(),
+        TitleItem.head(
+            player, "<light_purple><b>${player.name}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
@@ -125,29 +160,29 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 }
 
 @Composable
-fun CosmeticHat(player: Player) =
-    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticHat()?.item  ?: ItemStack(Material.AIR)
+fun CosmeticHat(player: OfflinePlayer) =
+    if (abyss.isHMCCosmeticsEnabled) player.player?.getCosmeticHat()?.item  ?: ItemStack(Material.AIR)
     else ItemStack(Material.AIR)
 
 @Composable
-fun CosmeticBackpack(player: Player) =
-    if (abyss.isHMCCosmeticsEnabled) player.getCosmeticBackpack()?.item ?: ItemStack(Material.AIR)
+fun CosmeticBackpack(player: OfflinePlayer) =
+    if (abyss.isHMCCosmeticsEnabled) player.player?.getCosmeticBackpack()?.item ?: ItemStack(Material.AIR)
     else ItemStack(Material.AIR)
 
 @Composable
-fun OrthCoinBalance(player: Player) {
-    val amount = player.playerData.orthCoinsHeld
+fun OrthCoinBalance(player: OfflinePlayer) {
+    val amount = player.getComponent<PlayerData>()?.orthCoinsHeld
     Item(TitleItem.of("<#FFBB1C>${amount} <b>Orth Coin${if (amount != 1) "s" else ""}".miniMsg()))
 }
 
 @Composable
-fun MittyTokenBalance(player: Player) {
-    val amount = player.playerData.mittyTokensHeld
+fun MittyTokenBalance(player: OfflinePlayer) {
+    val amount = player.getComponent<PlayerData>()?.mittyTokensHeld
     Item(TitleItem.of("<#b74b4d>${amount} <b>Mitty Token${if (amount != 1) "s" else ""}".miniMsg()))
 }
 
 @Composable
-fun GuildButton(player: Player, viewer: Player) {
+fun GuildButton(player: OfflinePlayer, viewer: Player) {
     Button(enabled = player.hasGuild() && !viewer.hasGuild(), onClick = {
         guiy { player.getGuildName()?.let { GuildScreen.GuildLookupMembers(it) } }
     }) {
@@ -163,7 +198,7 @@ fun GuildButton(player: Player, viewer: Player) {
 }
 
 @Composable
-fun DiscordButton(player: Player) {
+fun DiscordButton(player: OfflinePlayer) {
     val linked = player.linkedDiscordAccount
 
     if (linked == null) {
@@ -177,7 +212,7 @@ fun DiscordButton(player: Player) {
 }
 
 @Composable
-fun DisplayRanks(player: Player): String {
+fun DisplayRanks(player: OfflinePlayer): String {
     var group = player.luckpermGroups.filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.firstOrNull()
     val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it } ?: ""
     group = ":space_34:" + group?.let { ":player_profile_rank_$group:" }
