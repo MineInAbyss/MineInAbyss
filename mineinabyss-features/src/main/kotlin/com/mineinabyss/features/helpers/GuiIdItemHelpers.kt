@@ -30,7 +30,7 @@ object TitleItem {
         isHideTooltip = true
     }
 
-    private val profileCache: MutableMap<UUID, PlayerProfile> = mutableMapOf()
+    internal val profileCache: MutableMap<UUID, PlayerProfile> = mutableMapOf()
     fun head(
         player: OfflinePlayer,
         title: Component,
@@ -56,7 +56,7 @@ object TitleItem {
 
                 player.uniqueId in profileCache -> item.editItemMeta<SkullMeta> { playerProfile = profileCache[player.uniqueId] }
 
-                else -> player.playerProfile.update().get()?.let { profile ->
+                else -> player.playerProfile.update().whenCompleteAsync { profile, _ ->
                     profileCache[player.uniqueId] = profile
                     item.editItemMeta<SkullMeta> { playerProfile = profile }
                 }

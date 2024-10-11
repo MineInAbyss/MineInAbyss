@@ -1,5 +1,7 @@
 package com.mineinabyss.features.guilds
 
+import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.chatty.commands.ChattyBrigadierCommands
 import com.mineinabyss.chatty.ChattyChannel
@@ -13,6 +15,7 @@ import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
+import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.inventory.guiy
@@ -31,10 +34,15 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.title.Title
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 const val guildChannelId: String = "Guild Chat"
 
@@ -72,9 +80,18 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         }.toTypedArray()
     }
 
+    private var profileCacheJob: Job? = null
     override fun FeatureDSL.enable() {
         plugin.server.pluginManager.registerSuspendingEvents(GuildListener(), plugin)
         plugin.listeners(*context.listeners)
+
+        profileCacheJob = plugin.launch(plugin.asyncDispatcher) {
+            getAllGuilds().map { it.guildName.getOwnerFromGuildName() }.forEach {
+                if (it.uniqueId !in TitleItem.profileCache) it.playerProfile.update().whenCompleteAsync { profile, _ ->
+                    TitleItem.profileCache[it.uniqueId] = profile
+                }
+            }
+        }
 
         if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
@@ -329,5 +346,6 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
     override fun FeatureDSL.disable() {
         plugin.unregisterListeners(*context.listeners)
+        profileCacheJob?.cancel()
     }
 }
