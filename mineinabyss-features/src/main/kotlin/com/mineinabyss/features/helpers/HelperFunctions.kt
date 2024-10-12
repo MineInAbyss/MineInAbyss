@@ -2,6 +2,7 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import github.scarsz.discordsrv.DiscordSRV
 import net.kyori.adventure.text.Component
@@ -61,10 +62,7 @@ fun handleCurse(player: Player, from: Location, to: Location) {
 }
 
 val OfflinePlayer.linkedDiscordAccount
-    get() = runCatching {
-        val discordSRV = Bukkit.getPluginManager().getPlugin("DiscordSRV") as DiscordSRV
-        discordSRV.jda.getUserById(discordSRV.accountLinkManager.getDiscordId(uniqueId))?.name
-    }.getOrNull()
+    get() = API.DiscordSRV?.plugin?.runCatching { jda.getUserById(accountLinkManager.getDiscordId(uniqueId))?.name }
 
 val Player.isInventoryFull: Boolean
     get() = inventory.firstEmpty() == -1

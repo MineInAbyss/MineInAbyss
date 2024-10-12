@@ -1,12 +1,12 @@
 package com.mineinabyss.features.patreons
 
 import com.mineinabyss.components.players.Patreon
+import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
-import github.scarsz.discordsrv.DiscordSRV
 import github.scarsz.discordsrv.api.Subscribe
 import github.scarsz.discordsrv.api.events.AccountLinkedEvent
 import github.scarsz.discordsrv.api.events.AccountUnlinkedEvent
@@ -20,7 +20,7 @@ class PatreonListener(private val config: PatreonFeature.Config) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun PlayerJoinEvent.addPatreonComponent() {
-        val member = DiscordUtil.getMemberById(DiscordSRV.getPlugin().accountLinkManager.getDiscordId(player.uniqueId) ?: "")
+        val member = API.DiscordSRV?.plugin?.run { DiscordUtil.getMemberById(accountLinkManager.getDiscordId(player.uniqueId) ?: "") }
         if (member == null) player.removePatreonPerks()
         else {
             val roleIds = member.roles.map { it.id }

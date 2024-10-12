@@ -23,7 +23,6 @@ allprojects {
         maven("https://repo.codemc.org/repository/maven-public/")
         maven("https://repo.spaceio.xyz/repository/maven-public/")
         maven("https://mvn.lumine.io/repository/maven-public/")
-//        maven("https://m2.dv8tion.net/releases") // DiscordSRV
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
         maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
@@ -33,14 +32,14 @@ allprojects {
 
     dependencies {
         val idofrontLibs = rootProject.idofrontLibs
-        val miaLibs = rootProject.miaLibs
+        val libs = rootProject.libs
 
         // Shaded
         compileOnly(idofrontLibs.idofront.features)
         compileOnly(idofrontLibs.idofront.nms)
 
         // Geary platform
-        compileOnly(miaLibs.geary.papermc)
+        compileOnly(libs.geary.papermc)
 
         // MineInAbyss platform
         compileOnly(idofrontLibs.bundles.idofront.core)
@@ -60,24 +59,24 @@ allprojects {
         // Plugin libs
         compileOnly(idofrontLibs.minecraft.plugin.modelengine)
 
-        compileOnly(miaLibs.guiy)
-        compileOnly(miaLibs.chatty)
-        compileOnly(miaLibs.deeperworld)
-        compileOnly(miaLibs.eternalfortune)
-        compileOnly(miaLibs.packy)
-        compileOnly(miaLibs.blocky)
+        compileOnly(libs.guiy)
+        compileOnly(libs.chatty)
+        compileOnly(libs.deeperworld)
+        compileOnly(libs.eternalfortune)
+        compileOnly(libs.packy)
+        compileOnly(libs.blocky)
 
-        compileOnly(miaLibs.minecraft.plugin.blocklocker)
-        compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
-        compileOnly(miaLibs.minecraft.plugin.hibiscuscommons)
-        compileOnly(miaLibs.minecraft.plugin.discordsrv)
-        compileOnly(miaLibs.minecraft.plugin.luckperms)
-        compileOnly(miaLibs.minecraft.plugin.placeholderapi)
-        compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
-        compileOnly(miaLibs.minecraft.plugin.traincarts)
-        compileOnly(miaLibs.minecraft.plugin.tccoasters)
-        compileOnly(miaLibs.minecraft.plugin.mythichud)
-        //compileOnly(miaLibs.minecraft.plugin.betterhud)
+        compileOnly(libs.minecraft.plugin.blocklocker)
+        compileOnly(libs.minecraft.plugin.hmccosmetics)
+        compileOnly(libs.minecraft.plugin.hibiscuscommons)
+        compileOnly(libs.minecraft.plugin.discordsrv)
+        compileOnly(libs.minecraft.plugin.luckperms)
+        compileOnly(libs.minecraft.plugin.placeholderapi)
+        compileOnly(libs.minecraft.plugin.bkcommonlib)
+        compileOnly(libs.minecraft.plugin.traincarts)
+        compileOnly(libs.minecraft.plugin.tccoasters)
+        compileOnly(libs.minecraft.plugin.mythichud)
+        //compileOnly(libs.minecraft.plugin.betterhud)
     }
 }
 
