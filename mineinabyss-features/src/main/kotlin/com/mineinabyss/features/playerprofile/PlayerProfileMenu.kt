@@ -34,6 +34,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import kotlin.text.buildString
 
 private inline fun <reified T : Any> OfflinePlayer.hasComponent(): Boolean {
     return if (isOnline) player!!.toGeary().has<T>()
@@ -67,10 +68,13 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
     var hideArmorIcons by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile()).displayProfileArmor) }
     val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
     val backgroundId by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile(abyss.config.playerProfile.validBackgroundIds.firstOrNull() ?: "")).background) }
-    val titleComponent = Component.text(":space_-8::player_profile" +
-            (if (isPatreon) "_patreon" else "") +
-            ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +
-            ":space_-172:")
+    val titleComponent = Component.text(buildString {
+        append(":space_-8::player_profile")
+        if (isPatreon) append("_patreon")
+        append("_armor_")
+        if (hideArmorIcons) append("hidden:") else append("visible:")
+        append(":space_-172:")
+    })
     val background = Component.text(":${backgroundId}:")
     val titleName = Component.text(":space_-92:${player.name}", NamedTextColor.WHITE)
     val rankComponent = Component.text(":survival::space_-40::${DisplayRanks(player)}")
@@ -88,7 +92,7 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
         }
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
-            if (!isPatreon) MittyTokenBalance(player)
+            if (isPatreon) MittyTokenBalance(player)
             GuildButton(player, viewer)
             DiscordButton(player)
         }
