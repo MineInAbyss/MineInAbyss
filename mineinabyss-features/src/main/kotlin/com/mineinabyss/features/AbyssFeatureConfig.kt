@@ -47,7 +47,7 @@ class AbyssFeatureConfig(
     val ansiblePull: Toggle = Toggle(),
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),
-    val core: Toggle = Toggle(),
+    val core: CoreFeature.Config = CoreFeature.Config(),
     val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
     val curse: Toggle = Toggle(),
     val custom_hud: Toggle = Toggle(),
@@ -77,7 +77,7 @@ class AbyssFeatureConfig(
                 if (enableAll || condition) add(feature())
             }
             add(antiCheese.enabled) { AntiCheeseFeature() }
-            add(core.enabled) { CoreFeature() }
+            add(core.enabled) { CoreFeature(core) }
             add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }
             add(curse.enabled) { CurseFeature() }
             add(custom_hud.enabled) { CustomHudFeature() }

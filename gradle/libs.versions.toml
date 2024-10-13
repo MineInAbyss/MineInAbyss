@@ -1,11 +1,11 @@
 [versions]
-gearyPaper = "0.30.14"
+gearyPaper = "0.30.23"
 guiy = "0.12.4"
-deeperworld = "0.11.0"
-chatty = "0.8.6"
+deeperworld = "0.11.3"
+chatty = "0.8.9"
 eternalfortune = "0.4-SNAPSHOT"
-packy = "0.7.0"
-blocky = "0.10.2-dev.4"
+packy = "0.7.2"
+blocky = "0.10.9"
 
 
 [libraries]
@@ -19,7 +19,7 @@ packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
 blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.12.2"
-minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.4.4"
+minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.4.7"
 minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.3"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.28.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
