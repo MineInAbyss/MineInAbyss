@@ -5,7 +5,6 @@ import com.mineinabyss.components.PlayerData
 import com.mineinabyss.components.playerprofile.PlayerProfile
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.abyssFeatures
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
 import com.mineinabyss.features.helpers.*
@@ -38,7 +37,7 @@ import org.bukkit.inventory.ItemStack
 
 private inline fun <reified T : Any> OfflinePlayer.hasComponent(): Boolean {
     return if (isOnline) player!!.toGeary().has<T>()
-    else getOfflinePDC()?.has<T>() ?: false
+    else getOfflinePDC()?.has<T>() == true
 }
 
 private inline fun <reified T : Any> OfflinePlayer.getComponent(): T? {
@@ -67,7 +66,7 @@ private inline fun <reified T : Any> OfflinePlayer.setComponent(component: T) {
 fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
     var hideArmorIcons by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile()).displayProfileArmor) }
     val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
-    val backgroundId by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile(abyssFeatures.playerProfile.validBackgroundIds.firstOrNull() ?: "")).background) }
+    val backgroundId by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile(abyss.config.playerProfile.validBackgroundIds.firstOrNull() ?: "")).background) }
     val titleComponent = Component.text(":space_-8::player_profile" +
             (if (isPatreon) "_patreon" else "") +
             ("_armor_" + if (!hideArmorIcons) "hidden:" else "visible:") +

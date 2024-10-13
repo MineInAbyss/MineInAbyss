@@ -26,20 +26,12 @@ import com.mineinabyss.features.pvp.PvpFeature
 import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
-import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.features.Feature
 import kotlinx.serialization.Serializable
-
-val abyssFeatures by DI.observe<AbyssFeatureConfig>()
 
 @Serializable
 class Toggle(val enabled: Boolean = false)
 
-/**
- * @param layers A list of all the layers and sections composing them to be registered.
- * @property hubSection The hub section of the abyss, a safe place for living and trading.
- * @property guilds Guild related options.
- */
 @Serializable
 class AbyssFeatureConfig(
     @YamlComment("Ignore following options, enable all features")
