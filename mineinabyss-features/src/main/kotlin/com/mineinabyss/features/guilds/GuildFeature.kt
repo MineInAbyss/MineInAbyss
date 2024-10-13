@@ -3,8 +3,8 @@ package com.mineinabyss.features.guilds
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
-import com.mineinabyss.chatty.commands.ChattyBrigadierCommands
 import com.mineinabyss.chatty.ChattyChannel
+import com.mineinabyss.chatty.commands.ChattyBrigadierCommands
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
@@ -34,15 +34,13 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
-import kotlinx.coroutines.CompletableJob
+import com.mineinabyss.idofront.time.ticks
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.title.Title
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.concurrent.CompletableFuture
 
 const val guildChannelId: String = "Guild Chat"
 
@@ -90,6 +88,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                 if (it.uniqueId !in TitleItem.profileCache) it.playerProfile.update().whenCompleteAsync { profile, _ ->
                     TitleItem.profileCache[it.uniqueId] = profile
                 }
+                delay(10.ticks)
             }
         }
 
