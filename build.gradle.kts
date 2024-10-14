@@ -58,6 +58,7 @@ allprojects {
 
         // Plugin libs
         compileOnly(idofrontLibs.minecraft.plugin.modelengine)
+        compileOnly(idofrontLibs.minecraft.plugin.worldguard)
 
         compileOnly(libs.guiy)
         compileOnly(libs.chatty)

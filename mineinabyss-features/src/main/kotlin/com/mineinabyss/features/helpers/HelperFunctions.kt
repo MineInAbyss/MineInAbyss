@@ -2,8 +2,14 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.curse.CurseFeature
 import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.sk89q.worldedit.bukkit.BukkitAdapter
+import com.sk89q.worldedit.math.BlockVector3
+import com.sk89q.worldguard.WorldGuard
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin
+import com.sk89q.worldguard.protection.flags.StateFlag
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Location
@@ -36,6 +42,15 @@ fun Player.getLayerWhistleForHud(): String {
 
 private val recentlyMovedPlayers: MutableSet<UUID> = HashSet()
 fun handleCurse(player: Player, from: Location, to: Location) {
+    val container = WorldGuard.getInstance().platform.regionContainer
+    val regions = container.get(BukkitAdapter.adapt(player.world))
+    if (regions !== null) {
+        val localPlayer = WorldGuardPlugin.inst().wrapPlayer(player)
+        val set = regions.getApplicableRegions(BlockVector3.at(to.x, to.y, to.z))
+        val curseFlag = set.queryState(localPlayer, CurseFeature.ABYSS_CURSE_FLAG)
+        if (curseFlag === StateFlag.State.DENY) return
+    }
+
     //Arbitrary range with the purpose of preventing curse on section change
     if (from.distanceSquared(to) > 32 * 32) return
     if (recentlyMovedPlayers.remove(player.uniqueId) || !player.world.isAbyssWorld) return
