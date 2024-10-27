@@ -4,10 +4,11 @@ import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.geary.helpers.parent
+import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.modules.GearyModule
+import com.mineinabyss.geary.modules.observe
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.serialization.setPersisting
-import com.mineinabyss.geary.systems.builders.observe
 import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.items.editItemMeta
 import org.bukkit.entity.Player
@@ -15,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 
 
-fun GearyModule.toggleStarCompassHudAction() = observe<ToggleStarCompassHud>()
+fun Geary.toggleStarCompassHudAction() = observe<ToggleStarCompassHud>()
     .exec(query<ItemStack>()) { (item) ->
         val player = entity.parent?.get<Player>() ?: return@exec
         if (entity.has<ShowStarCompassHud>()) {

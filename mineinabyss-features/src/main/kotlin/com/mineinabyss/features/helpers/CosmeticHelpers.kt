@@ -6,7 +6,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers
-import com.mineinabyss.geary.papermc.tracking.items.gearyItems
+import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import me.lojosho.hibiscuscommons.util.packets.PacketManager
 import org.bukkit.Bukkit
@@ -40,14 +41,16 @@ fun CosmeticUser.equipWhistleCosmetic() {
 }
 
 fun Player.layerWhistleCosmetic(): ItemStack? {
-    val whistle = when (simpleLayerName) {
-        "orth" -> "bell"
-        "edge_of_the_abyss" -> "red_whistle"
-        "forest_of_temptation" -> "blue_whistle"
-        "great_fault", "the_goblets_of_giants" -> "moon_whistle"
-        "sea_of_corpses" -> "black_whistle"
-        else -> return null
+    withGeary {
+        val whistle = when (simpleLayerName) {
+            "orth" -> "bell"
+            "edge_of_the_abyss" -> "red_whistle"
+            "forest_of_temptation" -> "blue_whistle"
+            "great_fault", "the_goblets_of_giants" -> "moon_whistle"
+            "sea_of_corpses" -> "black_whistle"
+            else -> return null
+        }
+        val prefab = PrefabKey.ofOrNull("cosmetics:$whistle") ?: return null
+        return getAddon(ItemTracking).itemProvider.serializePrefabToItemStack(prefab).takeIf { it != ItemStack.empty() }
     }
-    val prefab = PrefabKey.ofOrNull("cosmetics:$whistle") ?: return null
-    return gearyItems.itemProvider.serializePrefabToItemStack(prefab).takeIf { it != ItemStack.empty() }
 }

@@ -11,6 +11,7 @@ import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.datastore.remove
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.idofront.entities.leftClicked
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
@@ -33,65 +34,67 @@ import java.time.LocalDate
 class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun PlayerInteractEvent.onChestInteract() {
-        val chest = clickedBlock?.state as? Chest ?: return
-        val pdc = chest.persistentDataContainer
-        val loot = pdc.decode<ContainsLoot>() ?: return
-        val lootLocation = pdc.decode<LootLocation>() ?: return
+        (clickedBlock?.state as? Chest)?.withGeary { chest ->
+            val pdc = chest.persistentDataContainer
+            val loot = pdc.decode<ContainsLoot>() ?: return
+            val lootLocation = pdc.decode<LootLocation>() ?: return
 
-        if (lootLocation.location != chest.location) {
-            pdc.remove<ContainsLoot>()
-            pdc.remove<LootLocation>()
-            chest.update()
-            return
-        }
-
-        if (leftClicked && !player.hasPermission(LootCratePermissions.BREAK)) {
-            player.error(msg.noPermissionToBreak)
-            isCancelled = true
-            return
-        }
-
-        if (!rightClicked) return
-        val gearyInventory = player.inventory.toGeary()
-        val mainHand = gearyInventory?.itemInMainHand
-        if (mainHand?.has<ContainsLoot>() == true) return
-
-        if (!player.hasPermission(LootCratePermissions.OPEN)) {
-            player.error(msg.noPermissionToOpen)
-            return
-        }
-
-        val lastLootDate = transaction(abyss.db) {
-            LootedChests.selectAll()
-                .where { (LootedChests.playerUUID eq player.uniqueId) and locationEq(chest.location) }.singleOrNull()
-                ?.getOrNull(LootedChests.dateLooted)
-        }
-        if (lastLootDate == null) {
-            transaction(abyss.db) {
-                LootedChests.insert {
-                    it[playerUUID] = player.uniqueId
-                    it[x] = chest.location.blockX
-                    it[y] = chest.location.blockY
-                    it[z] = chest.location.blockZ
-                    it[world] = chest.location.world.name
-                    it[dateLooted] = LocalDate.now()
-                    it[lootType] = loot.table
-                }
+            if (lootLocation.location != chest.location) {
+                pdc.remove<ContainsLoot>()
+                pdc.remove<LootLocation>()
+                chest.update()
+                return
             }
-            openChestWithLoot(player, loot, chest)
-        } else {
-            player.error(msg.alreadyLooted.format(lastLootDate))
+
+            if (leftClicked && !player.hasPermission(LootCratePermissions.BREAK)) {
+                player.error(msg.noPermissionToBreak)
+                isCancelled = true
+                return
+            }
+
+            if (!rightClicked) return
+            val gearyInventory = player.inventory.toGeary()
+            val mainHand = gearyInventory?.itemInMainHand
+            if (mainHand?.has<ContainsLoot>() == true) return
+
+            if (!player.hasPermission(LootCratePermissions.OPEN)) {
+                player.error(msg.noPermissionToOpen)
+                return
+            }
+
+            val lastLootDate = transaction(abyss.db) {
+                LootedChests.selectAll()
+                    .where { (LootedChests.playerUUID eq player.uniqueId) and locationEq(chest.location) }.singleOrNull()
+                    ?.getOrNull(LootedChests.dateLooted)
+            }
+            if (lastLootDate == null) {
+                transaction(abyss.db) {
+                    LootedChests.insert {
+                        it[playerUUID] = player.uniqueId
+                        it[x] = chest.location.blockX
+                        it[y] = chest.location.blockY
+                        it[z] = chest.location.blockZ
+                        it[world] = chest.location.world.name
+                        it[dateLooted] = LocalDate.now()
+                        it[lootType] = loot.table
+                    }
+                }
+                openChestWithLoot(player, loot, chest)
+            } else {
+                player.error(msg.alreadyLooted.format(lastLootDate))
+            }
+            isCancelled = true
         }
-        isCancelled = true
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     fun BlockBreakEvent.removeFromDBOnChestRemove() {
-        val chest = block.state as? Chest ?: return
-        if (!chest.persistentDataContainer.has<ContainsLoot>()) return
-        transaction(abyss.db) {
-            LootedChests.deleteWhere {
-                locationEq(chest.location)
+        (block.state as? Chest)?.withGeary { chest ->
+            if (!chest.persistentDataContainer.has<ContainsLoot>()) return
+            transaction(abyss.db) {
+                LootedChests.deleteWhere {
+                    locationEq(chest.location)
+                }
             }
         }
     }

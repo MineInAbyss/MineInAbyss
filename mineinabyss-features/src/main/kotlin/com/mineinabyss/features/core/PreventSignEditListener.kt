@@ -3,6 +3,7 @@ package com.mineinabyss.features.core
 import com.mineinabyss.components.core.SignOwner
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.block.Sign
 import org.bukkit.event.Event
@@ -17,22 +18,19 @@ class PreventSignEditListener : Listener {
 
     @EventHandler
     fun PlayerInteractEvent.onPlayerEditSign() {
-        val sign = clickedBlock?.state as? Sign ?: return
-        val signOwner = sign.persistentDataContainer.decode<SignOwner>()
-        if (player.hasPermission(BYPASS_PERMISSION)) return
+        val signOwner = (clickedBlock?.state as? Sign)?.withGeary { it.persistentDataContainer.decode<SignOwner>() } ?: return
+        if (signOwner.owner == player.uniqueId || player.hasPermission(BYPASS_PERMISSION)) return
 
         // Make people without bypass perm not be able to edit signs that don't have the component
-        signOwner?.takeIf { it.owner != player.uniqueId }?.let {
-            setUseInteractedBlock(Event.Result.DENY)
-            player.error("You do not have permission to edit this sign.")
-        }
+        setUseInteractedBlock(Event.Result.DENY)
+        player.error("You do not have permission to edit this sign.")
     }
 
     @EventHandler
     fun BlockPlaceEvent.onPlaceSign() {
-        (block.state as? Sign)?.let {
-            it.persistentDataContainer.encode(SignOwner(player.uniqueId))
-            it.update()
+        (block.state as? Sign)?.withGeary { sign ->
+            sign.persistentDataContainer.encode(SignOwner(player.uniqueId))
+            sign.update()
         }
     }
 }

@@ -2,6 +2,8 @@ package com.mineinabyss.features.npc.shopkeeping
 
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
+import com.mineinabyss.geary.papermc.toEntityOrNull
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.optionArg
@@ -21,9 +23,10 @@ class ShopKeepingFeature : Feature() {
                     parseErrorMessage = { "No such shopkeeper: $passed" }
                 }
                 playerAction {
-                    val shopKeeper =
-                        PrefabKey.of(shopKey).toEntityOrNull()?.get<ShopKeeper>() ?: return@playerAction
-                    guiy { ShopMainMenu(player, shopKeeper) }
+                    player.withGeary {
+                        val shopKeeper = PrefabKey.of(shopKey).toEntityOrNull()?.get<ShopKeeper>() ?: return@playerAction
+                        guiy { ShopMainMenu(player, shopKeeper) }
+                    }
                 }
             }
         }

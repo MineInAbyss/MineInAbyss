@@ -14,6 +14,7 @@ import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -307,37 +308,39 @@ fun Player.depositCoinsToGuild(amount: Int) {
 }
 
 fun Player.withdrawCoinsFromGuild(amount: Int) {
-    if (!hasGuild()) {
-        error("You must be in a guild to withdraw coins.")
-        return
-    }
+    withGeary {
+        if (!hasGuild()) {
+            error("You must be in a guild to withdraw coins.")
+            return
+        }
 
-    if (!isGuildOwner()) {
-        error("You must be the guild owner to withdraw coins.")
-        return
-    }
+        if (!isGuildOwner()) {
+            error("You must be the guild owner to withdraw coins.")
+            return
+        }
 
-    if (getGuildBalance() - amount < 0) {
-        error("You do not have enough coins in your guild to withdraw $amount coins.")
-        return
-    }
+        if (getGuildBalance() - amount < 0) {
+            error("You do not have enough coins in your guild to withdraw $amount coins.")
+            return
+        }
 
-    val slot = inventory.firstEmpty()
-    if (slot == -1) {
-        error("You do not have enough space in your inventory to withdraw the coins.")
-        return
-    }
+        val slot = inventory.firstEmpty()
+        if (slot == -1) {
+            error("You do not have enough space in your inventory to withdraw the coins.")
+            return
+        }
 
-    val orthCoin = CoinFactory.orthCoin
-    if (orthCoin == null) {
-        error("Could not create OrthCoin.")
-        error("Cancelling withdrawal!")
-        return
-    }
+        val orthCoin = CoinFactory.orthCoin
+        if (orthCoin == null) {
+            error("Could not create OrthCoin.")
+            error("Cancelling withdrawal!")
+            return
+        }
 
-    updateGuildBalance(-amount)
-    inventory.addItem(orthCoin.asQuantity(amount))
-    success("You withdrew $amount Orth Coins from your guild.")
+        updateGuildBalance(-amount)
+        inventory.addItem(orthCoin.asQuantity(amount))
+        success("You withdrew $amount Orth Coins from your guild.")
+    }
 }
 
 fun Player.canLevelUpGuild(): Boolean {

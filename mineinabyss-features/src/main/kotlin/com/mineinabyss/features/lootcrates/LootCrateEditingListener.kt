@@ -8,6 +8,7 @@ import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.datastore.remove
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.idofront.entities.leftClicked
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
@@ -21,57 +22,59 @@ import org.bukkit.event.player.PlayerInteractEvent
 class LootCrateEditingListener(val msg: LootCratesFeature.Messages) : Listener {
     @EventHandler
     fun BlockPlaceEvent.onPlaceCopiedLootChest() {
-        val chest = blockPlaced.state as? Chest ?: return
-        val pdc = chest.persistentDataContainer
-        val location = pdc.decode<LootLocation>() ?: return
+        (blockPlaced.state as? Chest)?.withGeary { chest ->
+            val pdc = chest.persistentDataContainer
+            val location = pdc.decode<LootLocation>() ?: return
 
-        if (!player.hasPermission(LootCratePermissions.EDIT)) {
-            pdc.remove<LootLocation>()
-            pdc.remove<ContainsLoot>()
+            if (!player.hasPermission(LootCratePermissions.EDIT)) {
+                pdc.remove<LootLocation>()
+                pdc.remove<ContainsLoot>()
+                chest.update()
+                player.error(msg.noPermissionToEdit)
+                isCancelled = true
+                return
+            }
+
+            pdc.encode(LootLocation(chest.location))
             chest.update()
-            player.error(msg.noPermissionToEdit)
-            isCancelled = true
-            return
         }
-
-        pdc.encode(LootLocation(chest.location))
-        chest.update()
     }
 
     @EventHandler
     fun PlayerInteractEvent.onChestInteract() {
-        val chest = clickedBlock?.state as? Chest ?: return
-        val pdc = chest.persistentDataContainer
+        (clickedBlock?.state as? Chest)?.withGeary { chest ->
+            val pdc = chest.persistentDataContainer
 
-        val gearyInventory = player.inventory.toGeary() ?: return
-        val mainHand = gearyInventory.itemInMainHand ?: return
-        val loot = mainHand.get<ContainsLoot>() ?: return
+            val gearyInventory = player.inventory.toGeary() ?: return
+            val mainHand = gearyInventory.itemInMainHand ?: return
+            val loot = mainHand.get<ContainsLoot>() ?: return
 
-        if (!player.hasPermission(LootCratePermissions.EDIT)) {
-            player.error(msg.noPermissionToEdit)
-            isCancelled = true
-            return
-        }
-
-        if (leftClicked) {
-            if (pdc.has<ContainsLoot>()) {
-                player.success("Removed loot table from chest")
-                chest.persistentDataContainer.remove<ContainsLoot>()
-                chest.update()
-            } else {
+            if (!player.hasPermission(LootCratePermissions.EDIT)) {
+                player.error(msg.noPermissionToEdit)
+                isCancelled = true
                 return
             }
-        } else if (rightClicked) {
-            if (chest.persistentDataContainer.decode<ContainsLoot>()?.table == loot.table) {
-                player.success("Previewing loot for ${loot.table}")
-                LootCratesListener.openChestWithLoot(player, loot, chest)
-            } else {
-                player.success("Set loot table of chest to ${loot.table}")
-                chest.persistentDataContainer.encode(loot)
-                chest.persistentDataContainer.encode(LootLocation(chest.location))
-                chest.update()
+
+            if (leftClicked) {
+                if (pdc.has<ContainsLoot>()) {
+                    player.success("Removed loot table from chest")
+                    chest.persistentDataContainer.remove<ContainsLoot>()
+                    chest.update()
+                } else {
+                    return
+                }
+            } else if (rightClicked) {
+                if (chest.persistentDataContainer.decode<ContainsLoot>()?.table == loot.table) {
+                    player.success("Previewing loot for ${loot.table}")
+                    LootCratesListener.openChestWithLoot(player, loot, chest)
+                } else {
+                    player.success("Set loot table of chest to ${loot.table}")
+                    chest.persistentDataContainer.encode(loot)
+                    chest.persistentDataContainer.encode(LootLocation(chest.location))
+                    chest.update()
+                }
             }
+            isCancelled = true
         }
-        isCancelled = true
     }
 }

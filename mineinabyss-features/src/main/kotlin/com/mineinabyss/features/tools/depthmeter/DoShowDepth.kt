@@ -5,10 +5,11 @@ import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
+import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.modules.observe
+import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.systems.builders.observe
-import com.mineinabyss.geary.systems.builders.observeWithData
 import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -18,7 +19,7 @@ import kotlin.math.roundToInt
 
 
 object ShowDepthSystem {
-    fun register() = geary.observe<ShowDepth>().exec(query<Player>()) { (player) ->
+    fun register(world: Geary) = world.observe<ShowDepth>().exec(world.query<Player>()) { (player) ->
         if (entity.has<ShowDepthMeterHud>()) return@exec
         player.sendDepthMessage()
     }
