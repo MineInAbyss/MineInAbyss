@@ -1,9 +1,11 @@
 package com.mineinabyss.features.patreons
 
 import com.mineinabyss.components.players.Patreon
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
+import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
@@ -43,8 +45,10 @@ class PatreonListener(private val config: PatreonFeature.Config) : Listener {
             gearyPlayer.setPersisting(patreon.copy(tier = tier))
         }
         else player.editOfflinePDC {
-            val patreon = this.decode<Patreon>() ?: Patreon()
-            encode(patreon.copy(tier = tier))
+            with(abyss.gearyGlobal) {
+                val patreon = decode<Patreon>() ?: Patreon()
+                encode(patreon.copy(tier = tier))
+            }
         }
     }
 

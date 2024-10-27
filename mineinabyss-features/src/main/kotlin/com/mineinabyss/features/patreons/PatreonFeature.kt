@@ -1,40 +1,26 @@
 package com.mineinabyss.features.patreons
 
-import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.components.PlayerData
-import com.mineinabyss.components.PreResetPatreon
 import com.mineinabyss.components.playerData
 import com.mineinabyss.components.players.Patreon
-import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.luckPerms
-import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.entities.toOfflinePlayer
-import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
-import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
 import com.mineinabyss.idofront.plugin.listeners
 import github.scarsz.discordsrv.DiscordSRV
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.time.Month
 import java.util.*
-import kotlin.io.path.readLines
-import kotlin.io.path.writeLines
 
 class PatreonFeature(val config: Config) : Feature() {
     override val dependsOn = setOf("LuckPerms", "DiscordSRV")
@@ -165,56 +151,6 @@ class PatreonFeature(val config: Config) : Feature() {
                     }
                 }
                 "admin" {
-                    val json = Json {
-                        this.ignoreUnknownKeys = true
-                        this.isLenient = true
-                    }
-                    "fetch_tokens" {
-                        action {
-                            abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
-                                val preResetDatas = abyss.plugin.server.offlinePlayers.map { offlinePlayer ->
-                                    runCatching {
-                                        val offlinePdc = offlinePlayer.getOfflinePDC() ?: return@map null
-                                        val heldTokens = (offlinePlayer.player?.playerData
-                                            ?: offlinePdc.decode<PlayerData>())?.mittyTokensHeld ?: 0
-                                        val wasPatreon = ((offlinePlayer.player?.toGeary()?.get<Patreon>()
-                                            ?: offlinePdc.decode<Patreon>())?.tier ?: 0) > 0
-                                        PreResetPatreon(
-                                            offlinePlayer.name.toString(),
-                                            offlinePlayer.uniqueId,
-                                            heldTokens,
-                                            wasPatreon
-                                        )
-                                    }.getOrNull()
-                                }.filterNotNull().toSet()
-                                    .sortedWith(compareByDescending(PreResetPatreon::wasActivePatreon)
-                                        .thenByDescending { it.heldTokens })
-
-                                abyss.dataPath
-                                    .resolve("preResetPatreons.txt")
-                                    .writeLines(preResetDatas.map {
-                                        runCatching { json.encodeToString(it) }.getOrNull() ?: it.toString()
-                                    })
-                                abyss.logger.s("done!")
-                            }
-                        }
-                    }
-                    "reset_extra_token" {
-                        action {
-                            abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
-                                abyss.dataPath.resolve("preResetPatreons.txt").readLines().mapNotNull {
-                                    runCatching { json.decodeFromString<PreResetPatreon>(it) }.getOrNull()
-                                }.filter { it.wasActivePatreon && it.heldTokens > 0 }.forEach {
-                                    it.uuid.toPlayer()?.let { player ->
-                                        player.playerData.mittyTokensHeld = it.heldTokens + 1 //add one extra token
-                                    } ?: it.uuid.toOfflinePlayer().editOfflinePDC {
-                                        (decode<PlayerData>() ?: PlayerData()).mittyTokensHeld =
-                                            it.heldTokens + 1 //add one extra token
-                                    }
-                                }
-                            }
-                        }
-                    }
                     "give_token" {
                         val amount by intArg()
                         playerAction {

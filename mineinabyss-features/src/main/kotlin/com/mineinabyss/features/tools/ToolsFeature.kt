@@ -1,6 +1,7 @@
 package com.mineinabyss.features.tools
 
 import com.mineinabyss.components.playerData
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.createDepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.createToggleDepthHudAction
@@ -8,6 +9,7 @@ import com.mineinabyss.features.tools.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.tools.sickle.SickleListener
 import com.mineinabyss.features.tools.sickle.createHarvestAction
 import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
@@ -18,7 +20,7 @@ import com.mineinabyss.idofront.plugin.listeners
 
 class ToolsFeature : Feature() {
     override val dependsOn: Set<String> = setOf("DeeperWorld")
-    override fun FeatureDSL.enable() = geary.run {
+    override fun FeatureDSL.enable() = abyss.gearyGlobal.run {
         mainCommand {
             "replant" {
                 playerAction {
@@ -48,7 +50,7 @@ class ToolsFeature : Feature() {
             if (args.size == 1) listOf("replant", "depth").filter { it.startsWith(args[0]) }
             else emptyList()
         }
-        ShowDepthSystem.register()
+        ShowDepthSystem.register(abyss.gearyGlobal)
         createToggleDepthHudAction()
         createHarvestAction()
         createDepthHudSystem()

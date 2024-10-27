@@ -8,11 +8,12 @@ import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.datatypes.EntityType
+import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.helpers.GearyMobPrefabQuery
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.configuration.components.Prefab
-import com.mineinabyss.geary.systems.builders.cache
 import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.Spacer
@@ -23,8 +24,8 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class ShopKeeperQuery : GearyQuery() {
-    val key by GearyMobPrefabQuery().get<PrefabKey>()
+class ShopKeeperQuery(world: Geary) : GearyQuery(world) {
+    val key by GearyMobPrefabQuery(world).get<PrefabKey>()
     override fun ensure() = this {
         has<EntityType>()
         has<Prefab>()
@@ -34,7 +35,7 @@ class ShopKeeperQuery : GearyQuery() {
 }
 
 object ShopKeepers {
-    val query = geary.cache(ShopKeeperQuery())
+    val query = abyss.gearyGlobal.cache(::ShopKeeperQuery)
 
     fun getKeys(): List<PrefabKey> = query.mapWithEntity { key }.map { it.data }
 }

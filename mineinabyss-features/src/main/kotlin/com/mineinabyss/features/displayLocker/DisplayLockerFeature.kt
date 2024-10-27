@@ -58,7 +58,7 @@ class DisplayLockerFeature : Feature() {
                             return@playerAction player.error("${offlinePlayer.name} can already interact with this ${entity.name}")
 
                         locked.allowedAccess.add(uuid)
-                        entity.toGeary().encodeComponentsTo(entity)
+                        entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
                         player.success("${offlinePlayer.name} can now interact with this ${entity.name}")
                     }
                 }
@@ -73,7 +73,7 @@ class DisplayLockerFeature : Feature() {
 
                         if (uuid in locked.allowedAccess) {
                             locked.allowedAccess.remove(uuid)
-                            entity.toGeary().encodeComponentsTo(entity)
+                            entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
                             player.success("${offlinePlayer.name} has been removed from this ${entity.name}")
                         } else player.error("${offlinePlayer.name} cannot interact with this ${entity.name}")
                     }
@@ -87,7 +87,7 @@ class DisplayLockerFeature : Feature() {
 
                         locked.allowedAccess.clear()
                         locked.allowedAccess.add(locked.owner)
-                        entity.toGeary().encodeComponentsTo(entity)
+                        entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
                         player.success("All players were removed from this ${entity.name}")
                     }
                 }

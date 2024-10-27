@@ -2,7 +2,8 @@ package com.mineinabyss.features
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
-import com.mineinabyss.geary.serialization.serializableComponents
+import com.mineinabyss.geary.papermc.gearyPaper
+import com.mineinabyss.geary.serialization.SerializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
@@ -10,7 +11,6 @@ import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.observeLogger
-import com.mineinabyss.idofront.plugin.Services
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.sql.Database
 import java.nio.file.Path
@@ -23,6 +23,7 @@ class AbyssContext(
     Configurable<AbyssFeatureConfig> {
     val logger by plugin.observeLogger()
     val dataPath: Path = plugin.dataFolder.toPath()
+    val gearyGlobal get() = gearyPaper.worldManager.global
 
     override val configManager = config<AbyssFeatureConfig>(
         "config", dataPath, AbyssFeatureConfig(), formats = ConfigFormats(
@@ -30,7 +31,7 @@ class AbyssContext(
                 Format(
                     "yml", Yaml(
                         // We autoscan in our Feature classes so need to use Geary's module.
-                        serializersModule = serializableComponents.serializers.module,
+                        serializersModule = gearyGlobal.getAddon(SerializableComponents).serializers.module,
                         configuration = YamlConfiguration(allowAnchorsAndAliases = true)
                     )
                 )

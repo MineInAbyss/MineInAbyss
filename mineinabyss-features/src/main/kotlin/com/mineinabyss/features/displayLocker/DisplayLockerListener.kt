@@ -38,7 +38,7 @@ class DisplayLockerListener : Listener {
         abyss.plugin.launch {
             yield()
             frame.toGeary().getOrSetPersisting<LockDisplayItem> { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
-            frame.toGeary().encodeComponentsTo(frame)
+            frame.toGeary().encodeComponentsTo(frame.persistentDataContainer)
             player.playerData.recentInteractEntity = frame.uniqueId
             when (lockState) {
                 true -> player.success("This ${frame.name} is now protected!")
@@ -54,7 +54,7 @@ class DisplayLockerListener : Listener {
         abyss.plugin.launch {
             yield()
             entity.toGeary().getOrSetPersisting<LockDisplayItem> { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
-            entity.toGeary().encodeComponentsTo(entity)
+            entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
             player.playerData.recentInteractEntity = entity.uniqueId
             when (lockState) {
                 true -> player.success("This ${entity.name} is now protected!")

@@ -4,11 +4,22 @@ import com.mineinabyss.components.lootcrates.ContainsLoot
 import com.mineinabyss.components.lootcrates.LootCrateConstants
 import com.mineinabyss.components.lootcrates.LootTable
 import com.mineinabyss.features.abyss
+import com.mineinabyss.geary.datatypes.Component
+import com.mineinabyss.geary.datatypes.Entity
 import com.mineinabyss.geary.datatypes.family.family
+import com.mineinabyss.geary.helpers.cId
+import com.mineinabyss.geary.helpers.componentId
 import com.mineinabyss.geary.helpers.entity
+import com.mineinabyss.geary.helpers.getComponentInfo
 import com.mineinabyss.geary.modules.geary
+import com.mineinabyss.geary.modules.get
 import com.mineinabyss.geary.papermc.datastore.encode
+import com.mineinabyss.geary.papermc.gearyPaper
+import com.mineinabyss.geary.papermc.tracking.entities.EntityTracking
+import com.mineinabyss.geary.papermc.tracking.items.itemEntityContext
+import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.prefabs.entityOf
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -31,11 +42,14 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
         override val configManager = config("lootTables", abyss.dataPath, Config())
         val listeners = arrayOf(LootCratesListener(config.messages), LootCrateEditingListener(config.messages))
         val lootTables by lazy {
-            geary.queryManager
-                .getEntitiesMatching(family {
+            with(abyss.gearyGlobal) {
+                queryManager.getEntitiesMatchingAsSequence(family {
                     hasSet<LootTable>()
                     hasSet<PrefabKey>()
-                }).associate { it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!! }
+                }).map { it.toGeary() }.associate {
+                    it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!!
+                }
+            }
         }
     }
 
@@ -52,7 +66,7 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
     override fun FeatureDSL.enable() {
         plugin.listeners(*context.listeners)
 
-        entity {
+        abyss.gearyGlobal.entity {
             set(LootTable.empty())
             set(PrefabKey.of(LootCrateConstants.CUSTOM_LOOT_TABLE))
         }
@@ -64,12 +78,16 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
 
                     playerAction {
                         val (namespace, key) = PrefabKey.of(lootTable)
-                        player.inventory.addItem(
-                            ItemStack(Material.STICK).editItemMeta {
-                                itemName(context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg())
-                                persistentDataContainer.encode(ContainsLoot(lootTable))
-                            }
-                        )
+                        player.withGeary {
+                            player.inventory.addItem(
+                                ItemStack(Material.STICK).editItemMeta {
+                                    itemName(
+                                        context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
+                                    )
+                                    persistentDataContainer.encode(ContainsLoot(lootTable))
+                                }
+                            )
+                        }
                     }
                 }
             }

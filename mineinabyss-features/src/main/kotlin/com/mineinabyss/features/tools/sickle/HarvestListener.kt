@@ -2,9 +2,9 @@ package com.mineinabyss.features.tools.sickle
 
 import com.mineinabyss.components.tools.Sickle
 import com.mineinabyss.features.helpers.BlockUtil
+import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.modules.GearyModule
-import com.mineinabyss.geary.systems.builders.observe
-import com.mineinabyss.geary.systems.builders.observeWithData
+import com.mineinabyss.geary.modules.observeWithData
 import com.mineinabyss.geary.systems.query.query
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
@@ -12,7 +12,7 @@ import org.bukkit.Tag
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockBreakEvent
 
-fun GearyModule.createHarvestAction() = observeWithData<Sickle>().exec(query<Player>()) { (player) ->
+fun Geary.createHarvestAction() = observeWithData<Sickle>().exec(query<Player>()) { (player) ->
     val block = player.getTargetBlockExact(5) ?: return@exec
     val item = player.inventory.itemInMainHand
 

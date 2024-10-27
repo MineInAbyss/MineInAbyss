@@ -12,6 +12,7 @@ import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.datastore.has
+import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
@@ -38,19 +39,19 @@ import kotlin.text.buildString
 
 private inline fun <reified T : Any> OfflinePlayer.hasComponent(): Boolean {
     return if (isOnline) player!!.toGeary().has<T>()
-    else getOfflinePDC()?.has<T>() == true
+    else with(abyss.gearyGlobal) { getOfflinePDC()?.has<T>() == true }
 }
 
 private inline fun <reified T : Any> OfflinePlayer.getComponent(): T? {
     return if (isOnline) player!!.toGeary().get<T>()
-    else getOfflinePDC()?.decode<T>()
+    else with(abyss.gearyGlobal) { getOfflinePDC()?.decode<T>() }
 }
 
 private inline fun <reified T : Any> OfflinePlayer.getOrSetComponent(default: T): T {
     return if (isOnline) player!!.toGeary().getOrSetPersisting<T> { default }
     else {
         val pdc = getOfflinePDC() ?: return default
-        val t = pdc.decode<T>() ?: run { pdc.encode(default); default }
+        val t = with(abyss.gearyGlobal) { pdc.decode<T>() ?: run { pdc.encode(default); default } }
         saveOfflinePDC(pdc)
         return t
     }
@@ -59,7 +60,7 @@ private inline fun <reified T : Any> OfflinePlayer.getOrSetComponent(default: T)
 private inline fun <reified T : Any> OfflinePlayer.setComponent(component: T) {
     if (isOnline) player!!.toGeary().setPersisting(component)
     else editOfflinePDC {
-        encode(component)
+        with(abyss.gearyGlobal) { encode(component) }
     }
 }
 

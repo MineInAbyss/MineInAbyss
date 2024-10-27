@@ -3,7 +3,8 @@ package com.mineinabyss.features.layers
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.features.abyss
-import com.mineinabyss.geary.serialization.serializableComponents
+import com.mineinabyss.geary.papermc.gearyPaper
+import com.mineinabyss.geary.serialization.SerializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
@@ -16,7 +17,7 @@ class LayersContext: Configurable<LayersConfig> {
                 Format(
                     "yml", Yaml(
                         // We autoscan in our Feature classes so need to use Geary's module.
-                        serializersModule = serializableComponents.serializers.module,
+                        serializersModule = abyss.gearyGlobal.getAddon(SerializableComponents).serializers.module,
                         configuration = YamlConfiguration(
                             extensionDefinitionPrefix = "x-",
                             allowAnchorsAndAliases = true,
