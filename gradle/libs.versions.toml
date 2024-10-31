@@ -5,7 +5,7 @@ deeperworld = "0.11.9"
 chatty = "0.8.10"
 eternalfortune = "0.4-SNAPSHOT"
 packy = "0.7.3"
-blocky = "0.10.14"
+blocky = "0.10.15"
 
 
 [libraries]
