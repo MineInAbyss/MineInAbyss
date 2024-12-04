@@ -31,13 +31,12 @@ class ShopKeeperQuery(world: Geary) : GearyQuery(world) {
         has<Prefab>()
         has<ShopKeeper>()
     }
-
 }
 
 object ShopKeepers {
     val query = abyss.gearyGlobal.cache(::ShopKeeperQuery)
 
-    fun getKeys(): List<PrefabKey> = query.mapWithEntity { key }.map { it.data }
+    fun getKeys(): List<PrefabKey> = query.mapWithEntity { it.key }.map { it.data }
 }
 
 

@@ -1,6 +1,6 @@
 [versions]
-gearyPaper = "0.31.0"
-guiy = "0.12.4"
+gearyPaper = "0.31.3"
+guiy = "0.12.5"
 deeperworld = "0.11.9"
 chatty = "0.8.10"
 eternalfortune = "0.4-SNAPSHOT"
