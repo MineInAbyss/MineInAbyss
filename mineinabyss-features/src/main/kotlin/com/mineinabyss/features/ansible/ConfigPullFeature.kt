@@ -17,7 +17,7 @@ class ConfigPullFeature : Feature() {
                 "copy" {
                     executes {
                         sender.info("Running keepup to copy configs and update plugins...")
-                        ProcessBuilder("/scripts/dev/keepup")
+                        ProcessBuilder("/scripts/keepup")
                             .inheritIO()
                             .start()
                             .onExit()
@@ -32,7 +32,7 @@ class ConfigPullFeature : Feature() {
                 "pull-remote" {
                     executes {
                         sender.info("Running ansible-pull")
-                        ProcessBuilder("/scripts/dev/ansible")
+                        ProcessBuilder("/scripts/ansible")
                             .inheritIO()
                             .start()
                             .onExit()
