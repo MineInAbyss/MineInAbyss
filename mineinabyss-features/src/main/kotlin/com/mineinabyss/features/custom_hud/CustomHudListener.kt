@@ -2,13 +2,14 @@ package com.mineinabyss.features.custom_hud
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
-import com.mineinabyss.packy.components.packyData
 import com.mineinabyss.packy.config.packy
+import io.lumine.mythichud.api.HudHolder
 import kotlinx.coroutines.delay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status
+import org.bukkit.persistence.PersistentDataType
 
 class CustomHudListener(private val feature: CustomHudFeature) : Listener {
 
@@ -37,10 +38,17 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
 
     private fun PlayerResourcePackStatusEvent.handleStatusEvent() {
         if (status == Status.SUCCESSFULLY_LOADED && feature.customHudEnabled(player)) {
-            mythicHud.createBarHandler(player.hudHolder)
-            player.hudHolder.initialize()
+            val hudHolder = player.hudHolder ?: HudHolder(player)
+            mythicHud.createBarHandler(hudHolder)
+            hudHolder.initialize()
             toggleBackgroundLayouts(player, feature)
-        } else mythicHud.createBarHandler(player.hudHolder).disable()
+        } else {
+            val layoutContainer = player.persistentDataContainer.get(LAYOUT_KEY, PersistentDataType.TAG_CONTAINER) ?: return
+            layoutContainer.keys.forEach { key ->
+                layoutContainer.set(key, PersistentDataType.BOOLEAN, false)
+            }
+            player.persistentDataContainer.set(LAYOUT_KEY, PersistentDataType.TAG_CONTAINER, layoutContainer)
+        }
     }
 
 }
