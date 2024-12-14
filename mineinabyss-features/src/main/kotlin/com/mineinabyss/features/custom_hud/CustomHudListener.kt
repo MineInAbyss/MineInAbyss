@@ -9,20 +9,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status
-import org.bukkit.persistence.PersistentDataType
 
 class CustomHudListener(private val feature: CustomHudFeature) : Listener {
-
-//    @EventHandler
-//    fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
-//        if (status == Status.ACCEPTED || status == Status.DOWNLOADED) return
-//        packy.plugin.launch {
-//            do {
-//                delay(1.ticks)
-//                if (player.isOnline) betterhud.getHudPlayer(player).isHudEnabled = feature.customHudTemplate in player.packyData.enabledPackIds
-//            } while (player.isConnected && !player.isOnline)
-//        }
-//    }
 
     @EventHandler
     fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
@@ -31,7 +19,6 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
             do {
                 delay(1.ticks)
                 if (player.isOnline) handleStatusEvent()
-                //if (player.isOnline) betterhud.getHudPlayer(player).isHudEnabled = feature.customHudTemplate in player.packyData.enabledPackIds
             } while (player.isConnected && !player.isOnline)
         }
     }
@@ -43,11 +30,9 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
             hudHolder.initialize()
             toggleBackgroundLayouts(player, feature)
         } else {
-            val layoutContainer = player.persistentDataContainer.get(LAYOUT_KEY, PersistentDataType.TAG_CONTAINER) ?: return
-            layoutContainer.keys.forEach { key ->
-                layoutContainer.set(key, PersistentDataType.BOOLEAN, false)
-            }
-            player.persistentDataContainer.set(LAYOUT_KEY, PersistentDataType.TAG_CONTAINER, layoutContainer)
+            val holder = player.hudHolder ?: return
+            mythicHud.layouts().layouts.forEach(holder::removeLayout)
+            holder.send()
         }
     }
 
