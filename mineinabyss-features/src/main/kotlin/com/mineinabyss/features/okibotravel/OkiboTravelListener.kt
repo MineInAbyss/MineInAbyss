@@ -11,8 +11,8 @@ import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.actions.execute
 import com.mineinabyss.geary.helpers.with
+import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldown
 import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldowns
-import com.mineinabyss.geary.papermc.features.common.cooldowns.StartCooldown
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.prefabs.PrefabKey
@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class OkiboTravelListener : Listener {
 
-    private val okiboMapCooldown = StartCooldown(1.seconds, null, "mineinabyss:okibomap")
+    private val okiboMapCooldown = Cooldown(1.seconds, null, "mineinabyss:okibomap")
 
     @EventHandler
     fun PlayerUseUnknownEntityEvent.onInteractMap() {

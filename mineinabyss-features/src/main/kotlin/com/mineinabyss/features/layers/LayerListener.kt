@@ -14,8 +14,8 @@ import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.actions.execute
+import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldown
 import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldowns
-import com.mineinabyss.geary.papermc.features.common.cooldowns.StartCooldown
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
@@ -49,7 +49,7 @@ class LayerListener : Listener {
         }, abyss.plugin)
     }
 
-    private val titleCooldown = StartCooldown(2.seconds, null, "mineinabyss:layer_title")
+    private val titleCooldown = Cooldown(2.seconds, null, "mineinabyss:layer_title")
 
     @EventHandler
     fun PlayerAscendEvent.onPlayerAscend() { sendTitleOnLayerChange() }
