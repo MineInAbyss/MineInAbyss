@@ -9,7 +9,6 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
-import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
 
@@ -51,6 +50,8 @@ class TutorialFeature : Feature() {
                             .map { (entity, tutorial) ->
                                 tutorial.copy(
                                     location = entity.location,
+                                    lineWidth = entity.lineWidth,
+                                    textOpacity = entity.textOpacity,
                                     backgroundColor = entity.backgroundColor ?: tutorial.backgroundColor,
                                     shadow = entity.isShadowed,
                                     alignment = entity.alignment,

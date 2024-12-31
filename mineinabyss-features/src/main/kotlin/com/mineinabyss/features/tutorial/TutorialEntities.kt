@@ -31,6 +31,8 @@ interface TutorialContext {
 data class TutorialEntity(
     val location: @Serializable(LocationSerializer::class) Location,
     val text: String,
+    @EncodeDefault(NEVER) val textOpacity: Byte = (-1).toByte(),
+    @EncodeDefault(NEVER) val lineWidth: Int = 200,
     @EncodeDefault(NEVER) val backgroundColor: @Serializable(ColorSerializer::class) Color = Color.fromARGB(0, 0, 0, 0),
     @EncodeDefault(NEVER) val shadow: Boolean = true,
     @EncodeDefault(NEVER) val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
@@ -51,6 +53,8 @@ data class TutorialEntity(
         location.world.spawn(location, TextDisplay::class.java) { textDisplay ->
             textDisplay.text(text.miniMsg())
             textDisplay.billboard = billboard
+            textDisplay.textOpacity = textOpacity
+            textDisplay.lineWidth = lineWidth
             textDisplay.alignment = alignment
             textDisplay.isShadowed = shadow
             textDisplay.backgroundColor = backgroundColor
