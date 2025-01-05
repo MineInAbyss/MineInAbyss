@@ -1,6 +1,7 @@
 package com.mineinabyss.components.okibotravel
 
 import com.mineinabyss.idofront.serialization.LocationSerializer
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
@@ -10,5 +11,5 @@ import org.bukkit.Location
 data class OkiboLineStation(
     val name: String,
     val location: @Serializable(with = LocationSerializer::class) Location,
-    val subStations: Set<OkiboLineStation> = setOf()
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val subStations: Set<OkiboLineStation> = setOf()
 )
