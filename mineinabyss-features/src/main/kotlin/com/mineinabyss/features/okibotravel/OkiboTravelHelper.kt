@@ -17,79 +17,80 @@ import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
 import java.util.*
 
-val mapEntities = mutableMapOf<OkiboMap, Int>()
-val hitboxEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
-val hitboxIconEntities = mutableMapOf<Pair<OkiboMap, OkiboMap.OkiboMapHitbox>, Int>()
+val mapEntities = mutableMapOf<String, Int>()
+val hitboxEntities = mutableMapOf<String, Int>()
+val hitboxIconEntities = mutableMapOf<String, Int>()
 val noticeBoardFurnitures = mutableSetOf<UUID>()
 
 val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
 val OkiboMap.OkiboMapHitbox.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == destStation }
 
 fun getHitboxStation(entityId: Int) =
-    hitboxEntities.entries.firstOrNull { it.value == entityId }?.key?.second
+    hitboxEntities.entries.firstOrNull { h -> h.value == entityId }?.key?.let { okiboLine.config.okiboMaps.firstOrNull { o -> it.startsWith(o.station) } }
 fun getMapEntityFromCollisionHitbox(id: Int) =
-    hitboxEntities.entries.firstOrNull { it.value == id }?.key?.first
+    hitboxEntities.entries.firstOrNull { it.value == id }?.key?.substringBefore("|")
 
 fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val connection = (this as CraftPlayer).handle.connection
 
     connection.send(ClientboundRemoveEntitiesPacket(
-        *intArrayOf().toMutableList().apply {
-            mapEntities.entries.firstOrNull { it.key.station == okiboMap.station }?.value?.let(::add)
-            hitboxEntities.entries.firstOrNull { it.key.first.station == okiboMap.station }?.value?.let(::add)
-            hitboxIconEntities.entries.firstOrNull { it.key.first.station == okiboMap.station }?.value?.let(::add)
+        *mutableListOf<Int>().apply {
+            mapEntities.entries.firstOrNull { it.key == okiboMap.station }?.value?.let(::add)
+            hitboxEntities.entries.firstOrNull { it.key.substringBefore("|") == okiboMap.station }?.value?.let(::add)
+            hitboxIconEntities.entries.firstOrNull { it.key.substringBefore("|") == okiboMap.station }?.value?.let(::add)
         }.toIntArray()
     ))
 
     val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset)?.apply { yaw = okiboMap.yaw } ?: return
-    val entityId = mapEntities.computeIfAbsent(okiboMap) { Entity.nextEntityId() }
+    val entityId = mapEntities.computeIfAbsent(okiboMap.station) { Entity.nextEntityId() }
 
     val textEntityPacket = ClientboundAddEntityPacket(
         entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw,
         EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
     )
 
-    val txt = PaperAdventure.asVanilla(okiboMap.text.miniMsg()) ?: Component.empty()
     val textMetaPacket = ClientboundSetEntityDataPacket(
         entityId, listOf(
             SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
-            SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, txt),
-            SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
+            SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(okiboMap.text)),
+            SynchedEntityData.DataValue(25, EntityDataSerializers.INT, okiboMap.background), // Transparent background
         )
     )
 
     connection.send(ClientboundBundlePacket(listOf(textEntityPacket, textMetaPacket)))
 
     okiboMap.hitboxes.flatMap { mapHitbox ->
-        val packets = mutableListOf<Packet<ClientGamePacketListener>>()
-        val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
-        val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap to mapHitbox) { Entity.nextEntityId() }
+        val packets = mutableListOf<ClientboundBundlePacket>()
+        val hitboxEntityId = hitboxEntities.computeIfAbsent("${okiboMap.station}|${mapHitbox.destStation}") { Entity.nextEntityId() }
+        val iconEntityId = hitboxIconEntities.computeIfAbsent("${okiboMap.station}|${mapHitbox.destStation}") { Entity.nextEntityId() }
         val loc = textLoc.clone().add(mapHitbox.offset)
 
         //interactionPacket
-        ClientboundAddEntityPacket(
+        val addEntity = ClientboundAddEntityPacket(
             hitboxEntityId, UUID.randomUUID(),
             loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
             EntityType.INTERACTION, 0, Vec3.ZERO, 0.0
-        ).also(packets::add)
+        )
 
         //metadataPacket
-        ClientboundSetEntityDataPacket(
+        val metadata = ClientboundSetEntityDataPacket(
             hitboxEntityId, listOf(
                 SynchedEntityData.DataValue(8, EntityDataSerializers.FLOAT, mapHitbox.hitbox.width.toFloat()),
                 SynchedEntityData.DataValue(9, EntityDataSerializers.FLOAT, mapHitbox.hitbox.height.toFloat()),
             )
-        ).also(packets::add)
+        )
+        packets += ClientboundBundlePacket(listOf(addEntity, metadata))
 
         okiboMap.icon?.also { icon ->
             val iconLoc = loc.clone().add(icon.offset)
+            val iconPackets = mutableListOf<Packet<ClientGamePacketListener>>()
 
             //iconPacket
             ClientboundAddEntityPacket(
                 iconEntityId, UUID.randomUUID(),
                 iconLoc.x, iconLoc.y, iconLoc.z, iconLoc.pitch, iconLoc.yaw,
                 EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
-            ).also(packets::add)
+            ).also(iconPackets::add)
 
             //iconMetaPacket
             ClientboundSetEntityDataPacket(
@@ -97,20 +98,20 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
                     SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(icon.text.miniMsg()) ?: Component.empty()),
                     SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
                 )
-            ).also(packets::add)
+            ).also(iconPackets::add)
+
+            packets += ClientboundBundlePacket(iconPackets)
         }
         packets
-    }.also {
-        connection.send(ClientboundBundlePacket(it))
-    }
+    }.forEach(connection::send)
 }
 
 fun Player.removeOkiboMap(okiboMap: OkiboMap) {
     (this as CraftPlayer).handle.connection.send(
         ClientboundRemoveEntitiesPacket(
-            *mapEntities.filterKeys { it != okiboMap }.values
-                .plus(hitboxEntities.filterKeys { it.first != okiboMap }.values)
-                .plus(hitboxIconEntities.filterKeys { it.first != okiboMap }.values).toIntArray()
+            *mapEntities.filterKeys { it != okiboMap.station }.values
+                .plus(hitboxEntities.filterKeys { it.substringBefore("|") != okiboMap.station }.values)
+                .plus(hitboxIconEntities.filterKeys { it.substringBefore("|") != okiboMap.station }.values).toIntArray()
         )
     )
 }

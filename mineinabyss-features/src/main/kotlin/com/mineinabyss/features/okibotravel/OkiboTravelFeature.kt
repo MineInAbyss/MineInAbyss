@@ -2,6 +2,7 @@ package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.blocky.api.BlockyFurnitures
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.okibotravel.OkiboTravelFeature.Context.Companion.spawnNoticeboards
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -15,9 +16,15 @@ import org.bukkit.Bukkit
 class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
     class Context : Configurable<OkiboTravelConfig> {
         override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
-            removeNoticeboards()
-            spawnNoticeboards()
-            abyss.logger.s("Okibo-Context reloaded")
+            runCatching {
+                abyss.logger.s("Okibo-Context reloaded")
+                removeNoticeboards()
+            }.onFailure { it.printStackTrace() }
+        }, onLoad = {
+            runCatching {
+                abyss.logger.s("Okibo-Context reloaded2")
+                it.spawnNoticeboards()
+            }.onFailure { it.printStackTrace() }
         })
         val okiboTravelListener = OkiboTravelListener()
 
@@ -25,29 +32,31 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
             noticeBoardFurnitures.onEach { Bukkit.getEntity(it)?.remove() }.clear()
         }
 
-        fun spawnNoticeboards() {
-            config.okiboMaps.forEach { okiboMap ->
-                val station = okiboMap.getStation ?: return@forEach
-                val noticeBoardFurniture = okiboMap.noticeBoardFurniture ?: return@forEach
-                val location = station.location.clone().add(okiboMap.offset).apply { yaw = okiboMap.yaw }.add(noticeBoardFurniture.offset)
-                abyss.logger.w("Attempting to spawn NoticeBoard at ${station.name} | $location")
-                location.world.getChunkAtAsync(location).thenAccept {
-                    it.addPluginChunkTicket(abyss.plugin)
-                    val noticeBoard = BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location, noticeBoardFurniture.yaw) ?: return@thenAccept
-                    noticeBoard.isPersistent = false
-                    noticeBoardFurnitures.add(noticeBoard.uniqueId)
-                    abyss.logger.s("Spawned NoticeBoard at ${station.name} | $location")
+        companion object {
+            fun OkiboTravelConfig.spawnNoticeboards() {
+                okiboMaps.forEach { okiboMap ->
+                    val station = okiboMap.getStation ?: return@forEach
+                    val noticeBoardFurniture = okiboMap.noticeBoardFurniture ?: return@forEach
+                    val location = station.location.clone().add(okiboMap.offset).apply { yaw = okiboMap.yaw }.add(noticeBoardFurniture.offset)
+                    abyss.logger.w("Attempting to spawn NoticeBoard at ${station.name} | $location")
+                    location.world.getChunkAtAsync(location).thenAccept {
+                        it.addPluginChunkTicket(abyss.plugin)
+                        val noticeBoard = BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location, noticeBoardFurniture.yaw) ?: return@thenAccept
+                        noticeBoard.isPersistent = false
+                        noticeBoardFurnitures.add(noticeBoard.uniqueId)
+                        abyss.logger.s("Spawned NoticeBoard at ${station.name} | $location")
+                    }
                 }
             }
         }
     }
 
-    override val dependsOn = setOf("Train_Carts", "TCCoasters", "BKCommonLib", "Blocky")
+    override val dependsOn = setOf("BKCommonLib", "Train_Carts", "TCCoasters", "Blocky")
 
     override fun FeatureDSL.enable() {
         plugin.listeners(context.okiboTravelListener)
 
-        context.spawnNoticeboards()
+        context.config.spawnNoticeboards()
 
         mainCommand {
             "okibo" {
@@ -92,6 +101,6 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
     }
 
     override fun FeatureDSL.disable() {
-        noticeBoardFurnitures.forEach { Bukkit.getEntity(it)?.remove() }
+        context.removeNoticeboards()
     }
 }
