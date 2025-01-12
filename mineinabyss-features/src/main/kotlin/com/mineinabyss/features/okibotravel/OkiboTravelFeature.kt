@@ -16,20 +16,27 @@ import org.bukkit.Bukkit
 class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
     class Context : Configurable<OkiboTravelConfig> {
         override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
-            runCatching {
-                abyss.logger.s("Okibo-Context reloaded")
-                removeNoticeboards()
-            }.onFailure { it.printStackTrace() }
+            noticeBoardFurnitures.onEach { Bukkit.getEntity(it.key)?.remove() }.clear()
         }, onLoad = {
-            runCatching {
-                abyss.logger.s("Okibo-Context reloaded2")
-                it.spawnNoticeboards()
-            }.onFailure { it.printStackTrace() }
+            abyss.logger.s("Reloaded OkiboLine!")
+            it.okiboMaps.forEach { okiboMap ->
+                val station = okiboMap.getStation ?: return@forEach
+                val noticeBoardFurniture = okiboMap.noticeBoardFurniture ?: return@forEach
+                val location = station.location.clone().add(okiboMap.offset).apply { yaw = okiboMap.yaw }.add(noticeBoardFurniture.offset)
+                abyss.logger.w("Attempting to spawn NoticeBoard at ${station.name} | $location")
+                location.world.getChunkAtAsync(location).thenAccept {
+                    it.addPluginChunkTicket(abyss.plugin)
+                    val noticeBoard = BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location, noticeBoardFurniture.yaw) ?: return@thenAccept
+                    noticeBoard.isPersistent = false
+                    noticeBoardFurnitures[noticeBoard.uniqueId] = okiboMap.station
+                    abyss.logger.s("Spawned NoticeBoard at ${station.name} | $location")
+                }
+            }
         })
         val okiboTravelListener = OkiboTravelListener()
 
         fun removeNoticeboards() {
-            noticeBoardFurnitures.onEach { Bukkit.getEntity(it)?.remove() }.clear()
+            noticeBoardFurnitures.onEach { Bukkit.getEntity(it.key)?.remove() }.clear()
         }
 
         companion object {
@@ -43,7 +50,7 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
                         it.addPluginChunkTicket(abyss.plugin)
                         val noticeBoard = BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location, noticeBoardFurniture.yaw) ?: return@thenAccept
                         noticeBoard.isPersistent = false
-                        noticeBoardFurnitures.add(noticeBoard.uniqueId)
+                        noticeBoardFurnitures[noticeBoard.uniqueId] = okiboMap.station
                         abyss.logger.s("Spawned NoticeBoard at ${station.name} | $location")
                     }
                 }
@@ -55,11 +62,13 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
 
     override fun FeatureDSL.enable() {
         plugin.listeners(context.okiboTravelListener)
-
         context.config.spawnNoticeboards()
 
         mainCommand {
             "okibo" {
+                "reload" {
+                    context.configManager.reload()
+                }
                 val station by optionArg(context.config.allStations.map { it.name }) {
                     default = context.config.okiboStations.first().name
                 }
@@ -85,15 +94,15 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
         tabCompletion {
             when (args.size) {
                 1 -> listOf("okibo").filter { it.startsWith(args[0]) }
-                2 -> if (args[0] == "okibo") listOf("spawn")
+                2 -> if (args[0] == "okibo") listOf("spawn", "reload")
                     .filter { it.startsWith(args[1]) } else null
                 3 -> when {
                     args[1] in listOf("spawn") -> context.config.allStations.map { it.name }
                     else -> null
-                }?.filter { it.startsWith(args[2]) }
+                }?.filter { it.startsWith(args[2], true) }
 
                 4 -> if (args[1] == "spawn") context.config.allStations.map { it.name }
-                    .filter { it.startsWith(args[3]) } else null
+                    .filter { it.startsWith(args[3], true) } else null
 
                 else -> null
             }
