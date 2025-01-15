@@ -34,10 +34,11 @@ data class OkiboMap(
     @EncodeDefault(NEVER) val yaw: Float = 0f,
     @EncodeDefault(NEVER) @SerialName("text") private val _text: String = ":orthmap|1::space_-1::orthmap|2:<newline><newline><newline>:orthmap|3::space_-1::orthmap|4:",
     @EncodeDefault(NEVER) @SerialName("scale") private val _scale: String = "1,1,1",
-    val hitboxes: Set<OkiboMapHitbox>,
+    @SerialName("hitboxes") val _hitboxes: Set<String>,
     val icon: Icon? = Icon()
 ) {
 
+    @Transient val hitboxes = mutableSetOf<OkiboMapHitbox>()
     @Transient val offset = vectorFromString(_offset, 0f)
     @Transient val scale = vector3fFromString(_scale, 1f)
     @Transient val text = _text.miniMsg()
@@ -62,7 +63,7 @@ data class OkiboMap(
         @Transient val offset = vectorFromString(_offset, 0f)
     }
     @Serializable
-    data class Hitbox(val width: Double = 0.3, val height: Double = 0.3)
+    data class Hitbox(val width: Double = 0.15, val height: Double = 0.15)
 
     @Serializable
     data class Icon(val text: String = ":orthmap_icon:", @SerialName("offset") private val _offset: String = "0,0,2") {

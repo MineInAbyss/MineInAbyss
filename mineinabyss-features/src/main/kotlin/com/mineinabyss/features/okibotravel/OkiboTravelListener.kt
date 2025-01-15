@@ -38,11 +38,10 @@ class OkiboTravelListener : Listener {
     //Then send subentities when player tracks entity
     @EventHandler
     fun PlayerTrackEntityEvent.onTrackMap() {
-        val station = noticeBoardFurnitures[entity.uniqueId] ?: return
-        val okiboMap = okiboLine.config.okiboMaps.firstOrNull { it.station == station } ?: return
-
         abyss.plugin.launch {
             delay(2.ticks)
+            val station = noticeBoardFurnitures[entity.uniqueId] ?: return@launch
+            val okiboMap = okiboLine.config.okiboMaps.firstOrNull { it.station == station } ?: return@launch
             player.sendOkiboMap(okiboMap)
         }
     }

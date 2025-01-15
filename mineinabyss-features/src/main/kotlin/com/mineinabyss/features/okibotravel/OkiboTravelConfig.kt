@@ -11,4 +11,11 @@ data class OkiboTravelConfig(
     val costPerKM: Double = 1.0
 ) {
     val allStations get() = okiboStations.toMutableList().apply { addAll(okiboStations.map { it.subStations }.flatten()) }
+
+    init {
+        val hitboxes = okiboStations.map { OkiboMap.OkiboMapHitbox(it.name, it.iconHitboxOffset) }
+        okiboMaps.forEach { map ->
+            map.hitboxes.addAll(hitboxes.filter { it.destStation in map._hitboxes })
+        }
+    }
 }

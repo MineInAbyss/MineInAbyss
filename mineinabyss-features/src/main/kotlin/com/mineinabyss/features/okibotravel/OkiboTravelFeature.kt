@@ -1,8 +1,15 @@
 package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.blocky.api.BlockyFurnitures
+import com.mineinabyss.blocky.components.core.BlockyFurniture
+import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.okibotravel.OkiboTravelFeature.Context.Companion.spawnNoticeboards
+import com.mineinabyss.geary.modules.Geary
+import com.mineinabyss.geary.modules.observe
+import com.mineinabyss.geary.observers.events.OnSet
+import com.mineinabyss.geary.papermc.gearyPaper
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -12,45 +19,34 @@ import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
+import org.bukkit.entity.ItemDisplay
 
 class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
     class Context : Configurable<OkiboTravelConfig> {
         override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
             noticeBoardFurnitures.onEach { Bukkit.getEntity(it.key)?.remove() }.clear()
-        }, onLoad = {
+            mapEntities.clear()
+            hitboxEntities.clear()
+            hitboxIconEntities.clear()
+        }, onLoad = { config ->
+            config.spawnNoticeboards()
             abyss.logger.s("Reloaded OkiboLine!")
-            it.okiboMaps.forEach { okiboMap ->
-                val station = okiboMap.getStation ?: return@forEach
-                val noticeBoardFurniture = okiboMap.noticeBoardFurniture ?: return@forEach
-                val location = station.location.clone().add(okiboMap.offset).apply { yaw = okiboMap.yaw }.add(noticeBoardFurniture.offset)
-                abyss.logger.w("Attempting to spawn NoticeBoard at ${station.name} | $location")
-                location.world.getChunkAtAsync(location).thenAccept {
-                    it.addPluginChunkTicket(abyss.plugin)
-                    val noticeBoard = BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location, noticeBoardFurniture.yaw) ?: return@thenAccept
-                    noticeBoard.isPersistent = false
-                    noticeBoardFurnitures[noticeBoard.uniqueId] = okiboMap.station
-                    abyss.logger.s("Spawned NoticeBoard at ${station.name} | $location")
-                }
-            }
         })
         val okiboTravelListener = OkiboTravelListener()
 
-        fun removeNoticeboards() {
-            noticeBoardFurnitures.onEach { Bukkit.getEntity(it.key)?.remove() }.clear()
-        }
-
         companion object {
+
             fun OkiboTravelConfig.spawnNoticeboards() {
                 okiboMaps.forEach { okiboMap ->
-                    val station = okiboMap.getStation ?: return@forEach
+                    val station = okiboStations.firstOrNull { it.name == okiboMap.station } ?: return@forEach
                     val noticeBoardFurniture = okiboMap.noticeBoardFurniture ?: return@forEach
-                    val location = station.location.clone().add(okiboMap.offset).apply { yaw = okiboMap.yaw }.add(noticeBoardFurniture.offset)
+                    val location = station.location.clone().add(okiboMap.offset).apply { yaw = okiboMap.yaw }.add(noticeBoardFurniture.offset).apply {
+                        yaw = noticeBoardFurniture.yaw
+                    }
                     abyss.logger.w("Attempting to spawn NoticeBoard at ${station.name} | $location")
                     location.world.getChunkAtAsync(location).thenAccept {
                         it.addPluginChunkTicket(abyss.plugin)
-                        val noticeBoard = BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location, noticeBoardFurniture.yaw) ?: return@thenAccept
-                        noticeBoard.isPersistent = false
-                        noticeBoardFurnitures[noticeBoard.uniqueId] = okiboMap.station
+                        BlockyFurnitures.placeFurniture(noticeBoardFurniture.prefabKey, location)?.toGearyOrNull()?.set(okiboMap) ?: return@thenAccept
                         abyss.logger.s("Spawned NoticeBoard at ${station.name} | $location")
                     }
                 }
@@ -58,11 +54,19 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
         }
     }
 
+    private fun Geary.createNoticeboardTracker() = observe<OnSet>()
+        .involving<ItemDisplay, BlockyFurniture, OkiboMap>()
+        .exec(query<ItemDisplay, BlockyFurniture, OkiboMap>()) { (itemDisplay, _, okiboMap) ->
+            itemDisplay.isPersistent = false
+            noticeBoardFurnitures[itemDisplay.uniqueId] = okiboMap.station
+        }
+
     override val dependsOn = setOf("BKCommonLib", "Train_Carts", "TCCoasters", "Blocky")
 
     override fun FeatureDSL.enable() {
         plugin.listeners(context.okiboTravelListener)
-        context.config.spawnNoticeboards()
+
+        gearyPaper.worldManager.global.createNoticeboardTracker()
 
         mainCommand {
             "okibo" {
@@ -107,9 +111,5 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
                 else -> null
             }
         }
-    }
-
-    override fun FeatureDSL.disable() {
-        context.removeNoticeboards()
     }
 }

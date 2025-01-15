@@ -23,7 +23,6 @@ val hitboxIconEntities = mutableMapOf<String, MutableMap<String, Int>>()
 val noticeBoardFurnitures = mutableMapOf<UUID, String>()
 
 val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
-val OkiboMap.OkiboMapHitbox.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == destStation }
 
 fun getHitboxStation(entityId: Int) =
     hitboxEntities.values.flatMap { it.toList() }.firstOrNull { it.second == entityId }?.first?.let { okiboLine.config.okiboMaps.firstOrNull { o -> it.startsWith(o.station) } }
@@ -32,11 +31,10 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val connection = (this as CraftPlayer).handle.connection
 
     connection.send(ClientboundRemoveEntitiesPacket(
-        *mutableListOf<Int>().apply {
-            mapEntities.entries.firstOrNull { it.key == okiboMap.station }?.value?.let(::add)
-            hitboxEntities.entries.firstOrNull { it.key == okiboMap.station }?.value?.values?.let(::addAll)
-            hitboxIconEntities.entries.firstOrNull { it.key == okiboMap.station }?.value?.values?.let(::addAll)
-        }.toIntArray()
+        *mutableListOf(mapEntities[okiboMap.station] ?: -1)
+            .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
+            .plus(hitboxIconEntities[okiboMap.station]?.values ?: listOf())
+            .toIntArray()
     ))
 
     val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset)?.apply { yaw = okiboMap.yaw } ?: return
@@ -50,6 +48,7 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val textMetaPacket = ClientboundSetEntityDataPacket(
         entityId, listOf(
             SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
+            SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
             SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(okiboMap.text)),
             SynchedEntityData.DataValue(25, EntityDataSerializers.INT, okiboMap.background), // Transparent background
         )
@@ -93,6 +92,7 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
             //iconMetaPacket
             ClientboundSetEntityDataPacket(
                 iconEntityId, listOf(
+                    SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
                     SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(icon.text.miniMsg()) ?: Component.empty()),
                     SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
                 )
@@ -107,7 +107,7 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
 fun Player.removeOkiboMap(okiboMap: OkiboMap) {
     (this as CraftPlayer).handle.connection.send(
         ClientboundRemoveEntitiesPacket(
-            *mapEntities.filterKeys { it != okiboMap.station }.values
+            *listOf(mapEntities[okiboMap.station] ?: -1)
                 .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
                 .plus(hitboxIconEntities[okiboMap.station]?.values ?: listOf())
                 .toIntArray()

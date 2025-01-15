@@ -11,5 +11,6 @@ import org.bukkit.Location
 data class OkiboLineStation(
     val name: String,
     val location: @Serializable(with = LocationSerializer::class) Location,
-    @EncodeDefault(EncodeDefault.Mode.NEVER) val subStations: Set<OkiboLineStation> = setOf()
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val subStations: Set<OkiboLineStation> = setOf(),
+    @SerialName("iconHitboxOffset") val iconHitboxOffset: String
 )
