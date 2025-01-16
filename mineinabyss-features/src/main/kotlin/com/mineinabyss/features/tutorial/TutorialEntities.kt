@@ -2,6 +2,7 @@ package com.mineinabyss.features.tutorial
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
+import com.mineinabyss.deeperworld.world.Region
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.serialization.setPersisting
@@ -15,8 +16,11 @@ import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
 import org.joml.Vector3f
@@ -24,6 +28,30 @@ import org.joml.Vector3f
 val tutorial by DI.observe<TutorialContext>()
 interface TutorialContext {
     val tutorialEntities: List<TutorialEntity>
+    val entry: TutorialRegion
+    val exit: TutorialRegion
+}
+
+@Serializable
+data class Tutorial(
+    val tutorialEntities: List<TutorialEntity> = listOf(),
+    val start: TutorialRegion = TutorialRegion(),
+    val end: TutorialRegion = TutorialRegion(),
+)
+
+@Serializable
+data class TutorialRegion(
+    val region: Region = Region(0,0,0,0,0,0),
+    @SerialName("target") private val _target: String = "0,0,0",
+    private val targetYaw: Float = 0f,
+) {
+
+    @Transient val target = _target.toLocation(Bukkit.getWorlds().first()).apply { yaw = targetYaw }
+
+    private fun String.toLocation(world: World): Location {
+        val (x,y,z) = this.replace(" ", "").split(",", limit = 3).map { it.toDoubleOrNull() ?: 0.0 }
+        return Location(world, x, y, z)
+    }
 }
 
 @Serializable
