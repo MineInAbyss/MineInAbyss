@@ -21,7 +21,10 @@ class TutorialFeature : Feature() {
     private fun setTutorialContext() {
         DI.remove<TutorialContext>()
         DI.add<TutorialContext>(object : TutorialContext {
-            override val tutorialEntities by config<List<TutorialEntity>>("tutorialEntities", abyss.dataPath, listOf())
+            val tutorial by config<Tutorial>("tutorial", abyss.dataPath, Tutorial())
+            override val tutorialEntities: List<TutorialEntity> = tutorial.tutorialEntities
+            override val entry: TutorialRegion = tutorial.start
+            override val exit: TutorialRegion = tutorial.end
         })
     }
 
@@ -58,7 +61,7 @@ class TutorialFeature : Feature() {
                                     billboard = entity.billboard,
                                     scale = entity.transformation.scale,
                                 )
-                            }.let { config<List<TutorialEntity>>("tutorialEntities", abyss.dataPath, it).write(it) }
+                            }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(it, tutorial.entry, tutorial.exit)).write(Tutorial(it, tutorial.entry, tutorial.exit)) }
 
                         setTutorialContext()
                         sender.success("Successfully saved tutorial-entities")
