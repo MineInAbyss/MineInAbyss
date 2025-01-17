@@ -23,6 +23,7 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
+import org.bukkit.util.Transformation
 import org.joml.Quaternionf
 import org.joml.Vector3f
 
@@ -89,11 +90,7 @@ data class TutorialEntity(
             textDisplay.alignment = alignment
             textDisplay.isShadowed = shadow
             textDisplay.backgroundColor = backgroundColor
-            textDisplay.transformation = textDisplay.transformation.also {
-                it.scale.set(scale)
-                it.leftRotation.set(leftRotation)
-                it.rightRotation.set(rightRotation)
-            }
+            textDisplay.transformation = Transformation(textDisplay.transformation.translation, leftRotation, scale, rightRotation)
             textDisplay.isSeeThrough = seeThrough
 
             textDisplay.isPersistent = false
