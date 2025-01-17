@@ -8,21 +8,30 @@ import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import org.bukkit.Bukkit
+import org.bukkit.Chunk
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
 
 class TutorialFeature : Feature() {
 
     private fun spawnTutorialEntities() {
-        tutorial.tutorialEntities.forEach(TutorialEntity::spawn)
+        tutorial.tutorialEntities.values.flatten().forEach(TutorialEntity::spawn)
     }
 
     private fun setTutorialContext() {
         DI.remove<TutorialContext>()
         DI.add<TutorialContext>(object : TutorialContext {
             val tutorial by config<Tutorial>("tutorial", abyss.dataPath, Tutorial())
-            override val tutorialEntities: List<TutorialEntity> = tutorial.tutorialEntities
+            override val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>> =
+                tutorial.tutorialEntities.groupByTo(Long2ObjectOpenHashMap()) {
+                    Chunk.getChunkKey(it.location)
+                }.mapValuesTo(Long2ObjectOpenHashMap()) { (_, entities) ->
+                    ObjectArrayList(entities)
+                }
+
             override val entry: TutorialRegion = tutorial.start
             override val exit: TutorialRegion = tutorial.end
         })

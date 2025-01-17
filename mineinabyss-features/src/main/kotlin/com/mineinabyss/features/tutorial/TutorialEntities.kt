@@ -11,6 +11,8 @@ import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import kotlinx.coroutines.delay
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
@@ -29,7 +31,7 @@ import org.joml.Vector3f
 
 val tutorial by DI.observe<TutorialContext>()
 interface TutorialContext {
-    val tutorialEntities: List<TutorialEntity>
+    val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>>
     val entry: TutorialRegion
     val exit: TutorialRegion
 }
@@ -82,7 +84,7 @@ data class TutorialEntity(
     }
 
     fun spawn() {
-        location.world.spawn(location, TextDisplay::class.java) { textDisplay ->
+        if (location.isChunkLoaded) location.world.spawn(location, TextDisplay::class.java) { textDisplay ->
             textDisplay.text(text.miniMsg())
             textDisplay.billboard = billboard
             textDisplay.textOpacity = textOpacity
