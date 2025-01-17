@@ -60,6 +60,8 @@ class TutorialFeature : Feature() {
                                     alignment = entity.alignment,
                                     billboard = entity.billboard,
                                     scale = entity.transformation.scale,
+                                    leftRotation = entity.transformation.leftRotation,
+                                    rightRotation = entity.transformation.rightRotation,
                                 )
                             }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(it, tutorial.entry, tutorial.exit)).write(Tutorial(it, tutorial.entry, tutorial.exit)) }
 

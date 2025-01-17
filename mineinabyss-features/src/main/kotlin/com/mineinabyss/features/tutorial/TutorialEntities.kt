@@ -23,6 +23,7 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
+import org.joml.Quaternionf
 import org.joml.Vector3f
 
 val tutorial by DI.observe<TutorialContext>()
@@ -66,6 +67,8 @@ data class TutorialEntity(
     @EncodeDefault(NEVER) val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
     @EncodeDefault(NEVER) val billboard: Display.Billboard = Display.Billboard.VERTICAL,
     @EncodeDefault(NEVER) val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
+    @EncodeDefault(NEVER) val leftRotation: @Serializable(QuaternionfSerializer::class) Quaternionf = Quaternionf(),
+    @EncodeDefault(NEVER) val rightRotation: @Serializable(QuaternionfSerializer::class) Quaternionf = Quaternionf(),
     @EncodeDefault(NEVER) val seeThrough: Boolean = false,
 ) {
     private fun TextDisplay.trackEntity(tutorial: TutorialEntity) {
@@ -86,7 +89,11 @@ data class TutorialEntity(
             textDisplay.alignment = alignment
             textDisplay.isShadowed = shadow
             textDisplay.backgroundColor = backgroundColor
-            textDisplay.transformation = textDisplay.transformation.apply { scale.set(scale) }
+            textDisplay.transformation = textDisplay.transformation.also {
+                it.scale.set(scale)
+                it.leftRotation.set(leftRotation)
+                it.rightRotation.set(rightRotation)
+            }
             textDisplay.isSeeThrough = seeThrough
 
             textDisplay.isPersistent = false
