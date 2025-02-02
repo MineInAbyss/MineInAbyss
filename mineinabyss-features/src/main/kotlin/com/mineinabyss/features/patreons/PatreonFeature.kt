@@ -79,17 +79,17 @@ class PatreonFeature(val config: Config) : Feature() {
 
                             if (loc == "global") {
                                 listOf(
-                                    PrefixNode.builder(":space_6:<#feac3b>Orth:space_2::$emote::space_2:>", 10)
+                                    PrefixNode.builder(":layer_orth::space_2::$emote::space_2:<#feac3b>", 10)
                                         .context(ImmutableContextSet.of("worldguard:region", "orth")).build(),
-                                    PrefixNode.builder(":space_6:<#c83038>Edge:space_2::$emote::space_2:>", 11)
+                                    PrefixNode.builder(":layer_1::space_2::$emote::space_2:", 11)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerone")).build(),
-                                    PrefixNode.builder(":space_6:<#4c92ac>Forest:space_2::$emote::space_2:>", 12)
+                                    PrefixNode.builder(":layer_2::space_2::$emote::space_2:", 12)
                                         .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build(),
-                                    PrefixNode.builder(":space_6:<#852d66>Fault:space_2::$emote::space_2:>", 13)
+                                    PrefixNode.builder(":layer_3::space_2::$emote::space_2:", 13)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build(),
-                                    PrefixNode.builder(":space_6:<#852d66>Goblets:space_2::$emote::space_2:>", 14)
+                                    PrefixNode.builder(":layer_4::space_2::$emote::space_2:", 14)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build(),
-                                    PrefixNode.builder(":space_6:<#434868>Sea:space_2::$emote::space_2:>", 15)
+                                    PrefixNode.builder(":layer_5::space_2::$emote::space_2:", 15)
                                         .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build(),
                                 ).forEach { node ->
                                     luckPerms.userManager.getUser(player.uniqueId)?.data()?.let { nodeMap ->
@@ -101,41 +101,28 @@ class PatreonFeature(val config: Config) : Feature() {
 
                             } else {
                                 val c: PrefixNode = when (loc) {
-                                    "orth" -> PrefixNode.builder(
-                                        ":space_6:<#feac3b>Orth:space_2::$emote::space_2:>",
-                                        10
-                                    )
-                                        .context(ImmutableContextSet.of("worldguard:region", "orth")).build()
+                                    "orth" ->
+                                        PrefixNode.builder(":layer_orth::space_2::$emote::space_2:", 10)
+                                            .context(ImmutableContextSet.of("worldguard:region", "orth")).build()
 
-                                    "layerone" -> PrefixNode.builder(
-                                        ":space_6:<#c83038>Edge:space_2::$emote::space_2:>",
-                                        11
-                                    )
-                                        .context(ImmutableContextSet.of("worldguard:region", "layerone")).build()
+                                    "layerone" ->
+                                        PrefixNode.builder(":layer_1::space_2::$emote::space_2:", 11)
+                                            .context(ImmutableContextSet.of("worldguard:region", "layerone")).build()
 
-                                    "layertwo" -> PrefixNode.builder(
-                                        ":space_6:<#4c92ac>Forest:space_2::$emote::space_2:>",
-                                        12
-                                    )
-                                        .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build()
+                                    "layertwo" ->
+                                        PrefixNode.builder(":layer_2::space_2::$emote::space_2:", 12)
+                                            .context(ImmutableContextSet.of("worldguard:region", "layertwo")).build()
+                                    "layerthree" ->
+                                        PrefixNode.builder(":layer_3::space_2::$emote::space_2:", 13)
+                                            .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build()
 
-                                    "layerthree" -> PrefixNode.builder(
-                                        ":space_6:<#852d66>Fault:space_2::$emote::space_2:>",
-                                        13
-                                    )
-                                        .context(ImmutableContextSet.of("worldguard:region", "layerthree")).build()
+                                    "layerfour" ->
+                                        PrefixNode.builder(":layer_4::space_2::$emote::space_2:", 14)
+                                            .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build()
 
-                                    "layerfour" -> PrefixNode.builder(
-                                        ":space_6:<#852d66>Goblets:space_2::$emote::space_2:>",
-                                        14
-                                    )
-                                        .context(ImmutableContextSet.of("worldguard:region", "layerfour")).build()
-
-                                    "layerfive" -> PrefixNode.builder(
-                                        ":space_6:<#434868>Sea:space_2::$emote::space_2:>",
-                                        15
-                                    )
-                                        .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build()
+                                    "layerfive" ->
+                                        PrefixNode.builder(":layer_5::space_2::$emote::space_2:", 15)
+                                            .context(ImmutableContextSet.of("worldguard:region", "layerfive")).build()
 
                                     else -> PrefixNode.builder().build()
                                 }
