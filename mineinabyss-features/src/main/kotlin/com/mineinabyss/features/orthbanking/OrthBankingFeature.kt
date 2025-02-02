@@ -1,5 +1,6 @@
 package com.mineinabyss.features.orthbanking
 
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
@@ -57,7 +58,7 @@ class OrthBankingFeature(val config: Config) : Feature() {
                         }
 
                         currItem.subtract(amount)
-                        player.playerData.orthCoinsHeld += amount
+                        player.editPlayerData { orthCoinsHeld += amount }
                     }
                 }
                 "withdraw"(desc = "Dev command until Guiy can take items") {

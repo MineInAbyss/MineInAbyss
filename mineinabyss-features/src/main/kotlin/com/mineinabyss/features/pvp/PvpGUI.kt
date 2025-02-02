@@ -1,14 +1,15 @@
 package com.mineinabyss.features.pvp
 
 import androidx.compose.runtime.*
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.features.pvp.ToggleIcon.disabled
 import com.mineinabyss.features.pvp.ToggleIcon.enabled
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.click.clickable
@@ -42,8 +43,10 @@ fun EnablePvp(player: Player, modifier: Modifier) {
             "<green>other players in the Abyss.".miniMsg()
         ),
         modifier.size(3, 2).clickable {
-            player.playerData.pvpStatus = true
-            player.playerData.pvpUndecided = false
+            player.editPlayerData {
+                pvpStatus = true
+                pvpUndecided = false
+            }
             player.success("PvP has been enabled!")
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
             player.closeInventory()
@@ -60,8 +63,10 @@ fun DisablePvp(player: Player, modifier: Modifier) {
             "<red>other players in the Abyss.".miniMsg()
         ),
         modifier.size(3, 2).clickable {
-            player.playerData.pvpStatus = false
-            player.playerData.pvpUndecided = false
+            player.editPlayerData {
+                pvpStatus = false
+                pvpUndecided = false
+            }
             player.error("PvP has been disabled!")
             player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 0.1f)
             player.closeInventory()
@@ -71,15 +76,18 @@ fun DisablePvp(player: Player, modifier: Modifier) {
 
 @Composable
 fun TogglePvpPrompt(player: Player, modifier: Modifier) {
-    val data = player.playerData
-    var isEnabled by remember { mutableStateOf(data.showPvpPrompt) }
+    val data = player.playerDataOrNull
+    //TODO replace with get component as flow
+    var isEnabled by remember { mutableStateOf(data?.showPvpPrompt ?: true) }
 
     Button(
         modifier = modifier,
         onClick = {
-            data.showPvpPrompt = !data.showPvpPrompt
-            isEnabled = data.showPvpPrompt
-            player.success("PvP-prompt has been ${if (data.showPvpPrompt) "<b>enabled" else "<b>disabled"}.")
+            isEnabled = player.editPlayerData {
+                showPvpPrompt = !showPvpPrompt
+                showPvpPrompt
+            }
+            player.success("PvP-prompt has been ${if (data?.showPvpPrompt != false) "<b>enabled" else "<b>disabled"}.")
         }
     ) { Item(if (isEnabled) enabled else disabled) }
 }

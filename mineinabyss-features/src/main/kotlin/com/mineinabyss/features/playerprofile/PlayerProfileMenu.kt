@@ -12,7 +12,6 @@ import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.datastore.has
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
@@ -35,7 +34,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import kotlin.text.buildString
 
 private inline fun <reified T : Any> OfflinePlayer.hasComponent(): Boolean {
     return if (isOnline) player!!.toGeary().has<T>()
@@ -66,9 +64,16 @@ private inline fun <reified T : Any> OfflinePlayer.setComponent(component: T) {
 
 @Composable
 fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
-    var hideArmorIcons by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile()).displayProfileArmor) }
+    var hideArmorIcons by remember {
+        mutableStateOf((player.getComponent<PlayerProfile>() ?: PlayerProfile()).displayProfileArmor)
+    }
     val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
-    val backgroundId by remember { mutableStateOf(player.getOrSetComponent<PlayerProfile>(PlayerProfile(abyss.config.playerProfile.validBackgroundIds.firstOrNull() ?: "")).background) }
+    val backgroundId by remember {
+        mutableStateOf(
+            player.getComponent<PlayerProfile>()?.background
+                ?: abyss.config.playerProfile.validBackgroundIds.firstOrNull() ?: ""
+        )
+    }
     val titleComponent = Component.text(buildString {
         append(":space_-8::player_profile")
         if (isPatreon) append("_patreon")
@@ -80,17 +85,18 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
     val titleName = Component.text(":space_-92:${player.name}", NamedTextColor.WHITE)
     val rankComponent = Component.text(":survival::space_-40::${DisplayRanks(player)}")
 
-    Chest(setOf(viewer),
+    Chest(
+        setOf(viewer),
         Component.textOfChildren(titleComponent, background, titleName, rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {
         PlayerHead(player, Modifier.at(0, 1))
-        if (player == viewer) ToggleArmorVisibility {
+        if (player == viewer) ToggleArmorVisibility(onClick = {
             if (player == viewer) {
                 player.setComponent(player.getComponent<PlayerProfile>()!!.copy(displayProfileArmor = !hideArmorIcons))
                 hideArmorIcons = !hideArmorIcons
             }
-        }
+        })
         Column(Modifier.at(5, 0)) {
             OrthCoinBalance(player)
             if (isPatreon) MittyTokenBalance(player)
@@ -154,8 +160,8 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
 
 
 @Composable
-fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
-    Button(onClick = toggleArmor, modifier = Modifier.at(7, 3)) {
+fun ToggleArmorVisibility(onClick: () -> Unit) {
+    Button(onClick = onClick, modifier = Modifier.at(7, 3)) {
         Text(
             "<b><dark_purple>Toggle armor visibility".miniMsg(),
             "<light_purple>Hides your armor from other".miniMsg(),
@@ -166,7 +172,7 @@ fun ToggleArmorVisibility(toggleArmor: () -> Unit) {
 
 @Composable
 fun CosmeticHat(player: OfflinePlayer) =
-    if (abyss.isHMCCosmeticsEnabled) player.player?.getCosmeticHat()?.item  ?: ItemStack(Material.AIR)
+    if (abyss.isHMCCosmeticsEnabled) player.player?.getCosmeticHat()?.item ?: ItemStack(Material.AIR)
     else ItemStack(Material.AIR)
 
 @Composable

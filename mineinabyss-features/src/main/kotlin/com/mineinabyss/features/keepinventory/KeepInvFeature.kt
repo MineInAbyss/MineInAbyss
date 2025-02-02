@@ -1,6 +1,6 @@
 package com.mineinabyss.features.keepinventory
 
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
@@ -36,7 +36,7 @@ class KeepInvFeature(config: Config) : FeatureWithContext<KeepInvFeature.Context
 
                 playerAction {
                     val player = sender as Player
-                    player.playerData.keepInvStatus = toggled
+                    player.editPlayerData { keepInvStatus = toggled }
                     if (toggled) player.success("Keep Inventory enabled for ${player.name}")
                     else sender.error("Keep Inventory disabled for ${player.name}")
                 }

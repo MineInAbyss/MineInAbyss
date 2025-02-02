@@ -3,7 +3,8 @@ package com.mineinabyss.features.displayLocker
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.displaylocker.lockedDisplay
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.editPlayerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -34,12 +35,18 @@ class DisplayLockerListener : Listener {
     @EventHandler
     fun HangingPlaceEvent.onPlaceItemFrame() {
         val (frame, player) = (entity as? ItemFrame ?: return) to (player ?: return)
-        val lockState = player.playerData.defaultDisplayLockState
+        val lockState = player.playerDataOrNull?.defaultDisplayLockState ?: false
         abyss.plugin.launch {
             yield()
-            frame.toGeary().getOrSetPersisting<LockDisplayItem> { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
+            frame.toGeary().getOrSetPersisting<LockDisplayItem> {
+                LockDisplayItem(
+                    player.uniqueId,
+                    lockState,
+                    mutableSetOf(player.uniqueId)
+                )
+            }
             frame.toGeary().encodeComponentsTo(frame.persistentDataContainer)
-            player.playerData.recentInteractEntity = frame.uniqueId
+            player.editPlayerData { recentInteractEntity = frame.uniqueId }
             when (lockState) {
                 true -> player.success("This ${frame.name} is now protected!")
                 false -> player.error("Use <b>/mia lock toggle</b> to protect this ${frame.name}.")
@@ -50,15 +57,19 @@ class DisplayLockerListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun EntityPlaceEvent.onPlaceArmorStand() {
         val (entity, player) = (entity as? ArmorStand ?: return) to (player ?: return)
-        val lockState = player.playerData.defaultDisplayLockState
         abyss.plugin.launch {
             yield()
-            entity.toGeary().getOrSetPersisting<LockDisplayItem> { LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId)) }
-            entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
-            player.playerData.recentInteractEntity = entity.uniqueId
-            when (lockState) {
-                true -> player.success("This ${entity.name} is now protected!")
-                false -> player.error("Use <b>/mia lock toggle</b> to protect this ${entity.name}.")
+            player.editPlayerData {
+                val lockState = defaultDisplayLockState
+                entity.toGeary().getOrSetPersisting<LockDisplayItem> {
+                    LockDisplayItem(player.uniqueId, lockState, mutableSetOf(player.uniqueId))
+                }
+                entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
+                recentInteractEntity = entity.uniqueId
+                when (lockState) {
+                    true -> player.success("This ${entity.name} is now protected!")
+                    false -> player.error("Use <b>/mia lock toggle</b> to protect this ${entity.name}.")
+                }
             }
         }
     }
@@ -69,7 +80,7 @@ class DisplayLockerListener : Listener {
 
         if (rightClicked !is ArmorStand) return
         if (lockedDisplay.owner == player.uniqueId && player.isSneaking)
-            player.playerData.recentInteractEntity = rightClicked.uniqueId
+            player.editPlayerData { recentInteractEntity = rightClicked.uniqueId }
         if (lockedDisplay.hasAccess(player)) return
 
         player.error("You do not have access to interact with this ${rightClicked.name}!")
@@ -80,7 +91,7 @@ class DisplayLockerListener : Listener {
     fun PlayerInteractEntityEvent.onInteractItemFrame() {
         val frame = rightClicked.lockedDisplay ?: return
         if (rightClicked !is ItemFrame || frame.owner != player.uniqueId) return
-        player.playerData.recentInteractEntity = rightClicked.uniqueId
+        player.editPlayerData { recentInteractEntity = rightClicked.uniqueId }
     }
 
     @EventHandler

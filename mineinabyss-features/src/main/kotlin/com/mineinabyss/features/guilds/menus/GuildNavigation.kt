@@ -40,18 +40,18 @@ sealed class GuildScreen(var title: String, val height: Int) {
 
     class GuildInfo(isGuildOwner: Boolean) : GuildScreen(":space_-8:${decideInfoMenu(isGuildOwner)}", 6)
 
-    object Leave : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
-    object Disband : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
+    data object Leave : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
+    data object Disband : GuildScreen(":space_-8::guild_disband_or_leave_menu:", 5)
 
-    object GuildList : GuildScreen(":space_-8::guild_list_menu:", 6)
+    data object GuildList : GuildScreen(":space_-8::guild_list_menu:", 6)
     class GuildLookupMembers(val guildName: GuildName) :
         GuildScreen(":space_-8:${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", minOf(guildName.getGuildLevel() + 3, MAX_CHEST_HEIGHT))
 
     // Forgot to add to pack so this is fine for now
-    object InviteList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
+    data object InviteList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
     class Invite(val owner: OfflinePlayer) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)
 
-    object JoinRequestList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
+    data object JoinRequestList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
     class JoinRequest(val from: OfflinePlayer) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)
 
     class MemberOptions(val member: OfflinePlayer) :

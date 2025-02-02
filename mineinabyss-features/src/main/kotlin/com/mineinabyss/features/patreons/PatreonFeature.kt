@@ -1,6 +1,6 @@
 package com.mineinabyss.features.patreons
 
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -58,7 +58,7 @@ class PatreonFeature(val config: Config) : Feature() {
                             return@playerAction
                         }
 
-                        player.playerData.mittyTokensHeld += patreon.tier
+                        player.editPlayerData { mittyTokensHeld += patreon.tier }
                         patreon.kitUsedMonth = month
                     }
                 }
@@ -141,7 +141,7 @@ class PatreonFeature(val config: Config) : Feature() {
                     "give_token" {
                         val amount by intArg()
                         playerAction {
-                            player.playerData.mittyTokensHeld += amount
+                            player.editPlayerData { mittyTokensHeld += amount }
                             sender.success("Gave $amount tokens to ${player.name}")
                         }
                     }

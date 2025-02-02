@@ -5,8 +5,8 @@ import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.chatty.helpers.defaultChannel
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
-import com.mineinabyss.components.playerData
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
@@ -97,11 +97,13 @@ fun Player.deleteGuild() {
             }
 
         /* Give guildbalance to owner or one who deleted guild */
-        getGuildOwner()?.let {
-            val owner = Bukkit.getOfflinePlayer(it)
-            if (owner.isOnline) (owner as Player).playerData.orthCoinsHeld += getGuildBalance()
-            else playerData.orthCoinsHeld += getGuildBalance()
-        } ?: { playerData.orthCoinsHeld += getGuildBalance() }
+        editPlayerData {
+            getGuildOwner()?.let {
+                val owner = Bukkit.getOfflinePlayer(it)
+                if (owner.isOnline) (owner as Player).editPlayerData { orthCoinsHeld += getGuildBalance() }
+                else orthCoinsHeld += getGuildBalance()
+            } ?: { orthCoinsHeld += getGuildBalance() }
+        }
 
         val guildChatId = guildChatId()
         chatty.config.channels -= guildChatId

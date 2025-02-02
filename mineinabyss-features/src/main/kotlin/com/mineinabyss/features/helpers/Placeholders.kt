@@ -1,7 +1,7 @@
 package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.custom_hud.customHudData
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.centerLocation
@@ -23,10 +23,10 @@ class Placeholders : PlaceholderExpansion() {
 
     override fun onPlaceholderRequest(player: Player, identifier: String) =
         when (identifier) {
-            "orthbanking_coins" -> player.playerData.orthCoinsHeld
-            "orthbanking_tokens" -> player.playerData.mittyTokensHeld
+            "orthbanking_coins" -> player.playerDataOrNull?.orthCoinsHeld ?: 0
+            "orthbanking_tokens" -> player.playerDataOrNull?.mittyTokensHeld ?: 0
 
-            "hud_orthbanking" -> player.playerData.showPlayerBalance
+            "hud_orthbanking" -> player.playerDataOrNull?.showPlayerBalance
             "hud_depthmeter" -> player.toGeary().has<ShowDepthMeterHud>()
             "hud_starcompass" -> player.toGeary().has<ShowStarCompassHud>()
             "hud_always_air" -> player.customHudData.alwaysShowAir

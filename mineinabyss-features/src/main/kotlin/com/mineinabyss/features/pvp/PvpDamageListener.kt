@@ -1,6 +1,6 @@
 package com.mineinabyss.features.pvp
 
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.layer
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
@@ -19,8 +19,10 @@ class PvpDamageListener : Listener {
             else -> return
         }
 
+        val playerPvpStatus = player.playerDataOrNull?.pvpStatus ?: false
+        val attackerPvpStatus = attacker.playerDataOrNull?.pvpStatus ?: false
         if ((player.location.layer?.hasPvpDefault == true)
-            || (player.playerData.pvpStatus && attacker.playerData.pvpStatus)
+            || (playerPvpStatus && attackerPvpStatus)
             || player == attacker
         ) return
 

@@ -2,6 +2,7 @@ package com.mineinabyss.components
 
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.serialization.UUIDSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -34,9 +35,29 @@ class PlayerData(
         this.exp += exp
     }
 
-    fun getRecentEntity() : Entity? {
+    fun getRecentEntity(): Entity? {
         return recentInteractEntity?.let { Bukkit.getEntity(it) }
     }
 }
 
+@Deprecated(
+    "Use editPlayerData when writing, or getPlayerDataOrNull when just reading",
+    ReplaceWith("playerDataOrNull")
+)
 val Player.playerData get() = toGeary().getOrSetPersisting<PlayerData> { PlayerData() }
+
+/**
+ * Edit [PlayerData], ensuring it is saved back to the entity right after modifying.
+ */
+inline fun <T> Player.editPlayerData(edit: PlayerData.() -> T): T {
+    val entity = toGeary()
+    val playerData = entity.get<PlayerData>() ?: PlayerData()
+    val returned = playerData.run(edit)
+    entity.setPersisting(playerData)
+    return returned
+}
+
+val Player.playerDataOrNull get() = toGeary().get<PlayerData>()
+
+// TODO Feels a bit dangerous to add while playerData is mutable, consider later
+//val Player.playerDataOrDefault get() = playerDataOrNull ?: PlayerData()

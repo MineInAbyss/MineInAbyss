@@ -1,5 +1,6 @@
 package com.mineinabyss.features.orthbanking
 
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
@@ -10,28 +11,27 @@ import org.bukkit.entity.Player
 
 fun Player.depositCoins(amount: Int) {
     val player = player ?: return
-    val data = player.playerData
 
-    player.inventory.contents.forEachIndexed { index, item ->
-        if (item == null) {
-            player.success("Your Orth Coins have been deposited!")
-            return
+    player.editPlayerData {
+        player.inventory.contents.forEachIndexed { index, item ->
+            if (item == null) {
+                player.success("Your Orth Coins have been deposited!")
+                return
+            }
+            player.inventory.toGeary()?.get(index)?.get<OrthCoin>() ?: return@forEachIndexed
+
+            if (item.amount < amount) {
+                player.error("You don't have that many Orth Coins!")
+                return
+            }
+            orthCoinsHeld += amount
+            item.subtract(amount)
+            return@forEachIndexed
         }
-        player.inventory.toGeary()?.get(index)?.get<OrthCoin>() ?: return@forEachIndexed
-
-        if (item.amount < amount) {
-            player.error("You don't have that many Orth Coins!")
-            return
-        }
-
-        data.orthCoinsHeld += amount
-        item.subtract(amount)
-        return@forEachIndexed
     }
 }
 
-fun Player.withdrawCoins(amount: Int) {
-    val data = playerData
+fun Player.withdrawCoins(amount: Int) = editPlayerData {
     val slot = inventory.firstEmpty()
 
     if (slot == -1) {
@@ -39,12 +39,12 @@ fun Player.withdrawCoins(amount: Int) {
         return
     }
 
-    if (data.orthCoinsHeld == 0) {
+    if (orthCoinsHeld == 0) {
         error("Your account is empty...")
         return
     }
 
-    if (data.orthCoinsHeld < amount) {
+    if (orthCoinsHeld < amount) {
         error("You don't have that many Orth Coins!")
         return
     }
@@ -57,7 +57,7 @@ fun Player.withdrawCoins(amount: Int) {
     val item = CoinFactory.orthCoin ?: kotlin.error("No orth coin prefab found")
     for (i in 1..amount) {
         inventory.addItem(item)
-        data.orthCoinsHeld -= 1
+        orthCoinsHeld -= 1
     }
     success("Your Orth Coins have been withdrawn!")
 }

@@ -30,7 +30,6 @@ class GuildListener : Listener {
         guiy { GuildMainMenu(player, true) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val databaseDispatcher = Dispatchers.IO.limitedParallelism(1)
 
     @EventHandler

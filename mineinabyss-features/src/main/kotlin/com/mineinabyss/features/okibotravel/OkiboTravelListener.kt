@@ -4,8 +4,8 @@ import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.blocky.api.events.furniture.BlockyFurnitureBreakEvent
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.okibotravel.OkiboTraveler
-import com.mineinabyss.components.playerData
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.features.hubstorage.isInHub
@@ -79,12 +79,14 @@ class OkiboTravelListener : Listener {
         gearyPlayer.with { traveler: OkiboTraveler ->
             when (traveler.selectedDestination) {
                 destination -> {
-                    when {
-                        cost > player.playerData.orthCoinsHeld -> player.error("You do not have enough coins to travel to that station!")
-                        playerStation == destination -> player.error("You are already at that station!")
-                        else -> {
-                            if (cost > 0) player.playerData.orthCoinsHeld -= cost
-                            spawnOkiboCart(player, playerStation, destination)
+                    player.editPlayerData {
+                        when {
+                            cost > orthCoinsHeld -> player.error("You do not have enough coins to travel to that station!")
+                            playerStation == destination -> player.error("You are already at that station!")
+                            else -> {
+                                if (cost > 0) orthCoinsHeld -= cost
+                                spawnOkiboCart(player, playerStation, destination)
+                            }
                         }
                     }
                     return

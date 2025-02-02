@@ -23,7 +23,7 @@ class CoreFeature(val config: Config) : Feature() {
 
     @Serializable
     data class ServerLink(@SerialName("displayName") private val _displayName: String, @SerialName("url") private val _url: String) {
-        @Transient val url = URI.create(_url)
+        @Transient val url: URI = URI.create(_url)
         @Transient val displayName = _displayName.miniMsg()
     }
 

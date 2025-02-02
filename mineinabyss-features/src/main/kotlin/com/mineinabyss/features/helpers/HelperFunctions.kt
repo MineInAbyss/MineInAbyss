@@ -1,7 +1,7 @@
 package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.curse.PlayerCurseEvent
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
@@ -42,9 +42,9 @@ fun handleCurse(player: Player, from: Location, to: Location) {
 
     val changeY = to.y - from.y
 
-    player.playerData.apply {
+    player.editPlayerData {
         if (player.isInvulnerable) curseAccrued = 0.0
-        else if (player.playerData.isAffectedByCurse) {
+        else if (isAffectedByCurse) {
             val layer = to.layer ?: return
 
             val dist = curseAccrued

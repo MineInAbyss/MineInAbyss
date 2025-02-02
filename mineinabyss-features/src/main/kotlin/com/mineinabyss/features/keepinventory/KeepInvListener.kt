@@ -1,6 +1,6 @@
 package com.mineinabyss.features.keepinventory
 
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import org.bukkit.GameRule
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -18,7 +18,7 @@ class KeepInvListener(private val config: KeepInvFeature.Config) : Listener {
     @EventHandler
     fun PlayerDeathEvent.optionalKeepInventory() {
         if ((config.keepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
-            player.playerData.keepInvStatus) {
+            player.playerDataOrNull?.keepInvStatus != false) {
             keepInventory = true
             keepLevel = true
             droppedExp = 0

@@ -1,7 +1,8 @@
 package com.mineinabyss.features.displayLocker
 
 import com.mineinabyss.components.displaylocker.LockDisplayItem
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.editPlayerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
@@ -9,13 +10,11 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
-import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -30,14 +29,16 @@ class DisplayLockerFeature : Feature() {
             "lock"(desc = "Protection related commands") {
                 "default_state"(desc = "Toggles the default lockstate of player") {
                     playerAction {
-                        player.playerData.defaultDisplayLockState = !player.playerData.defaultDisplayLockState
-                        player.success("Your default lockstate is now ${if (player.playerData.defaultDisplayLockState) "locked" else "unlocked"}")
+                        player.editPlayerData {
+                            defaultDisplayLockState = !defaultDisplayLockState
+                            player.success("Your default lockstate is now ${if (defaultDisplayLockState) "locked" else "unlocked"}")
+                        }
                     }
                 }
                 "toggle"(desc = "Toggles if a display item should be protected or not") {
                     playerAction {
                         val player = sender as Player
-                        val entity = player.playerData.getRecentEntity() ?: return@playerAction
+                        val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                         locked.lockState = !locked.lockState
                         entity.setGravity(!locked.lockState)
@@ -50,7 +51,7 @@ class DisplayLockerFeature : Feature() {
                     val offlinePlayer by offlinePlayerArg()
                     playerAction {
                         val player = sender as Player
-                        val entity = player.playerData.getRecentEntity() ?: return@playerAction
+                        val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                         val uuid = offlinePlayer.uniqueId
 
@@ -67,7 +68,7 @@ class DisplayLockerFeature : Feature() {
                     val offlinePlayer by offlinePlayerArg()
                     playerAction {
                         val player = sender as Player
-                        val entity = player.playerData.getRecentEntity() ?: return@playerAction
+                        val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
                         val uuid = offlinePlayer.uniqueId
 
@@ -82,7 +83,7 @@ class DisplayLockerFeature : Feature() {
                 "clear"(desc = "Clear all other players from this display item") {
                     playerAction {
                         val player = sender as Player
-                        val entity = player.playerData.getRecentEntity() ?: return@playerAction
+                        val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                         locked.allowedAccess.clear()
@@ -95,7 +96,7 @@ class DisplayLockerFeature : Feature() {
                 "list"(desc = "Get a list of all players allowed to interact with this display item.") {
                     playerAction {
                         val player = sender as Player
-                        val entity = player.playerData.getRecentEntity() ?: return@playerAction
+                        val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerAction
                         val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerAction
 
                         if (locked.lockState) {

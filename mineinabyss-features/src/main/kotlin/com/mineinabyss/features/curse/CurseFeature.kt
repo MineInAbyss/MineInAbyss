@@ -1,6 +1,6 @@
 package com.mineinabyss.features.curse
 
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
@@ -21,7 +21,7 @@ class CurseFeature : Feature() {
                 val toggled by booleanArg()
 
                 playerAction {
-                    player.playerData.isAffectedByCurse = toggled
+                    player.editPlayerData { isAffectedByCurse = toggled }
                     val enabled = if (toggled) "enabled" else "disabled"
                     sender.success("Curse $enabled for ${player.name}")
                 }

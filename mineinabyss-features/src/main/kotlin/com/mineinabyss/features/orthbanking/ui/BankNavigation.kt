@@ -3,6 +3,7 @@ package com.mineinabyss.features.orthbanking.ui
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.PlayerData
 import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -17,9 +18,9 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player
 
 sealed class BankScreen(val title: String, val height: Int) {
-    object Default : BankScreen(":space_-8::orthbanking_menu:", 4)
-    object Deposit : BankScreen(":space_-8::orthbanker_deposit_menu:", 5)
-    object Widthdraw : BankScreen(":space_-8::orthbanker_withdrawal_menu:", 5)
+    data object Default : BankScreen(":space_-8::orthbanking_menu:", 4)
+    data object Deposit : BankScreen(":space_-8::orthbanker_deposit_menu:", 5)
+    data object Widthdraw : BankScreen(":space_-8::orthbanker_withdrawal_menu:", 5)
 }
 
 @Composable
@@ -30,7 +31,7 @@ fun GuiyOwner.BankMenu(player: Player) {
             onClose = { nav.back() }) {
             when (screen) {
                 BankScreen.Default -> {
-                    val data = player.playerData
+                    val data = player.playerDataOrNull ?: PlayerData() // careful not to modify directly here
                     DepositCurrencyOption(data, Modifier.at(1, 1).clickable {
                         nav.open(BankScreen.Deposit)
                     })

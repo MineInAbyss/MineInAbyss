@@ -20,7 +20,7 @@ internal val featureManager by DI.observe<AbyssFeatureManager>()
 
 // very meta
 class AbyssFeatureManager(plugin: JavaPlugin) : FeatureManager<AbyssContext>(plugin, { AbyssContext(plugin) }) {
-    override fun FeatureDSL.enable() = actions {
+    override fun FeatureDSL.enable() = actions(logger) {
         transaction(abyss.db) {
             //addLogger(StdOutSqlLogger)
 

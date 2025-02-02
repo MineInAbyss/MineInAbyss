@@ -1,7 +1,7 @@
 package com.mineinabyss.features.displayLocker
 
 import com.mineinabyss.components.displaylocker.LockDisplayItem
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.withGeary
@@ -18,7 +18,7 @@ class BookshelfLocker : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun BlockPlaceEvent.onPlace() {
-        val lockState = LockDisplayItem(player.uniqueId, player.playerData.defaultDisplayLockState, mutableSetOf(player.uniqueId))
+        val lockState = LockDisplayItem(player.uniqueId, player.playerDataOrNull?.defaultDisplayLockState ?: false, mutableSetOf(player.uniqueId))
         (block.state as? EnchantingTable)?.withGeary { eTable ->
             eTable.persistentDataContainer.encode(lockState)
             eTable.update()
