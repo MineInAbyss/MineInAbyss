@@ -64,16 +64,16 @@ private inline fun <reified T : Any> OfflinePlayer.setComponent(component: T) {
 
 @Composable
 fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
-    var hideArmorIcons by remember {
-        mutableStateOf((player.getComponent<PlayerProfile>() ?: PlayerProfile()).displayProfileArmor)
-    }
-    val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
-    val backgroundId by remember {
+    var playerProfile by remember {
         mutableStateOf(
-            player.getComponent<PlayerProfile>()?.background
-                ?: abyss.config.playerProfile.validBackgroundIds.firstOrNull() ?: ""
+            player.getComponent<PlayerProfile>()
+                ?: PlayerProfile(abyss.config.playerProfile.validBackgroundIds.firstOrNull() ?: "")
         )
     }
+    val hideArmorIcons = playerProfile.displayProfileArmor
+    val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
+    val backgroundId = playerProfile.background
+
     val titleComponent = Component.text(buildString {
         append(":space_-8::player_profile")
         if (isPatreon) append("_patreon")
@@ -81,7 +81,7 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
         if (hideArmorIcons) append("hidden:") else append("visible:")
         append(":space_-172:")
     })
-    val background = Component.text(":${backgroundId}:")
+    val background = Component.text(":$backgroundId:")
     val titleName = Component.text(":space_-92:${player.name}", NamedTextColor.WHITE)
     val rankComponent = Component.text(":survival::space_-40::${DisplayRanks(player)}")
 
@@ -93,8 +93,8 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
         PlayerHead(player, Modifier.at(0, 1))
         if (player == viewer) ToggleArmorVisibility(onClick = {
             if (player == viewer) {
-                player.setComponent(player.getComponent<PlayerProfile>()!!.copy(displayProfileArmor = !hideArmorIcons))
-                hideArmorIcons = !hideArmorIcons
+                playerProfile = playerProfile.copy(displayProfileArmor = !hideArmorIcons)
+                player.setComponent(playerProfile)
             }
         })
         Column(Modifier.at(5, 0)) {
