@@ -83,7 +83,7 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
     })
     val background = Component.text(":$backgroundId:")
     val titleName = Component.text(":space_-92:${player.name}", NamedTextColor.WHITE)
-    val rankComponent = Component.text(":survival::space_-40::${DisplayRanks(player)}")
+    val rankComponent = Component.text(":survival:${DisplayRanks(player)}")
 
     Chest(
         setOf(viewer),
@@ -197,14 +197,12 @@ fun GuildButton(player: OfflinePlayer, viewer: Player) {
     Button(enabled = player.hasGuild() && !viewer.hasGuild(), onClick = {
         guiy { player.getGuildName()?.let { GuildScreen.GuildLookupMembers(it) } }
     }) {
-        if (player.hasGuild()) {
-            Text(
-                "<gold><b><i>${player.getGuildName()}".miniMsg(),
-                "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()!!).name}".miniMsg(),
-                "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
-                "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
-            )
-        } else Text("<gold><b><i>${player.name}</b> is not".miniMsg(), "<gold><i>in any guild.".miniMsg())
+        if (player.hasGuild()) Text(
+            "<gold><b><i>${player.getGuildName()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()!!).name}".miniMsg(),
+            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
+            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
+        ) else Text("<gold><b><i>${player.name}</b> is not".miniMsg(), "<gold><i>in any guild.".miniMsg())
     }
 }
 
@@ -212,24 +210,19 @@ fun GuildButton(player: OfflinePlayer, viewer: Player) {
 fun DiscordButton(player: OfflinePlayer) {
     val linked = player.linkedDiscordAccount
 
-    if (linked == null) {
-        Item(
-            TitleItem.of(
-                "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
-                "<#718AD6>linked an account.".miniMsg()
-            )
+    if (linked == null) Item(
+        TitleItem.of(
+            "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
+            "<#718AD6>linked an account.".miniMsg()
         )
-    } else Item(TitleItem.of("<b><#718AD6>${player.name} is linked with <b>${linked}</b>.".miniMsg()))
+    ) else Item(TitleItem.of("<b><#718AD6>${player.name} is linked with <b>${linked}</b>.".miniMsg()))
 }
 
 @Composable
 fun DisplayRanks(player: OfflinePlayer): String {
-    var group = player.luckpermGroups.filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.firstOrNull()
-    val patreon = player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it } ?: ""
-    group = ":space_34:" + (group?.let { ":player_profile_rank_$group:" } ?: "")
-    if (patreon.isNotEmpty()) group += ":space_-4::player_profile_rank_$patreon:"
-
-    return group
+    return player.luckpermGroups.asSequence().filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.toMutableList()
+        .apply { addFirst(player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it }) }
+        .take(3).joinToString("") { ":space_-1::player_profile_rank_$it:" }
 }
 
 val sortedRanks =
