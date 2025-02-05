@@ -221,7 +221,7 @@ fun DiscordButton(player: OfflinePlayer) {
 @Composable
 fun DisplayRanks(player: OfflinePlayer): String {
     return player.luckpermGroups.asSequence().filter { it in sortedRanks }.sortedBy { sortedRanks[it] }.toMutableList()
-        .apply { addFirst(player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it }) }
+        .apply { player.luckpermGroups.firstOrNull { "patreon" in it || "supporter" in it }?.apply(::addFirst) }
         .take(3).joinToString("") { ":space_-1::player_profile_rank_$it:" }
 }
 
