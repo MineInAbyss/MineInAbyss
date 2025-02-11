@@ -16,8 +16,8 @@ class ConfigPullFeature : Feature() {
                 requires { sender.isOp }
                 "copy" {
                     executes {
-                        sender.info("Running keepup to copy configs and update plugins...")
-                        ProcessBuilder("/scripts/keepup")
+                        sender.info("Copying plugin configs...")
+                        ProcessBuilder("/scripts/keepup-configs")
                             .inheritIO()
                             .start()
                             .onExit()
@@ -25,6 +25,21 @@ class ConfigPullFeature : Feature() {
                                 when (process.exitValue()) {
                                     0 -> sender.success("Config copy complete")
                                     else -> sender.error("Config copy failed")
+                                }
+                            }
+                    }
+                }
+                "download-plugins" {
+                    executes {
+                        sender.info("Downloading plugins defined in keepup config...")
+                        ProcessBuilder("/scripts/keepup-plugins")
+                            .inheritIO()
+                            .start()
+                            .onExit()
+                            .thenAccept { process ->
+                                when (process.exitValue()) {
+                                    0 -> sender.success("Plugin download complete")
+                                    else -> sender.error("Plugin download failed")
                                 }
                             }
                     }
