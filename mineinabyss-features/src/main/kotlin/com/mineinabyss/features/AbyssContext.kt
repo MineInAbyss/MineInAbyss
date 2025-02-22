@@ -1,5 +1,6 @@
 package com.mineinabyss.features
 
+import com.charleskorn.kaml.AnchorsAndAliases
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -32,7 +33,7 @@ class AbyssContext(
                     "yml", Yaml(
                         // We autoscan in our Feature classes so need to use Geary's module.
                         serializersModule = gearyGlobal.getAddon(SerializableComponents).serializers.module,
-                        configuration = YamlConfiguration(allowAnchorsAndAliases = true)
+                        configuration = YamlConfiguration(anchorsAndAliases = AnchorsAndAliases.Permitted())
                     )
                 )
             )

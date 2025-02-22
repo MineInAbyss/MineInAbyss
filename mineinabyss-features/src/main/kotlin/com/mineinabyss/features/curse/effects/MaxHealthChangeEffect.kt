@@ -33,14 +33,14 @@ data class MaxHealthChangeEffect(
     @Transient var modifier: AttributeModifier? = null
 
     override fun applyEffect(player: Player) {
-        val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 0.0
+        val maxHealth = player.getAttribute(Attribute.MAX_HEALTH)?.value ?: 0.0
         //if more health than minHealth, or enough health to safely remove addMaxHealth
         if (maxHealth > (minHealth ?: abs(addMaxHealth))) {
             val newMod = AttributeModifier(CURSE_MAX_HEALTH, addMaxHealth, AttributeModifier.Operation.ADD_NUMBER)
             modifier = newMod
             activeEffects += newMod.key
             cleanUp(player)
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.addModifier(newMod)
+            player.getAttribute(Attribute.MAX_HEALTH)?.addModifier(newMod)
 
             val (x, y, z) = player.eyeLocation
             player.spawnParticle(Particle.SOUL, x, y, z, 6, 0.2, 0.5, 0.2, 0.02)
@@ -51,7 +51,7 @@ data class MaxHealthChangeEffect(
     override fun cleanUp(player: Player) {
         modifier?.let {
             activeEffects.remove(it.key)
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.removeModifier(it)
+            player.getAttribute(Attribute.MAX_HEALTH)?.removeModifier(it)
         }
     }
 
