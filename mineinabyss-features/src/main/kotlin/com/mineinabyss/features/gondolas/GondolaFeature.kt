@@ -24,7 +24,7 @@ class GondolaFeature : Feature() {
                 "list"(desc = "Opens the gondola menu") {
                     permission = "mineinabyss.gondola.list"
                     playerAction {
-                        guiy { GondolaSelectionMenu(player) }
+                        guiy(player) { GondolaSelectionMenu() }
                     }
                 }
                 "unlock"(desc = "Unlocks a gondola for a player") {

@@ -86,7 +86,6 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
     val rankComponent = Component.text(":survival:${DisplayRanks(player)}")
 
     Chest(
-        setOf(viewer),
         Component.textOfChildren(titleComponent, background, titleName, rankComponent),
         Modifier.height(4),
         onClose = { viewer.closeInventory() }) {

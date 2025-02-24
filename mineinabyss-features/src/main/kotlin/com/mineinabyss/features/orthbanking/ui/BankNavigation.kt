@@ -27,8 +27,7 @@ sealed class BankScreen(val title: String, val height: Int) {
 fun GuiyOwner.BankMenu(player: Player) {
     val nav = rememberNavigation<BankScreen> { BankScreen.Default }
     nav.withScreen(setOf(player), onEmpty = ::exit) { screen ->
-        Chest(setOf(player), screen.title, Modifier.height(screen.height),
-            onClose = { nav.back() }) {
+        Chest(screen.title, Modifier.height(screen.height), onClose = { nav.back() }) {
             when (screen) {
                 BankScreen.Default -> {
                     val data = player.playerDataOrNull ?: PlayerData() // careful not to modify directly here

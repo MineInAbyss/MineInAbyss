@@ -9,6 +9,9 @@ plugins {
 
 dependencies {
     api(project(":mineinabyss-components"))
+    implementation("io.insert-koin:koin-compose:4.1.0-Beta5") {
+        isTransitive = false
+    }
 }
 
 kotlin {

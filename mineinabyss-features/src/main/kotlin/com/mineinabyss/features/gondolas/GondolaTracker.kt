@@ -9,5 +9,5 @@ import com.mineinabyss.geary.systems.query.query
 import org.bukkit.entity.Player
 
 fun Geary.createGondolaTracker() = observe<OnSet>().exec(query<Player>()) { player ->
-        entity.getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
-    }
+    entity.getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
+}

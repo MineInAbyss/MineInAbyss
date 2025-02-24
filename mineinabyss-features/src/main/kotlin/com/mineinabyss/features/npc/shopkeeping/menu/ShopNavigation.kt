@@ -65,7 +65,6 @@ fun ShopMainMenu(player: Player, shopKeeper: ShopKeeper) {
     scope.apply {
         nav.withScreen(setOf(player), onEmpty = owner::exit) { screen ->
             Chest(
-                setOf(player),
                 screen.title,
                 Modifier.height(screen.height),
                 onClose = { player.closeInventory() }
