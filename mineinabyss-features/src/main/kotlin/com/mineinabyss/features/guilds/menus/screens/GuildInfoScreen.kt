@@ -1,6 +1,8 @@
 package com.mineinabyss.features.guilds.menus.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.BackButton
 import com.mineinabyss.features.guilds.menus.GuildScreen
@@ -55,13 +57,14 @@ fun CurrentGuildInfoButton(
     modifier: Modifier = Modifier,
     guild: GuildViewModel = viewModel(),
 ) {
+    val guild by guild.guildUiState.collectAsState()
     Button(modifier = modifier) {
         Text(
             "<gold><b>Current Guild Info</b>",
-            "<yellow><b>Guild Name:</b> <yellow><i>${guild.guildName}",
-            "<yellow><b>Guild Owner:</b> <yellow><i>${guild.guildOwner?.name}",
-            "<yellow><b>Guild Level:</b> <yellow><i>${guild.guildLevel}",
-            "<yellow><b>Guild Members:</b> <yellow><i>${guild.memberCount}",
+            "<yellow><b>Guild Name:</b> <yellow><i>${guild?.name}",
+            "<yellow><b>Guild Owner:</b> <yellow><i>${guild?.owner?.name}",
+            "<yellow><b>Guild Level:</b> <yellow><i>${guild?.level}",
+            "<yellow><b>Guild Members:</b> <yellow><i>${guild?.memberCount}",
             modifier = Modifier.size(2, 2)
         )
     }
@@ -87,22 +90,23 @@ fun GuildMemberManagement(
 fun GuildRenameButton(
     modifier: Modifier = Modifier,
     player: Player = CurrentPlayer,
-    guild: GuildViewModel = viewModel(),
+    guildViewModel: GuildViewModel = viewModel(),
 ) {
-    val renameItem = TitleItem.of(guild.guildName ?: "Guild Name").editItemMeta { isHideTooltip = true }
+    val guild by guildViewModel.guildUiState.collectAsState()
+    val renameItem = TitleItem.of(guild?.name ?: "Guild Name").editItemMeta { isHideTooltip = true }
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,
         onClick = {
             if (!player.isCaptainOrAbove()) return@Button
-            guild.nav.open(
+            guildViewModel.nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
                         .title(":space_-61::guild_name_menu:")
                         .itemLeft(renameItem)
                         .itemOutput(TitleItem.transparentItem)
                         .plugin(guiyPlugin)
-                        .onClose { guild.nav.back() }
+                        .onClose { guildViewModel.nav.back() }
                         .onClick { _, snapshot ->
                             snapshot.player.changeStoredGuildName(snapshot.text)
                             listOf(AnvilGUI.ResponseAction.close())
@@ -112,11 +116,11 @@ fun GuildRenameButton(
     ) {
         Text(
             "<gold><b>Change Guild Name",
-            "<yellow><b>Guild Name:</b> <yellow><i>${guild.guildName}",
-            "<yellow><b>Guild Owner:</b> <yellow><i>${player.name}",
-            "<yellow><b>Guild Level:</b> <yellow><i>${guild.guildLevel}",
-            "<yellow><b>Guild Members:</b> <yellow><i>${guild.memberCount}",
-            "<yellow><b>Guild Balance:</b> <yellow><i>${guild.guildBalance}",
+            "<yellow><b>Guild Name:</b> <yellow><i>${guild?.name}",
+            "<yellow><b>Guild Owner:</b> <yellow><i>${guild?.owner?.name}",
+            "<yellow><b>Guild Level:</b> <yellow><i>${guild?.level}",
+            "<yellow><b>Guild Members:</b> <yellow><i>${guild?.memberCount}",
+            "<yellow><b>Guild Balance:</b> <yellow><i>${guild?.balance}",
             modifier = Modifier.size(2, 2)
         )
     }

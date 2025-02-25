@@ -11,4 +11,5 @@ class GuildPlayerEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var guild by GuildEntity referencedOn Players.guild
     var guildRank by Players.guildRank
+    val uuid by Players.id
 }

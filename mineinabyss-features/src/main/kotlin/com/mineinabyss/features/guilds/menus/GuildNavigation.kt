@@ -1,6 +1,8 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.data.GuildRepository
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen.*
@@ -32,7 +34,8 @@ typealias GuildNav = Navigator<GuildScreen>
 @Composable
 fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer) {
     val owner = LocalGuiyOwner.current
-    val guildViewModel = viewModel { GuildViewModel(player, owner, openedFromHQ) }
+    //TODO koin inject
+    val guildViewModel = viewModel { GuildViewModel(player, openedFromHQ, owner, GuildRepository(abyss.db)) }
     guildViewModel.apply {
         nav.withScreen(setOf(player), onEmpty = owner::exit) { screen ->
             Chest(
