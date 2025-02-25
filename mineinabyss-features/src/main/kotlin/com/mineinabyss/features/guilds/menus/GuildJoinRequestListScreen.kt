@@ -8,27 +8,26 @@ import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.guilds.extensions.hasGuildRequests
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
-import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
-import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.button.Button
+import com.mineinabyss.guiy.components.items.PlayerHead
+import com.mineinabyss.guiy.components.items.PlayerHeadType
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun GuildUIScope.GuildJoinRequestListScreen() {
+fun GuildViewModel.GuildJoinRequestListScreen() {
     GuildJoinRequestButton(Modifier.at(1, 1))
     DeclineAllGuildRequestsButton(Modifier.at(8, 4))
     BackButton(Modifier.at(2, 4))
 }
 
 @Composable
-fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
+fun GuildViewModel.GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(abyss.db) {
@@ -45,12 +44,11 @@ fun GuildUIScope.GuildJoinRequestButton(modifier: Modifier = Modifier) {
                 if (!player.hasGuildRequests()) player.closeInventory()
                 else nav.open(GuildScreen.JoinRequest(newMember))
             }) {
-                Item(
-                    TitleItem.head(
-                        newMember, "<yellow><i>${newMember.name}".miniMsg(),
-                        "<blue>Click this to accept or deny the join-request.".miniMsg(),
-                        isFlat = true
-                    )
+                PlayerHead(
+                    newMember,
+                    "<yellow><i>${newMember.name}",
+                    "<blue>Click this to accept or deny the join-request.",
+                    type = PlayerHeadType.FLAT
                 )
             }
         }

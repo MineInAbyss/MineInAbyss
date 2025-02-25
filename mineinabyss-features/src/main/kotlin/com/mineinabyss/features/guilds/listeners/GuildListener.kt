@@ -27,7 +27,7 @@ class GuildListener : Listener {
     @EventHandler
     fun PlayerInteractAtEntityEvent.onInteractGuildMaster() {
         rightClicked.toGearyOrNull()?.get<GuildMaster>() ?: return
-        guiy { GuildMainMenu(player, true) }
+        guiy(player) { GuildMainMenu(true) }
     }
 
     private val databaseDispatcher = Dispatchers.IO.limitedParallelism(1)

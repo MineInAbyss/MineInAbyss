@@ -2,10 +2,9 @@ package com.mineinabyss.features.orthbanking.ui
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.components.PlayerData
-import com.mineinabyss.components.playerData
 import com.mineinabyss.components.playerDataOrNull
-import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.guiy.components.items.Text
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier

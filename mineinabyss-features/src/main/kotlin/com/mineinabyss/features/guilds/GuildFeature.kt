@@ -15,9 +15,9 @@ import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
-import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
+import com.mineinabyss.guiy.components.items.PlayerProfileCache
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
@@ -85,9 +85,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
         profileCacheJob = plugin.launch(plugin.asyncDispatcher) {
             getAllGuilds().map { it.guildName.getOwnerFromGuildName() }.forEach {
-                if (it.uniqueId !in TitleItem.profileCache) it.playerProfile.update().whenCompleteAsync { profile, _ ->
-                    TitleItem.profileCache[it.uniqueId] = profile
-                }
+                PlayerProfileCache.get(it)
                 delay(10.ticks)
             }
         }
@@ -153,7 +151,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                 }
                 "menu"(desc = "Open Guild Menu") {
                     playerAction {
-                        guiy { GuildMainMenu(player, true) }
+                        guiy(player) { GuildMainMenu(true) }
                     }
                 }
                 "admin" {

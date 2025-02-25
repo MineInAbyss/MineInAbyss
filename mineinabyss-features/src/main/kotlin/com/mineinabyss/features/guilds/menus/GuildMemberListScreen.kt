@@ -3,12 +3,14 @@ package com.mineinabyss.features.guilds.menus
 import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.VerticalGrid
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
+import com.mineinabyss.guiy.components.items.PlayerHead
+import com.mineinabyss.guiy.components.items.PlayerHeadType
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
@@ -27,9 +29,11 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 @Composable
-fun GuildUIScope.GuildMemberListScreen() {
+fun GuildViewModel.GuildMemberListScreen() {
     var line by remember { mutableStateOf(0) }
-    val guildMembers = remember { player.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }) }
+    val guildMembers = remember {
+        player.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal })
+    }
 
     Scrollable(
         guildMembers, line, ScrollDirection.VERTICAL,
@@ -43,12 +47,10 @@ fun GuildUIScope.GuildMemberListScreen() {
                     if (member != player && player.isCaptainOrAbove())
                         nav.open(GuildScreen.MemberOptions(member))
                 }) {
-                    Item(
-                        TitleItem.head(
-                            member, "<gold><i>${member.name}".miniMsg(),
-                            "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
-                            isFlat = true
-                        )
+                    PlayerHead(
+                        member, "<gold><i>${member.name}",
+                        "<yellow><b>Guild Rank: <yellow><i>$rank",
+                        type = PlayerHeadType.FLAT
                     )
                 }
             }
@@ -79,7 +81,7 @@ fun ScrollUpButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
+fun GuildViewModel.InviteToGuildButton(modifier: Modifier) {
     val guildInvitePaper = TitleItem.of("Player Name").editItemMeta { isHideTooltip = true }
     Button(
         enabled = player.isCaptainOrAbove(),
@@ -93,17 +95,17 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
             }
             nav.open(
                 UniversalScreens.Anvil(
-                AnvilGUI.Builder()
-                    .title(":space_-61::guild_search_menu:")
-                    .itemLeft(guildInvitePaper)
-                    .itemOutput(TitleItem.transparentItem)
-                    .plugin(guiyPlugin)
-                    .onClose { nav.back() }
-                    .onClick { _, snapshot ->
-                        snapshot.player.invitePlayerToGuild(snapshot.text)
-                        listOf(AnvilGUI.ResponseAction.close())
-                    }
-            ))
+                    AnvilGUI.Builder()
+                        .title(":space_-61::guild_search_menu:")
+                        .itemLeft(guildInvitePaper)
+                        .itemOutput(TitleItem.transparentItem)
+                        .plugin(guiyPlugin)
+                        .onClose { nav.back() }
+                        .onClick { _, snapshot ->
+                            snapshot.player.invitePlayerToGuild(snapshot.text)
+                            listOf(AnvilGUI.ResponseAction.close())
+                        }
+                ))
         }
     ) {
         Text("<yellow><b>INVITE Player to Guild".miniMsg())
@@ -111,7 +113,7 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
 }
 
 @Composable
-private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
+private fun GuildViewModel.ManageGuildJoinRequestsButton(modifier: Modifier) {
     val requestAmount = player.getNumberOfGuildRequests()
     val plural = requestAmount != 1
     Button(
@@ -139,7 +141,7 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 }
 
 @Composable
-private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
+private fun GuildViewModel.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
     val item = ItemStack(Material.PAPER).editItemMeta {
         setCustomModelData(1)

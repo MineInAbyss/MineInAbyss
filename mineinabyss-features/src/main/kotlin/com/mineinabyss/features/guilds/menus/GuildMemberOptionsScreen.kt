@@ -5,8 +5,8 @@ import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.isCaptainOrAbove
 import com.mineinabyss.features.guilds.extensions.kickPlayerFromGuild
 import com.mineinabyss.features.guilds.extensions.setGuildRank
-import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.guiy.components.items.Text
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -16,7 +16,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
-fun GuildUIScope.GuildMemberOptionsScreen(member: OfflinePlayer) {
+fun GuildViewModel.GuildMemberOptionsScreen(member: OfflinePlayer) {
     Row(modifier = Modifier.at(0,1)) {
         ChangeMemberRankButton(member, GuildRank.STEWARD, Modifier.size(2,2))
         Spacer(1)
@@ -30,7 +30,7 @@ fun GuildUIScope.GuildMemberOptionsScreen(member: OfflinePlayer) {
 }
 
 @Composable
-fun GuildUIScope.ChangeMemberRankButton(member: OfflinePlayer, rank: GuildRank, modifier: Modifier = Modifier) =
+fun GuildViewModel.ChangeMemberRankButton(member: OfflinePlayer, rank: GuildRank, modifier: Modifier = Modifier) =
     Button(
         modifier = modifier,
         enabled = player.isCaptainOrAbove(),
@@ -43,7 +43,7 @@ fun GuildUIScope.ChangeMemberRankButton(member: OfflinePlayer, rank: GuildRank, 
     }
 
 @Composable
-fun GuildUIScope.KickGuildMemberButton(member: OfflinePlayer, modifier: Modifier = Modifier) =
+fun GuildViewModel.KickGuildMemberButton(member: OfflinePlayer, modifier: Modifier = Modifier) =
     Button(
         modifier = modifier,
         onClick = {

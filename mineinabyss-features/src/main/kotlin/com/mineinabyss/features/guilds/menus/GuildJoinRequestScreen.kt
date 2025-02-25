@@ -5,10 +5,12 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.helpers.Text
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.items.PlayerHead
+import com.mineinabyss.guiy.components.items.PlayerHeadType
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
@@ -20,7 +22,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
+fun GuildViewModel.GuildJoinRequestScreen(from: OfflinePlayer) {
     PlayerLabel(Modifier.at(4, 0), from)
     AcceptGuildRequestButton(Modifier.at(1, 1), from)
     DeclineGuildRequestButton(Modifier.at(5, 1), from)
@@ -29,11 +31,11 @@ fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {
 
 @Composable
 fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Item(TitleItem.head(newMember, "<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
+    PlayerHead(newMember, "<yellow><i>${newMember.name}", type = PlayerHeadType.LARGE_CENTER)
 }
 
 @Composable
-fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
+fun GuildViewModel.AcceptGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     onClick = {
         if (player.getGuildJoinType() == GuildJoinType.INVITE) {
             player.error("Your guild is in 'INVITE-only' mode.")
@@ -53,7 +55,7 @@ fun GuildUIScope.AcceptGuildRequestButton(modifier: Modifier, newMember: Offline
 }
 
 @Composable
-fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
+fun GuildViewModel.DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     modifier = modifier,
     onClick = {
         guildName?.removeGuildQueueEntries(newMember, GuildJoinType.REQUEST)
@@ -78,7 +80,7 @@ fun GuildUIScope.DeclineGuildRequestButton(modifier: Modifier, newMember: Offlin
 }
 
 @Composable
-fun GuildUIScope.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
+fun GuildViewModel.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
         player.removeGuildQueueEntries(GuildJoinType.REQUEST, true)

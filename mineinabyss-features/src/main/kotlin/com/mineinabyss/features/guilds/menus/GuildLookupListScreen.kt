@@ -2,11 +2,12 @@ package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
-import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.button.Button
+import com.mineinabyss.guiy.components.items.PlayerHead
+import com.mineinabyss.guiy.components.items.PlayerHeadType
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.Paginated
 import com.mineinabyss.guiy.guiyPlugin
@@ -19,7 +20,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.wesjd.anvilgui.AnvilGUI
 
 @Composable
-fun GuildUIScope.GuildLookupListScreen() {
+fun GuildViewModel.GuildLookupListScreen() {
     var pageNum by remember { mutableStateOf(0) }
     var guildPageList by remember { mutableStateOf(displayGuildList()) }
 
@@ -40,22 +41,21 @@ fun GuildUIScope.GuildLookupListScreen() {
                             nav.open(GuildScreen.GuildLookupMembers(guildName))
 
                     }) {
-                    Item(
-                        TitleItem.head(
-                            owner, "<gold><i>$guildName".miniMsg(),
-                            "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
-                            "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
-                            "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
-                            "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}".miniMsg(),
-                            isFlat = true
-                        )
+                    PlayerHead(
+                        owner,
+                        "<gold><i>$guildName",
+                        "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}",
+                        "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}",
+                        "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}",
+                        "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}",
+                        type = PlayerHeadType.FLAT
                     )
                 }
             }
         }
     }
 
-    LookForGuildButton(Modifier.at(7,5)) { text ->
+    LookForGuildButton(Modifier.at(7, 5)) { text ->
         pageNum = 0
         guildPageList = displayGuildList(text)
     }
@@ -73,7 +73,7 @@ fun PreviousPageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
 @Composable
 fun NextPageButton(
     modifier: Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -82,7 +82,7 @@ fun NextPageButton(
 }
 
 @Composable
-fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Unit) {
+fun GuildViewModel.LookForGuildButton(modifier: Modifier, onClick: (String) -> Unit) {
     Button(
         modifier = modifier.at(7, 5),
         onClick = {

@@ -7,8 +7,10 @@ import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
-import com.mineinabyss.features.helpers.*
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.features.helpers.getCosmeticBackpack
+import com.mineinabyss.features.helpers.getCosmeticHat
+import com.mineinabyss.features.helpers.linkedDiscordAccount
+import com.mineinabyss.features.helpers.luckpermGroups
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.datastore.has
@@ -16,7 +18,11 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.items.PlayerHead
+import com.mineinabyss.guiy.components.items.PlayerHeadType
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -25,7 +31,6 @@ import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.saveOfflinePDC
-import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -122,38 +127,34 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
 
 @Composable
 fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
-    Item(
-        TitleItem.head(
-            player, "<light_purple><b>${player.name}".miniMsg(),
-            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
-            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
-            isLarge = true
-        ), modifier = modifier
+    PlayerHead(
+        player, "<light_purple><b>${player.name}",
+        "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}",
+        "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h",
+        "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h",
+        type = PlayerHeadType.LARGE,
+        modifier = modifier
     )
-    Item(
-        TitleItem.of(
-            "<light_purple><b>${player.name}".miniMsg(),
-            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
-            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
-        ), modifier = modifier.at(1, 1)
+    Text(
+        "<light_purple><b>${player.name}",
+        "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}",
+        "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h",
+        "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h",
+        modifier = modifier.at(1, 1)
     )
-    Item(
-        TitleItem.of(
-            "<light_purple><b>${player.name}".miniMsg(),
-            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
-            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
-        ), modifier = modifier.at(0, 2)
+    Text(
+        "<light_purple><b>${player.name}",
+        "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}",
+        "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h",
+        "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h",
+        modifier = modifier.at(0, 2)
     )
-    Item(
-        TitleItem.of(
-            "<light_purple><b>${player.name}".miniMsg(),
-            "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
-            "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
-            "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
-        ), modifier = modifier.at(1, 2)
+    Text(
+        "<light_purple><b>${player.name}",
+        "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}",
+        "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h",
+        "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h",
+        modifier = modifier.at(1, 2)
     )
 }
 
@@ -162,9 +163,9 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
 fun ToggleArmorVisibility(onClick: () -> Unit) {
     Button(onClick = onClick, modifier = Modifier.at(7, 3)) {
         Text(
-            "<b><dark_purple>Toggle armor visibility".miniMsg(),
-            "<light_purple>Hides your armor from other".miniMsg(),
-            "<light_purple>players viewing your profile".miniMsg()
+            "<b><dark_purple>Toggle armor visibility",
+            "<light_purple>Hides your armor from other",
+            "<light_purple>players viewing your profile"
         )
     }
 }
@@ -182,13 +183,13 @@ fun CosmeticBackpack(player: OfflinePlayer) =
 @Composable
 fun OrthCoinBalance(player: OfflinePlayer) {
     val amount = player.getComponent<PlayerData>()?.orthCoinsHeld
-    Item(TitleItem.of("<#FFBB1C>${amount} <b>Orth Coin${if (amount != 1) "s" else ""}".miniMsg()))
+    Text("<#FFBB1C>${amount} <b>Orth Coin${if (amount != 1) "s" else ""}")
 }
 
 @Composable
 fun MittyTokenBalance(player: OfflinePlayer) {
     val amount = player.getComponent<PlayerData>()?.mittyTokensHeld
-    Item(TitleItem.of("<#b74b4d>${amount} <b>Mitty Token${if (amount != 1) "s" else ""}".miniMsg()))
+    Text("<#b74b4d>${amount} <b>Mitty Token${if (amount != 1) "s" else ""}")
 }
 
 @Composable
@@ -197,11 +198,11 @@ fun GuildButton(player: OfflinePlayer, viewer: Player) {
         guiy { player.getGuildName()?.let { GuildScreen.GuildLookupMembers(it) } }
     }) {
         if (player.hasGuild()) Text(
-            "<gold><b><i>${player.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()!!).name}".miniMsg(),
-            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}".miniMsg()
-        ) else Text("<gold><b><i>${player.name}</b> is not".miniMsg(), "<gold><i>in any guild.".miniMsg())
+            "<gold><b><i>${player.getGuildName()}",
+            "<yellow><b>Guild Owner:</b> <yellow><i>${Bukkit.getOfflinePlayer(player.getGuildOwner()!!).name}",
+            "<yellow><b>Guild Level:</b> <yellow><i>${player.getGuildLevel()}",
+            "<yellow><b>Guild Members:</b> <yellow><i>${player.getGuildMemberCount()}"
+        ) else Text("<gold><b><i>${player.name}</b> is not", "<gold><i>in any guild.")
     }
 }
 
@@ -209,12 +210,10 @@ fun GuildButton(player: OfflinePlayer, viewer: Player) {
 fun DiscordButton(player: OfflinePlayer) {
     val linked = player.linkedDiscordAccount
 
-    if (linked == null) Item(
-        TitleItem.of(
-            "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}".miniMsg(),
-            "<#718AD6>linked an account.".miniMsg()
-        )
-    ) else Item(TitleItem.of("<b><#718AD6>${player.name} is linked with <b>${linked}</b>.".miniMsg()))
+    if (linked == null) Text(
+        "<b><#718AD6>${"${player.name}</b> <#718AD6>has not"}",
+        "<#718AD6>linked an account."
+    ) else Text("<b><#718AD6>${player.name} is linked with <b>${linked}</b>.")
 }
 
 @Composable

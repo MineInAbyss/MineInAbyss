@@ -3,8 +3,8 @@ package com.mineinabyss.features.npc.shopkeeping.menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
-import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.guiy.components.items.Text
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.inventory.GuiyOwner
 import com.mineinabyss.guiy.inventory.LocalGuiyOwner

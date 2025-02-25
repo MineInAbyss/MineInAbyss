@@ -1,8 +1,8 @@
 package com.mineinabyss.features.npc.shopkeeping.menu
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.guiy.components.items.Text
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.layout.Row

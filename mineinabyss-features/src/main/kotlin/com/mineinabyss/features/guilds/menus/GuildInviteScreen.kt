@@ -3,10 +3,12 @@ package com.mineinabyss.features.guilds.menus
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.helpers.Text
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.Item
+import com.mineinabyss.guiy.components.items.PlayerHead
+import com.mineinabyss.guiy.components.items.PlayerHeadType
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
@@ -16,7 +18,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
-fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
+fun GuildViewModel.GuildInviteScreen(owner: OfflinePlayer) {
     GuildLabel(owner, Modifier.at(4, 0))
     AcceptGuildInviteButton(owner, Modifier.at(1, 1))
     DeclineGuildInviteButton(owner, Modifier.at(5, 1))
@@ -25,21 +27,20 @@ fun GuildUIScope.GuildInviteScreen(owner: OfflinePlayer) {
 
 @Composable
 fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
-    Item(
-        TitleItem.head(
-            owner, "<gold><b>Current Guild Info</b>".miniMsg(),
-            "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <i>${owner.name}".miniMsg(),
-            "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
-            "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
-            isLarge = true,
-            isCenterOfInv = true
-        ), modifier = modifier
+    PlayerHead(
+        owner,
+        "<gold><b>Current Guild Info</b>",
+        "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}",
+        "<yellow><b>Guild Owner:</b> <i>${owner.name}",
+        "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}",
+        "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}",
+        type = PlayerHeadType.LARGE_CENTER,
+        modifier = modifier
     )
 }
 
 @Composable
-fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
+fun GuildViewModel.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
         if (!owner.hasGuild()) {
@@ -63,11 +64,11 @@ fun GuildUIScope.AcceptGuildInviteButton(owner: OfflinePlayer, modifier: Modifie
         nav.back()
     },
 ) {
-    Text("<green>Accept INVITE".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<green>Accept INVITE", modifier = Modifier.size(3, 3))
 }
 
 @Composable
-fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
+fun GuildViewModel.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifier) = Button(
     modifier = modifier,
     onClick = {
         val guildName = owner.getGuildName() ?: ""
@@ -78,5 +79,5 @@ fun GuildUIScope.DeclineGuildInviteButton(owner: OfflinePlayer, modifier: Modifi
         else nav.reset()
     }
 ) {
-    Text("<red>Decline INVITE".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<red>Decline INVITE", modifier = Modifier.size(3, 3))
 }
