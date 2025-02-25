@@ -38,7 +38,7 @@ fun GuildInvites(
         GuildJoinQueue.selectAll().where {
             (GuildJoinQueue.joinType eq GuildJoinType.INVITE) and
                     (GuildJoinQueue.playerUUID eq player.uniqueId)
-        }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
+        }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId].value) }
 
     }
     HorizontalGrid(modifier.size(9, 4)) {

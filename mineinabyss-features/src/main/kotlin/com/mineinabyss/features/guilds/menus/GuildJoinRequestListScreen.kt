@@ -31,7 +31,7 @@ fun GuildViewModel.GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(abyss.db) {
-            val id = Players.selectAll().where { Players.playerUUID eq player.uniqueId }.first()[Players.guildId]
+            val id = Players.selectAll().where { Players.id eq player.uniqueId }.first()[Players.guild]
 
             GuildJoinQueue.selectAll()
                 .where { (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) }

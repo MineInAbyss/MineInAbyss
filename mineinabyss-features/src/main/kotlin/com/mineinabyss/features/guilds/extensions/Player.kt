@@ -14,7 +14,6 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.textcomponents.serialize
-import kotlinx.coroutines.flow.asFlow
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -28,7 +27,7 @@ fun UUID.toOfflinePlayer(): OfflinePlayer = Bukkit.getOfflinePlayer(this)
 fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
     var added = false
     transaction(abyss.db) {
-        val guild = Players.selectAll().where { Players.playerUUID eq uniqueId }.firstOrNull()?.get(Players.guildId)
+        val guild = Players.selectAll().where { Players.id eq uniqueId }.firstOrNull()?.get(Players.guild)
 
         if (guild == null) {
             player?.error("You cannot add a player when you have no guild.")
@@ -41,7 +40,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
         val level = guildRow[Guilds.level]
 
         val memberGuildCheck =
-            Players.selectAll().where { Players.playerUUID eq member.uniqueId }.firstOrNull()?.get(Players.guildId)
+            Players.selectAll().where { Players.id eq member.uniqueId }.firstOrNull()?.get(Players.guild)
 
         if (memberGuildCheck == id) {
             player?.error("This player is already in your guild.")
@@ -63,8 +62,8 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
 
 
         Players.insert {
-            it[playerUUID] = member.uniqueId
-            it[guildId] = id
+            it[Players.id] = member.uniqueId
+            it[this.guild] = id
             it[guildRank] = GuildRank.MEMBER
         }
         player?.success("${member.name} joined your Guild!")
@@ -113,7 +112,7 @@ fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
             return@transaction
         }
 
-        val id = Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull()?.get(Players.guildId)
+        val id = Players.selectAll().where { Players.id eq uniqueId }.singleOrNull()?.get(Players.guild)
             ?: return@transaction
 
         val guild = Guilds.selectAll().where { Guilds.id eq id }.single()[Guilds.id]
@@ -192,8 +191,8 @@ fun OfflinePlayer.requestToJoin(guildName: String) {
             it[joinType] = GuildJoinType.REQUEST
         }
 
-        val owner = Players.selectAll().where { (Players.guildId eq id) and (Players.guildRank eq GuildRank.OWNER) }
-            .single()[Players.playerUUID]
+        val owner = Players.selectAll().where { (Players.guild eq id) and (Players.guildRank eq GuildRank.OWNER) }
+            .single()[Players.id].value
 
 
         if (owner.toPlayer()?.isOnline == true) {
@@ -241,7 +240,7 @@ fun OfflinePlayer.promotePlayerInGuild(member: OfflinePlayer) {
 
         /* Send message if online, otherwise queue it */
         //playerRow[Players.guildRank]
-        Players.update({ Players.playerUUID eq member.uniqueId }) {
+        Players.update({ Players.id eq member.uniqueId }) {
             it[guildRank] = newRank
         }
 
@@ -272,7 +271,7 @@ fun OfflinePlayer.setGuildRank(member: OfflinePlayer, rank: GuildRank) {
 
         /* Send message if online, otherwise queue it */
         //playerRow[Players.guildRank]
-        Players.update({ Players.playerUUID eq member.uniqueId }) {
+        Players.update({ Players.id eq member.uniqueId }) {
             it[guildRank] = rank
         }
 
@@ -299,20 +298,20 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
 
     return transaction(abyss.db) {
         val dbPlayer = Players
-            .selectAll().where { Players.playerUUID eq member.uniqueId }
+            .selectAll().where { Players.id eq member.uniqueId }
             .firstOrNull() ?: return@transaction true
 
         val executor = Players
-            .selectAll().where { Players.playerUUID eq uniqueId }
+            .selectAll().where { Players.id eq uniqueId }
             .firstOrNull() ?: return@transaction true
 
-        val playerRow = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()
+        val playerRow = Players.selectAll().where { Players.id eq uniqueId }.single()
 
         val memberRank = playerRow[Players.guildRank]
-        val guildID = playerRow[Players.guildId]
+        val guildID = playerRow[Players.guild]
 
         /* Check if kicker is in same guild as kicked */
-        if (executor[Players.guildId] != guildID) {
+        if (executor[Players.guild] != guildID) {
             return@transaction false
         }
 
@@ -332,7 +331,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
         }
 
         Players.deleteWhere {
-            (playerUUID eq member.uniqueId) and (guildId eq guildID)
+            (id eq member.uniqueId) and (guild eq guildID)
         }
 
         /* Message to actual kicked player online or offline */
@@ -356,7 +355,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
 
 fun Player.leaveGuild() {
     transaction(abyss.db) {
-        val playerRow = Players.selectAll().where { Players.playerUUID eq uniqueId }.firstOrNull()
+        val playerRow = Players.selectAll().where { Players.id eq uniqueId }.firstOrNull()
 
         if (playerRow == null) {
             player?.error("You cannot leave a guild when you're not a member of any!")
@@ -382,7 +381,7 @@ fun Player.leaveGuild() {
         }
 
         Players.deleteWhere {
-            playerUUID eq uniqueId
+            id eq uniqueId
         }
         val leftMessage = "<i>${player?.name}</i> has left your guild!"
         player?.success("You have left <i>${guildName}")
@@ -395,7 +394,7 @@ fun Player.leaveGuild() {
 
 fun OfflinePlayer.getGuildRank(): GuildRank? {
     return transaction(abyss.db) {
-        val rank = Players.selectAll().where { Players.playerUUID eq uniqueId }.firstOrNull()?.get(Players.guildRank)
+        val rank = Players.selectAll().where { Players.id eq uniqueId }.firstOrNull()?.get(Players.guildRank)
 
         if (rank != null) return@transaction rank; else return@transaction null
     }
@@ -403,7 +402,7 @@ fun OfflinePlayer.getGuildRank(): GuildRank? {
 
 fun OfflinePlayer.hasGuild(): Boolean {
     return transaction(abyss.db) {
-        val hasGuild = Players.selectAll().where { Players.playerUUID eq uniqueId }.firstOrNull()
+        val hasGuild = Players.selectAll().where { Players.id eq uniqueId }.firstOrNull()
         return@transaction hasGuild !== null
     }
 }
@@ -411,7 +410,7 @@ fun OfflinePlayer.hasGuild(): Boolean {
 fun OfflinePlayer.getGuildName(): GuildName? {
     return transaction(abyss.db) {
         val playerGuild =
-            Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull()?.get(Players.guildId)
+            Players.selectAll().where { Players.id eq uniqueId }.singleOrNull()?.get(Players.guild)
                 ?: return@transaction null
 
         val guildName = Guilds.selectAll().where { Guilds.id eq playerGuild }.singleOrNull()?.get(Guilds.name)
@@ -423,15 +422,15 @@ fun OfflinePlayer.getGuildName(): GuildName? {
 fun OfflinePlayer.getGuildOwner(): UUID? {
     return transaction(abyss.db) {
         val playerGuild =
-            Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull()?.get(Players.guildId)
+            Players.selectAll().where { Players.id eq uniqueId }.singleOrNull()?.get(Players.guild)
                 ?: return@transaction null
 
         val guildId = Guilds.selectAll().where { Guilds.id eq playerGuild }.singleOrNull()?.get(Guilds.id)
             ?: return@transaction null
 
         val guildOwner =
-            Players.selectAll().where { (Players.guildId eq guildId) and (Players.guildRank eq GuildRank.OWNER) }
-                .singleOrNull()?.get(Players.playerUUID) ?: return@transaction null
+            Players.selectAll().where { (Players.guild eq guildId) and (Players.guildRank eq GuildRank.OWNER) }
+                .singleOrNull()?.get(Players.id)?.value ?: return@transaction null
         return@transaction guildOwner
     }
 }
@@ -447,15 +446,15 @@ fun OfflinePlayer.getGuildOwnerFromInvite(): UUID {
             .singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction player?.uniqueId!!
 
         return@transaction Players.selectAll()
-            .where { (Players.guildId eq guilds) and (Players.guildRank eq GuildRank.OWNER) }
-            .single()[Players.playerUUID]
+            .where { (Players.guild eq guilds) and (Players.guildRank eq GuildRank.OWNER) }
+            .single()[Players.id].value
     }
 }
 
 fun OfflinePlayer.getGuildLevel(): Int {
     return transaction(abyss.db) {
         val playerGuild =
-            (Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull() ?: return@transaction 0)[Players.guildId]
+            (Players.selectAll().where { Players.id eq uniqueId }.singleOrNull() ?: return@transaction 0)[Players.guild]
 
         val guildLevel = Guilds.selectAll().where { Guilds.id eq playerGuild }.single()[Guilds.level]
         return@transaction guildLevel
@@ -471,7 +470,7 @@ fun GuildName.getGuildLevel(): Int {
 
 fun OfflinePlayer.getGuildBalance(): Int {
     return transaction(abyss.db) {
-        val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.first()[Players.guildId]
+        val guildId = Players.selectAll().where { Players.id eq uniqueId }.first()[Players.guild]
 
         val guildBalance = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.balance]
 
@@ -496,10 +495,10 @@ fun String.setGuildBalance(newBalance: Int) {
 
 fun OfflinePlayer.getGuildMemberCount(): Int {
     return transaction(abyss.db) {
-        val playerRow = Players.selectAll().where { Players.playerUUID eq uniqueId }.first()[Players.guildId]
+        val playerRow = Players.selectAll().where { Players.id eq uniqueId }.first()[Players.guild]
 
-        val members = Players.selectAll().where { Players.guildId eq playerRow }.map { row ->
-            Bukkit.getOfflinePlayer(row[Players.playerUUID])
+        val members = Players.selectAll().where { Players.guild eq playerRow }.map { row ->
+            Bukkit.getOfflinePlayer(row[Players.id].value)
         }
 
         return@transaction members.count()
@@ -512,7 +511,7 @@ fun OfflinePlayer.hasGuildInvite(guildOwner: OfflinePlayer): Boolean {
             .where { (GuildJoinQueue.playerUUID eq uniqueId) and (GuildJoinQueue.joinType eq GuildJoinType.INVITE) }
             .singleOrNull()?.get(GuildJoinQueue.guildId) ?: return@transaction false
 
-        val ownerId = Players.selectAll().where { Players.playerUUID eq guildOwner.uniqueId }.single()[Players.guildId]
+        val ownerId = Players.selectAll().where { Players.id eq guildOwner.uniqueId }.single()[Players.guild]
 
         val hasInvite = Guilds.selectAll().where { (Guilds.id eq joinQueueId) and (Guilds.id eq ownerId) }.firstOrNull()
 
@@ -530,7 +529,7 @@ fun OfflinePlayer.hasGuildInvites(): Boolean {
 
 fun OfflinePlayer.hasGuildRequests(): Boolean {
     return transaction(abyss.db) {
-        val player = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
+        val player = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
 
         return@transaction GuildJoinQueue.selectAll()
             .where { (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) and (GuildJoinQueue.guildId eq player) }
@@ -540,7 +539,7 @@ fun OfflinePlayer.hasGuildRequests(): Boolean {
 
 fun OfflinePlayer.hasGuildRequest(): Boolean {
     return transaction(abyss.db) {
-        val player = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
+        val player = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
 
         val joinQueueId = GuildJoinQueue.selectAll()
             .where { (GuildJoinQueue.guildId eq player) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) }
@@ -556,7 +555,7 @@ fun OfflinePlayer.getNumberOfGuildRequests(): Int {
     var requestCount = 0
     val amount = transaction(abyss.db) {
         val playerGuild =
-            Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull()?.get(Players.guildId)
+            Players.selectAll().where { Players.id eq uniqueId }.singleOrNull()?.get(Players.guild)
                 ?: return@transaction 0
 
         GuildJoinQueue.selectAll()
@@ -613,7 +612,7 @@ fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAl
 
 fun OfflinePlayer.getGuildJoinType(): GuildJoinType {
     val joinType = transaction(abyss.db) {
-        val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
+        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
 
         val type: GuildJoinType = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.joinType]
 

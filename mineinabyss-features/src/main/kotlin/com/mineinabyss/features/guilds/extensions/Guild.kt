@@ -66,8 +66,8 @@ fun OfflinePlayer.createGuild(guildName: String) {
         } get Guilds.id
 
         Players.insert {
-            it[playerUUID] = uniqueId
-            it[guildId] = rowID
+            it[id] = uniqueId
+            it[this.guild] = rowID
             it[guildRank] = GuildRank.OWNER
         }
     }
@@ -76,7 +76,7 @@ fun OfflinePlayer.createGuild(guildName: String) {
 fun Player.deleteGuild() {
     transaction(abyss.db) {
         /* Find the owners guild */
-        val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.firstOrNull()?.get(Players.guildId)
+        val guildId = Players.selectAll().where { Players.id eq uniqueId }.firstOrNull()?.get(Players.guild)?.value
             ?: return@transaction
 
         if (getGuildRank() != GuildRank.OWNER) {
@@ -85,14 +85,14 @@ fun Player.deleteGuild() {
         }
 
         /* Message to all guild-members */
-        Players.selectAll().where { (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId) }
+        Players.selectAll().where { (Players.guild eq guildId) and (Players.id neq uniqueId) }
             .forEach { row ->
                 val deleteGuildMessage = "<red>The Guild you were in has been deleted by the Owner."
-                val player = Bukkit.getPlayer(row[Players.playerUUID])
+                val player = Bukkit.getPlayer(row[Players.id].value)
 
                 player?.error(deleteGuildMessage) ?: GuildMessageQueue.insert {
                     it[content] = deleteGuildMessage
-                    it[playerUUID] = row[Players.playerUUID]
+                    it[playerUUID] = row[Players.id].value
                 }
             }
 
@@ -131,7 +131,7 @@ fun Player.deleteGuild() {
         }
 
         Players.deleteWhere {
-            Players.guildId eq guildId
+            Players.guild eq guildId
         }
 
         /* Message to owner */
@@ -145,7 +145,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         val oldGuildName = getGuildName() ?: return@transaction
         val guild = Guilds.selectAll().where { Guilds.name.lowerCase() eq newGuildName.lowercase() }.firstOrNull()
 
-        val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
+        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
 
 
 
@@ -174,16 +174,16 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         val changedNameMessage =
             "<yellow>The Guild you are in has been renamed to <gold><i>$guildName!"
         /* Message to all guild-members */
-        Players.selectAll().where { (Players.guildId eq guildId) and (Players.playerUUID neq uniqueId) }
+        Players.selectAll().where { (Players.guild eq guildId) and (Players.id neq uniqueId) }
             .forEach { row ->
 
-                val player = Bukkit.getPlayer(row[Players.playerUUID])
+                val player = Bukkit.getPlayer(row[Players.id].value)
                 if (player != null) {
                     player.info(changedNameMessage)
                 } else {
                     GuildMessageQueue.insert {
                         it[content] = changedNameMessage
-                        it[playerUUID] = row[Players.playerUUID]
+                        it[playerUUID] = row[Players.id].value
                     }
                 }
             }
@@ -193,7 +193,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
 
 fun Player.changeGuildJoinType(): GuildJoinType {
     return transaction(abyss.db) {
-        val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
+        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
 
         val type = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.joinType]
 
@@ -213,12 +213,12 @@ fun Player.changeGuildJoinType(): GuildJoinType {
 
 fun Player.getGuildMembers(): List<GuildMember> {
     return transaction(abyss.db) {
-        val playerRow = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()
+        val playerRow = Players.selectAll().where { Players.id eq uniqueId }.single()
 
-        val guildId = playerRow[Players.guildId]
+        val guildId = playerRow[Players.guild]
 
-        Players.selectAll().where { (Players.guildId eq guildId) }.map { row ->
-            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+        Players.selectAll().where { (Players.guild eq guildId) }.map { row ->
+            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.id].value))
         }
     }
 }
@@ -229,8 +229,8 @@ fun String.getGuildMembers(): List<GuildMember> {
             Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.singleOrNull()?.get(Guilds.id)
                 ?: return@transaction emptyList()
 
-        Players.selectAll().where { (Players.guildId eq guild) }.map { row ->
-            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID]))
+        Players.selectAll().where { (Players.guild eq guild) }.map { row ->
+            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.id].value))
         }
     }
 }
@@ -252,6 +252,7 @@ fun GuildName.getGuildId(): Int? {
     return transaction(abyss.db) {
         return@transaction Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.firstOrNull()
             ?.get(Guilds.id)
+            ?.value
     }
 }
 
@@ -288,7 +289,7 @@ fun GuildName.getOwnerFromGuildName(): OfflinePlayer {
     return transaction(abyss.db) {
         val guild = Guilds.selectAll().where { Guilds.name eq this@getOwnerFromGuildName }.first()[Guilds.id]
 
-        val player = Players.selectAll().where { Players.guildId eq guild }.first()[Players.playerUUID]
+        val player = Players.selectAll().where { Players.guild eq guild }.first()[Players.id].value
 
         return@transaction Bukkit.getOfflinePlayer(player)
     }
@@ -409,7 +410,7 @@ fun GuildName.getGuildLevelUpCost(): Int? {
 
 private fun Player.updateGuildBalance(amount: Int) {
     transaction(abyss.db) {
-        val guildId = Players.selectAll().where { Players.playerUUID eq uniqueId }.single()[Players.guildId]
+        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
 
         val bal = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.balance]
 

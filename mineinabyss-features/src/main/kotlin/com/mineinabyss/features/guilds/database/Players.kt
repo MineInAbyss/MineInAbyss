@@ -1,10 +1,8 @@
 package com.mineinabyss.features.guilds.database
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.UUIDTable
 
-object Players : Table() {
-    val playerUUID = uuid("playerUUID").uniqueIndex()
-    val guildId = integer("guildId") references Guilds.id
+object Players : UUIDTable(columnName = "playerUUID") {
+    val guild = reference("guildId", Guilds)
     val guildRank = enumeration("guildRank", GuildRank::class)
-    override val primaryKey = PrimaryKey(playerUUID, name = "pk_players_uuid")
 }

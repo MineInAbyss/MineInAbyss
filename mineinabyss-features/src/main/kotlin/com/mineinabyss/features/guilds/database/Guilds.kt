@@ -1,14 +1,12 @@
 package com.mineinabyss.features.guilds.database
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.IntIdTable
 
-object Guilds : Table() {
-    val id = integer("id").autoIncrement()
+object Guilds : IntIdTable() {
     val name = varchar("guildName", 30)
     val balance = integer("guildBalance")
     val level = integer("guildLevel")
     val joinType = enumeration("joinType", GuildJoinType::class)
-    override val primaryKey = PrimaryKey(id, name = "pk_guilds_id")
 }
 
 enum class GuildRank {
