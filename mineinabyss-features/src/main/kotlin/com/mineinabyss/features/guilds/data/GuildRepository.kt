@@ -1,14 +1,15 @@
 package com.mineinabyss.features.guilds.data
 
-import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
-import com.mineinabyss.features.guilds.data.tables.GuildJoinType
-import com.mineinabyss.features.guilds.data.tables.GuildsTable
 import com.mineinabyss.features.guilds.data.entities.GuildEntity
 import com.mineinabyss.features.guilds.data.entities.GuildJoinEntity
 import com.mineinabyss.features.guilds.data.entities.GuildPlayerEntity
+import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildsTable
 import com.mineinabyss.features.guilds.ui.GuildMemberUiState
 import com.mineinabyss.features.guilds.ui.GuildUiState
 import com.mineinabyss.features.guilds.ui.Invite
+import org.jetbrains.exposed.dao.id.CompositeID
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.and
@@ -25,11 +26,15 @@ class GuildRepository(
     fun getGuild(guildId: Int): GuildEntity? = GuildEntity.findById(guildId)
 
     suspend fun guild(id: Int): GuildUiState? = transaction {
-        GuildEntity.findById(id)?.toGuildUiState()
+        GuildEntity.findById(id)?.toUiState()
+    }
+
+    suspend fun deleteGuild(id: Int) = transaction {
+        GuildEntity.findById(id)?.delete()
     }
 
     suspend fun guildForPlayer(uuid: UUID): GuildUiState? = transaction {
-        GuildPlayerEntity.findById(uuid)?.guild?.toGuildUiState()
+        GuildPlayerEntity.findById(uuid)?.guild?.toUiState()
     }
 
     suspend fun findGuildByName(name: String) = transaction {
@@ -43,7 +48,7 @@ class GuildRepository(
     suspend fun getInvites(player: UUID): List<Invite> = transaction {
         GuildPlayerEntity.findById(player)?.joinQueue
             ?.filter { it.joinType == GuildJoinType.INVITE }
-            ?.map { Invite(it.guild.toGuildUiState()) }
+            ?.map { Invite(it.guild.toUiState()) }
             ?: emptyList()
     }
 
@@ -52,6 +57,7 @@ class GuildRepository(
             .singleOrNull()
             ?.delete()
     }
+
     suspend fun addMember(guild: Int, player: UUID): Boolean = transaction {
         // Remove invite if present
         clearInvite(guild, player)
@@ -67,8 +73,8 @@ class GuildRepository(
 
     fun search(query: String) = GuildEntity.find { GuildsTable.name like "%$query%" }
 
-    fun updateName(guild: GuildEntity, newName: String) {
-        require(GuildEntity.find { GuildsTable.name eq guild.name }.empty()) { "Guild with this name already exists" }
-        guild.name = newName
+    suspend fun updateJoinType(guildId: Int, newJoinType: GuildJoinType) = transaction {
+        val guild = GuildEntity.findById(guildId) ?: return@transaction
+        guild.joinType = newJoinType
     }
 }

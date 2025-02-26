@@ -2,15 +2,18 @@ package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.data.GuildJoinRequestsRepository
 import com.mineinabyss.features.guilds.data.GuildMessagesRepository
 import com.mineinabyss.features.guilds.data.GuildRepository
-import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.ui.GuildScreen.*
 import com.mineinabyss.features.guilds.ui.screens.GuildDisbandScreen
 import com.mineinabyss.features.guilds.ui.screens.GuildInfoScreen
+import com.mineinabyss.features.guilds.ui.screens.GuildLeaveScreen
+import com.mineinabyss.features.guilds.ui.screens.GuildMemberListScreen
 import com.mineinabyss.features.guilds.ui.screens.HomeScreen
-import com.mineinabyss.features.guilds.ui.screens.invites.GuildInviteListScreen
+import com.mineinabyss.features.guilds.ui.screens.GuildInviteListScreen
+import com.mineinabyss.features.guilds.ui.screens.GuildInviteScreen
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -39,7 +42,8 @@ fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer)
     val guildViewModel = viewModel {
         GuildViewModel(
             player, openedFromHQ, GuildRepository(abyss.db),
-            GuildMessagesRepository(abyss.db)
+            GuildMessagesRepository(abyss.db),
+            GuildJoinRequestsRepository(abyss.db),
         )
     }
     guildViewModel.apply {
@@ -173,43 +177,4 @@ fun GuildLookupListButton(
         "<yellow>There are currently no Guilds registered.",
         modifier = Modifier.size(2, 2)
     )
-}
-
-object DecideMenus {
-    fun decideMainMenu(player: Player): String {
-        return buildString {
-            append(":guild_main_menu:")
-            append(":space_-138:")
-            if (player.hasGuild()) append(":guild_main_menu_info:")
-            else append(":guild_main_menu_create:")
-            append(":space_66:")
-            if (player.hasGuildInvites()) append(":guild_inbox_unread:")
-            else append(":guild_inbox_read:")
-        }
-    }
-
-    fun decideInfoMenu(isGuildOwner: Boolean): String {
-        return buildString {
-            append(":guild_info_menu:")
-            append(":space_-28:")
-            if (isGuildOwner) {
-                append(":guild_disband_button:")
-                append(":space_-18:")
-                append(":guild_level_up_button:")
-            } else append(":guild_leave_button:")
-        }
-    }
-
-    //TODO Implement lists for guilds, making one able to have more than 5(25) members
-    fun decideMemberMenu(player: Player, joinType: GuildJoinType): String {
-        val menuHeight = minOf(player.getGuildLevel(), 4)
-        return buildString {
-            append(":guild_member_management_menu_${menuHeight}:")
-            append(":space_-171:")
-            append(":guild_member_management_jointype_${joinType.name.lowercase()}:")
-            append(":space_125:")
-            if (player.hasGuildRequests()) append(":guild_inbox_unread:")
-            else append(":guild_inbox_read:")
-        }
-    }
 }

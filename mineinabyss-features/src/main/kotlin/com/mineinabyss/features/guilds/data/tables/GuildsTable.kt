@@ -14,5 +14,7 @@ enum class GuildRank {
 }
 
 enum class GuildJoinType {
-    ANY, REQUEST, INVITE
+    ANY, REQUEST, INVITE;
+
+    fun next(): GuildJoinType = entries[(ordinal + 1) % entries.size]
 }

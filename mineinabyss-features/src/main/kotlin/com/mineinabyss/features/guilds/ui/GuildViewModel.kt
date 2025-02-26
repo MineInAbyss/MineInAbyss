@@ -4,11 +4,15 @@ import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import com.mineinabyss.chatty.chatty
 import com.mineinabyss.chatty.components.ChannelData
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.data.GuildJoinRequestsRepository
 import com.mineinabyss.features.guilds.data.GuildMessagesRepository
 import com.mineinabyss.features.guilds.data.GuildRepository
-import com.mineinabyss.features.guilds.data.tables.GuildJoinType
-import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.data.entities.GuildEntity
+import com.mineinabyss.features.guilds.data.entities.GuildJoinEntity
+import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildMessagesTable
+import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.extensions.guildChat
 import com.mineinabyss.features.guilds.extensions.guildChatId
 import com.mineinabyss.features.helpers.ui.WhileSubscribed
@@ -25,7 +29,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.jetbrains.exposed.sql.insert
 import java.util.*
 
 data class GuildUiState(
@@ -34,13 +40,16 @@ data class GuildUiState(
     val owner: GuildMemberUiState,
     val level: Int,
     val memberCount: Int,
+    val members: List<GuildMemberUiState>,
     val balance: Int,
+    val joinType: GuildJoinType,
 )
 
 data class GuildMemberUiState(
     val name: String,
     val uuid: UUID,
     val rank: GuildRank,
+    val currentGuild: Int,
 )
 
 data class Invite(val guild: GuildUiState)
@@ -50,12 +59,14 @@ class GuildViewModel(
     val openedFromHQ: Boolean,
     private val guildRepo: GuildRepository,
     private val messagesRepo: GuildMessagesRepository,
+    private val requestsRepo: GuildJoinRequestsRepository,
 ) : GuiyViewModel() {
     private val _currentGuild = MutableStateFlow<GuildUiState?>(null)
     private val _memberInfo = MutableStateFlow<GuildMemberUiState?>(null)
     val currentGuild = _currentGuild.asStateFlow()
     val memberInfo = _memberInfo.asStateFlow()
     val invites = MutableStateFlow<List<Invite>>(emptyList())
+    val joinRequests = MutableStateFlow<List<Invite>>(emptyList())
     val nav = GuildNav { GuildScreen.Default(player) }
 
     val isCaptainOrAbove = _memberInfo.map {
@@ -64,7 +75,7 @@ class GuildViewModel(
     }.stateIn(viewModelScope, WhileSubscribed, initialValue = false)
 
     val canAcceptNewMembers = _currentGuild.map {
-        if(it == null) false
+        if (it == null) false
         else it.memberCount < it.level * 5
     }.stateIn(viewModelScope, WhileSubscribed, initialValue = false)
 
@@ -74,6 +85,41 @@ class GuildViewModel(
             _currentGuild.emit(guildRepo.guildForPlayer(player.uniqueId))
             invites.emit(guildRepo.getInvites(player.uniqueId))
         }
+    }
+
+    fun invitePlayer(playerName: String) = viewModelScope.launch {
+        val guild = currentGuild.value ?: return@launch
+        val invitedMember = Bukkit.getOfflinePlayerIfCached(playerName)
+        if (invitedMember == null) {
+            player.error("Player $playerName could not be found.")
+            return@launch
+        }
+        val inviteMessage ="<yellow>You have been invited to join the <gold>${guild.name}</gold> guild."
+
+        /* Should invites be cancelled if player already is in one? */
+        /* Or should this be checked when a player tries to accept an invite? */
+        if(guildRepo.member(invitedMember.uniqueId) != null) {
+            player.error("This player is already in another guild!")
+            return@launch
+        }
+
+        val existingInvite = requestsRepo.getRequest(invitedMember.uniqueId, guild.id)
+
+        if (existingInvite == GuildJoinType.INVITE) {
+            player.error("This player has already been invited to your guild!")
+            return@launch
+        }
+
+        if (existingInvite == GuildJoinType.REQUEST) {
+            player.error("This player has already requested to join your guild!")
+            player.error("Navigate to the <b>Manage GuildJoin REQUEST</b> menu to respond.")
+            return@launch
+        }
+
+        requestsRepo.addRequest(invitedMember.uniqueId, guild.id, GuildJoinType.INVITE)
+
+        player.success("${invitedMember.name} was invited to your guild!")
+        messagesRepo.messagePlayer(invitedMember.uniqueId, inviteMessage)
     }
 
     fun acceptInvite(guildId: Int) = viewModelScope.launch {
@@ -148,5 +194,16 @@ class GuildViewModel(
             exclude = setOf(player.uniqueId)
         )
         player.success("Your guild was successfully renamed to <gold><i>$newName!")
+    }
+
+    fun updateJoinType() = viewModelScope.launch {
+        val guild = currentGuild.value ?: return@launch
+        guildRepo.updateJoinType(guild.id, guild.joinType.next())
+    }
+
+    fun deleteGuild() = viewModelScope.launch {
+        // TODO migrate all checks over
+//        val guild = _currentGuild.value ?: return@launch
+//        guildRepo.deleteGuild(guild.id)
     }
 }

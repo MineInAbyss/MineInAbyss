@@ -1,11 +1,12 @@
-package com.mineinabyss.features.guilds.ui
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.features.guilds.extensions.*
+import com.mineinabyss.features.guilds.ui.BackButton
+import com.mineinabyss.features.guilds.ui.GuildUiState
+import com.mineinabyss.features.guilds.ui.GuildViewModel
+import com.mineinabyss.features.guilds.ui.components.GuildLabel
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.button.Button
-import com.mineinabyss.guiy.components.items.PlayerHead
-import com.mineinabyss.guiy.components.items.PlayerHeadType
 import com.mineinabyss.guiy.inventory.viewModel
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
@@ -35,16 +36,3 @@ fun GuildInviteScreen(
     BackButton(Modifier.at(4, 4))
 }
 
-@Composable
-fun GuildLabel(guild: GuildUiState, modifier: Modifier) = Button {
-    PlayerHead(
-        guild.owner.uuid.toOfflinePlayer(),
-        "<gold><b>Current Guild Info</b>",
-        "<yellow><b>Guild Name:</b> <i>${guild.name}",
-        "<yellow><b>Guild Owner:</b> <i>${guild.owner.name}",
-        "<yellow><b>Guild Level:</b> <i>${guild.level}",
-        "<yellow><b>Guild Members:</b> <i>${guild.memberCount}",
-        type = PlayerHeadType.LARGE_CENTER,
-        modifier = modifier
-    )
-}

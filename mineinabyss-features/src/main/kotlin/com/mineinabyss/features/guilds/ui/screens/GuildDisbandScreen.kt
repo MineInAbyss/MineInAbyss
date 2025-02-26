@@ -15,17 +15,18 @@ import com.mineinabyss.guiy.modifiers.size
 import org.bukkit.entity.Player
 
 @Composable
-fun GuildDisbandScreen(player: Player = CurrentPlayer, guild: GuildViewModel = viewModel()) {
+fun GuildDisbandScreen(player: Player = CurrentPlayer, guildViewModel: GuildViewModel = viewModel()) {
     Row(Modifier.at(1, 1)) {
         Button(
             onClick = {
+                guildViewModel.deleteGuild()
                 player.deleteGuild()
                 player.closeInventory()
             }) {
             Text("<green><b>Confirm Guild Disbanding", modifier = Modifier.size(3, 3))
         }
         Spacer(width = 1)
-        Button(onClick = { guild.nav.back() }) {
+        Button(onClick = { guildViewModel.nav.back() }) {
             Text("<red><b>Cancel Guild Disbanding", modifier = Modifier.size(3, 3))
         }
     }

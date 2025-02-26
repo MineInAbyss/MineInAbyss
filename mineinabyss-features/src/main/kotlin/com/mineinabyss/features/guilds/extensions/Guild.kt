@@ -144,26 +144,6 @@ fun Player.deleteGuild() {
     }
 }
 
-fun Player.changeGuildJoinType(): GuildJoinType {
-    return transaction(abyss.db) {
-        val guildId = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.single()[GuildMembersTable.guild]
-
-        val type = GuildsTable.selectAll().where { GuildsTable.id eq guildId }.single()[GuildsTable.joinType]
-
-        val newType = when (type) {
-            GuildJoinType.ANY -> GuildJoinType.REQUEST
-            GuildJoinType.INVITE -> GuildJoinType.ANY
-            GuildJoinType.REQUEST -> GuildJoinType.INVITE
-        }
-
-        GuildsTable.update({ GuildsTable.id eq guildId }) {
-            it[joinType] = newType
-        }
-
-        return@transaction newType
-    }
-}
-
 fun Player.getGuildMembers(): List<GuildMember> {
     return transaction(abyss.db) {
         val playerRow = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.single()

@@ -26,6 +26,7 @@ class GuildPlayerEntity(id: EntityID<UUID>) : UUIDEntity(id) {
             player.name ?: "Unknown Player",
             uuid,
             guildRank,
+            guild.id.value
         )
     }
 }

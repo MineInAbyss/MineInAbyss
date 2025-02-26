@@ -92,55 +92,6 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
     return added
 }
 
-fun OfflinePlayer.invitePlayerToGuild(invitedPlayer: String) {
-    // TODO send message when player not found
-    val invitedMember = Bukkit.getOfflinePlayerIfCached(invitedPlayer) ?: return
-    val inviteMessage =
-        "<yellow>You have been invited to join the <gold>${this@invitePlayerToGuild.getGuildName()}</gold> guild."
-    transaction(abyss.db) {
-        /* Should invites be cancelled if player already is in one? */
-        /* Or should this be checked when a player tries to accept an invite? */
-        if (invitedMember.hasGuild()) {
-            player?.error("This player is already in another guild!")
-            return@transaction
-        }
-
-        if (invitedMember.hasGuildInvite(this@invitePlayerToGuild)) {
-            player?.error("This player has already been invited to your guild!")
-            return@transaction
-        }
-
-        //val owner = (invitedMember as Player).getGuildOwnerFromInvite().toPlayer()
-        if (player?.hasGuildRequest() == true) {
-            player?.error("This player has already requested to join your guild!")
-            player?.error("Navigate to the <b>Manage GuildJoin REQUEST</b> menu to respond.")
-            return@transaction
-        }
-
-        val id = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.singleOrNull()?.get(GuildMembersTable.guild)
-            ?: return@transaction
-
-        val guild = GuildsTable.selectAll().where { GuildsTable.id eq id }.single()[GuildsTable.id]
-
-        GuildJoinRequestsTable.insert {
-            it[playerUUID] = invitedMember.uniqueId
-            it[guildId] = guild
-            it[joinType] = GuildJoinType.INVITE
-        }
-
-        /* Adds invitedPlayer into the guild of the player. */
-        player?.success("${invitedMember.name} was invited to your guild!")
-
-        if (invitedMember.isOnline) invitedMember.player?.success(inviteMessage)
-        else {
-            GuildMessagesTable.insert {
-                it[content] = inviteMessage
-                it[playerUUID] = invitedMember.uniqueId
-            }
-        }
-    }
-}
-
 fun OfflinePlayer.verifyGuildName(guildName: String): String? {
     return transaction(abyss.db) {
 

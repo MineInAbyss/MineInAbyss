@@ -17,6 +17,7 @@ class GuildEntity(id: EntityID<Int>) : IntEntity(id) {
     var balance by GuildsTable.balance
     var level by GuildsTable.level
     var joinType by GuildsTable.joinType
+    // TODO sort members by compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }
     val members by GuildPlayerEntity referrersOn GuildMembersTable.guild orderBy GuildMembersTable.guildRank
     val owner: GuildPlayerEntity
         get() = GuildPlayerEntity
@@ -25,12 +26,14 @@ class GuildEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val joinQueue by GuildJoinEntity referrersOn GuildJoinRequestsTable.guildId
 
-    fun toGuildUiState() = GuildUiState(
+    fun toUiState() = GuildUiState(
         id.value,
         name,
         owner.toUiState(),
         level,
         members.count().toInt(),
-        balance
+        members.map { it.toUiState() },
+        balance,
+        joinType,
     )
 }

@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
+import com.mineinabyss.features.guilds.ui.screens.ScrollDownButton
+import com.mineinabyss.features.guilds.ui.screens.ScrollUpButton
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
