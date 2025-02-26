@@ -1,8 +1,8 @@
-package com.mineinabyss.features.guilds.database
+package com.mineinabyss.features.guilds.data.tables
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 
-object Guilds : IntIdTable() {
+object GuildsTable : IntIdTable(name = "Guilds") {
     val name = varchar("guildName", 30)
     val balance = integer("guildBalance")
     val level = integer("guildLevel")

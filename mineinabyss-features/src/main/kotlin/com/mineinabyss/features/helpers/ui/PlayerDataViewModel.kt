@@ -12,7 +12,7 @@ class PlayerDataViewModel(
 ) : GuiyViewModel() {
     val playerData: StateFlow<PlayerData?> = player.toGeary().getAsFlow<PlayerData>().stateIn(
         viewModelScope,
-        started = SharingStarted,
+        started = WhileSubscribed,
         initialValue = null
     )
 }

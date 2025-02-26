@@ -1,8 +1,8 @@
-package com.mineinabyss.features.guilds.menus.screens
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.extensions.deleteGuild
-import com.mineinabyss.features.guilds.menus.GuildViewModel
+import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.Spacer

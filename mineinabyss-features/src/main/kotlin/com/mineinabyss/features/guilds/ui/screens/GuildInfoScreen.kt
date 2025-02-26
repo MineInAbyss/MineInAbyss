@@ -1,12 +1,12 @@
-package com.mineinabyss.features.guilds.menus.screens
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.guilds.menus.BackButton
-import com.mineinabyss.features.guilds.menus.GuildScreen
-import com.mineinabyss.features.guilds.menus.GuildViewModel
+import com.mineinabyss.features.guilds.ui.BackButton
+import com.mineinabyss.features.guilds.ui.GuildScreen
+import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.button.Button
@@ -57,7 +57,7 @@ fun CurrentGuildInfoButton(
     modifier: Modifier = Modifier,
     guild: GuildViewModel = viewModel(),
 ) {
-    val guild by guild.guildUiState.collectAsState()
+    val guild by guild.currentGuild.collectAsState()
     Button(modifier = modifier) {
         Text(
             "<gold><b>Current Guild Info</b>",
@@ -74,12 +74,14 @@ fun CurrentGuildInfoButton(
 fun GuildMemberManagement(
     modifier: Modifier = Modifier,
     player: Player = CurrentPlayer,
-    guild: GuildViewModel = viewModel(),
+    guildViewModel: GuildViewModel = viewModel(),
 ) {
+    val guild = guildViewModel.currentGuild.collectAsState().value
+    if (guild == null) return
     Button(
         modifier = modifier,
         onClick = {
-            guild.nav.open(GuildScreen.MemberList(guild.guildLevel, player))
+            guildViewModel.nav.open(GuildScreen.MemberList(guild.level, player))
         }
     ) {
         Text("<green><b>Guild Member List", modifier = Modifier.size(2, 2))
@@ -89,16 +91,15 @@ fun GuildMemberManagement(
 @Composable
 fun GuildRenameButton(
     modifier: Modifier = Modifier,
-    player: Player = CurrentPlayer,
     guildViewModel: GuildViewModel = viewModel(),
 ) {
-    val guild by guildViewModel.guildUiState.collectAsState()
+    val guild by guildViewModel.currentGuild.collectAsState()
     val renameItem = TitleItem.of(guild?.name ?: "Guild Name").editItemMeta { isHideTooltip = true }
+    val canEdit by guildViewModel.isCaptainOrAbove.collectAsState()
     Button(
-        enabled = player.isCaptainOrAbove(),
+        enabled = canEdit,
         modifier = modifier,
         onClick = {
-            if (!player.isCaptainOrAbove()) return@Button
             guildViewModel.nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
@@ -108,7 +109,7 @@ fun GuildRenameButton(
                         .plugin(guiyPlugin)
                         .onClose { guildViewModel.nav.back() }
                         .onClick { _, snapshot ->
-                            snapshot.player.changeStoredGuildName(snapshot.text)
+                            guildViewModel.rename(snapshot.text)
                             listOf(AnvilGUI.ResponseAction.close())
                         }
                 ))
@@ -154,7 +155,7 @@ fun GuildLevelUpButton(
             else ->
                 Text(
                     "<red><b><st>Level up Guildrank",
-                    "<red>You need <b>${guild?.getGuildLevelUpCost()} coins</b> in your",
+                    "<red>You need <b>${guild.getGuildLevelUpCost()} coins</b> in your",
                     "<red>guild balance to level up your guildrank."
                 )
         }

@@ -1,8 +1,8 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.*
-import com.mineinabyss.features.guilds.database.GuildJoinType
-import com.mineinabyss.features.guilds.database.GuildRank
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.button.Button

@@ -1,50 +1,74 @@
 package com.mineinabyss.features.guilds.data
 
-import com.mineinabyss.features.guilds.database.Guilds
-import com.mineinabyss.features.guilds.database.entities.GuildEntity
-import com.mineinabyss.features.guilds.database.entities.GuildPlayerEntity
-import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
-import com.mineinabyss.features.guilds.menus.GuildMemberUiState
+import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildsTable
+import com.mineinabyss.features.guilds.data.entities.GuildEntity
+import com.mineinabyss.features.guilds.data.entities.GuildJoinEntity
+import com.mineinabyss.features.guilds.data.entities.GuildPlayerEntity
+import com.mineinabyss.features.guilds.ui.GuildMemberUiState
+import com.mineinabyss.features.guilds.ui.GuildUiState
+import com.mineinabyss.features.guilds.ui.Invite
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.util.*
 
 class GuildRepository(
     val database: Database,
 ) {
-    suspend inline fun <T> transaction(crossinline statement: suspend Transaction.() -> T) =
+    private suspend inline fun <T> transaction(crossinline statement: suspend Transaction.() -> T) =
         newSuspendedTransaction(db = database) { statement() }
 
     fun getGuild(guildId: Int): GuildEntity? = GuildEntity.findById(guildId)
 
-    suspend fun guildInfo(id: Int) = transaction {
-        val guildName = Guilds.selectAll()
-            .where { Guilds.id eq id }
+    suspend fun guild(id: Int): GuildUiState? = transaction {
+        GuildEntity.findById(id)?.toGuildUiState()
+    }
+
+    suspend fun guildForPlayer(uuid: UUID): GuildUiState? = transaction {
+        GuildPlayerEntity.findById(uuid)?.guild?.toGuildUiState()
+    }
+
+    suspend fun findGuildByName(name: String) = transaction {
+        GuildEntity.find { GuildsTable.name.lowerCase() eq name.lowercase() }
+    }
+
+    suspend fun getMembers(guildId: Int) = transaction {
+        GuildEntity.findById(guildId)?.members ?: emptyList()
+    }
+
+    suspend fun getInvites(player: UUID): List<Invite> = transaction {
+        GuildPlayerEntity.findById(player)?.joinQueue
+            ?.filter { it.joinType == GuildJoinType.INVITE }
+            ?.map { Invite(it.guild.toGuildUiState()) }
+            ?: emptyList()
+    }
+
+    suspend fun clearInvite(guild: Int, player: UUID) = transaction {
+        GuildJoinEntity.find { (GuildJoinRequestsTable.guildId eq guild) and (GuildJoinRequestsTable.playerUUID eq player) }
             .singleOrNull()
+            ?.delete()
+    }
+    suspend fun addMember(guild: Int, player: UUID): Boolean = transaction {
+        // Remove invite if present
+        clearInvite(guild, player)
 
-            ?: return@transaction null
-        guildName
+        // Update player's guild
+        GuildPlayerEntity.findById(player)?.guild = GuildEntity.findById(guild) ?: return@transaction false
+        true
     }
 
-    suspend fun member(uuid: UUID): GuildMemberUiState? {
-        val entity = transaction {
-            GuildPlayerEntity.findById(uuid)
-        } ?: return null
-        val uuid = entity.uuid.value
-        val player = uuid.toOfflinePlayer()
-        return GuildMemberUiState(
-            player.name ?: "Unknown Player",
-            uuid,
-            entity.guildRank,
-        )
+    suspend fun member(uuid: UUID): GuildMemberUiState? = transaction {
+        GuildPlayerEntity.findById(uuid)?.toUiState()
     }
 
-    fun search(query: String) = GuildEntity.find { Guilds.name like "%$query%" }
+    fun search(query: String) = GuildEntity.find { GuildsTable.name like "%$query%" }
 
     fun updateName(guild: GuildEntity, newName: String) {
-        require(GuildEntity.find { Guilds.name eq guild.name }.empty()) { "Guild with this name already exists" }
+        require(GuildEntity.find { GuildsTable.name eq guild.name }.empty()) { "Guild with this name already exists" }
         guild.name = newName
     }
 }

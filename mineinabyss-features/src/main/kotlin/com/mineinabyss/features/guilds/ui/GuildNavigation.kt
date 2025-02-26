@@ -1,19 +1,20 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.data.GuildMessagesRepository
 import com.mineinabyss.features.guilds.data.GuildRepository
-import com.mineinabyss.features.guilds.database.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.guilds.menus.GuildScreen.*
-import com.mineinabyss.features.guilds.menus.screens.GuildDisbandScreen
-import com.mineinabyss.features.guilds.menus.screens.GuildInfoScreen
-import com.mineinabyss.features.guilds.menus.screens.HomeScreen
-import com.mineinabyss.features.guilds.menus.screens.invites.GuildInviteListScreen
-import com.mineinabyss.guiy.components.items.Text
+import com.mineinabyss.features.guilds.ui.GuildScreen.*
+import com.mineinabyss.features.guilds.ui.screens.GuildDisbandScreen
+import com.mineinabyss.features.guilds.ui.screens.GuildInfoScreen
+import com.mineinabyss.features.guilds.ui.screens.HomeScreen
+import com.mineinabyss.features.guilds.ui.screens.invites.GuildInviteListScreen
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.CurrentPlayer
 import com.mineinabyss.guiy.inventory.LocalGuiyOwner
@@ -35,7 +36,12 @@ typealias GuildNav = Navigator<GuildScreen>
 fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer) {
     val owner = LocalGuiyOwner.current
     //TODO koin inject
-    val guildViewModel = viewModel { GuildViewModel(player, openedFromHQ, owner, GuildRepository(abyss.db)) }
+    val guildViewModel = viewModel {
+        GuildViewModel(
+            player, openedFromHQ, GuildRepository(abyss.db),
+            GuildMessagesRepository(abyss.db)
+        )
+    }
     guildViewModel.apply {
         nav.withScreen(setOf(player), onEmpty = owner::exit) { screen ->
             Chest(
@@ -49,7 +55,7 @@ fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer)
                     is GuildList -> GuildLookupListScreen()
                     is GuildLookupMembers -> GuildLookupMembersScreen(screen.guildName)
                     InviteList -> GuildInviteListScreen()
-                    is Invite -> GuildInviteScreen(screen.owner)
+                    is GuildScreen.Invite -> GuildInviteScreen(screen.guildId)
                     JoinRequestList -> GuildJoinRequestListScreen()
                     is JoinRequest -> GuildJoinRequestScreen(screen.from)
                     Disband -> GuildDisbandScreen()

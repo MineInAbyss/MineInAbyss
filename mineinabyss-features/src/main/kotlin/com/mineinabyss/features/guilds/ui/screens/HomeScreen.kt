@@ -1,4 +1,4 @@
-package com.mineinabyss.features.guilds.menus.screens
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -6,13 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.mineinabyss.features.guilds.extensions.hasGuild
 import com.mineinabyss.features.guilds.extensions.isGuildOwner
-import com.mineinabyss.features.guilds.menus.CloseButton
-import com.mineinabyss.features.guilds.menus.CreateGuildButton
-import com.mineinabyss.features.guilds.menus.CurrentGuildButton
-import com.mineinabyss.features.guilds.menus.GuildInvitesButton
-import com.mineinabyss.features.guilds.menus.GuildLookupListButton
-import com.mineinabyss.features.guilds.menus.GuildScreen
-import com.mineinabyss.features.guilds.menus.GuildViewModel
+import com.mineinabyss.features.guilds.ui.CloseButton
+import com.mineinabyss.features.guilds.ui.CreateGuildButton
+import com.mineinabyss.features.guilds.ui.CurrentGuildButton
+import com.mineinabyss.features.guilds.ui.GuildInvitesButton
+import com.mineinabyss.features.guilds.ui.GuildLookupListButton
+import com.mineinabyss.features.guilds.ui.GuildScreen
+import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.inventory.CurrentPlayer
 import com.mineinabyss.guiy.inventory.viewModel

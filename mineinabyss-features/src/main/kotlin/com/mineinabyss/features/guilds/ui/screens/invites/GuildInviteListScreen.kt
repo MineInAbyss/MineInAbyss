@@ -1,7 +1,7 @@
-package com.mineinabyss.features.guilds.menus.screens.invites
+package com.mineinabyss.features.guilds.ui.screens.invites
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.features.guilds.menus.BackButton
+import com.mineinabyss.features.guilds.ui.BackButton
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 

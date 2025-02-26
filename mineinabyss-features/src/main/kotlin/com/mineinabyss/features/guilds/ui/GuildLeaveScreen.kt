@@ -1,4 +1,4 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,7 +15,7 @@ import com.mineinabyss.guiy.modifiers.size
 
 @Composable
 fun GuildViewModel.GuildLeaveScreen(guildViewModel: GuildViewModel = viewModel()) {
-    val guild by guildViewModel.guildUiState.collectAsState()
+    val guild by guildViewModel.currentGuild.collectAsState()
     Row(Modifier.at(1, 1)) {
         Button(onClick = {
             player.leaveGuild()

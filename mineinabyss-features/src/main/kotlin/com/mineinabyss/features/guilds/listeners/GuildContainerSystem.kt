@@ -1,6 +1,6 @@
 package com.mineinabyss.features.guilds.listeners
 
-import com.mineinabyss.features.guilds.database.GuildRank
+import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.extensions.getGuildName
 import com.mineinabyss.features.guilds.extensions.getGuildRank
 import com.mineinabyss.features.guilds.extensions.hasGuild

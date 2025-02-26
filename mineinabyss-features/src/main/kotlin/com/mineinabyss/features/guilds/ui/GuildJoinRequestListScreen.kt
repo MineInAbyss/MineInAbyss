@@ -1,11 +1,11 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.guilds.database.GuildJoinQueue
-import com.mineinabyss.features.guilds.database.GuildJoinType
-import com.mineinabyss.features.guilds.database.Players
+import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildMembersTable
 import com.mineinabyss.features.guilds.extensions.hasGuildRequests
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
 import com.mineinabyss.guiy.components.HorizontalGrid
@@ -31,15 +31,15 @@ fun GuildViewModel.GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(abyss.db) {
-            val id = Players.selectAll().where { Players.id eq player.uniqueId }.first()[Players.guild]
+            val id = GuildMembersTable.selectAll().where { GuildMembersTable.id eq player.uniqueId }.first()[GuildMembersTable.guild]
 
-            GuildJoinQueue.selectAll()
-                .where { (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) }
-                .map { row -> row[GuildJoinQueue.playerUUID] }
+            GuildJoinRequestsTable.selectAll()
+                .where { (GuildJoinRequestsTable.guildId eq id) and (GuildJoinRequestsTable.joinType eq GuildJoinType.REQUEST) }
+                .map { row -> row[GuildJoinRequestsTable.playerUUID] }
         }
     }
     HorizontalGrid(modifier.size(9, 4)) {
-        requests.map { it.toOfflinePlayer() }.forEach { newMember ->
+        requests.map { it.value.toOfflinePlayer() }.forEach { newMember ->
             Button(onClick = {
                 if (!player.hasGuildRequests()) player.closeInventory()
                 else nav.open(GuildScreen.JoinRequest(newMember))

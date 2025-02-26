@@ -1,4 +1,4 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import com.mineinabyss.features.guilds.extensions.GuildName
 import com.mineinabyss.features.guilds.extensions.getGuildJoinType
@@ -23,7 +23,7 @@ sealed class GuildScreen(var title: String, val height: Int) {
 
     // Forgot to add to pack so this is fine for now
     data object InviteList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
-    class Invite(val owner: OfflinePlayer) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)
+    class Invite(val guildId: GuildUiState) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)
 
     data object JoinRequestList : GuildScreen(":space_-8::guild_inbox_list_menu:", 5)
     class JoinRequest(val from: OfflinePlayer) : GuildScreen(":space_-8::guild_inbox_handle_menu:", 5)

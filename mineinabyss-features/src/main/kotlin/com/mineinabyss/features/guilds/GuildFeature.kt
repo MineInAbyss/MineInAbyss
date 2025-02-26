@@ -8,13 +8,13 @@ import com.mineinabyss.chatty.commands.ChattyBrigadierCommands
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.guilds.database.GuildRank
+import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.listeners.ChattyGuildListener
 import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
-import com.mineinabyss.features.guilds.menus.GuildMainMenu
+import com.mineinabyss.features.guilds.ui.GuildMainMenu
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.components.items.PlayerProfileCache

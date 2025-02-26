@@ -1,7 +1,7 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.*
-import com.mineinabyss.features.guilds.database.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.guiy.components.Item
@@ -34,6 +34,9 @@ fun GuildViewModel.GuildMemberListScreen() {
     val guildMembers = remember {
         player.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal })
     }
+    val isCaptain = isCaptainOrAbove.collectAsState().value
+    val guild = currentGuild.collectAsState().value
+    if (guild == null) return
 
     Scrollable(
         guildMembers, line, ScrollDirection.VERTICAL,
@@ -41,10 +44,10 @@ fun GuildViewModel.GuildMemberListScreen() {
         previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
         NavbarPosition.START, null
     ) { members ->
-        VerticalGrid(Modifier.at(1, 1).size(5, minOf(guildLevel + 1, 4))) {
+        VerticalGrid(Modifier.at(1, 1).size(5, minOf(guild.level + 1, 4))) {
             members.forEach { (rank, member) ->
                 Button(onClick = {
-                    if (member != player && player.isCaptainOrAbove())
+                    if (member != player && isCaptain)
                         nav.open(GuildScreen.MemberOptions(member))
                 }) {
                     PlayerHead(
@@ -57,7 +60,7 @@ fun GuildViewModel.GuildMemberListScreen() {
         }
     }
 
-    BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
+    BackButton(Modifier.at(0, minOf(guild.level + 1, MAX_CHEST_HEIGHT - 1)))
 
     InviteToGuildButton(Modifier.at(7, 0))
     ManageGuildJoinRequestsButton(Modifier.at(8, 0))
@@ -83,8 +86,9 @@ fun ScrollUpButton(modifier: Modifier = Modifier) {
 @Composable
 fun GuildViewModel.InviteToGuildButton(modifier: Modifier) {
     val guildInvitePaper = TitleItem.of("Player Name").editItemMeta { isHideTooltip = true }
+    val isCaptain = isCaptainOrAbove.collectAsState().value
     Button(
-        enabled = player.isCaptainOrAbove(),
+        enabled = isCaptain,
         modifier = modifier,
         onClick = {
             //if (player.isAboveCaptain()) return@Button
@@ -116,14 +120,13 @@ fun GuildViewModel.InviteToGuildButton(modifier: Modifier) {
 private fun GuildViewModel.ManageGuildJoinRequestsButton(modifier: Modifier) {
     val requestAmount = player.getNumberOfGuildRequests()
     val plural = requestAmount != 1
+    val isCaptain = isCaptainOrAbove.collectAsState().value
     Button(
-        enabled = player.hasGuildRequest(),
+        enabled = player.hasGuildRequest() && isCaptain,
         /* Icon that notifies player there are new invites */
         modifier = modifier,
         onClick = {
-            if (player.isCaptainOrAbove()) {
-                nav.open(GuildScreen.JoinRequestList)
-            }
+            nav.open(GuildScreen.JoinRequestList)
         }
     ) { enabled ->
         if (enabled) Text(
@@ -148,10 +151,11 @@ private fun GuildViewModel.ToggleGuildJoinTypeButton(modifier: Modifier) {
         itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         lore(listOf("<yellow>Currently players can join via:<gold><i> ${joinType.name}".miniMsg()))
     }
+    val isCaptain = isCaptainOrAbove.collectAsState().value
     Button(
+        enabled = isCaptain,
         modifier = modifier,
         onClick = {
-            if (!player.isCaptainOrAbove()) return@Button
             joinType = player.changeGuildJoinType()
             player.openInventory.title(":space_-8:${DecideMenus.decideMemberMenu(player, joinType)}".miniMsg())
         }

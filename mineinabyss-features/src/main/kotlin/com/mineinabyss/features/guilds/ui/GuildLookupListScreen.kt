@@ -1,4 +1,4 @@
-package com.mineinabyss.features.guilds.menus
+package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.extensions.*

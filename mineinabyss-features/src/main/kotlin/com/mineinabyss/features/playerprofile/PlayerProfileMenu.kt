@@ -6,7 +6,7 @@ import com.mineinabyss.components.playerprofile.PlayerProfile
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.guilds.menus.GuildScreen
+import com.mineinabyss.features.guilds.ui.GuildScreen
 import com.mineinabyss.features.helpers.getCosmeticBackpack
 import com.mineinabyss.features.helpers.getCosmeticHat
 import com.mineinabyss.features.helpers.linkedDiscordAccount

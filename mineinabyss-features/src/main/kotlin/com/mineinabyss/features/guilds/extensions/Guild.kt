@@ -8,7 +8,12 @@ import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.guilds.database.*
+import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
+import com.mineinabyss.features.guilds.data.tables.GuildJoinType
+import com.mineinabyss.features.guilds.data.tables.GuildMessagesTable
+import com.mineinabyss.features.guilds.data.tables.GuildRank
+import com.mineinabyss.features.guilds.data.tables.GuildsTable
+import com.mineinabyss.features.guilds.data.tables.GuildMembersTable
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.di.Features
@@ -52,20 +57,20 @@ fun OfflinePlayer.createGuild(guildName: String) {
 
     transaction(abyss.db) {
 
-        val guild = Guilds.selectAll().where { Guilds.name.lowerCase() eq guildName.lowercase() }.firstOrNull()
+        val guild = GuildsTable.selectAll().where { GuildsTable.name.lowerCase() eq guildName.lowercase() }.firstOrNull()
 
         if (guild != null)
             return@transaction player?.error("There is already a guild registered with the name <i>$guildName</i>!")
         else player?.success("Your Guild has been registered with the name <i>$guildName")
 
-        val rowID = Guilds.insert {
+        val rowID = GuildsTable.insert {
             it[name] = guildName
             it[balance] = 0
             it[level] = 1
             it[joinType] = GuildJoinType.ANY
-        } get Guilds.id
+        } get GuildsTable.id
 
-        Players.insert {
+        GuildMembersTable.insert {
             it[id] = uniqueId
             it[this.guild] = rowID
             it[guildRank] = GuildRank.OWNER
@@ -76,7 +81,7 @@ fun OfflinePlayer.createGuild(guildName: String) {
 fun Player.deleteGuild() {
     transaction(abyss.db) {
         /* Find the owners guild */
-        val guildId = Players.selectAll().where { Players.id eq uniqueId }.firstOrNull()?.get(Players.guild)?.value
+        val guildId = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.firstOrNull()?.get(GuildMembersTable.guild)?.value
             ?: return@transaction
 
         if (getGuildRank() != GuildRank.OWNER) {
@@ -85,14 +90,14 @@ fun Player.deleteGuild() {
         }
 
         /* Message to all guild-members */
-        Players.selectAll().where { (Players.guild eq guildId) and (Players.id neq uniqueId) }
+        GuildMembersTable.selectAll().where { (GuildMembersTable.guild eq guildId) and (GuildMembersTable.id neq uniqueId) }
             .forEach { row ->
                 val deleteGuildMessage = "<red>The Guild you were in has been deleted by the Owner."
-                val player = Bukkit.getPlayer(row[Players.id].value)
+                val player = Bukkit.getPlayer(row[GuildMembersTable.id].value)
 
-                player?.error(deleteGuildMessage) ?: GuildMessageQueue.insert {
+                player?.error(deleteGuildMessage) ?: GuildMessagesTable.insert {
                     it[content] = deleteGuildMessage
-                    it[playerUUID] = row[Players.id].value
+                    it[playerUUID] = row[GuildMembersTable.id].value
                 }
             }
 
@@ -121,17 +126,17 @@ fun Player.deleteGuild() {
         }
 
         /* Delete join-requests & invites if the guild is deleted */
-        GuildJoinQueue.deleteWhere {
-            GuildJoinQueue.guildId eq guildId
+        GuildJoinRequestsTable.deleteWhere {
+            GuildJoinRequestsTable.guildId eq guildId
         }
 
         /* Remove guild entry from Guilds db thus removing all members */
-        Guilds.deleteWhere {
+        GuildsTable.deleteWhere {
             id eq guildId
         }
 
-        Players.deleteWhere {
-            Players.guild eq guildId
+        GuildMembersTable.deleteWhere {
+            GuildMembersTable.guild eq guildId
         }
 
         /* Message to owner */
@@ -139,63 +144,11 @@ fun Player.deleteGuild() {
     }
 }
 
-//TODO Make sure guild chatname is properly updated when guild name is changed
-fun Player.changeStoredGuildName(newGuildName: String) {
-    transaction(abyss.db) {
-        val oldGuildName = getGuildName() ?: return@transaction
-        val guild = Guilds.selectAll().where { Guilds.name.lowerCase() eq newGuildName.lowercase() }.firstOrNull()
-
-        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
-
-
-
-        if (guild != null) {
-            error("There is already a guild registered with this name!")
-            return@transaction
-        }
-
-        // Update the guildchat ID on online players, rest handled on join
-        abyss.plugin.launch {
-            this@changeStoredGuildName.getGuildMembers().mapNotNull { it.player.player }.forEach {
-                val gearyPlayer = it.toGeary()
-                val channelData = gearyPlayer.get<ChannelData>() ?: return@forEach
-                if (channelData.channelId == oldGuildName.guildChatId())
-                    gearyPlayer.setPersisting(channelData.copy(channelId = newGuildName.guildChatId()))
-                chatty.config.channels -= oldGuildName.guildChatId()
-                newGuildName.guildChat()
-            }
-        }
-
-        Guilds.update({ Guilds.id eq guildId }) {
-            it[name] = newGuildName
-        }
-
-        val guildName = getGuildName()
-        val changedNameMessage =
-            "<yellow>The Guild you are in has been renamed to <gold><i>$guildName!"
-        /* Message to all guild-members */
-        Players.selectAll().where { (Players.guild eq guildId) and (Players.id neq uniqueId) }
-            .forEach { row ->
-
-                val player = Bukkit.getPlayer(row[Players.id].value)
-                if (player != null) {
-                    player.info(changedNameMessage)
-                } else {
-                    GuildMessageQueue.insert {
-                        it[content] = changedNameMessage
-                        it[playerUUID] = row[Players.id].value
-                    }
-                }
-            }
-        success("Your guild was successfully renamed to <gold><i>$guildName!")
-    }
-}
-
 fun Player.changeGuildJoinType(): GuildJoinType {
     return transaction(abyss.db) {
-        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
+        val guildId = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.single()[GuildMembersTable.guild]
 
-        val type = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.joinType]
+        val type = GuildsTable.selectAll().where { GuildsTable.id eq guildId }.single()[GuildsTable.joinType]
 
         val newType = when (type) {
             GuildJoinType.ANY -> GuildJoinType.REQUEST
@@ -203,7 +156,7 @@ fun Player.changeGuildJoinType(): GuildJoinType {
             GuildJoinType.REQUEST -> GuildJoinType.INVITE
         }
 
-        Guilds.update({ Guilds.id eq guildId }) {
+        GuildsTable.update({ GuildsTable.id eq guildId }) {
             it[joinType] = newType
         }
 
@@ -213,12 +166,12 @@ fun Player.changeGuildJoinType(): GuildJoinType {
 
 fun Player.getGuildMembers(): List<GuildMember> {
     return transaction(abyss.db) {
-        val playerRow = Players.selectAll().where { Players.id eq uniqueId }.single()
+        val playerRow = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.single()
 
-        val guildId = playerRow[Players.guild]
+        val guildId = playerRow[GuildMembersTable.guild]
 
-        Players.selectAll().where { (Players.guild eq guildId) }.map { row ->
-            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.id].value))
+        GuildMembersTable.selectAll().where { (GuildMembersTable.guild eq guildId) }.map { row ->
+            GuildMember(row[GuildMembersTable.guildRank], Bukkit.getOfflinePlayer(row[GuildMembersTable.id].value))
         }
     }
 }
@@ -226,32 +179,32 @@ fun Player.getGuildMembers(): List<GuildMember> {
 fun String.getGuildMembers(): List<GuildMember> {
     return transaction(abyss.db) {
         val guild =
-            Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.singleOrNull()?.get(Guilds.id)
+            GuildsTable.selectAll().where { GuildsTable.name.lowerCase<String>() eq lowercase() }.singleOrNull()?.get(GuildsTable.id)
                 ?: return@transaction emptyList()
 
-        Players.selectAll().where { (Players.guild eq guild) }.map { row ->
-            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.id].value))
+        GuildMembersTable.selectAll().where { (GuildMembersTable.guild eq guild) }.map { row ->
+            GuildMember(row[GuildMembersTable.guildRank], Bukkit.getOfflinePlayer(row[GuildMembersTable.id].value))
         }
     }
 }
 
 fun getAllGuilds(): List<GuildJoin> {
     return transaction(abyss.db) {
-        return@transaction Guilds.selectAll()
-            .map { row -> GuildJoin(row[Guilds.name], row[Guilds.joinType], row[Guilds.level]) }
+        return@transaction GuildsTable.selectAll()
+            .map { row -> GuildJoin(row[GuildsTable.name], row[GuildsTable.joinType], row[GuildsTable.level]) }
     }
 }
 
 fun getAllGuildNames(): List<String> {
     return transaction(abyss.db) {
-        return@transaction Guilds.selectAll().map { row -> row[Guilds.name] }
+        return@transaction GuildsTable.selectAll().map { row -> row[GuildsTable.name] }
     }
 }
 
 fun GuildName.getGuildId(): Int? {
     return transaction(abyss.db) {
-        return@transaction Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.firstOrNull()
-            ?.get(Guilds.id)
+        return@transaction GuildsTable.selectAll().where { GuildsTable.name.lowerCase<String>() eq lowercase() }.firstOrNull()
+            ?.get(GuildsTable.id)
             ?.value
     }
 }
@@ -259,7 +212,7 @@ fun GuildName.getGuildId(): Int? {
 fun GuildName.clearGuildJoinRequests() {
     val guildId = getGuildId() ?: return
     transaction(abyss.db) {
-        GuildJoinQueue.deleteWhere {
+        GuildJoinRequestsTable.deleteWhere {
             (this.guildId eq guildId) and (joinType eq GuildJoinType.REQUEST)
         }
     }
@@ -268,7 +221,7 @@ fun GuildName.clearGuildJoinRequests() {
 fun GuildName.clearGuildInvites() {
     val guildId = getGuildId() ?: return
     transaction(abyss.db) {
-        GuildJoinQueue.deleteWhere {
+        GuildJoinRequestsTable.deleteWhere {
             (this.guildId eq guildId) and (joinType eq GuildJoinType.INVITE)
         }
     }
@@ -287,9 +240,9 @@ fun displayGuildList(queryName: String? = null): List<GuildJoin> {
 
 fun GuildName.getOwnerFromGuildName(): OfflinePlayer {
     return transaction(abyss.db) {
-        val guild = Guilds.selectAll().where { Guilds.name eq this@getOwnerFromGuildName }.first()[Guilds.id]
+        val guild = GuildsTable.selectAll().where { GuildsTable.name eq this@getOwnerFromGuildName }.first()[GuildsTable.id]
 
-        val player = Players.selectAll().where { Players.guild eq guild }.first()[Players.id].value
+        val player = GuildMembersTable.selectAll().where { GuildMembersTable.guild eq guild }.first()[GuildMembersTable.id].value
 
         return@transaction Bukkit.getOfflinePlayer(player)
     }
@@ -366,10 +319,10 @@ fun Player.levelUpGuild() {
     val guildMembers = getGuildMembers().filter { it.player.uniqueId != uniqueId }.map { it.player }
     updateGuildBalance(-cost)
     transaction(abyss.db) {
-        val lvl = Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq guildName.lowercase() }.firstOrNull()
-            ?.get(Guilds.level) ?: return@transaction 0
+        val lvl = GuildsTable.selectAll().where { GuildsTable.name.lowerCase<String>() eq guildName.lowercase() }.firstOrNull()
+            ?.get(GuildsTable.level) ?: return@transaction 0
 
-        Guilds.update({ Guilds.name.lowerCase() eq guildName.lowercase() }) {
+        GuildsTable.update({ GuildsTable.name.lowerCase() eq guildName.lowercase() }) {
             it[level] = lvl + 1
         }
     }
@@ -383,7 +336,7 @@ fun Player.levelUpGuild() {
             (member as Player).info(lvlUpMessage)
         } else {
             transaction(abyss.db) {
-                GuildMessageQueue.insert {
+                GuildMessagesTable.insert {
                     it[content] = lvlUpMessage
                     it[playerUUID] = member.uniqueId
                 }
@@ -410,11 +363,11 @@ fun GuildName.getGuildLevelUpCost(): Int? {
 
 private fun Player.updateGuildBalance(amount: Int) {
     transaction(abyss.db) {
-        val guildId = Players.selectAll().where { Players.id eq uniqueId }.single()[Players.guild]
+        val guildId = GuildMembersTable.selectAll().where { GuildMembersTable.id eq uniqueId }.single()[GuildMembersTable.guild]
 
-        val bal = Guilds.selectAll().where { Guilds.id eq guildId }.single()[Guilds.balance]
+        val bal = GuildsTable.selectAll().where { GuildsTable.id eq guildId }.single()[GuildsTable.balance]
 
-        Guilds.update({ Guilds.id eq guildId }) {
+        GuildsTable.update({ GuildsTable.id eq guildId }) {
             it[balance] = (bal + amount)
         }
     }
@@ -422,9 +375,9 @@ private fun Player.updateGuildBalance(amount: Int) {
 
 private fun GuildName.updateGuildBalance(amount: Int) {
     transaction(abyss.db) {
-        val bal = Guilds.selectAll().where { Guilds.name eq this@updateGuildBalance }.single()[Guilds.balance]
+        val bal = GuildsTable.selectAll().where { GuildsTable.name eq this@updateGuildBalance }.single()[GuildsTable.balance]
 
-        Guilds.update({ Guilds.name eq this@updateGuildBalance }) {
+        GuildsTable.update({ GuildsTable.name eq this@updateGuildBalance }) {
             it[balance] = (bal + amount)
         }
     }
