@@ -1,7 +1,7 @@
 [versions]
 gearyPaper = "0.31.8"
 guiy = "0.12.5"
-deeperworld = "0.11.9"
+deeperworld = "0.11.13"
 chatty = "0.8.10"
 eternalfortune = "0.4-SNAPSHOT"
 packy = "0.7.3"
