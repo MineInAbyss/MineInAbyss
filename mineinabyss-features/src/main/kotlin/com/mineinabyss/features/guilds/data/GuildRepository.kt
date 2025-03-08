@@ -67,6 +67,10 @@ class GuildRepository(
         true
     }
 
+    suspend fun leaveGuild(player: UUID) = transaction {
+        GuildPlayerEntity.findById(player)?.delete()
+    }
+
     suspend fun member(uuid: UUID): GuildMemberUiState? = transaction {
         GuildPlayerEntity.findById(uuid)?.toUiState()
     }

@@ -16,7 +16,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
-fun GuildViewModel.GuildJoinRequestScreen(from: OfflinePlayer) {
+fun GuildJoinRequestScreen(from: OfflinePlayer) {
     PlayerLabel(Modifier.at(4, 0), from)
     AcceptGuildRequestButton(Modifier.at(1, 1), from)
     DeclineGuildRequestButton(Modifier.at(5, 1), from)
@@ -29,7 +29,7 @@ fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier 
 }
 
 @Composable
-fun GuildViewModel.AcceptGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) {
+fun AcceptGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) {
     val canAccept = canAcceptNewMembers.collectAsState().value
     Button(
         onClick = {
@@ -53,7 +53,7 @@ fun GuildViewModel.AcceptGuildRequestButton(modifier: Modifier, newMember: Offli
 }
 
 @Composable
-fun GuildViewModel.DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
+fun DeclineGuildRequestButton(modifier: Modifier, newMember: OfflinePlayer) = Button(
     modifier = modifier,
     onClick = {
         //TODO
@@ -76,16 +76,4 @@ fun GuildViewModel.DeclineGuildRequestButton(modifier: Modifier, newMember: Offl
     }
 ) {
     Text("<red>Decline GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3, 3))
-}
-
-@Composable
-fun GuildViewModel.DeclineAllGuildRequestsButton(modifier: Modifier) = Button(
-    modifier = modifier,
-    onClick = {
-        player.removeGuildQueueEntries(GuildJoinType.REQUEST, true)
-        player.info("<yellow><b>❌ <yellow>You denied all join-requests for your guild!")
-        nav.back()
-    }
-) {
-    Text("<red>Decline All Requests".miniMsg())
 }

@@ -22,12 +22,13 @@ fun ShopUIScope.ShopHomeScreen() {
     CloseButton(Modifier.at(0, MAX_CHEST_HEIGHT - 1))
 }
 
+//TODO navigation
 @Composable
 fun ShopUIScope.OpenBuyMenu(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         enabled = shopKeeper.buying.isNotEmpty(),
-        onClick = { nav.open(ShopScreen.Buy(shopKeeper)) },
+//        onClick = { nav.open(ShopScreen.Buy(shopKeeper)) },
     ) { enabled ->
         if (enabled) Text(
             "<gold><b>Sought after Wares".miniMsg(),
@@ -45,7 +46,7 @@ fun ShopUIScope.OpenSellMenu(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         enabled = shopKeeper.selling.isNotEmpty(),
-        onClick = { nav.open(ShopScreen.Sell(shopKeeper)) },
+//        onClick = { nav.open(ShopScreen.Sell(shopKeeper)) },
     ) { enabled ->
         if (enabled) Text(
             "<gold><b>Wares for Sale".miniMsg(),
@@ -63,7 +64,7 @@ fun ShopUIScope.OpenSpecialMenu(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
         enabled = shopKeeper.specialTrades.isNotEmpty(),
-        onClick = { nav.open(ShopScreen.Special(shopKeeper)) },
+//        onClick = { nav.open(ShopScreen.Special(shopKeeper)) },
     ) { enabled ->
         if (enabled) Text(
             "<gold><b>Special Trade Offers".miniMsg(),

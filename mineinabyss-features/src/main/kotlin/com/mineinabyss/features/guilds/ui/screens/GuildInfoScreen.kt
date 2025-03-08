@@ -3,53 +3,65 @@ package com.mineinabyss.features.guilds.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.mineinabyss.components.PlayerData
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.ui.BackButton
+import com.mineinabyss.features.guilds.ui.DecideMenus
 import com.mineinabyss.features.guilds.ui.GuildScreen
 import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.button.Button
+import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.components.items.Text
-import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.CurrentPlayer
-import com.mineinabyss.guiy.inventory.viewModel
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.navigation.UniversalScreens
+import com.mineinabyss.guiy.viewmodel.viewModel
 import com.mineinabyss.idofront.items.editItemMeta
-import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.entity.Player
 
 @Composable
 fun GuildInfoScreen(
-    player: Player = CurrentPlayer,
+    guildViewModel: GuildViewModel = viewModel(),
+    onNavigateToRename: () -> Unit,
+    onNavigateToMembersList: () -> Unit,
+    onNavigateToDisband: () -> Unit,
+    onNavigateToLeave: () -> Unit,
 ) {
-    val isOwner = player.isGuildOwner()
-    Column(Modifier.at(2, 0)) {
-        Row {
-            GuildMemberManagement()
-            Spacer(width = 1)
-            if (isOwner) GuildRenameButton()
-            else CurrentGuildInfoButton()
+    val memberInfo = guildViewModel.memberInfo.collectAsState().value ?: return
+    val isOwner = memberInfo.isOwner
+    Chest(":space_-8:${DecideMenus.decideInfoMenu(isOwner)}", Modifier.height(6)) {
+        Column(Modifier.at(2, 0)) {
+            Row {
+                Button(onClick = onNavigateToMembersList) {
+                    Text("<green><b>Guild Member List", modifier = Modifier.size(2, 2))
+                }
+                Spacer(width = 1)
+                if (isOwner) GuildRenameButton(onClick = onNavigateToRename)
+                else CurrentGuildInfoButton()
+            }
+            Spacer(height = 1)
+            Row {
+                GuildHouseButton()
+                Spacer(width = 1)
+                GuildRelationshipButton()
+            }
         }
-        Spacer(height = 1)
-        Row {
-            GuildHouseButton()
-            Spacer(width = 1)
-            GuildRelationshipButton()
-        }
+
+        if (isOwner) {
+            GuildLevelUpButton(Modifier.at(8, 0))
+            GuildDisbandButton(Modifier.at(8, 5), onClick = onNavigateToDisband)
+        } else GuildLeaveButton(Modifier.at(8, 5), onClick = onNavigateToLeave)
+
+        BackButton(Modifier.at(0, 5))
     }
-
-    if (isOwner) {
-        GuildLevelUpButton(Modifier.at(8, 0))
-        GuildDisbandButton(Modifier.at(8, 5))
-    } else GuildLeaveButton(Modifier.at(8, 5))
-
-    BackButton(Modifier.at(0, 5))
 }
 
 @Composable
@@ -71,27 +83,10 @@ fun CurrentGuildInfoButton(
 }
 
 @Composable
-fun GuildMemberManagement(
-    modifier: Modifier = Modifier,
-    player: Player = CurrentPlayer,
-    guildViewModel: GuildViewModel = viewModel(),
-) {
-    val guild = guildViewModel.currentGuild.collectAsState().value
-    if (guild == null) return
-    Button(
-        modifier = modifier,
-        onClick = {
-            guildViewModel.nav.open(GuildScreen.MemberList(guild.level, player))
-        }
-    ) {
-        Text("<green><b>Guild Member List", modifier = Modifier.size(2, 2))
-    }
-}
-
-@Composable
 fun GuildRenameButton(
     modifier: Modifier = Modifier,
     guildViewModel: GuildViewModel = viewModel(),
+    onClick: () -> Unit
 ) {
     val guild by guildViewModel.currentGuild.collectAsState()
     val renameItem = TitleItem.of(guild?.name ?: "Guild Name").editItemMeta { isHideTooltip = true }
@@ -99,7 +94,7 @@ fun GuildRenameButton(
     Button(
         enabled = canEdit,
         modifier = modifier,
-        onClick = {
+        onClick = onClick /*{
             guildViewModel.nav.open(
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
@@ -113,7 +108,7 @@ fun GuildRenameButton(
                             listOf(AnvilGUI.ResponseAction.close())
                         }
                 ))
-        }
+        }*/
     ) {
         Text(
             "<gold><b>Change Guild Name",
@@ -189,11 +184,12 @@ fun GuildDisbandButton(
     modifier: Modifier = Modifier,
     player: Player = CurrentPlayer,
     guild: GuildViewModel = viewModel(),
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
         enabled = (player.isGuildOwner()),
-        onClick = { guild.nav.open(GuildScreen.Disband) }
+        onClick = onClick//{ guild.nav.open(GuildScreen.Disband) }
     ) { enabled ->
         if (enabled)
             Text("<red><b>Disband Guild")
@@ -203,13 +199,16 @@ fun GuildDisbandButton(
 }
 
 @Composable
-fun GuildLeaveButton(modifier: Modifier, player: Player = CurrentPlayer, guild: GuildViewModel = viewModel()) {
+fun GuildLeaveButton(
+    modifier: Modifier,
+    player: Player = CurrentPlayer,
+    guild: GuildViewModel = viewModel(),
+    onClick: () -> Unit,
+) {
     Button(
         modifier = modifier,
         enabled = player.hasGuild() && !player.isGuildOwner(),
-        onClick = {
-            guild.nav.open(GuildScreen.Leave)
-        }) { enabled ->
+        onClick = onClick) { enabled ->
         if (enabled) Text("<red><i>Leave Guild")
         else Text("<red><i><st>Leave Guild")
     }

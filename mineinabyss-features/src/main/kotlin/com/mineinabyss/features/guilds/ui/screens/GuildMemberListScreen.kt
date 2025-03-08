@@ -7,7 +7,6 @@ import com.mineinabyss.features.guilds.ui.BackButton
 import com.mineinabyss.features.guilds.ui.GuildScreen
 import com.mineinabyss.features.guilds.ui.GuildUiState
 import com.mineinabyss.features.guilds.ui.GuildViewModel
-import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
@@ -17,22 +16,20 @@ import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
-import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.inventory.CurrentPlayer
-import com.mineinabyss.guiy.inventory.viewModel
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.guiy.viewmodel.viewModel
 import com.mineinabyss.idofront.messaging.error
-import net.wesjd.anvilgui.AnvilGUI
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 @Composable
 fun GuildMemberListScreen(
     viewModel: GuildViewModel = viewModel(),
+    navigateToMemberOptions: (player: OfflinePlayer) -> Unit, // viewModel.nav.open(GuildScreen.MemberOptions(member.toOfflinePlayer()))
+    navigateToJoinRequests: () -> Unit, // viewModel.nav.open(GuildScreen.JoinRequestList)
 ) {
     var line by remember { mutableStateOf(0) }
     val guild = viewModel.currentGuild.collectAsState().value ?: return
@@ -40,16 +37,19 @@ fun GuildMemberListScreen(
     val player = CurrentPlayer
 
     Scrollable(
-        guild.members, line, ScrollDirection.VERTICAL,
-        nextButton = { ScrollDownButton(Modifier.at(0, 3).clickable { line++ }) },
-        previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
-        NavbarPosition.START, null
+        items = guild.members,
+        line = line,
+        onLineChange = { line = it },
+        scrollDirection = ScrollDirection.VERTICAL,
+        nextButton = { ScrollDownButton(Modifier.at(0, 3)) },
+        previousButton = { ScrollUpButton(Modifier.at(0, 1)) },
+        navbarPosition = NavbarPosition.START, navbarBackground = null
     ) { members ->
         VerticalGrid(Modifier.at(1, 1).size(5, minOf(guild.level + 1, 4))) {
             members.forEach { (name, member, rank) ->
                 Button(onClick = {
                     if (member != player && isCaptain)
-                        viewModel.nav.open(GuildScreen.MemberOptions(member.toOfflinePlayer()))
+                        navigateToMemberOptions(member.toOfflinePlayer())
                 }) {
                     PlayerHead(
                         member.toOfflinePlayer(), "<gold><i>${name}",
@@ -70,7 +70,7 @@ fun GuildMemberListScreen(
         enabled = requests.isNotEmpty() && isCaptain,
         /* Icon that notifies player there are new invites */
         modifier = Modifier.at(8, 0),
-        onClick = { viewModel.nav.open(GuildScreen.JoinRequestList) }
+        onClick = { navigateToJoinRequests() }
     ) { enabled ->
         if (enabled) Text(
             "<dark_green><b>Manage Guild GuildJoin Requests",
@@ -129,19 +129,20 @@ fun InviteToGuildButton(
                 player.error("Change it to 'ANY' or 'INVITE-only' mode to invite others.")
                 return@Button
             }
-            viewModel.nav.open(
-                UniversalScreens.Anvil(
-                    AnvilGUI.Builder()
-                        .title(":space_-61::guild_search_menu:")
-                        .itemLeft(TitleItem.of("Player Name").editItemMeta { isHideTooltip = true })
-                        .itemOutput(TitleItem.transparentItem)
-                        .plugin(guiyPlugin)
-                        .onClose { viewModel.nav.back() }
-                        .onClick { _, snapshot ->
-                            viewModel.invitePlayer(snapshot.text)
-                            listOf(AnvilGUI.ResponseAction.close())
-                        }
-                ))
+            //TODO
+//            viewModel.nav.open(
+//                UniversalScreens.Anvil(
+//                    AnvilGUI.Builder()
+//                        .title(":space_-61::guild_search_menu:")
+//                        .itemLeft(TitleItem.of("Player Name").editItemMeta { isHideTooltip = true })
+//                        .itemOutput(TitleItem.transparentItem)
+//                        .plugin(guiyPlugin)
+//                        .onClose { viewModel.nav.back() }
+//                        .onClick { _, snapshot ->
+//                            viewModel.invitePlayer(snapshot.text)
+//                            listOf(AnvilGUI.ResponseAction.close())
+//                        }
+//                ))
         }
     ) {
         Text("<yellow><b>INVITE Player to Guild")

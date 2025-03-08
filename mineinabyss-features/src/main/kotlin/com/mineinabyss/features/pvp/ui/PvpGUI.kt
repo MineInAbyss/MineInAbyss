@@ -13,12 +13,12 @@ import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.inventory.CurrentPlayer
-import com.mineinabyss.guiy.inventory.viewModel
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.viewmodel.viewModel
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import org.bukkit.Sound
@@ -27,7 +27,7 @@ import org.bukkit.entity.Player
 @Composable
 fun PvpPrompt(player: Player = CurrentPlayer) {
     viewModel { PlayerDataViewModel(player) }
-    Chest(":space_-8::pvp_menu_toggle:", Modifier.height(4), onClose = { reopen() }) {
+    Chest(":space_-8::pvp_menu_toggle:", Modifier.height(4), onClose = {}) {
         EnablePvp(Modifier.at(1, 1))
         DisablePvp(Modifier.at(5, 1))
         TogglePvpPrompt(Modifier.at(8, 3))

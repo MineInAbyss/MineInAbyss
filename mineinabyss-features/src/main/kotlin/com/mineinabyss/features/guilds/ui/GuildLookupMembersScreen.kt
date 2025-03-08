@@ -23,7 +23,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
-fun GuildViewModel.GuildLookupMembersScreen(guildName: String) {
+fun GuildLookupMembersScreen(guildName: String) {
     val owner = guildName.getOwnerFromGuildName()
     val guildLevel = owner.getGuildLevel()
     val height = minOf(guildLevel.plus(2), MAX_CHEST_HEIGHT - 1)
@@ -34,9 +34,11 @@ fun GuildViewModel.GuildLookupMembersScreen(guildName: String) {
     }
 
     Scrollable(
-        guildMembers, line, ScrollDirection.VERTICAL,
-        nextButton = { ScrollDownButton(Modifier.at(0, 4).clickable { line++; this.clickType }) },
-        previousButton = { ScrollUpButton(Modifier.at(0, 1).clickable { line-- }) },
+        guildMembers, line,
+        onLineChange = { line = it },
+        ScrollDirection.VERTICAL,
+        nextButton = { ScrollDownButton(Modifier.at(0, 4)) },
+        previousButton = { ScrollUpButton(Modifier.at(0, 1)) },
         NavbarPosition.END, null
     ) { members ->
         VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {
@@ -70,7 +72,7 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
 }
 
 @Composable
-fun GuildViewModel.RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, guildName: String) {
+fun RequestToJoinButton(modifier: Modifier, owner: OfflinePlayer, guildName: String) {
     val inviteOnly = owner.getGuildJoinType() == GuildJoinType.INVITE
     Button(modifier = modifier, onClick = {
         if (!inviteOnly && !player.hasGuild())

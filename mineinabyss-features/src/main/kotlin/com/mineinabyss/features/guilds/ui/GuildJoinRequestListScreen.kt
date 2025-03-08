@@ -7,27 +7,43 @@ import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.data.tables.GuildMembersTable
 import com.mineinabyss.features.guilds.extensions.hasGuildRequests
+import com.mineinabyss.features.guilds.extensions.removeGuildQueueEntries
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.items.PlayerHead
 import com.mineinabyss.guiy.components.items.PlayerHeadType
+import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.navigation.LocalBackGestureDispatcher
+import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun GuildViewModel.GuildJoinRequestListScreen() {
+fun GuildJoinRequestListScreen() {
+    val gestures = LocalBackGestureDispatcher.current
     GuildJoinRequestButton(Modifier.at(1, 1))
-    DeclineAllGuildRequestsButton(Modifier.at(8, 4))
+    Button(
+        modifier = Modifier.at(8, 4),
+        onClick = {
+            player.removeGuildQueueEntries(GuildJoinType.REQUEST, true)
+            player.info("<yellow><b>❌ <yellow>You denied all join-requests for your guild!")
+            gestures?.onBack()
+        }
+    ) {
+        Text("<red>Decline All Requests".miniMsg())
+    }
+
     BackButton(Modifier.at(2, 4))
 }
 
 @Composable
-fun GuildViewModel.GuildJoinRequestButton(modifier: Modifier = Modifier) {
+fun GuildJoinRequestButton(modifier: Modifier = Modifier) {
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(abyss.db) {
@@ -42,7 +58,7 @@ fun GuildViewModel.GuildJoinRequestButton(modifier: Modifier = Modifier) {
         requests.map { it.value.toOfflinePlayer() }.forEach { newMember ->
             Button(onClick = {
                 if (!player.hasGuildRequests()) player.closeInventory()
-                else nav.open(GuildScreen.JoinRequest(newMember))
+                else TODO() //nav.open(GuildScreen.JoinRequest(newMember))
             }) {
                 PlayerHead(
                     newMember,

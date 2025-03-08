@@ -15,10 +15,11 @@ import com.mineinabyss.guiy.components.items.PlayerHead
 import com.mineinabyss.guiy.components.items.PlayerHeadType
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.inventory.CurrentPlayer
-import com.mineinabyss.guiy.inventory.viewModel
+import com.mineinabyss.guiy.viewmodel.viewModel
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.viewmodel.viewModel
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.entity.Player
@@ -26,10 +27,21 @@ import org.bukkit.entity.Player
 @Composable
 fun GuildInviteListScreen(
     guildViewModel: GuildViewModel = viewModel(),
+    player: Player = CurrentPlayer,
+    navigateToMembersList: () -> Unit = {},
 ) {
     val guild = guildViewModel.currentGuild.collectAsState().value ?: return
     GuildInvites(Modifier.at(1, 1))
-    DenyAllInvitesButton(Modifier.at(8, 4), guild)
+    Button(
+        onClick = {
+            player.removeGuildQueueEntries(GuildJoinType.INVITE, true)
+            navigateToMembersList()
+            player.info("<gold><b>❌<yellow>You denied all invites!")
+        },
+        modifier = Modifier.at(8, 4)
+    ) {
+        Text("<red>Decline All Invites".miniMsg())
+    }
     BackButton(Modifier.at(2, 4))
 }
 
@@ -39,11 +51,12 @@ fun GuildInvites(
     modifier: Modifier = Modifier,
     player: Player = CurrentPlayer,
     guildViewModel: GuildViewModel = viewModel(),
+    navigateToInvites: () -> Unit = {}, //guildViewModel.nav.open(GuildScreen.InviteScreen(invite.guild))
 ) {
     val invites by guildViewModel.invites.collectAsState()
     HorizontalGrid(modifier.size(9, 4)) {
         invites.sortedBy { it.guild.memberCount }.forEach { invite ->
-            Button(onClick = { guildViewModel.nav.open(GuildScreen.Invite(invite.guild)) }) {
+            Button(onClick = { navigateToInvites() }) {
                 PlayerHead(
                     player,
                     "<gold><b>Guildname: <yellow><i>${invite.guild.name}",
@@ -53,24 +66,5 @@ fun GuildInvites(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun DenyAllInvitesButton(
-    modifier: Modifier,
-    guild: GuildUiState,
-    guildViewModel: GuildViewModel = viewModel(),
-    player: Player = CurrentPlayer,
-) {
-    Button(
-        onClick = {
-            player.removeGuildQueueEntries(GuildJoinType.INVITE, true)
-            guildViewModel.nav.open(GuildScreen.MemberList(guild.level, player))
-            player.info("<gold><b>❌<yellow>You denied all invites!")
-        },
-        modifier = modifier
-    ) {
-        Text("<red>Decline All Invites".miniMsg())
     }
 }

@@ -7,10 +7,11 @@ import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.features.guilds.ui.components.GuildLabel
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.button.Button
-import com.mineinabyss.guiy.inventory.viewModel
+import com.mineinabyss.guiy.viewmodel.viewModel
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.navigation.LocalBackGestureDispatcher
 
 @Composable
 fun GuildInviteScreen(
@@ -18,17 +19,21 @@ fun GuildInviteScreen(
     guildViewModel: GuildViewModel = viewModel(),
 ) {
     GuildLabel(invitedTo, Modifier.at(4, 0))
-
+    val gestures = LocalBackGestureDispatcher.current
     Button(
         modifier = Modifier.at(1, 1),
-        onClick = { guildViewModel.acceptInvite(invitedTo.id) },
+        onClick = { guildViewModel.acceptInvite(invitedTo.id, onSuccess = { gestures?.onBack() }) },
     ) {
         Text("<green>Accept INVITE", modifier = Modifier.size(3, 3))
     }
 
     Button(
         modifier = Modifier.at(5, 1),
-        onClick = { guildViewModel.declineInvite(invitedTo.id) }
+        onClick = { guildViewModel.declineInvite(invitedTo.id, onSuccess = { remaining ->
+            gestures?.onBack()
+//            if (remaining > 1)  nav.back()
+//            else nav.reset()
+        }) }
     ) {
         Text("<red>Decline INVITE", modifier = Modifier.size(3, 3))
     }

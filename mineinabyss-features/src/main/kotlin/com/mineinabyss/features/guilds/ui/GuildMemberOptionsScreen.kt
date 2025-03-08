@@ -16,7 +16,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 
 @Composable
-fun GuildViewModel.GuildMemberOptionsScreen(member: OfflinePlayer) {
+fun GuildMemberOptionsScreen(member: OfflinePlayer) {
     Row(modifier = Modifier.at(0, 1)) {
         ChangeMemberRankButton(member, GuildRank.STEWARD, Modifier.size(2, 2))
         Spacer(1)
@@ -30,14 +30,14 @@ fun GuildViewModel.GuildMemberOptionsScreen(member: OfflinePlayer) {
 }
 
 @Composable
-fun GuildViewModel.ChangeMemberRankButton(member: OfflinePlayer, rank: GuildRank, modifier: Modifier = Modifier) {
+fun ChangeMemberRankButton(member: OfflinePlayer, rank: GuildRank, modifier: Modifier = Modifier) {
     val isCaptain = isCaptainOrAbove.collectAsState().value
     Button(
         modifier = modifier,
         enabled = isCaptain,
         onClick = {
             player.setGuildRank(member, rank)
-            nav.back()
+//            nav.back() // TODO navigation
         }
     ) {
         Text("<dark_aqua>Change GuildRank to <blue>$rank".miniMsg(), modifier = modifier)
@@ -45,12 +45,12 @@ fun GuildViewModel.ChangeMemberRankButton(member: OfflinePlayer, rank: GuildRank
 }
 
 @Composable
-fun GuildViewModel.KickGuildMemberButton(member: OfflinePlayer, modifier: Modifier = Modifier) =
+fun KickGuildMemberButton(member: OfflinePlayer, modifier: Modifier = Modifier) =
     Button(
         modifier = modifier,
         onClick = {
             player.kickPlayerFromGuild(member)
-            nav.back()
+//            nav.back() // TODO navigation
         }
     ) {
         Text("<red><i>Kick Member".miniMsg())

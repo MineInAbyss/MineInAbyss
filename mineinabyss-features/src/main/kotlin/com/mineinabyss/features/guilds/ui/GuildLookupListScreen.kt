@@ -1,8 +1,9 @@
 package com.mineinabyss.features.guilds.ui
 
 import androidx.compose.runtime.*
-import com.mineinabyss.features.guilds.extensions.*
-import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.features.guilds.extensions.displayGuildList
+import com.mineinabyss.features.guilds.extensions.getGuildMemberCount
+import com.mineinabyss.features.guilds.extensions.getOwnerFromGuildName
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.items.PlayerHead
@@ -10,24 +11,21 @@ import com.mineinabyss.guiy.components.items.PlayerHeadType
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.Paginated
-import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import net.wesjd.anvilgui.AnvilGUI
 
 @Composable
-fun GuildViewModel.GuildLookupListScreen() {
+fun GuildLookupListScreen() {
     var pageNum by remember { mutableStateOf(0) }
     var guildPageList by remember { mutableStateOf(displayGuildList()) }
 
     Paginated(
         guildPageList, pageNum,
-        nextButton = { NextPageButton(Modifier.at(5, 0)) { pageNum++ } },
-        previousButton = { PreviousPageButton(Modifier.at(3, 0)) { pageNum-- } },
+        onPageChange = { pageNum = it },
+        nextButton = { NextPageButton(Modifier.at(5, 0)) },
+        previousButton = { PreviousPageButton(Modifier.at(3, 0)) },
         NavbarPosition.BOTTOM, null
     ) { pageItems ->
         HorizontalGrid(Modifier.at(1, 0).size(7, 5)) {
@@ -35,10 +33,11 @@ fun GuildViewModel.GuildLookupListScreen() {
                 val owner = guildName.getOwnerFromGuildName()
                 Button(
                     onClick = {
-                        if (player.hasGuild() && player.getGuildName().equals(guildName, true))
-                            nav.open(GuildScreen.MemberList(guildLevel, player))
-                        else
-                            nav.open(GuildScreen.GuildLookupMembers(guildName))
+                        // TODO navigation
+//                        if (player.hasGuild() && player.getGuildName().equals(guildName, true))
+//                            nav.open(GuildScreen.MemberList(guildLevel, player))
+//                        else
+//                            nav.open(GuildScreen.GuildLookupMembers(guildName))
 
                     }) {
                     PlayerHead(
@@ -63,42 +62,40 @@ fun GuildViewModel.GuildLookupListScreen() {
 }
 
 @Composable
-fun PreviousPageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun PreviousPageButton(modifier: Modifier = Modifier) {
     Button(
         modifier = modifier,
-        onClick = onClick
     ) { Text("<yellow><b>Previous".miniMsg()) }
 }
 
 @Composable
 fun NextPageButton(
     modifier: Modifier,
-    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
-        onClick = onClick
     ) { Text("<yellow><b>Next".miniMsg()) }
 }
 
 @Composable
-fun GuildViewModel.LookForGuildButton(modifier: Modifier, onClick: (String) -> Unit) {
+fun LookForGuildButton(modifier: Modifier, onClick: (String) -> Unit) {
     Button(
         modifier = modifier.at(7, 5),
         onClick = {
-            nav.open(
-                UniversalScreens.Anvil(
-                    AnvilGUI.Builder()
-                        .title(":space_-61::guild_search_menu:")
-                        .itemLeft(TitleItem.of("Guild Name").editItemMeta { isHideTooltip = true })
-                        .itemOutput(TitleItem.transparentItem)
-                        .plugin(guiyPlugin)
-                        .onClose { nav.back() }
-                        .onClick { _, snapshot ->
-                            onClick.invoke(snapshot.text)
-                            listOf(AnvilGUI.ResponseAction.close())
-                        }
-                ))
+            // TODO open anvil menu
+//            nav.open(
+//                UniversalScreens.Anvil(
+//                    AnvilGUI.Builder()
+//                        .title(":space_-61::guild_search_menu:")
+//                        .itemLeft(TitleItem.of("Guild Name").editItemMeta { isHideTooltip = true })
+//                        .itemOutput(TitleItem.transparentItem)
+//                        .plugin(guiyPlugin)
+//                        .onClose { nav.back() }
+//                        .onClick { _, snapshot ->
+//                            onClick.invoke(snapshot.text)
+//                            listOf(AnvilGUI.ResponseAction.close())
+//                        }
+//                ))
         }
     ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
 }
