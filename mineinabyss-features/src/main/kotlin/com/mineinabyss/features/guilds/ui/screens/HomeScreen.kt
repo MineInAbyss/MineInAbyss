@@ -3,7 +3,7 @@ package com.mineinabyss.features.guilds.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.mineinabyss.features.guilds.ui.DecideMenus
+import com.mineinabyss.features.guilds.extensions.hasGuildInvites
 import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.button.Button
@@ -21,36 +21,48 @@ import org.bukkit.entity.Player
 
 @Composable
 fun HomeScreen(
-    guild: GuildViewModel = viewModel(),
+    guildViewModel: GuildViewModel = viewModel(),
     player: Player = CurrentPlayer,
     onNavigateToInfo: () -> Unit,
     onNavigateToInvites: () -> Unit,
     onOpenGuildCreateDialog: () -> Unit,
-) = Chest(":space_-8:${DecideMenus.decideMainMenu(player)}", Modifier.height(4)) {
-    val guild by guild.currentGuild.collectAsState()
-    Row(Modifier.at(2, 1)) {
-        if (guild != null) Button(onClick = onNavigateToInfo) {
-            Text(
-                "<gold><b>Current Guild Info",
-                modifier = Modifier.size(2, 2)
-            )
-        }
-        else Button(onClick = { onOpenGuildCreateDialog() }) {
-            Text(
-                "<gold><b>Create a Guild",
-                modifier = Modifier.size(2, 2)
-            )
-        }
+) {
+    val guild by guildViewModel.currentGuild.collectAsState()
+    val invites by guildViewModel.invites.collectAsState()
+    Chest(buildString {
+        append(":space_-8:")
+        append(":guild_main_menu:")
+        append(":space_-138:")
+        if (guild != null) append(":guild_main_menu_info:")
+        else append(":guild_main_menu_create:")
+        append(":space_66:")
+        if (invites.isNotEmpty()) append(":guild_inbox_unread:")
+        else append(":guild_inbox_read:")
+    }, Modifier.height(4)) {
+        Row(Modifier.at(2, 1)) {
+            if (guild != null) Button(onClick = onNavigateToInfo) {
+                Text(
+                    "<gold><b>Current Guild Info",
+                    modifier = Modifier.size(2, 2)
+                )
+            }
+            else Button(onClick = { onOpenGuildCreateDialog() }) {
+                Text(
+                    "<gold><b>Create a Guild",
+                    modifier = Modifier.size(2, 2)
+                )
+            }
 
-        Spacer(1)
+            Spacer(1)
 //        GuildLookupListButton()
-    }
+        }
 
-    Column(Modifier.at(8, 0)) {
+        Column(Modifier.at(8, 0)) {
 //        GuildInvitesButton()
-    }
+        }
 
-    CloseButton(Modifier.at(0, 3))
+        CloseButton(Modifier.at(0, 3))
+    }
 }
 
 @Composable

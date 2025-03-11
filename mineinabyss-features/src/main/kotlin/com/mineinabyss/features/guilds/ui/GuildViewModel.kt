@@ -10,9 +10,12 @@ import com.mineinabyss.features.guilds.data.GuildRepository
 import com.mineinabyss.features.guilds.data.entities.GuildEntity
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.data.tables.GuildRank
-import com.mineinabyss.features.guilds.extensions.deleteGuild
 import com.mineinabyss.features.guilds.extensions.guildChat
 import com.mineinabyss.features.guilds.extensions.guildChatId
+import com.mineinabyss.features.guilds.ui.state.GuildMemberUiState
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
+import com.mineinabyss.features.guilds.ui.state.Invite
+import com.mineinabyss.features.guilds.ui.state.JoinRequest
 import com.mineinabyss.features.helpers.ui.WhileSubscribed
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
@@ -31,33 +34,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-data class GuildUiState(
-    val id: Int,
-    val name: String,
-    val owner: GuildMemberUiState,
-    val level: Int,
-    val memberCount: Int,
-    val members: List<GuildMemberUiState>,
-    val balance: Int,
-    val joinType: GuildJoinType,
-) {
-    val canAcceptNewMembers get() = memberCount < level * 5
-}
-
-data class GuildMemberUiState(
-    val name: String,
-    val uuid: UUID,
-    val rank: GuildRank,
-    val currentGuild: Int,
-) {
-    val isOwner = rank == GuildRank.OWNER
-    val isCaptainOrAbove = rank <= GuildRank.CAPTAIN
-}
-
-data class Invite(val guild: GuildUiState)
-
-data class JoinRequest(val requester: UUID)
-
 class GuildViewModel(
     val player: Player,
     val openedFromHQ: Boolean,
@@ -73,11 +49,6 @@ class GuildViewModel(
     val joinRequests = MutableStateFlow<List<JoinRequest>>(emptyList())
     val currentGuild = _currentGuild.asStateFlow()
     val memberInfo = _memberInfo.asStateFlow()
-
-    val isCaptainOrAbove = _memberInfo.map {
-        val rank = it?.rank
-        rank == GuildRank.CAPTAIN || rank == GuildRank.OWNER
-    }.stateIn(viewModelScope, WhileSubscribed, initialValue = false)
 
     init {
         viewModelScope.launch {

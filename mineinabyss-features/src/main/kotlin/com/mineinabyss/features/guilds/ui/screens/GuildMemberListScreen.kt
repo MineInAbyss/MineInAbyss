@@ -4,10 +4,11 @@ import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
 import com.mineinabyss.features.guilds.ui.BackButton
-import com.mineinabyss.features.guilds.ui.GuildUiState
 import com.mineinabyss.features.guilds.ui.GuildViewModel
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.button.Button
+import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.items.PlayerHead
 import com.mineinabyss.guiy.components.items.PlayerHeadType
@@ -17,6 +18,7 @@ import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.inventory.CurrentPlayer
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.viewmodel.viewModel
@@ -30,75 +32,86 @@ fun GuildMemberListScreen(
     navigateToJoinRequests: () -> Unit, // viewModel.nav.open(GuildScreen.JoinRequestList)
     viewModel: GuildViewModel = viewModel(),
 ) {
-    var line by remember { mutableStateOf(0) }
     val guild = viewModel.currentGuild.collectAsState().value ?: return
-    val isCaptain = viewModel.isCaptainOrAbove.collectAsState().value
+    val memberInfo by viewModel.memberInfo.collectAsState()
+    val isCaptain = memberInfo?.isCaptainOrAbove == true
+    val menuHeight = guild.level.coerceAtLeast(4)
+    val joinRequests by viewModel.joinRequests.collectAsState()
     val player = CurrentPlayer
-
-    Scrollable(
-        items = guild.members,
-        line = line,
-        onLineChange = { line = it },
-        scrollDirection = ScrollDirection.VERTICAL,
-        nextButton = { ScrollDownButton(Modifier.at(0, 3)) },
-        previousButton = { ScrollUpButton(Modifier.at(0, 1)) },
-        navbarPosition = NavbarPosition.START, navbarBackground = null
-    ) { members ->
-        VerticalGrid(Modifier.at(1, 1).size(5, minOf(guild.level + 1, 4))) {
-            members.forEach { (name, member, rank) ->
-                Button(onClick = {
-                    if (member != player && isCaptain)
-                        navigateToMemberOptions(member.toOfflinePlayer())
-                }) {
-                    PlayerHead(
-                        member.toOfflinePlayer(), "<gold><i>${name}",
-                        "<yellow><b>Guild Rank: <yellow><i>$rank",
-                        type = PlayerHeadType.FLAT
-                    )
+    Chest(buildString {
+        //TODO Implement lists for guilds, making one able to have more than 5(25) members
+        append(":space_-8:")
+        append(":guild_member_management_menu_${menuHeight}:")
+        append(":space_-171:")
+        append(":guild_member_management_jointype_${guild.joinType.name.lowercase()}:")
+        append(":space_125:")
+        if (joinRequests.isNotEmpty()) append(":guild_inbox_unread:")
+        else append(":guild_inbox_read:")
+    }, Modifier.height(menuHeight)) {
+        var line by remember { mutableStateOf(0) }
+        Scrollable(
+            items = guild.members,
+            line = line,
+            onLineChange = { line = it },
+            scrollDirection = ScrollDirection.VERTICAL,
+            nextButton = { ScrollDownButton(Modifier.at(0, 3)) },
+            previousButton = { ScrollUpButton(Modifier.at(0, 1)) },
+            navbarPosition = NavbarPosition.START, navbarBackground = null
+        ) { members ->
+            VerticalGrid(Modifier.at(1, 1).size(5, minOf(guild.level + 1, 4))) {
+                members.forEach { (name, member, rank) ->
+                    Button(onClick = {
+                        if (member != player && isCaptain)
+                            navigateToMemberOptions(member.toOfflinePlayer())
+                    }) {
+                        PlayerHead(
+                            member.toOfflinePlayer(), "<gold><i>${name}",
+                            "<yellow><b>Guild Rank: <yellow><i>$rank",
+                            type = PlayerHeadType.FLAT
+                        )
+                    }
                 }
             }
         }
-    }
 
-    InviteToGuildButton(Modifier.at(7, 0), guild, isCaptain)
+        InviteToGuildButton(Modifier.at(7, 0), guild, isCaptain)
 
-    val requests = viewModel.joinRequests.collectAsState().value
-    val requestAmount = requests.size
-    val plural = requestAmount != 1
-    Button(
-        enabled = requests.isNotEmpty() && isCaptain,
-        /* Icon that notifies player there are new invites */
-        modifier = Modifier.at(8, 0),
-        onClick = { navigateToJoinRequests() }
-    ) { enabled ->
-        if (enabled) Text(
-            "<dark_green><b>Manage Guild GuildJoin Requests",
-            "<yellow><i>There ${if (plural) "are" else "is"} currently <gold><b>$requestAmount ",
-            "<yellow><i>join-request${if (plural) "s" else ""} for your guild."
-        )
-        else Text(
-            "<dark_green><b><st>Manage Guild GuildJoin Requests",
-            "<red><i>There are currently no ",
-            "<red><i>join-requests for your guild."
-        )
-    }
-
-    Button(
-        enabled = isCaptain,
-        modifier = Modifier.at(0, 0),
-        onClick = {
-            viewModel.updateJoinType()
-            //TODO manage title better
-//            player.openInventory.title(":space_-8:${DecideMenus.decideMemberMenu(player, guild.joinType)}")
+        val requests = viewModel.joinRequests.collectAsState().value
+        val requestAmount = requests.size
+        val plural = requestAmount != 1
+        Button(
+            enabled = requests.isNotEmpty() && isCaptain,
+            /* Icon that notifies player there are new invites */
+            modifier = Modifier.at(8, 0),
+            onClick = { navigateToJoinRequests() }
+        ) { enabled ->
+            if (enabled) Text(
+                "<dark_green><b>Manage Guild GuildJoin Requests",
+                "<yellow><i>There ${if (plural) "are" else "is"} currently <gold><b>$requestAmount ",
+                "<yellow><i>join-request${if (plural) "s" else ""} for your guild."
+            )
+            else Text(
+                "<dark_green><b><st>Manage Guild GuildJoin Requests",
+                "<red><i>There are currently no ",
+                "<red><i>join-requests for your guild."
+            )
         }
-    ) {
-        Text(
-            "<dark_green><b>Toggle Guild GuildJoin Type",
-            "<yellow>Currently players can join via:<gold><i> ${guild.joinType.name}"
-        )
-    }
 
-    BackButton(Modifier.at(0, minOf(guild.level + 1, MAX_CHEST_HEIGHT - 1)))
+        Button(
+            enabled = isCaptain,
+            modifier = Modifier.at(0, 0),
+            onClick = {
+                viewModel.updateJoinType()
+            }
+        ) {
+            Text(
+                "<dark_green><b>Toggle Guild GuildJoin Type",
+                "<yellow>Currently players can join via:<gold><i> ${guild.joinType.name}"
+            )
+        }
+
+        BackButton(Modifier.at(0, minOf(guild.level + 1, MAX_CHEST_HEIGHT - 1)))
+    }
 }
 
 @Composable

@@ -7,13 +7,11 @@ import com.mineinabyss.features.guilds.data.GuildMessagesRepository
 import com.mineinabyss.features.guilds.data.GuildRepository
 import com.mineinabyss.features.guilds.ui.GuildScreen.*
 import com.mineinabyss.features.guilds.ui.screens.*
-import com.mineinabyss.guiy.components.button.Button
+import com.mineinabyss.features.guilds.ui.state.JoinRequest
 import com.mineinabyss.guiy.components.canvases.Anvil
 import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.inventory.CurrentPlayer
 import com.mineinabyss.guiy.inventory.LocalGuiyOwner
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.navigation.LocalBackGestureDispatcher
 import com.mineinabyss.guiy.navigation.NavHost
 import com.mineinabyss.guiy.navigation.composable
 import com.mineinabyss.guiy.navigation.rememberNavController
@@ -26,9 +24,11 @@ fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer)
     //TODO koin inject
     val guildViewModel = viewModel {
         GuildViewModel(
-            player, openedFromHQ, GuildRepository(abyss.db),
-            GuildMessagesRepository(abyss.db),
-            GuildJoinRequestsRepository(abyss.db),
+            player = player,
+            openedFromHQ = openedFromHQ,
+            guildRepo = GuildRepository(abyss.db),
+            messagesRepo = GuildMessagesRepository(abyss.db),
+            requestsRepo = GuildJoinRequestsRepository(abyss.db),
         )
     }
 
@@ -92,10 +92,3 @@ fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer)
     }
 }
 
-@Composable
-fun BackButton(modifier: Modifier = Modifier, content: @Composable () -> Unit = { Text("<red><b>Back") }) {
-    val backHandler = LocalBackGestureDispatcher.current ?: return
-    Button(onClick = { backHandler.onBack() }, modifier = modifier) {
-        content()
-    }
-}

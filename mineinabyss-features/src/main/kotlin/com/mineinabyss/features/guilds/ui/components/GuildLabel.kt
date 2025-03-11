@@ -2,7 +2,7 @@ package com.mineinabyss.features.guilds.ui.components
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
-import com.mineinabyss.features.guilds.ui.GuildUiState
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.items.PlayerHead
 import com.mineinabyss.guiy.components.items.PlayerHeadType

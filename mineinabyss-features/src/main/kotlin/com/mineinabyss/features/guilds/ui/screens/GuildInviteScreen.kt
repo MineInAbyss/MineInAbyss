@@ -2,7 +2,7 @@ package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.ui.BackButton
-import com.mineinabyss.features.guilds.ui.GuildUiState
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
 import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.features.guilds.ui.components.GuildLabel
 import com.mineinabyss.guiy.components.button.Button

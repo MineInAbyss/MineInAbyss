@@ -1,8 +1,10 @@
-package com.mineinabyss.features.guilds.ui
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import com.mineinabyss.features.guilds.data.tables.GuildRank
+import com.mineinabyss.features.guilds.ui.BackButton
+import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest

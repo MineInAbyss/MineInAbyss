@@ -1,12 +1,13 @@
-package com.mineinabyss.features.guilds.ui
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.data.tables.GuildRank
-import com.mineinabyss.features.guilds.extensions.getGuildLevel
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
-import com.mineinabyss.features.guilds.ui.screens.ScrollDownButton
-import com.mineinabyss.features.guilds.ui.screens.ScrollUpButton
+import com.mineinabyss.features.guilds.ui.BackButton
+import com.mineinabyss.features.guilds.ui.state.GuildMemberUiState
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
+import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.guiy.components.VerticalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -17,7 +18,6 @@ import com.mineinabyss.guiy.components.items.Text
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
-import com.mineinabyss.guiy.layout.Box
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at

@@ -6,10 +6,9 @@ import com.mineinabyss.features.guilds.data.entities.GuildPlayerEntity
 import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.data.tables.GuildsTable
-import com.mineinabyss.features.guilds.ui.GuildMemberUiState
-import com.mineinabyss.features.guilds.ui.GuildUiState
-import com.mineinabyss.features.guilds.ui.Invite
-import org.jetbrains.exposed.dao.id.CompositeID
+import com.mineinabyss.features.guilds.ui.state.GuildMemberUiState
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
+import com.mineinabyss.features.guilds.ui.state.Invite
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.and

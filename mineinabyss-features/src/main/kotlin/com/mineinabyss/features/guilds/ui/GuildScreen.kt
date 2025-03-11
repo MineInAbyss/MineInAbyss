@@ -1,9 +1,7 @@
 package com.mineinabyss.features.guilds.ui
 
-import com.mineinabyss.features.guilds.extensions.GuildName
-import com.mineinabyss.features.guilds.extensions.getGuildLevel
-import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
-import org.bukkit.OfflinePlayer
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
+import com.mineinabyss.features.guilds.ui.state.Invite
 import java.util.UUID
 
 sealed class GuildScreen(var title: String, val height: Int) {

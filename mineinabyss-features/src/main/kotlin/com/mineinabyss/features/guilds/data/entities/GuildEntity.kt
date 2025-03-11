@@ -4,7 +4,7 @@ import com.mineinabyss.features.guilds.data.tables.GuildJoinRequestsTable
 import com.mineinabyss.features.guilds.data.tables.GuildRank
 import com.mineinabyss.features.guilds.data.tables.GuildsTable
 import com.mineinabyss.features.guilds.data.tables.GuildMembersTable
-import com.mineinabyss.features.guilds.ui.GuildUiState
+import com.mineinabyss.features.guilds.ui.state.GuildUiState
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

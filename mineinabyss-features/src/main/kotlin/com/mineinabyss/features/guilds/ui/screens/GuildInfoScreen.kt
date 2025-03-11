@@ -3,15 +3,10 @@ package com.mineinabyss.features.guilds.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import com.mineinabyss.components.PlayerData
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.ui.BackButton
-import com.mineinabyss.features.guilds.ui.DecideMenus
-import com.mineinabyss.features.guilds.ui.GuildScreen
 import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -37,7 +32,16 @@ fun GuildInfoScreen(
 ) {
     val memberInfo = guildViewModel.memberInfo.collectAsState().value ?: return
     val isOwner = memberInfo.isOwner
-    Chest(":space_-8:${DecideMenus.decideInfoMenu(isOwner)}", Modifier.height(6)) {
+    Chest(buildString {
+        append(":space_-8:")
+        append(":guild_info_menu:")
+        append(":space_-28:")
+        if (isOwner) {
+            append(":guild_disband_button:")
+            append(":space_-18:")
+            append(":guild_level_up_button:")
+        } else append(":guild_leave_button:")
+    }, Modifier.height(6)) {
         Column(Modifier.at(2, 0)) {
             Row {
                 Button(onClick = onNavigateToMembersList) {
@@ -86,11 +90,11 @@ fun CurrentGuildInfoButton(
 fun GuildRenameButton(
     modifier: Modifier = Modifier,
     guildViewModel: GuildViewModel = viewModel(),
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val guild by guildViewModel.currentGuild.collectAsState()
     val renameItem = TitleItem.of(guild?.name ?: "Guild Name").editItemMeta { isHideTooltip = true }
-    val canEdit by guildViewModel.isCaptainOrAbove.collectAsState()
+    val canEdit = guildViewModel.memberInfo.collectAsState().value?.isCaptainOrAbove == true
     Button(
         enabled = canEdit,
         modifier = modifier,
@@ -208,7 +212,8 @@ fun GuildLeaveButton(
     Button(
         modifier = modifier,
         enabled = player.hasGuild() && !player.isGuildOwner(),
-        onClick = onClick) { enabled ->
+        onClick = onClick
+    ) { enabled ->
         if (enabled) Text("<red><i>Leave Guild")
         else Text("<red><i><st>Leave Guild")
     }

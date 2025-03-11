@@ -3,10 +3,9 @@ package com.mineinabyss.features.guilds.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.ui.BackButton
 import com.mineinabyss.features.guilds.ui.GuildViewModel
-import com.mineinabyss.features.guilds.ui.Invite
+import com.mineinabyss.features.guilds.ui.state.Invite
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.items.PlayerHead

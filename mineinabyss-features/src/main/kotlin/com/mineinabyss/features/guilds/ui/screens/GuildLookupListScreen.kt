@@ -1,9 +1,10 @@
-package com.mineinabyss.features.guilds.ui
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.extensions.displayGuildList
 import com.mineinabyss.features.guilds.extensions.getGuildMemberCount
 import com.mineinabyss.features.guilds.extensions.getOwnerFromGuildName
+import com.mineinabyss.features.guilds.ui.BackButton
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.items.PlayerHead

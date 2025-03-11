@@ -1,8 +1,11 @@
-package com.mineinabyss.features.guilds.ui
+package com.mineinabyss.features.guilds.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
+import com.mineinabyss.features.guilds.ui.BackButton
+import com.mineinabyss.features.guilds.ui.GuildViewModel
+import com.mineinabyss.features.guilds.ui.state.JoinRequest
 import com.mineinabyss.guiy.components.button.Button
 import com.mineinabyss.guiy.components.items.PlayerHead
 import com.mineinabyss.guiy.components.items.PlayerHeadType
