@@ -4,7 +4,6 @@ import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.toOfflinePlayer
 import com.mineinabyss.features.guilds.ui.BackButton
-import com.mineinabyss.features.guilds.ui.GuildScreen
 import com.mineinabyss.features.guilds.ui.GuildUiState
 import com.mineinabyss.features.guilds.ui.GuildViewModel
 import com.mineinabyss.guiy.components.VerticalGrid
@@ -27,9 +26,9 @@ import org.bukkit.entity.Player
 
 @Composable
 fun GuildMemberListScreen(
-    viewModel: GuildViewModel = viewModel(),
     navigateToMemberOptions: (player: OfflinePlayer) -> Unit, // viewModel.nav.open(GuildScreen.MemberOptions(member.toOfflinePlayer()))
     navigateToJoinRequests: () -> Unit, // viewModel.nav.open(GuildScreen.JoinRequestList)
+    viewModel: GuildViewModel = viewModel(),
 ) {
     var line by remember { mutableStateOf(0) }
     val guild = viewModel.currentGuild.collectAsState().value ?: return

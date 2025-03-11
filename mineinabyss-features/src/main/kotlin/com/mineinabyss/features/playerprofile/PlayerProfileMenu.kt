@@ -195,7 +195,8 @@ fun MittyTokenBalance(player: OfflinePlayer) {
 @Composable
 fun GuildButton(player: OfflinePlayer, viewer: Player) {
     Button(enabled = player.hasGuild() && !viewer.hasGuild(), onClick = {
-        guiy { player.getGuildName()?.let { GuildScreen.GuildLookupMembers(it) } }
+        TODO("Open player guild member list")
+//        guiy { player.getGuildName()?.let { GuildScreen.GuildLookupMembers(it) } }
     }) {
         if (player.hasGuild()) Text(
             "<gold><b><i>${player.getGuildName()}",

@@ -31,6 +31,7 @@ fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer)
             GuildJoinRequestsRepository(abyss.db),
         )
     }
+
     val nav = rememberNavController()
     NavHost(nav, startDestination = Default) {
         composable<Default> {
@@ -50,14 +51,28 @@ fun GuildMainMenu(openedFromHQ: Boolean = false, player: Player = CurrentPlayer)
         }
         composable<Leave> { GuildLeaveScreen(onLeave = { nav.popBackStack() }) }
         composable<GuildList> { GuildLookupListScreen() }
-        composable<GuildLookupMembers> { GuildLookupMembersScreen() }
-        composable<InviteList> { GuildInviteListScreen() }
-        composable<InviteScreen> { GuildInviteScreen() }
-        composable<JoinRequestList> { GuildJoinRequestListScreen() }
-        composable<JoinRequest> { GuildJoinRequestScreen(screen.from) }
-        composable<Disband> { GuildDisbandScreen() }
-        composable<MemberOptions> { GuildMemberOptionsScreen() }
-        composable<MemberList> { GuildMemberListScreen() }
+        composable<GuildLookupMembers> { GuildLookupMembersScreen(it.guild) }
+        composable<InviteList> {
+            GuildInviteListScreen(
+                navigateToMembersList = { TODO() },
+                navigateToInvite = { nav.navigate(InviteScreen(it)) }
+            )
+        }
+        composable<InviteScreen> { GuildInviteScreen(it.invite.guild) }
+        composable<JoinRequestList> {
+            GuildJoinRequestListScreen(
+                navigateToJoinRequest = { nav.navigate(it) },
+            )
+        }
+        composable<JoinRequest> { GuildJoinRequestScreen(it, navigateBack = nav::popBackStack) }
+        composable<Disband> { GuildDisbandScreen(exit = { owner.exit() }) }
+        composable<MemberOptions> { GuildMemberOptionsScreen(it.member, navigateBack = nav::popBackStack) }
+        composable<MemberList> {
+            GuildMemberListScreen(
+                navigateToJoinRequests = { TODO() },
+                navigateToMemberOptions = { TODO() },
+            )
+        }
 
         composable<CreateGuild> {
             var input by remember { mutableStateOf("") }

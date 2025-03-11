@@ -10,6 +10,7 @@ import com.mineinabyss.features.guilds.data.GuildRepository
 import com.mineinabyss.features.guilds.data.entities.GuildEntity
 import com.mineinabyss.features.guilds.data.tables.GuildJoinType
 import com.mineinabyss.features.guilds.data.tables.GuildRank
+import com.mineinabyss.features.guilds.extensions.deleteGuild
 import com.mineinabyss.features.guilds.extensions.guildChat
 import com.mineinabyss.features.guilds.extensions.guildChatId
 import com.mineinabyss.features.helpers.ui.WhileSubscribed
@@ -39,7 +40,9 @@ data class GuildUiState(
     val members: List<GuildMemberUiState>,
     val balance: Int,
     val joinType: GuildJoinType,
-)
+) {
+    val canAcceptNewMembers get() = memberCount < level * 5
+}
 
 data class GuildMemberUiState(
     val name: String,
@@ -47,10 +50,13 @@ data class GuildMemberUiState(
     val rank: GuildRank,
     val currentGuild: Int,
 ) {
-    val isOwner get() = rank == GuildRank.OWNER
+    val isOwner = rank == GuildRank.OWNER
+    val isCaptainOrAbove = rank <= GuildRank.CAPTAIN
 }
 
 data class Invite(val guild: GuildUiState)
+
+data class JoinRequest(val requester: UUID)
 
 class GuildViewModel(
     val player: Player,
@@ -61,19 +67,16 @@ class GuildViewModel(
 ) : GuiyViewModel() {
     private val _currentGuild = MutableStateFlow<GuildUiState?>(null)
     private val _memberInfo = MutableStateFlow<GuildMemberUiState?>(null)
+    /** Guilds that have invited this player to join. */
     val invites = MutableStateFlow<List<Invite>>(emptyList())
-    val joinRequests = MutableStateFlow<List<Invite>>(emptyList())
+    /** Requests to join this guild. */
+    val joinRequests = MutableStateFlow<List<JoinRequest>>(emptyList())
     val currentGuild = _currentGuild.asStateFlow()
     val memberInfo = _memberInfo.asStateFlow()
 
     val isCaptainOrAbove = _memberInfo.map {
         val rank = it?.rank
         rank == GuildRank.CAPTAIN || rank == GuildRank.OWNER
-    }.stateIn(viewModelScope, WhileSubscribed, initialValue = false)
-
-    val canAcceptNewMembers = _currentGuild.map {
-        if (it == null) false
-        else it.memberCount < it.level * 5
     }.stateIn(viewModelScope, WhileSubscribed, initialValue = false)
 
     init {
@@ -158,6 +161,10 @@ class GuildViewModel(
         onSuccess(invites.value.size)
     }
 
+    fun declineAllInvites() {
+
+    }
+
     //TODO Make sure guild chatname is properly updated when guild name is changed
     fun rename(newName: String) = viewModelScope.launch {
         val guild = _currentGuild.value ?: run {
@@ -200,7 +207,55 @@ class GuildViewModel(
         guildRepo.updateJoinType(guild.id, guild.joinType.next())
     }
 
+    fun requestJoin(guild: GuildUiState) {
+        TODO()
+    }
+
+    fun acceptJoinRequest(request: JoinRequest) = viewModelScope.launch {
+        //TODO
+//            if (player.getGuildJoinType() == GuildJoinType.INVITE) {
+//                player.error("Your guild is in 'INVITE-only' mode.")
+//                player.error("Change it to 'ANY' or 'REQUEST-only' mode to accept requests.")
+//                return@Button
+//            }
+//            if (!player.addMemberToGuild(newMember)) return@Button player.error("Failed to add ${newMember.name} to guild.")
+//            newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
+//            if (canAccept) {
+//                newMember.removeGuildQueueEntries(GuildJoinType.REQUEST)
+//            }
+//            nav.back()
+    }
+
+    fun declineJoinRequest(request: JoinRequest) = viewModelScope.launch {
+        //TODO
+//        guildName?.removeGuildQueueEntries(newMember, GuildJoinType.REQUEST)
+//        player.info("<yellow><b>❌ <yellow>You denied the join-request from ${newMember.name}")
+//        val requestDeniedMessage =
+//            "<red>Your request to join <i>${guildName} has been denied!"
+//        if (newMember.isOnline) newMember.player?.error(requestDeniedMessage)
+//        else {
+//            transaction(abyss.db) {
+//                GuildMessageQueue.insert {
+//                    it[content] = requestDeniedMessage
+//                    it[playerUUID] = newMember.uniqueId
+//                }
+//            }
+//        }
+//        nav.back()
+//        if (player.getNumberOfGuildRequests() == 0)
+//            nav.back()
+
+    }
+
+    fun clearGuildJoinRequests() {
+        TODO()
+//        player.removeGuildQueueEntries(GuildJoinType.REQUEST, true)
+
+        player.info("<yellow><b>❌ <yellow>You denied all join-requests for your guild!")
+    }
+
     fun deleteGuild() = viewModelScope.launch {
+//        player.deleteGuild()
         // TODO migrate all checks over
 //        val guild = _currentGuild.value ?: return@launch
 //        guildRepo.deleteGuild(guild.id)
@@ -208,5 +263,13 @@ class GuildViewModel(
 
     fun createGuild(name: String) = viewModelScope.launch {
 
+    }
+
+    fun kickMember(member: UUID) = viewModelScope.launch {
+        TODO()
+    }
+
+    fun setRank(member: UUID, rank: GuildRank) = viewModelScope.launch {
+        TODO()
     }
 }
