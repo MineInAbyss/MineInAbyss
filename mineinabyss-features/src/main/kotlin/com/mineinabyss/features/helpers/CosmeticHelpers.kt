@@ -18,18 +18,18 @@ import org.bukkit.inventory.ItemStack
 val hmcCosmetics: HMCCosmeticsPlugin by lazy { Bukkit.getPluginManager().getPlugin("HMCCosmetics") as HMCCosmeticsPlugin }
 
 fun Player.getCosmeticBackpack() = this.cosmeticUser?.getCosmetic(CosmeticSlot.BACKPACK)
-fun Player.equipCosmeticBackPack(backpack: String) = this.cosmeticUser?.addPlayerCosmetic(Cosmetics.getCosmetic(backpack))
+fun Player.equipCosmeticBackPack(backpack: String) = Cosmetics.getCosmetic(backpack)?.let { this.cosmeticUser?.addPlayerCosmetic(it) }
 fun Player.unequipCosmeticBackpack() = this.cosmeticUser?.removeCosmeticSlot(CosmeticSlot.BACKPACK)
 
 fun Player.getCosmeticHat() = this.cosmeticUser?.getCosmetic(CosmeticSlot.HELMET)
-fun Player.equipCosmeticHat(hat: String) = this.cosmeticUser?.addPlayerCosmetic(Cosmetics.getCosmetic(hat))
+fun Player.equipCosmeticHat(hat: String) = Cosmetics.getCosmetic(hat)?.let { this.cosmeticUser?.addPlayerCosmetic(it) }
 fun Player.unequipCosmeticHat() = this.cosmeticUser?.removeCosmeticSlot(CosmeticSlot.HELMET)
 
 internal val Player.cosmeticUser get() = CosmeticUsers.getUser(this)
 
 fun CosmeticUser.equipWhistleCosmetic() {
     if (this.isHidden) return
-    if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) addPlayerCosmetic(Cosmetics.getCosmetic("empty_backpack"))
+    if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) Cosmetics.getCosmetic("empty_backpack")?.let { addPlayerCosmetic(it) }
     val player = player ?: return
     val layerWhistle = player.layerWhistleCosmetic() ?: return
     val viewers = player.world.getNearbyPlayers(player.location, 16.0).toMutableList()

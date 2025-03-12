@@ -124,12 +124,11 @@ class CosmeticsFeature(val config: Config) : Feature() {
                 }
                 "menu" {
                     playerAction {
-                        if (hmcCosmetics.isEnabled)
-                            Menus.getDefaultMenu().openMenu(player.cosmeticUser)
+                        if (hmcCosmetics.isEnabled) Menus.getDefaultMenu()?.openMenu(player.cosmeticUser)
                     }
                 }
                 "dye" {
-                    val cosmeticSlot by optionArg(CosmeticSlot.entries.map { it.name })
+                    val cosmeticSlot by optionArg(CosmeticSlot.values().keys.toList())
                     playerAction {
                         player.cosmeticUser?.let { user ->
                             user.getCosmetic(CosmeticSlot.valueOf(cosmeticSlot))?.let { cosmetic ->
@@ -150,7 +149,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
 
                 3 -> when (args[1]) {
                     //"wardrobe" -> listOf("personal", "open").filter { it.startsWith(args[2]) }
-                    "dye" -> CosmeticSlot.entries.map { it.name }.filter { it.uppercase().startsWith(args[2]) }
+                    "dye" -> CosmeticSlot.values().keys.filter { it.uppercase().startsWith(args[2]) }
                     else -> listOf()
                 }
 
