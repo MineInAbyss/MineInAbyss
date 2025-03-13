@@ -19,8 +19,8 @@ packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
 blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.12.2"
-minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.4.7"
-minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.3"
+minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.6.2-e29bbc8d"
+minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.6-ea724998"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.28.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.6"
