@@ -28,16 +28,16 @@ fun Player.unequipCosmeticHat() = this.cosmeticUser?.removeCosmeticSlot(Cosmetic
 internal val Player.cosmeticUser get() = CosmeticUsers.getUser(this)
 
 fun CosmeticUser.equipWhistleCosmetic() {
-    if (this.isHidden) return
     if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) Cosmetics.getCosmetic("empty_backpack")?.let { addPlayerCosmetic(it) }
-    val player = player ?: return
+    val player = player.takeUnless { isHidden } ?: return
     val layerWhistle = player.layerWhistleCosmetic() ?: return
-    val viewers = player.world.getNearbyPlayers(player.location, 16.0).toMutableList()
+    val viewers = player.world.players.filter { it.canSee(player) && it.uniqueId != player.uniqueId }
+    val id = userBackpackManager.firstArmorStandId
+
     if ((getCosmetic(CosmeticSlot.BACKPACK) as CosmeticBackpackType).isFirstPersonCompadible) {
-        viewers.remove(player)
-        PacketManager.equipmentSlotUpdate(userBackpackManager.firstArmorStandId, EquipmentSlot.OFF_HAND, layerWhistle, mutableListOf(player))
+        PacketManager.equipmentSlotUpdate(id, EquipmentSlot.OFF_HAND, layerWhistle, mutableListOf(player))
     }
-    PacketManager.equipmentSlotUpdate(userBackpackManager.firstArmorStandId, EquipmentSlot.HAND, layerWhistle, viewers)
+    PacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, layerWhistle, viewers)
 }
 
 fun Player.layerWhistleCosmetic(): ItemStack? {
