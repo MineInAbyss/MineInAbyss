@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 class CurseEffectsListener : Listener {
     @EventHandler
     fun PlayerQuitEvent.fixMaxHealthEffectOnLeave() {
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.run {
+        player.getAttribute(Attribute.MAX_HEALTH)?.run {
             modifiers.filter {
                 it.key == MaxHealthChangeEffect.CURSE_MAX_HEALTH && it.key !in MaxHealthChangeEffect.activeEffects
             }.forEach(::removeModifier)

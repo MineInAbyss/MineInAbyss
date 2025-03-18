@@ -76,7 +76,6 @@ allprojects {
         compileOnly(libs.minecraft.plugin.traincarts)
         compileOnly(libs.minecraft.plugin.tccoasters)
         compileOnly(libs.minecraft.plugin.mythichud)
-        //compileOnly(libs.minecraft.plugin.betterhud)
     }
 }
 

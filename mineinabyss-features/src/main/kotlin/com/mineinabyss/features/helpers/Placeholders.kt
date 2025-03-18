@@ -33,7 +33,7 @@ class Placeholders : PlaceholderExpansion() {
             "hud_always_armor" -> player.customHudData.alwaysShowArmor
             "hud_show_top_bar" -> (player.toGeary().has<ShowDepthMeterHud>() && player.toGeary().has<ShowStarCompassHud>())
             "hud_hide_armor_air_background" -> (!player.customHudData.alwaysShowAir && !player.customHudData.alwaysShowArmor)
-                    || ((player.getAttribute(Attribute.GENERIC_ARMOR)?.value ?: 0.0) > 0.0) || (player.remainingAir < player.maximumAir)
+                    || ((player.getAttribute(Attribute.ARMOR)?.value ?: 0.0) > 0.0) || (player.remainingAir < player.maximumAir)
 
             "layer" -> player.location.layer?.name
             "layer_simple" -> player.simpleLayerName

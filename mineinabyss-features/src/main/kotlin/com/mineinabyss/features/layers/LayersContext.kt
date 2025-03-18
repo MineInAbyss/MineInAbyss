@@ -1,9 +1,9 @@
 package com.mineinabyss.features.layers
 
+import com.charleskorn.kaml.AnchorsAndAliases
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.features.abyss
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.serialization.SerializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
@@ -20,7 +20,7 @@ class LayersContext: Configurable<LayersConfig> {
                         serializersModule = abyss.gearyGlobal.getAddon(SerializableComponents).serializers.module,
                         configuration = YamlConfiguration(
                             extensionDefinitionPrefix = "x-",
-                            allowAnchorsAndAliases = true,
+                            anchorsAndAliases = AnchorsAndAliases.Permitted(),
                         )
                     )
                 )
