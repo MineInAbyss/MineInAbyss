@@ -6,7 +6,7 @@ import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.components.tools.ShowDepthMeterHud
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.features.tools.depthmeter.getDepth
+import com.mineinabyss.features.tools.depthmeter.getAbyssDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.attribute.Attribute
@@ -39,7 +39,7 @@ class Placeholders : PlaceholderExpansion() {
             "layer_simple" -> player.simpleLayerName
             "whistle" -> player.getLayerWhistleForHud()
             "section" -> player.location.section?.name ?: "Unmanaged Section"
-            "depth" -> player.getDepth()
+            "depth" -> player.location.getAbyssDepth()
 
             "compass" -> player.getCompassAngle().unicode
             "compass_angle" -> player.getCompassAngle().angle
