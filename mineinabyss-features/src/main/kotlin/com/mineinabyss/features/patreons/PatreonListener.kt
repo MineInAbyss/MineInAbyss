@@ -28,7 +28,7 @@ class PatreonListener(private val config: PatreonFeature.Config) : Listener {
             val roleIds = member.roles.map { it.id }
             val tier = config.patreonRoles.values.filter { it.roleId in roleIds }.maxOfOrNull { it.patreonTier } ?: 0
             val gearyPlayer = player.toGeary()
-            val patreon = gearyPlayer.get<Patreon>() ?: return
+            val patreon = gearyPlayer.get<Patreon>() ?: Patreon()
             gearyPlayer.setPersisting(patreon.copy(tier = tier))
         }
     }
@@ -43,8 +43,7 @@ class PatreonListener(private val config: PatreonFeature.Config) : Listener {
             val gearyPlayer = player.player!!.toGeary()
             val patreon = gearyPlayer.get<Patreon>() ?: Patreon()
             gearyPlayer.setPersisting(patreon.copy(tier = tier))
-        }
-        else player.editOfflinePDC {
+        } else player.editOfflinePDC {
             with(abyss.gearyGlobal) {
                 val patreon = decode<Patreon>() ?: Patreon()
                 encode(patreon.copy(tier = tier))

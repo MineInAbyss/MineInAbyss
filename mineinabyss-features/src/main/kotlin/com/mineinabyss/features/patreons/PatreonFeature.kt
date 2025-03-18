@@ -1,9 +1,11 @@
 package com.mineinabyss.features.patreons
 
 import com.mineinabyss.components.editPlayerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.arguments.stringArg
@@ -44,10 +46,10 @@ class PatreonFeature(val config: Config) : Feature() {
 
         mainCommand {
             "patreon"(desc = "Patreon-supporter related commands") {
-                ("token" / "kit")(desc = "Redeem kit") {
+                ("token")(desc = "Redeem token") {
                     playerAction {
                         val player = sender as Player
-                        if (player.toGeary().get<Patreon>()?.tier == 0)
+                        if ((player.toGeary().get<Patreon>()?.tier ?: 0) == 0)
                             return@playerAction player.error("This command is only for Patreon supporters!")
 
                         val patreon = player.toGeary().get<Patreon>() ?: return@playerAction
@@ -143,6 +145,26 @@ class PatreonFeature(val config: Config) : Feature() {
                         playerAction {
                             player.editPlayerData { mittyTokensHeld += amount }
                             sender.success("Gave $amount tokens to ${player.name}")
+                        }
+                    }
+                    "check_token" {
+                        playerAction {
+                            sender.success("${player.name} has ${player.playerDataOrNull?.mittyTokensHeld} tokens")
+                        }
+                    }
+                    "check_patreon" {
+                        playerAction {
+                            sender.success("${player.name}: ${player.toGeary().get<Patreon>()}")
+                        }
+                    }
+                    "set_patreon" {
+                        val tier by intArg()
+                        playerAction {
+                            with(player.toGeary()) {
+                                val patreon = (get<Patreon>() ?: Patreon()).copy(tier = tier)
+                                setPersisting(patreon)
+                                sender.success("Set Patreon-component on ${player.name}: $patreon")
+                            }
                         }
                     }
                 }
