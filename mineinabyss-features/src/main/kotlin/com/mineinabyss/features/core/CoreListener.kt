@@ -12,19 +12,11 @@ import org.bukkit.block.data.type.Light
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
-import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
 class CoreListener : Listener {
-
-    @EventHandler
-    fun EntityPotionEffectEvent.onEffect() {
-        if (newEffect == PotionEffectType.OOZING) isCancelled = true
-        if (newEffect == PotionEffectType.INFESTED) isCancelled = true
-    }
 
     @EventHandler
     fun PlayerFailMoveEvent.onMoveWrongly() {
