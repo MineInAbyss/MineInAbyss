@@ -85,3 +85,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    Shopkeepers:
+      required: false
+      load: BEFORE
+      join-classpath: true

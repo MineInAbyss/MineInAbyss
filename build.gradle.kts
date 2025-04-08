@@ -26,6 +26,7 @@ allprojects {
         maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
         maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
+        maven("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/") // Shopkeepers
         maven("https://jitpack.io")
         mavenLocal()
     }
@@ -76,6 +77,7 @@ allprojects {
         compileOnly(libs.minecraft.plugin.traincarts)
         compileOnly(libs.minecraft.plugin.tccoasters)
         compileOnly(libs.minecraft.plugin.mythichud)
+        compileOnly(libs.minecraft.plugin.shopkeepers)
     }
 }
 
