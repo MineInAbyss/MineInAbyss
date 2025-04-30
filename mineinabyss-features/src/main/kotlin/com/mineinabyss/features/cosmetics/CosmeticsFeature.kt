@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 class CosmeticsFeature(val config: Config) : Feature() {
 
     companion object {
-        val MIA_BACKPACK by lazy { CosmeticSlot.valueOf("MIA_BACKPACK") }
+        val MIA_BACKPACK by lazy { HMCCosmeticsAPI.registerCosmeticSlot("MIA_BACKPACK") }
     }
 
     @Serializable
@@ -27,9 +27,14 @@ class CosmeticsFeature(val config: Config) : Feature() {
         val equipWhistleCosmetic = false
     }
 
+    override fun FeatureDSL.load() {
+        println(CosmeticSlot.values().keys)
+        MIA_BACKPACK
+        println(CosmeticSlot.values().keys)
+    }
+
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
-        HMCCosmeticsAPI.registerCosmeticSlot("MIA_BACKPACK")
         HMCCosmeticsAPI.registerCosmeticUserProvider(MiAUserProvider())
         HMCCosmeticsAPI.registerCosmeticProvider(MiACosmeticProvider())
         TypeMiaCosmetic()
