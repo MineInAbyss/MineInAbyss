@@ -1,5 +1,6 @@
 package com.mineinabyss.features.tutorial
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,10 +12,10 @@ import org.joml.Quaternionf
 @Serializable
 @SerialName("Quaternion")
 private class QuaternionSurrogate(
-    val x: Float = 0f,
-    val y: Float = 0f,
-    val z: Float = 0f,
-    val w: Float = 0f,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val x: Float = 0f,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val y: Float = 0f,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val z: Float = 0f,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val w: Float = 0f,
 )
 
 object QuaternionfSerializer : KSerializer<Quaternionf> {
