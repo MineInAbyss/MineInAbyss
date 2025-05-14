@@ -19,13 +19,13 @@ packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
 blocky = { module = "com.mineinabyss:blocky", version.ref = "blocky" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.13"
-minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.6.2-e29bbc8d"
-minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.6-ea724998"
+minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.6.3-d97e5686"
+minecraft-plugin-hmccosmetics = "com.hibiscusmc:HMCCosmetics:2.7.8-e5fda588"
 minecraft-plugin-discordsrv = "com.discordsrv:discordsrv:1.29.0"
 minecraft-plugin-luckperms = "net.luckperms:api:5.4"
 minecraft-plugin-placeholderapi = "me.clip:placeholderapi:2.11.6"
 minecraft-plugin-mythichud = "io.lumine.mythichud:api:1.2.2-SNAPSHOT"
-minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.21.4-v1-SNAPSHOT"
-minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.21.4-v1-SNAPSHOT"
-minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.21.4-v1-SNAPSHOT"
+minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.21.5-v2-SNAPSHOT"
+minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.21.5-v2-SNAPSHOT"
+minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.21.5-v2-SNAPSHOT"
 minecraft-plugin-shopkeepers = "com.nisovin.shopkeepers:ShopkeepersAPI:2.23.4"

@@ -5,9 +5,7 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
 import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.mineinabyss.components.editPlayerData
-import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.luckPerms
-import com.mineinabyss.idofront.messaging.broadcast
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import me.lojosho.shaded.configurate.ConfigurationNode
@@ -25,43 +23,40 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
         val currentCosmetic = user.getCosmetic(cosmetic.slot)
 
         when (clickType) {
-            ClickType.LEFT -> {
-                if (cosmetic == currentCosmetic) user.removeCosmeticSlot(cosmetic.slot)
-                else if (user.canEquipCosmetic(cosmetic)) {
+            ClickType.LEFT -> when {
+                cosmetic == currentCosmetic -> user.removeCosmeticSlot(cosmetic.slot)
+                user.canEquipCosmetic(cosmetic) -> {
                     user.removeCosmeticSlot(cosmetic.slot)
-                    user.addPlayerCosmetic(cosmetic)
+                    user.addCosmetic(cosmetic)
                     if (cosmetic.requiresPermission() && !player.hasPermission(cosmetic.permission))
                         player.closeInventory()
                 }
             }
 
-            ClickType.RIGHT ->
-                when {
-                    cosmetic.isDyable && (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) ->
-                        DyeMenu.openMenu(user, cosmetic)
-                    else -> {
-                        player.editPlayerData {
-                            when (currency) {
-                                "mitty_token" -> {
-                                    if (mittyTokensHeld < cost) return player.error("You don't have enough :cosmetic_mitty_token:!")
-                                    mittyTokensHeld -= cost
-                                    player.success("You have purchased the cosmetic for $cost :cosmetic_mitty_token:!")
-                                }
-
-                                else -> {
-                                    if (orthCoinsHeld < cost) return player.error("You don't have enough :cosmetic_orth_coin:!")
-                                    orthCoinsHeld -= cost
-                                    player.success("You have purchased the cosmetic for $cost :cosmetic_orth_coin:!")
-                                }
-                            }.apply {
-                                luckPerms.userManager.modifyUser(player.uniqueId) {
-                                    it.data().add(Node.builder(cosmetic.permission).build())
-                                }
-                                super.run(user, config, clickType)
-                            }
+            ClickType.RIGHT -> when {
+                cosmetic.isDyeable && (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) ->
+                    DyeMenu.openMenu(user, cosmetic)
+                else -> player.editPlayerData {
+                    when (currency) {
+                        "mitty_token" -> {
+                            if (mittyTokensHeld < cost) return player.error("You don't have enough :cosmetic_mitty_token:!")
+                            mittyTokensHeld -= cost
+                            player.success("You have purchased the cosmetic for $cost :cosmetic_mitty_token:!")
                         }
+
+                        else -> {
+                            if (orthCoinsHeld < cost) return player.error("You don't have enough :cosmetic_orth_coin:!")
+                            orthCoinsHeld -= cost
+                            player.success("You have purchased the cosmetic for $cost :cosmetic_orth_coin:!")
+                        }
+                    }.apply {
+                        luckPerms.userManager.modifyUser(player.uniqueId) {
+                            it.data().add(Node.builder(cosmetic.permission).build())
+                        }
+                        super.run(user, config, clickType)
                     }
                 }
+            }
 
             else -> super.run(user, config, clickType)
         }

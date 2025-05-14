@@ -1,25 +1,18 @@
 package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.gui.Menus
-import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
+import com.hibiscusmc.hmccosmetics.gui.type.Types
 import com.mineinabyss.features.helpers.cosmeticUser
 import com.mineinabyss.features.helpers.hmcCosmetics
-import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.warn
 import kotlinx.serialization.Serializable
 
 class CosmeticsFeature(val config: Config) : Feature() {
-
-    companion object {
-        val MIA_BACKPACK by lazy { HMCCosmeticsAPI.registerCosmeticSlot("MIA_BACKPACK") }
-    }
 
     @Serializable
     class Config {
@@ -27,17 +20,9 @@ class CosmeticsFeature(val config: Config) : Feature() {
         val equipWhistleCosmetic = false
     }
 
-    override fun FeatureDSL.load() {
-        println(CosmeticSlot.values().keys)
-        MIA_BACKPACK
-        println(CosmeticSlot.values().keys)
-    }
-
     override val dependsOn: Set<String> = setOf("HMCCosmetics")
     override fun FeatureDSL.enable() {
-        HMCCosmeticsAPI.registerCosmeticUserProvider(MiAUserProvider())
-        HMCCosmeticsAPI.registerCosmeticProvider(MiACosmeticProvider())
-        TypeMiaCosmetic()
+        Types.addType(TypeMiaCosmetic())
         HMCCosmeticsPlugin.setup()
 
         mainCommand {
@@ -136,7 +121,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
                         if (hmcCosmetics.isEnabled) Menus.getDefaultMenu()?.openMenu(player.cosmeticUser)
                     }
                 }
-                "dye" {
+                /*"dye" {
                     val cosmeticSlot by optionArg(CosmeticSlot.values().keys.toList())
                     playerAction {
                         player.cosmeticUser?.let { user ->
@@ -145,7 +130,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
                             } ?: player.error("You do not have any cosmetic to dye")
                         }
                     }
-                }
+                }*/
             }
         }
         tabCompletion {
