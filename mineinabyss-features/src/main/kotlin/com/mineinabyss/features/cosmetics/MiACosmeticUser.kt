@@ -10,6 +10,7 @@ class MiACosmeticUser(uuid: UUID) : CosmeticUser(uuid) {
 
     override fun updateCosmetic(slot: CosmeticSlot) {
         super.updateCosmetic(slot)
+        if (slot != CosmeticSlot.BACKPACK) return
         if (abyss.config.cosmetics.equipWhistleCosmetic) equipWhistleCosmetic()
     }
 
