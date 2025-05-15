@@ -1,5 +1,6 @@
 package com.mineinabyss.features.cosmetics
 
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
 import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic
@@ -10,13 +11,14 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import me.lojosho.shaded.configurate.ConfigurationNode
 import net.luckperms.api.node.Node
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
 
 class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
 
-    override fun run(user: CosmeticUser?, config: ConfigurationNode, clickType: ClickType?) {
-        val player = user?.player ?: return
+    override fun run(player: Player, holder: CosmeticHolder, config: ConfigurationNode, clickType: ClickType) {
+        val user = holder as CosmeticUser
         val currency = config.node("currency").string.takeIf { it == "mitty_token" || it == "orth_coin" } ?: return
         val cost = config.node("cost").int
         val cosmetic = Cosmetics.getCosmetic(config.node("cosmetic").string) ?: return
