@@ -10,6 +10,7 @@ import com.mineinabyss.features.helpers.hmcCosmetics
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
 
 class CosmeticsFeature(val config: Config) : Feature() {
@@ -25,7 +26,7 @@ class CosmeticsFeature(val config: Config) : Feature() {
         Types.addType(TypeMiaCosmetic())
         HMCCosmeticsPlugin.setup()
         Cosmetics.addCosmetic(EmptyBackpackCosmetic)
-        //plugin.listeners(CosmeticListener(config.equipWhistleCosmetic))
+        plugin.listeners(CosmeticListener(config.equipWhistleCosmetic))
 
         mainCommand {
             "cosmetics" {

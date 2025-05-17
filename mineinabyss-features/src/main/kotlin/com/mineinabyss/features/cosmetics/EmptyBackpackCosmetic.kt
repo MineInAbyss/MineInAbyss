@@ -6,7 +6,10 @@ import me.lojosho.shaded.configurate.CommentedConfigurationNode
 
 object EmptyBackpackCosmetic : CosmeticBackpackType(EmptyBackpackCosmetic.ID, CommentedConfigurationNode.root().apply {
     node("slot").set(CosmeticSlot.BACKPACK.name)
-    node("firstperson-item").set("")
+    node("item", "material").set("PAPER")
+    node("item", "model-id").set("minecraft:empty")
+    node("firstperson-item", "material").set("PAPER")
+    node("firstperson-item", "model-id").set("minecraft:empty")
 }) {
 
     const val ID = "empty_backpack"

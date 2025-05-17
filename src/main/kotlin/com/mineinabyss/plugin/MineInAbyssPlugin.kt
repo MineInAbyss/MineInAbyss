@@ -34,11 +34,11 @@ class MineInAbyssPlugin : JavaPlugin() {
 
         DI.add(AbyssFeatureManager(this@MineInAbyssPlugin))
 
-        runCatching {
-            HMCCosmeticsAPI.registerCosmeticSlot("MIA_BACKPACK")
-            HMCCosmeticsAPI.registerCosmeticUserProvider(MiAUserProvider())
-            HMCCosmeticsAPI.registerCosmeticProvider(MiACosmeticProvider())
-        }
+        //runCatching {
+        //    HMCCosmeticsAPI.registerCosmeticSlot("MIA_BACKPACK")
+        //    HMCCosmeticsAPI.registerCosmeticUserProvider(MiAUserProvider())
+        //    HMCCosmeticsAPI.registerCosmeticProvider(MiACosmeticProvider())
+        //}
     }
 
     override fun onEnable() {
