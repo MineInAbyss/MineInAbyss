@@ -14,7 +14,9 @@ import org.bukkit.event.player.PlayerInteractEvent
 
 class PreventSignEditListener : Listener {
 
-    private val BYPASS_PERMISSION = "mineinabyss.preventsignedit.bypass"
+    companion object {
+        private const val BYPASS_PERMISSION = "mineinabyss.preventsignedit.bypass"
+    }
 
     @EventHandler
     fun PlayerInteractEvent.onPlayerEditSign() {
