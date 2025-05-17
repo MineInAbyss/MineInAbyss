@@ -55,12 +55,12 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
                         luckPerms.userManager.modifyUser(player.uniqueId) {
                             it.data().add(Node.builder(cosmetic.permission).build())
                         }
-                        super.run(user, config, clickType)
+                        super.run(player, holder, config, clickType)
                     }
                 }
             }
 
-            else -> super.run(user, config, clickType)
+            else -> super.run(player, holder, config, clickType)
         }
     }
 }
