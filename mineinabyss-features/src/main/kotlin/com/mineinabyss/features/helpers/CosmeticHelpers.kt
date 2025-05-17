@@ -32,7 +32,7 @@ fun Player.unequipCosmeticHat() = this.cosmeticUser?.removeCosmeticSlot(Cosmetic
 internal val Player.cosmeticUser get() = CosmeticUsers.getUser(this)
 
 fun CosmeticUser.equipWhistleCosmetic() {
-    val player = player ?: return
+    val player = player?.takeIf { it.location.layer?.equipWhistleCosmetic == true } ?: return
     val backpack = (getCosmetic(CosmeticSlot.BACKPACK) as? CosmeticBackpackType) ?: EmptyBackpackCosmetic.apply(::addCosmetic)
     val id = userBackpackManager.firstArmorStandId
     val (item, itemFp) = whistleItems[player.layerIndex]
