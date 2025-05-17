@@ -38,7 +38,7 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
             ClickType.RIGHT -> when {
                 cosmetic.isDyeable && (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) ->
                     DyeMenu.openMenu(user, cosmetic)
-                else -> player.editPlayerData {
+                cosmetic.requiresPermission() && !player.hasPermission(cosmetic.permission) -> player.editPlayerData {
                     when (currency) {
                         "mitty_token" -> {
                             if (mittyTokensHeld < cost) return player.error("You don't have enough :cosmetic_mitty_token:!")
