@@ -1,7 +1,5 @@
 package com.mineinabyss.features.guilds
 
-import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
-import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.commands.ChattyCommands
@@ -33,9 +31,6 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
-import com.mineinabyss.idofront.time.ticks
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.Bukkit
@@ -75,24 +70,13 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
             if (abyss.isChattyLoaded) add(ChattyGuildListener())
             if (abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
         }.toTypedArray()
-        var profileCacheJob: Job? = null
     }
 
     override fun FeatureDSL.enable() {
         plugin.server.pluginManager.registerSuspendingEvents(GuildListener(), plugin)
         plugin.listeners(*context.listeners)
 
-        context.profileCacheJob = plugin.launch(plugin.asyncDispatcher) {
-            getAllGuildOwners().filter { it.uniqueId !in ProfileManager.profileCache }.forEach {
-                val profile = it.playerProfile
-                ProfileManager.profileCache[it.uniqueId] = when {
-                    profile.isComplete -> profile
-                    else -> ProfileManager.getOrRequestProfile(it.uniqueId)
-                }
-
-                delay(10.ticks)
-            }
-        }
+        ProfileManager.startProfileFetching()
 
         if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
@@ -347,6 +331,6 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
     override fun FeatureDSL.disable() {
         plugin.unregisterListeners(*context.listeners)
-        context.profileCacheJob?.cancel()
+        ProfileManager.stopProfileFetching()
     }
 }

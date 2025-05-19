@@ -43,17 +43,18 @@ object TitleItem {
         isLarge: Boolean = false,
         isCenterOfInv: Boolean = false,
     ): ItemStack {
-        val item = ItemStack(Material.PLAYER_HEAD).apply {
-            setData(DataComponentTypes.ITEM_NAME, title)
-            setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
-            setData(DataComponentTypes.ITEM_MODEL, Key.key("mineinabyss:head"))
+        val item = ItemStack(Material.PLAYER_HEAD)
+        item.setData(DataComponentTypes.ITEM_NAME, title)
+        item.setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
+        item.setData(DataComponentTypes.ITEM_MODEL, Key.key("mineinabyss:head"))
 
-            if (!isFlat && !isLarge && !isCenterOfInv) return@apply
+        if (isFlat || isLarge || isCenterOfInv) {
             val cmd = CustomModelData.customModelData().addFloat(when {
                 isCenterOfInv -> if (isLarge) 4f else 3f
                 else -> if (isLarge) 2f else 1f
             }).build()
-            setData(DataComponentTypes.CUSTOM_MODEL_DATA, cmd)
+
+            item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, cmd)
         }
 
         abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
