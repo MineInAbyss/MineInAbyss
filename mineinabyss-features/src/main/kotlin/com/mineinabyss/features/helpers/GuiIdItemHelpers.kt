@@ -1,10 +1,12 @@
 package com.mineinabyss.features.helpers
 
 import androidx.compose.runtime.Composable
-import com.destroystokyo.paper.profile.PlayerProfile
+import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
+import com.github.shynixn.mccoroutine.bukkit.launch
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.ProfileManager
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
@@ -15,8 +17,6 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
-import java.util.*
 
 object TitleItem {
     fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).apply {
@@ -35,7 +35,6 @@ object TitleItem {
         setData(DataComponentTypes.HIDE_TOOLTIP)
     }
 
-    internal val profileCache: MutableMap<UUID, PlayerProfile> = mutableMapOf()
     fun head(
         player: OfflinePlayer,
         title: Component,
@@ -44,7 +43,7 @@ object TitleItem {
         isLarge: Boolean = false,
         isCenterOfInv: Boolean = false,
     ): ItemStack {
-        return ItemStack(Material.PLAYER_HEAD).apply {
+        val item = ItemStack(Material.PLAYER_HEAD).apply {
             setData(DataComponentTypes.ITEM_NAME, title)
             setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
             setData(DataComponentTypes.ITEM_MODEL, Key.key("mineinabyss:head"))
@@ -55,22 +54,20 @@ object TitleItem {
                 else -> if (isLarge) 2f else 1f
             }).build()
             setData(DataComponentTypes.CUSTOM_MODEL_DATA, cmd)
-        }.also { item ->
-            when {
-                player.isOnline -> {
-                    val profile = player.playerProfile
-                    item.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile(profile))
-                    profileCache[player.uniqueId] = profile
-                }
-
-                player.uniqueId in profileCache -> item.editItemMeta<SkullMeta> { playerProfile = profileCache[player.uniqueId] }
-
-                else -> player.playerProfile.update().whenCompleteAsync { profile, _ ->
-                    profileCache[player.uniqueId] = profile
-                    item.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile(profile))
-                }
-            }
         }
+
+        abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
+            val profile = when {
+                player.isOnline -> player.playerProfile
+                player.uniqueId in ProfileManager.profileCache -> ProfileManager.profileCache[player.uniqueId]!!
+                else -> ProfileManager.getOrRequestProfile(player.uniqueId)
+            }
+            ProfileManager.profileCache[player.uniqueId] = profile
+
+            item.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile(profile))
+        }
+
+        return item
     }
 }
 

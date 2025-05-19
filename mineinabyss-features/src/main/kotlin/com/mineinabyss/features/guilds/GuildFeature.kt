@@ -15,7 +15,6 @@ import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
-import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.inventory.guiy
@@ -76,18 +75,21 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
             if (abyss.isChattyLoaded) add(ChattyGuildListener())
             if (abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
         }.toTypedArray()
+        var profileCacheJob: Job? = null
     }
 
-    private var profileCacheJob: Job? = null
     override fun FeatureDSL.enable() {
         plugin.server.pluginManager.registerSuspendingEvents(GuildListener(), plugin)
         plugin.listeners(*context.listeners)
 
-        profileCacheJob = plugin.launch(plugin.asyncDispatcher) {
-            getAllGuilds().map { it.guildName.getOwnerFromGuildName() }.forEach {
-                if (it.uniqueId !in TitleItem.profileCache) it.playerProfile.update().whenCompleteAsync { profile, _ ->
-                    TitleItem.profileCache[it.uniqueId] = profile
+        context.profileCacheJob = plugin.launch(plugin.asyncDispatcher) {
+            getAllGuildOwners().filter { it.uniqueId !in ProfileManager.profileCache }.forEach {
+                val profile = it.playerProfile
+                ProfileManager.profileCache[it.uniqueId] = when {
+                    profile.isComplete -> profile
+                    else -> ProfileManager.getOrRequestProfile(it.uniqueId)
                 }
+
                 delay(10.ticks)
             }
         }
@@ -345,6 +347,6 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
     override fun FeatureDSL.disable() {
         plugin.unregisterListeners(*context.listeners)
-        profileCacheJob?.cancel()
+        context.profileCacheJob?.cancel()
     }
 }

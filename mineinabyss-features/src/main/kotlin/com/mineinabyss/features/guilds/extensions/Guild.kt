@@ -248,9 +248,16 @@ fun getAllGuildNames(): List<String> {
     }
 }
 
+fun getAllGuildOwners(): List<OfflinePlayer> {
+    return transaction(abyss.db) {
+        return@transaction Players.selectAll().where { Players.guildRank eq GuildRank.OWNER }
+            .map { Bukkit.getOfflinePlayer(it[Players.playerUUID]) }
+    }
+}
+
 fun GuildName.getGuildId(): Int? {
     return transaction(abyss.db) {
-        return@transaction Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.firstOrNull()
+        return@transaction Guilds.selectAll().where { Guilds.name.lowerCase() eq lowercase() }.firstOrNull()
             ?.get(Guilds.id)
     }
 }
@@ -273,15 +280,15 @@ fun GuildName.clearGuildInvites() {
     }
 }
 
+private val displayComparator = compareBy<GuildJoin> {
+    it.joinType; it.guildName; it.guildName.getGuildMembers().size; it.guildLevel
+}
 fun displayGuildList(queryName: String? = null): List<GuildJoin> {
     val guilds = getAllGuilds()
-    val comparator = compareBy<GuildJoin> {
-        it.joinType; it.guildName; it.guildName.getGuildMembers().size; it.guildLevel
-    }
     return when (queryName) {
         null -> guilds
         else -> guilds.filter { it.guildName.startsWith(queryName, true) }
-    }.sortedWith(comparator).sortedByDescending { it.guildName.getGuildMembers().size; it.guildLevel }
+    }.sortedWith(displayComparator).sortedByDescending { it.guildName.getGuildMembers().size; it.guildLevel }
 }
 
 fun GuildName.getOwnerFromGuildName(): OfflinePlayer {
