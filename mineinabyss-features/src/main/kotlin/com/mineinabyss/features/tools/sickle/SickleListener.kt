@@ -80,7 +80,7 @@ fun harvestPlant(block: Block, player: Player): Boolean {
 
     fun applyFortune(count: Int): Int {
         if (handItem.type !in Tag.ITEMS_HOES.values) return count
-        val level = handItem.itemMeta?.getEnchantLevel(Enchantment.FORTUNE) ?: return count
+        val level = handItem.getEnchantmentLevel(Enchantment.FORTUNE).takeIf { it > 0 } ?: return count
 
         // Do we have bonus drops?
         return if (Random.nextDouble() > 2 / (level + 2)) {

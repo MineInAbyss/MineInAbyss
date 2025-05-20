@@ -13,8 +13,8 @@ import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.entity.Player
 
@@ -73,7 +73,8 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 
 @Composable
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
-    val renameItem = TitleItem.of(guildName ?: "Guild Name").editItemMeta { isHideTooltip = true }
+    val renameItem = TitleItem.of(guildName ?: "Guild Name")
+    renameItem.setData(DataComponentTypes.HIDE_TOOLTIP)
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,

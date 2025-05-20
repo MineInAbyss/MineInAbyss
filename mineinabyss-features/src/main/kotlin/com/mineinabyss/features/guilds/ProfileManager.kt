@@ -66,6 +66,8 @@ object ProfileManager {
 
     fun stopProfileFetching() {
         status = false
+        activeProfileJobs.values.forEach { it.cancel() }
+        activeProfileJobs.clear()
     }
 
     private suspend fun fetchProfileForUUID(uuid: UUID): PlayerProfile {

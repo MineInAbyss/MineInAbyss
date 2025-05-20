@@ -4,33 +4,21 @@ import com.mineinabyss.components.lootcrates.ContainsLoot
 import com.mineinabyss.components.lootcrates.LootCrateConstants
 import com.mineinabyss.components.lootcrates.LootTable
 import com.mineinabyss.features.abyss
-import com.mineinabyss.geary.datatypes.Component
-import com.mineinabyss.geary.datatypes.Entity
 import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.helpers.cId
-import com.mineinabyss.geary.helpers.componentId
 import com.mineinabyss.geary.helpers.entity
-import com.mineinabyss.geary.helpers.getComponentInfo
-import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.modules.get
 import com.mineinabyss.geary.papermc.datastore.encode
-import com.mineinabyss.geary.papermc.gearyPaper
-import com.mineinabyss.geary.papermc.tracking.entities.EntityTracking
-import com.mineinabyss.geary.papermc.tracking.items.itemEntityContext
 import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.geary.prefabs.entityOf
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
-import com.mineinabyss.idofront.serialization.SerializableItemStack
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -80,11 +68,12 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
                         val (namespace, key) = PrefabKey.of(lootTable)
                         player.withGeary {
                             player.inventory.addItem(
-                                ItemStack(Material.STICK).editItemMeta {
-                                    itemName(
-                                        context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
-                                    )
-                                    persistentDataContainer.encode(ContainsLoot(lootTable))
+                                ItemStack(Material.STICK).apply {
+                                    editPersistentDataContainer {
+                                        it.encode(ContainsLoot(lootTable))
+                                    }
+                                    val itemName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
+                                    setData(DataComponentTypes.ITEM_NAME, itemName)
                                 }
                             )
                         }

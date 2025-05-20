@@ -10,6 +10,7 @@ import com.mineinabyss.features.guilds.menus.DecideMenus.decideInfoMenu
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMainMenu
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMemberMenu
 import com.mineinabyss.features.guilds.menus.GuildScreen.*
+import com.mineinabyss.features.guilds.menus.GuildScreen.Invite
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
@@ -27,9 +28,9 @@ import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.Navigator
 import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
 import net.wesjd.anvilgui.AnvilGUI
 import net.wesjd.anvilgui.AnvilGUI.ResponseAction
 import org.bukkit.OfflinePlayer
@@ -160,7 +161,8 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
     Button(
         enabled = !player.hasGuild(),
         onClick = {
-            val guildRenamePaper = TitleItem.of("Guild Name").editItemMeta { isHideTooltip = true }
+            val guildRenamePaper = TitleItem.of("Guild Name")
+            guildRenamePaper.setData(DataComponentTypes.HIDE_TOOLTIP)
             if (player.hasGuild()) {
                 player.error("You already have a guild.")
                 nav.back()
