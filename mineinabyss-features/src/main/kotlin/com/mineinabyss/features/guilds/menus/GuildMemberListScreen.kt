@@ -20,6 +20,7 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.entities.title
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
@@ -67,7 +68,7 @@ fun GuildUIScope.GuildMemberListScreen() {
 fun ScrollDownButton(modifier: Modifier = Modifier) {
     Item(ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_NAME, "<green><b>Scroll Down".miniMsg())
-        setData(DataComponentTypes.ITEM_MODEL, TitleItem.emptyItemModel)
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }, modifier)
 }
 
@@ -75,7 +76,7 @@ fun ScrollDownButton(modifier: Modifier = Modifier) {
 fun ScrollUpButton(modifier: Modifier = Modifier) {
     Item(ItemStack(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_NAME, "<blue><b>Scroll Up".miniMsg())
-        setData(DataComponentTypes.ITEM_MODEL, TitleItem.emptyItemModel)
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }, modifier)
 }
 
@@ -144,7 +145,7 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
     val item = ItemStack(Material.PAPER).apply {
-        setData(DataComponentTypes.ITEM_MODEL, TitleItem.emptyItemModel)
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
         setData(DataComponentTypes.ITEM_NAME, "<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
         setData(DataComponentTypes.LORE, ItemLore.lore(listOf("<yellow>Currently players can join via:<gold><i> ${joinType.name}".miniMsg())))
     }

@@ -3,6 +3,7 @@ package com.mineinabyss.features.helpers
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
+import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
@@ -14,22 +15,21 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
 
 object TitleItem {
-    val emptyItemModel = Key.key("minecraft:empty")
     val headItemModel = Key.key("mineinabyss:head")
 
     fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_NAME, name.miniMsg())
         setData(DataComponentTypes.LORE, ItemLore.lore(lore.map { it.miniMsg() }))
-        setData(DataComponentTypes.ITEM_MODEL, emptyItemModel)
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }
     fun of(name: Component, vararg lore: Component) = ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_NAME, name)
         setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
-        setData(DataComponentTypes.ITEM_MODEL, emptyItemModel)
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }
 
     val transparentItem = ItemStack.of(Material.PAPER).apply {
-        setData(DataComponentTypes.ITEM_MODEL, emptyItemModel)
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
         setData(DataComponentTypes.HIDE_TOOLTIP)
     }
 
