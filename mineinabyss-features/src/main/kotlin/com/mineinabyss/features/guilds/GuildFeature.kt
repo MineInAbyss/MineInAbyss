@@ -76,7 +76,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         plugin.server.pluginManager.registerSuspendingEvents(GuildListener(), plugin)
         plugin.listeners(*context.listeners)
 
-        //ProfileManager.startProfileFetching()
+        ProfileManager.startProfileFetching()
 
         if (Plugins.isEnabled("BlockLocker"))
             BlockLockerAPIv2.getPlugin().groupSystems.addSystem(GuildContainerSystem())
