@@ -23,7 +23,7 @@ class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Cont
 
             spawnOkiboMaps()
         }, onLoad = { config ->
-            abyss.logger.s("Reloaded OkiboLine!")
+            abyss.logger.s("Reloaded OkiboLines")
         })
         val okiboTravelListener = OkiboTravelListener()
     }
