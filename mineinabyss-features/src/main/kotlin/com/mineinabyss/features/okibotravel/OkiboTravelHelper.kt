@@ -15,14 +15,16 @@ import net.minecraft.world.phys.Vec3
 import org.bukkit.Color
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
+import org.bukkit.util.Vector
+import org.joml.Matrix4f
+import org.joml.Vector3f
 import java.util.*
 
 val mapEntities = mutableMapOf<String, Int>()
 val hitboxEntities = mutableMapOf<String, MutableMap<String, Int>>()
 val hitboxIconEntities = mutableMapOf<String, MutableMap<String, Int>>()
-val noticeBoardFurnitures = mutableMapOf<UUID, String>()
 
-val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.name == station }
+val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.id == station }
 
 fun getHitboxStation(entityId: Int) =
     hitboxEntities.values.flatMap { it.toList() }.firstOrNull { it.second == entityId }?.first?.let { okiboLine.config.okiboMaps.firstOrNull { o -> it.startsWith(o.station) } }
@@ -30,6 +32,7 @@ fun getHitboxStation(entityId: Int) =
 fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val connection = (this as CraftPlayer).handle.connection
 
+    // Remove existing entities
     connection.send(ClientboundRemoveEntitiesPacket(
         *mutableListOf(mapEntities[okiboMap.station] ?: -1)
             .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
@@ -37,71 +40,79 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
             .toIntArray()
     ))
 
-    val textLoc = okiboMap.getStation?.location?.clone()?.add(okiboMap.offset)?.apply { yaw = okiboMap.yaw } ?: return
+    // Map text entity
+    val textLoc = okiboMap.location
     val entityId = mapEntities.computeIfAbsent(okiboMap.station) { Entity.nextEntityId() }
-
     val textEntityPacket = ClientboundAddEntityPacket(
-        entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw,
+        entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw - 90f,
         EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
     )
-
     val textMetaPacket = ClientboundSetEntityDataPacket(
         entityId, listOf(
+            SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, okiboMap.offset),
             SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
             SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
             SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(okiboMap.text)),
-            SynchedEntityData.DataValue(25, EntityDataSerializers.INT, okiboMap.background), // Transparent background
+            SynchedEntityData.DataValue(25, EntityDataSerializers.INT, OkiboMap.background),
         )
     )
+    val textBundle = ClientboundBundlePacket(listOf(textEntityPacket, textMetaPacket))
+    connection.send(textBundle)
 
-    okiboMap.hitboxes.flatMap { mapHitbox ->
+    // Process hitboxes and icons
+    val hitboxBundles = okiboMap.hitboxes.flatMap { mapHitbox ->
         val packets = mutableListOf<ClientboundBundlePacket>()
+
+        // Calculate hitbox position (offset from textLoc, rotated by yaw)
+        val hitboxOffset = mapHitbox.offset.clone().rotateAroundY(Math.toRadians(-textLoc.yaw.toDouble()))
+        val hitboxLoc = textLoc.clone().add(hitboxOffset)
+
         val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
             .computeIfAbsent(mapHitbox.destStation) { Entity.nextEntityId() }
-        val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
-            .computeIfAbsent(mapHitbox.destStation) { Entity.nextEntityId() }
-        val loc = textLoc.clone().add(mapHitbox.offset)
-
-        //interactionPacket
-        val addEntity = ClientboundAddEntityPacket(
+        val hitboxPacket = ClientboundAddEntityPacket(
             hitboxEntityId, UUID.randomUUID(),
-            loc.x, loc.y, loc.z, loc.pitch, loc.yaw,
+            hitboxLoc.x, hitboxLoc.y, hitboxLoc.z, 0f, 0f,
             EntityType.INTERACTION, 0, Vec3.ZERO, 0.0
         )
-
-        //metadataPacket
-        val metadata = ClientboundSetEntityDataPacket(
+        val hitboxMetaPacket = ClientboundSetEntityDataPacket(
             hitboxEntityId, listOf(
                 SynchedEntityData.DataValue(8, EntityDataSerializers.FLOAT, mapHitbox.hitbox.width.toFloat()),
                 SynchedEntityData.DataValue(9, EntityDataSerializers.FLOAT, mapHitbox.hitbox.height.toFloat()),
             )
         )
-        packets += ClientboundBundlePacket(listOf(addEntity, metadata))
+        packets += ClientboundBundlePacket(listOf(hitboxPacket, hitboxMetaPacket))
 
+        // Icon logic with translation offset from hitbox
         okiboMap.icon?.also { icon ->
-            val iconLoc = loc.clone().add(icon.offset)
-            val iconPackets = mutableListOf<Packet<ClientGamePacketListener>>()
+            val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
+                .computeIfAbsent(mapHitbox.destStation) { Entity.nextEntityId() }
 
-            //iconPacket
-            ClientboundAddEntityPacket(
-                iconEntityId, UUID.randomUUID(),
-                iconLoc.x, iconLoc.y, iconLoc.z, iconLoc.pitch, iconLoc.yaw,
+            // Spawn icon at hitboxLoc
+            val iconPacket = ClientboundAddEntityPacket(
+                iconEntityId, UUID.randomUUID(), hitboxLoc.x, hitboxLoc.y, hitboxLoc.z, textLoc.pitch, textLoc.yaw - 90,
                 EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
-            ).also(iconPackets::add)
+            )
 
-            //iconMetaPacket
-            ClientboundSetEntityDataPacket(
+            // Calculate icon translation (offset from hitbox, rotated by yaw)
+            val iconTranslation = icon.offset.rotateY(Math.toRadians(-textLoc.yaw.toDouble()).toFloat(), Vector3f()) // Create a copy
+
+            // Set translation metadata (ID 11) with Vector3 serializer
+            val iconMetaPacket = ClientboundSetEntityDataPacket(
                 iconEntityId, listOf(
+                    SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, iconTranslation), // Translation offset from hitbox
+                    SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, icon.scale), // Translation offset from hitbox
                     SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
                     SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(icon.text.miniMsg()) ?: Component.empty()),
-                    SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()), // Transparent background
+                    SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()),
                 )
-            ).also(iconPackets::add)
+            )
 
-            packets += ClientboundBundlePacket(iconPackets)
+            packets += ClientboundBundlePacket(listOf(iconPacket, iconMetaPacket))
         }
         packets
-    }.plus(ClientboundBundlePacket(listOf(textEntityPacket, textMetaPacket))).forEach(connection::send)
+    }
+
+    hitboxBundles.forEach(connection::send)
 }
 
 fun Player.removeOkiboMap(okiboMap: OkiboMap) {
@@ -113,4 +124,22 @@ fun Player.removeOkiboMap(okiboMap: OkiboMap) {
                 .toIntArray()
         )
     )
+}
+
+fun spawnOkiboMaps() {
+    okiboLine.config.okiboMaps.forEach {
+        if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@forEach
+        it.location.chunk.playersSeeingChunk.forEach { player ->
+            player.sendOkiboMap(it)
+        }
+    }
+}
+
+fun removeOkiboMaps() {
+    okiboLine.config.okiboMaps.forEach {
+        if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@forEach
+        it.location.chunk.playersSeeingChunk.forEach { player ->
+            player.removeOkiboMap(it)
+        }
+    }
 }

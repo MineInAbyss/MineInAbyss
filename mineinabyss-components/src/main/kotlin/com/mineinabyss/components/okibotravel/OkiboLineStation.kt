@@ -9,7 +9,8 @@ import org.bukkit.Location
 @Serializable
 @SerialName("mineinabyss:okibo_line_station")
 data class OkiboLineStation(
-    val name: String,
+    val id: String,
+    val displayName: String,
     val location: @Serializable(with = LocationSerializer::class) Location,
     @EncodeDefault(EncodeDefault.Mode.NEVER) val subStations: Set<OkiboLineStation> = setOf(),
     @SerialName("iconHitboxOffset") val iconHitboxOffset: String
