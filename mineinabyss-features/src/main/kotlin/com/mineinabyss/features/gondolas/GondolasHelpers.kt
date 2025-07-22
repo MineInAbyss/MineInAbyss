@@ -19,12 +19,12 @@ fun gondolaWarp(gondola: Gondola, player: Player, gondolaType: GondolaType) {
     player.sendMessage("You have been warped to ${gondola.name} at ${loc.x}, ${loc.y}, ${loc.z}")
 }
 
-// AABB detection
 // returns if locations contains point within radius
 fun locContains(loc: Location, point: Location, radius: Double): Boolean {
-    return abs(loc.x - point.x) <= radius &&
-            abs(loc.y - point.y) <= radius &&
-            abs(loc.z - point.z) <= radius
+//    return abs(loc.x - point.x) <= radius &&
+//            abs(loc.y - point.y) <= radius &&
+//            abs(loc.z - point.z) <= radius
+    return loc.distanceSquared(point) <= radius * radius
 }
 
 fun getClosestGondolaType(gondola: Gondola, location: Location): GondolaType {
