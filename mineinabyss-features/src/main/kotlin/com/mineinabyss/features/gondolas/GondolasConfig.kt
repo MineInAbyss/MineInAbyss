@@ -8,8 +8,6 @@ data class GondolasConfig(
     val gondolas: Set<Gondola> = setOf()
 ) {
     init {
-        // set the gondolas to be loaded at startup
-        LoadedGondolas.loaded =
-            gondolas.associateBy { it.name.lowercase() } as MutableMap<String, Gondola>
+        LoadedGondolas.loaded = gondolas.associateByTo(mutableMapOf()) { it.name.lowercase() }
     }
 }
