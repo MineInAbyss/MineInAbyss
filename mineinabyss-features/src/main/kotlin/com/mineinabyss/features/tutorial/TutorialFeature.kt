@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
 
@@ -25,6 +26,7 @@ class TutorialFeature : Feature() {
         DI.remove<TutorialContext>()
         DI.add<TutorialContext>(object : TutorialContext {
             val tutorial by config<Tutorial>("tutorial", abyss.dataPath, Tutorial())
+            override val firstJoinLocation: Location? = tutorial.firstJoinLocation
             override val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>> =
                 tutorial.tutorialEntities.groupByTo(Long2ObjectOpenHashMap()) {
                     Chunk.getChunkKey(it.location)
@@ -72,7 +74,7 @@ class TutorialFeature : Feature() {
                                     leftRotation = entity.transformation.leftRotation,
                                     rightRotation = entity.transformation.rightRotation,
                                 )
-                            }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(it, tutorial.entry, tutorial.exit)).write(Tutorial(it, tutorial.entry, tutorial.exit)) }
+                            }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(tutorial.firstJoinLocation, it, tutorial.entry, tutorial.exit)).write(Tutorial(tutorial.firstJoinLocation, it, tutorial.entry, tutorial.exit)) }
 
                         setTutorialContext()
                         sender.success("Successfully saved tutorial-entities")

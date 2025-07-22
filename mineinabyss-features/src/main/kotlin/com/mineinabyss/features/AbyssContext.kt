@@ -13,7 +13,7 @@ import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.observeLogger
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.jdbc.Database
 import java.nio.file.Path
 
 val abyss by DI.observe<AbyssContext>()

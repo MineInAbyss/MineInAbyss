@@ -17,7 +17,7 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
 
     train.head().addPassengerForced(player)
 
-    train.properties.destination = destination.name
+    train.properties.destination = destination.id
     train.properties.addTags("paid") // Ticket adds this so that train only launches when player mounts it
     train.properties.setOwner(player.name, true)
     train.properties.speedLimit = 1.0
@@ -26,13 +26,14 @@ internal fun spawnOkiboCart(player: Player, station: OkiboLineStation, destinati
     train.properties.isPlayerTakeable = false
     train.properties.isManualMovementAllowed = true
 
-    abyss.logger.i("A train has been spawned at ${station.name} and is heading to ${destination.name}!")
+    abyss.logger.i("A train has been spawned at ${station.id} and is heading to ${destination.id}!")
 }
 
 //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
 fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
-    val startNode = TrainCarts.plugin.pathProvider.getWorld(location.world).let { it.getNodeByName(this.name) ?: it.getNodeAtRail(this.location.block) } ?: return null
-    val destNode = TrainCarts.plugin.pathProvider.getWorld(destination.location.world).let { it.getNodeByName(destination.name) ?: it.getNodeAtRail(destination.location.block) } ?: return null
+    val trainWorld = TrainCarts.plugin.pathProvider.getWorld(location.world)
+    val startNode = trainWorld.getNodeByName(id) ?: trainWorld.getNodeAtRail(location.block) ?: return null
+    val destNode = trainWorld.getNodeByName(destination.id) ?: trainWorld.getNodeAtRail(destination.location.block) ?: return null
     return (startNode.findConnection(destNode)?.distance?.times(okiboLine.config.costPerKM)?.div(1000))?.roundToInt()
 }
 
@@ -40,8 +41,8 @@ val OkiboLineStation.isSubStation get() = okiboLine.config.okiboStations.any { t
 val OkiboLineStation.parentStation get() = okiboLine.config.okiboStations.firstOrNull { this in it.subStations }
 fun OkiboLineStation.nextStation(destination: OkiboLineStation) : OkiboLineStation? {
     TrainCarts.plugin.pathProvider.getWorld(location.world).let {
-        val (startNode, endNode) = (it.getNodeByName(name) ?: return null) to (it.getNodeByName(destination.name) ?: return null)
+        val (startNode, endNode) = (it.getNodeByName(id) ?: return null) to (it.getNodeByName(destination.id) ?: return null)
         val nextStation = startNode.findRoute(endNode).first().destination.name
-        return okiboLine.config.allStations.find { it.name == nextStation }
+        return okiboLine.config.allStations.find { it.id == nextStation }
     }
 }
