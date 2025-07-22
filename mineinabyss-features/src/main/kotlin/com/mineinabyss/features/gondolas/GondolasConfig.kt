@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GondolasConfig(
-    val gondolas: Set<Gondola> = setOf()
+    val gondolas: Map<String, Gondola> = mapOf()
 ) {
     init {
-        LoadedGondolas.loaded = gondolas.associateByTo(mutableMapOf()) { it.name.lowercase() }
+        LoadedGondolas.loaded = gondolas.mapKeys { it.key.lowercase() }.toMutableMap()
     }
 }
