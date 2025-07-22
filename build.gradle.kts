@@ -63,9 +63,7 @@ allprojects {
         compileOnly(libs.guiy)
         compileOnly(libs.chatty)
         compileOnly(libs.deeperworld)
-        compileOnly(libs.eternalfortune)
         compileOnly(libs.packy)
-        compileOnly(libs.blocky)
 
         compileOnly(libs.minecraft.plugin.blocklocker)
         compileOnly(libs.minecraft.plugin.hmccosmetics)

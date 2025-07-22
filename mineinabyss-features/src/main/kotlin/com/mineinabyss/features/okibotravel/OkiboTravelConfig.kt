@@ -13,7 +13,7 @@ data class OkiboTravelConfig(
     val allStations get() = okiboStations.toMutableList().apply { addAll(okiboStations.map { it.subStations }.flatten()) }
 
     init {
-        val hitboxes = okiboStations.map { OkiboMap.OkiboMapHitbox(it.name, it.iconHitboxOffset) }
+        val hitboxes = okiboStations.map { OkiboMap.OkiboMapHitbox(it.id, it.iconHitboxOffset) }
         okiboMaps.forEach { map ->
             map.hitboxes.addAll(hitboxes.filter { it.destStation in map._hitboxes })
         }

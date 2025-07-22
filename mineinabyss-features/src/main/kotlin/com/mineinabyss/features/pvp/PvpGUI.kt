@@ -2,7 +2,6 @@ package com.mineinabyss.features.pvp
 
 import androidx.compose.runtime.*
 import com.mineinabyss.components.editPlayerData
-import com.mineinabyss.components.playerData
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
@@ -11,14 +10,17 @@ import com.mineinabyss.features.pvp.ToggleIcon.enabled
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.height
+import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.CustomModelData
+import io.papermc.paper.datacomponent.item.ItemLore
+import net.kyori.adventure.key.Key
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -93,28 +95,27 @@ fun TogglePvpPrompt(player: Player, modifier: Modifier) {
 }
 
 object ToggleIcon {
-    val enabled = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(2)
-        itemName("<blue><b>Toggle PvP Prompt".miniMsg())
-        lore(
-            listOf(
-                "<red>Disable <dark_aqua>this prompt from showing".miniMsg(),
-                "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
-                "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
-            )
-        )
+    private val pvpIconModel = Key.key("mineinabyss:pvp_toggle_icon")
+
+    val enabled = ItemStack(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_MODEL, pvpIconModel)
+        setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFlag(true).build())
+        setData(DataComponentTypes.ITEM_NAME, "<blue><b>Toggle PvP Prompt".miniMsg())
+        setData(DataComponentTypes.LORE, ItemLore.lore(listOf(
+            "<red>Disable <dark_aqua>this prompt from showing".miniMsg(),
+            "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
+            "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
+        )))
     }
 
-    val disabled =
-        ItemStack(Material.PAPER).editItemMeta {
-            setCustomModelData(3)
-            itemName("<blue><b>Toggle PvP Prompt".miniMsg())
-            lore(
-                listOf(
-                    "<green>Enable <dark_aqua>this prompt from showing".miniMsg(),
-                    "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
-                    "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
-                )
-            )
-        }
+    val disabled = ItemStack(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_MODEL, pvpIconModel)
+        setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFlag(false).build())
+        setData(DataComponentTypes.ITEM_NAME, "<blue><b>Toggle PvP Prompt".miniMsg())
+        setData(DataComponentTypes.LORE, ItemLore.lore(listOf(
+            "<green>Enable <dark_aqua>this prompt from showing".miniMsg(),
+            "<dark_aqua>when entering the <green>Abyss.".miniMsg(),
+            "<dark_aqua>It can be re-opened at any time in <gold>Orth.".miniMsg()
+        )))
+    }
 }

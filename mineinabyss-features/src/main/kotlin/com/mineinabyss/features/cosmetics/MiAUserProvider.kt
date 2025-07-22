@@ -4,7 +4,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.hibiscusmc.hmccosmetics.user.CosmeticUserProvider
 import com.mineinabyss.features.abyss
 import org.bukkit.plugin.Plugin
-import java.util.UUID
+import java.util.*
 
 class MiAUserProvider : CosmeticUserProvider() {
     override fun createCosmeticUser(playerId: UUID): CosmeticUser {
