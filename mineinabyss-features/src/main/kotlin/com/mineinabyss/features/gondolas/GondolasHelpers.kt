@@ -15,8 +15,6 @@ fun gondolaWarp(gondola: Gondola, player: Player, gondolaType: GondolaType) {
     val loc =
         if (gondolaType == GondolaType.LOWER) gondola.upperLoc else gondola.lowerLoc
     player.teleportAsync(loc)
-
-    player.sendMessage("You have been warped to ${gondola.name} at ${loc.x}, ${loc.y}, ${loc.z}")
 }
 
 // returns if locations contains point within radius
@@ -36,13 +34,4 @@ fun getClosestGondolaType(gondola: Gondola, location: Location): GondolaType {
     if (locContains(upperLoc, location, radius)) return GondolaType.UPPER
     if (locContains(lowerLoc, location, radius)) return GondolaType.LOWER
     return GondolaType.NONE
-}
-
-fun getGondolaFromName(gondolaName: String): Gondola? {
-    return LoadedGondolas.loaded.values.firstOrNull {
-        it.name.equals(
-            gondolaName,
-            ignoreCase = true
-        )
-    }
 }
