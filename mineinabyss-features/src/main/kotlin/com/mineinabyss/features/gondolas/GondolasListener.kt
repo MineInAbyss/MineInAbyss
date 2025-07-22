@@ -18,10 +18,10 @@ class GondolasListener : Listener {
     private val errorCooldown = 5000
 
     @EventHandler
-    fun onPlayerMove(event: PlayerMoveEvent) {
-        if (!event.hasExplicitlyChangedBlock()) return
+    fun PlayerMoveEvent.onPlayerMove() {
+        if (!hasExplicitlyChangedBlock()) return
 
-        val player = event.player
+        val player = player
         val gondolas = LoadedGondolas.loaded
         val now = System.currentTimeMillis()
 
