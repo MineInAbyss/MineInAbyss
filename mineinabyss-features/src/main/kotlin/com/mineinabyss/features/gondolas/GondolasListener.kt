@@ -21,14 +21,18 @@ class GondolasListener : Listener {
     fun PlayerMoveEvent.onPlayerMove() {
         if (!hasExplicitlyChangedBlock()) return
 
-        val player = player
         val gondolas = LoadedGondolas.loaded
         val now = System.currentTimeMillis()
 
-        val nearbyGondolaData = gondolas.entries.firstNotNullOfOrNull { (id, gondola) ->
-            val type = getClosestGondolaType(gondola, player.location)
-            if (type != GondolaType.NONE) Triple(id, gondola, type) else null
-        }
+        val nearbyGondolaData =
+            gondolas.entries.firstNotNullOfOrNull { (id, gondola) ->
+                val type = getClosestGondolaType(gondola, player.location)
+                if (type != GondolaType.NONE) Triple(
+                    id,
+                    gondola,
+                    type
+                ) else null
+            }
 
         if (nearbyGondolaData == null) {
             playerZoneEntry.remove(player.uniqueId)
@@ -38,14 +42,10 @@ class GondolasListener : Listener {
 
         val (id, gondola, type) = nearbyGondolaData
 
-        val unlockedGondolas =
-            player.toGeary().get<UnlockedGondolas>() ?: return
-        if (id !in unlockedGondolas.keys) {
-            showError(player, gondola, now)
-            return
-        }
+        val unlockedGondolas = player.toGeary().get<UnlockedGondolas>() ?: return
+        if (id !in unlockedGondolas.keys) return showError(player, gondola, now)
 
-        if (justWarped.contains(player.uniqueId)) return
+        if (player.uniqueId in justWarped) return
         handleWarpCooldown(player, id, gondola, type, now)
     }
 
