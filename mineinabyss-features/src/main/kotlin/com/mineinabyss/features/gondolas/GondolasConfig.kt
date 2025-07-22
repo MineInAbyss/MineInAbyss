@@ -8,6 +8,8 @@ data class GondolasConfig(
     val gondolas: Map<String, Gondola> = mapOf()
 ) {
     init {
-        LoadedGondolas.loaded = gondolas.mapKeys { it.key.lowercase() }.toMutableMap()
+        LoadedGondolas.loaded.clear()
+        LoadedGondolas.loaded.putAll(gondolas.mapKeys { it.key.lowercase() })
+
     }
 }
