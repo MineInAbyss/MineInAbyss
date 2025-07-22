@@ -20,6 +20,7 @@ import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import org.bukkit.entity.Player
 
 /*
  * Gondolas system:
@@ -68,6 +69,18 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                         player.error("Cleared all gondolas")
                     }
                 }
+            }
+        }
+        tabCompletion {
+            when (args.size) {
+                1 -> listOf("gondola").filter { it.startsWith(args[0], true) }
+                2 -> if (args[0] == "gondola") listOf("list", "unlock", "clear").filter { it.startsWith(args[1], true) } else null
+                3 -> if (args[0] == "gondola" && args[1] == "unlock") {
+                    val player = sender as? Player ?: return@tabCompletion emptyList()
+                    val unlocked = player.toGeary().get<UnlockedGondolas>()?.keys ?: emptySet()
+                    context.config.gondolas.keys.filter { it !in unlocked && it.startsWith(args[2], true) }
+                } else null
+                else -> null
             }
         }
     }
