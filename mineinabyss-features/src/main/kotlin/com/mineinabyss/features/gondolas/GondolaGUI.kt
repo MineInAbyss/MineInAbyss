@@ -22,17 +22,26 @@ fun GondolaSelectionMenu(player: Player) {
     val gearyPlayer = player.toGeary()
     val gondolas = gearyPlayer.get<UnlockedGondolas>() ?: return
 
-    Chest(setOf(player), title = "Choose Spawn Location", onClose = { owner.exit() }) {
+    Chest(
+        setOf(player),
+        title = "Choose Spawn Location",
+        onClose = { owner.exit() }) {
         HorizontalGrid(Modifier.size(9, 6)) {
-            gondolas.keys.forEach { GondolaSpawn(player, LoadedGondolas.loaded[it] ?: return@forEach) }
+            gondolas.keys.forEach {
+                GondolaSpawn(
+                    player,
+                    LoadedGondolas.loaded[it] ?: return@forEach
+                )
+            }
         }
     }
 }
 
 @Composable
 fun GondolaSpawn(player: Player, gondola: Gondola) = Item(
-    gondola.displayItem.toItemStack().editItemMeta { itemName(gondola.name.miniMsg()) },
+    gondola.displayItem.toItemStack()
+        .editItemMeta { itemName(gondola.name.miniMsg()) },
     Modifier.clickable {
-        player.teleportAsync(gondola.location)
+        player.teleportAsync(gondola.upperLoc)
     }
 )
