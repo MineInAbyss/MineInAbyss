@@ -9,6 +9,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.UUID
+import com.mineinabyss.idofront.textcomponents.miniMsg
 
 class GondolasListener : Listener {
     private val playerZoneEntry = mutableMapOf<UUID, Pair<String, Long>>()
@@ -51,7 +52,7 @@ class GondolasListener : Listener {
     private fun showError(player: Player, gondola: Gondola, now: Long) {
         val lastTime = lastErrorTime[player.uniqueId] ?: 0L
         if (now - lastTime >= errorCooldown) {
-            player.error(gondola.noAccessMessage)
+            player.error(gondola.rawNoAccessMessage)
             lastErrorTime[player.uniqueId] = now
         }
     }
