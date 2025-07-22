@@ -78,8 +78,7 @@ class GondolasListener : Listener {
             }
 
             else -> {
-                val remainingSeconds =
-                    (gondola.warpCooldown - (now - entry.second)) / 1000
+                val remainingSeconds = (gondola.warpCooldown - (now - entry.second)) / 1000
                 player.sendActionBar("Warping in $remainingSeconds seconds...")
             }
         }
