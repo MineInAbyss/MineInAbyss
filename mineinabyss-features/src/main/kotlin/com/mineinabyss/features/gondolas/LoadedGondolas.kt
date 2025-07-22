@@ -22,5 +22,5 @@ object LoadedGondolas {
     //    loaded[gondola.name] = gondola
     //}
 
-    var loaded = mutableMapOf<String, Gondola>()
+    val loaded = mutableMapOf<String, Gondola>()
 }
