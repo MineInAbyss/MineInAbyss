@@ -31,7 +31,8 @@ import com.mineinabyss.idofront.plugin.listeners
 class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
 
     class Context : Configurable<GondolasConfig> {
-        override val configManager = config("gondolas", abyss.dataPath, GondolasConfig())
+        override val configManager =
+            config("gondolas", abyss.dataPath, GondolasConfig())
         val gondolasListener = GondolasListener()
     }
 
@@ -45,8 +46,6 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                 "list"(desc = "Opens the gondola menu") {
                     permission = "mineinabyss.gondola.list"
                     playerAction {
-                        val list_gondolas = context.config.gondolas
-                        //list_gondolas.forEach { println("Gondola: ${it.name} at ${it.location}") }
                         guiy { GondolaSelectionMenu(player) }
                     }
                 }
@@ -54,7 +53,8 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                     permission = "mineinabyss.gondola.unlock"
                     val gondola by stringArg()
                     playerAction {
-                        val gondolas = player.toGeary().get<UnlockedGondolas>() ?: return@playerAction
+                        val gondolas = player.toGeary().get<UnlockedGondolas>()
+                            ?: return@playerAction
                         gondolas.keys.add(gondola)
                         player.success("Unlocked $gondola")
                     }
@@ -62,8 +62,8 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                 "clear"(desc = "Removes all associated gondolas from a player") {
                     permission = "mineinabyss.gondola.clear"
                     playerAction {
-                        val list_gondolas = context.config.gondolas
-                        val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
+                        val gondolas = player.toGeary()
+                            .getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
                         gondolas.keys.clear()
                         player.error("Cleared all gondolas")
                     }

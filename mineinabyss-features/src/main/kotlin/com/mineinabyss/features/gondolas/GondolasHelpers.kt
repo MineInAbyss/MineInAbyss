@@ -12,7 +12,8 @@ enum class GondolaType() {
 }
 
 fun gondolaWarp(gondola: Gondola, player: Player, gondolaType: GondolaType) {
-    val loc = if (gondolaType == GondolaType.LOWER) gondola.upperLoc else gondola.lowerLoc
+    val loc =
+        if (gondolaType == GondolaType.LOWER) gondola.upperLoc else gondola.lowerLoc
     player.teleport(loc)
     player.sendMessage("You have been warped to ${gondola.name} at ${loc.x}, ${loc.y}, ${loc.z}")
 }

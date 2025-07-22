@@ -21,14 +21,18 @@ class GondolasListener : Listener {
         val player = event.player
         val gondolas = LoadedGondolas.loaded
         val now = System.currentTimeMillis()
-        var inZone = false
 
+        // iterate through all gondolas
         for (gondola in gondolas.values) {
             val unlockedGondolas =
                 player.toGeary().get<UnlockedGondolas>() ?: continue
+            // finds if  we are near a gondola upper/lower section
+            // type = GondolaType.NONE if not near a gondola
+            // type = GondolaType.UPPER if near upper section
+            // type = GondolaType.LOWER if near lower section
             val type = getClosestGondolaType(gondola, player.location)
             if (type != GondolaType.NONE) {
-                inZone = true
+                // ensure the player has access to the gondola
                 if (gondola.name !in unlockedGondolas.keys) {
                     val lastTime = lastErrorTime[player.uniqueId] ?: 0L
                     if (now - lastTime >= errorCooldown) {
@@ -37,8 +41,10 @@ class GondolasListener : Listener {
                     }
                     return
                 }
+                // warp cooldown
                 if (justWarped.contains(player.uniqueId)) return
 
+                // apply and check warp cooldown
                 val entry = playerZoneEntry[player.uniqueId]
                 if (entry?.first == gondola.name) {
                     if (now - entry.second >= gondola.warpCooldown) {
