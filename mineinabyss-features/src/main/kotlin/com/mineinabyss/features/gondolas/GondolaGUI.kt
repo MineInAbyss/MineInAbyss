@@ -42,6 +42,6 @@ fun GondolaSpawn(player: Player, gondola: Gondola) = Item(
     gondola.displayItem.toItemStack()
         .editItemMeta { itemName(gondola.name.miniMsg()) },
     Modifier.clickable {
-        player.teleport(gondola.upperLoc)
+        player.teleportAsync(gondola.upperLoc)
     }
 )
