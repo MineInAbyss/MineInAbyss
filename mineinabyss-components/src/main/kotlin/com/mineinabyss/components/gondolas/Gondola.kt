@@ -9,7 +9,6 @@ import org.bukkit.Location
 @Serializable
 @SerialName("mineinabyss:gondola")
 class Gondola(
-    val name: String,
     @Serializable(with = LocationSerializer::class)
     val upperLoc: Location,
     @Serializable(with = LocationSerializer::class)
