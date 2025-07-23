@@ -5,7 +5,6 @@ import com.mineinabyss.components.music.Song
 import com.mineinabyss.deeperworld.services.WorldManager
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.idofront.serialization.MiniMessageSerializer
-import com.mineinabyss.idofront.textcomponents.miniMsg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -37,6 +36,7 @@ class Layer(
     val _songs: List<String> = emptyList(),
     @SerialName("sections")
     val _sections: List<String> = emptyList(),
+    val equipWhistleCosmetic: Boolean = false,
 ) {
     @Transient val songs: List<Song> = emptyList()
     @Transient val sections: List<Section> = _sections.mapNotNull { WorldManager.getSectionFor(it) }

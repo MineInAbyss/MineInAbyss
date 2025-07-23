@@ -27,6 +27,9 @@ class PlayerProfileFeature(val config: Config) : Feature() {
     override fun FeatureDSL.enable() {
         mainCommand {
             "profile"(desc = "Opens a players profile") {
+                playerAction {
+                    guiy { PlayerProfile(sender as Player, player) }
+                }
                 val offlinePlayer by offlinePlayerArg { default = sender as? Player }
                 action {
                     guiy { PlayerProfile(sender as Player, offlinePlayer) }
@@ -47,7 +50,7 @@ class PlayerProfileFeature(val config: Config) : Feature() {
                 1 -> listOf("profile", "profile_background").filter { it.startsWith(args[0]) }
                 2 -> {
                     when (args[0]) {
-                        "profile" -> abyss.plugin.server.onlinePlayers.filter { it != sender as? Player }.map { it.name }
+                        "profile" -> abyss.plugin.server.onlinePlayers.map { it.name }
                         "profile_background" -> config.validBackgroundIds
                         else -> null
                     }?.filter { it.startsWith(args[1], true) }

@@ -1,36 +1,40 @@
 package com.mineinabyss.features.helpers
 
 import androidx.compose.runtime.Composable
-import com.destroystokyo.paper.profile.PlayerProfile
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.idofront.items.editItemMeta
+import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.CustomModelData
+import io.papermc.paper.datacomponent.item.ItemLore
+import io.papermc.paper.datacomponent.item.TooltipDisplay
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
-import java.util.*
 
 object TitleItem {
-    fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).editItemMeta {
-        itemName(name.miniMsg())
-        lore(lore.toList().map { it.miniMsg() })
-        setCustomModelData(1)
+    val hideTooltip = TooltipDisplay.tooltipDisplay().hideTooltip(true)
+    val headItemModel = Key.key("mineinabyss:head")
+
+    fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_NAME, name.miniMsg())
+        setData(DataComponentTypes.LORE, ItemLore.lore(lore.map { it.miniMsg() }))
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }
-    fun of(name: Component, vararg lore: Component) = ItemStack.of(Material.PAPER).editItemMeta {
-        itemName(name)
-        lore(lore.toList())
-        setCustomModelData(1)
+    fun of(name: Component, vararg lore: Component) = ItemStack.of(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_NAME, name)
+        setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }
 
-    val transparentItem = ItemStack.of(Material.PAPER).editItemMeta {
-        setCustomModelData(1)
-        isHideTooltip = true
+    val transparentItem = ItemStack.of(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
+        setData(DataComponentTypes.TOOLTIP_DISPLAY, hideTooltip)
     }
 
-    internal val profileCache: MutableMap<UUID, PlayerProfile> = mutableMapOf()
     fun head(
         player: OfflinePlayer,
         title: Component,
@@ -39,29 +43,32 @@ object TitleItem {
         isLarge: Boolean = false,
         isCenterOfInv: Boolean = false,
     ): ItemStack {
-        return ItemStack(Material.PLAYER_HEAD).editItemMeta<SkullMeta> {
-            itemName(title)
-            lore(lore.toList())
-            if (isFlat) setCustomModelData(1)
-            if (isLarge) setCustomModelData(2)
-            if (isCenterOfInv && !isLarge) setCustomModelData(3)
-            if (isCenterOfInv && isLarge) setCustomModelData(4)
-        }.also { item ->
-            when {
-                player.isOnline -> {
-                    val profile = player.playerProfile
-                    item.editItemMeta<SkullMeta> { playerProfile = profile }
-                    profileCache[player.uniqueId] = profile
-                }
+        val item = ItemStack(Material.PLAYER_HEAD)
+        item.setData(DataComponentTypes.ITEM_NAME, title)
+        item.setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
+        item.setData(DataComponentTypes.ITEM_MODEL, headItemModel)
 
-                player.uniqueId in profileCache -> item.editItemMeta<SkullMeta> { playerProfile = profileCache[player.uniqueId] }
+        if (isFlat || isLarge || isCenterOfInv) {
+            val cmd = CustomModelData.customModelData().addFloat(when {
+                isCenterOfInv -> if (isLarge) 4f else 3f
+                else -> if (isLarge) 2f else 1f
+            }).build()
 
-                else -> player.playerProfile.update().whenCompleteAsync { profile, _ ->
-                    profileCache[player.uniqueId] = profile
-                    item.editItemMeta<SkullMeta> { playerProfile = profile }
-                }
-            }
+            item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, cmd)
         }
+
+        //abyss.plugin.launch(abyss.plugin.asyncDispatcher) {
+        //    val profile = when {
+        //        player.isOnline -> player.playerProfile
+        //        player.uniqueId in ProfileManager.profileCache -> ProfileManager.profileCache[player.uniqueId]!!
+        //        else -> ProfileManager.getOrRequestProfile(player.uniqueId)
+        //    }
+        //    ProfileManager.profileCache[player.uniqueId] = profile
+
+        //    item.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile(profile))
+        //}
+
+        return item
     }
 }
 

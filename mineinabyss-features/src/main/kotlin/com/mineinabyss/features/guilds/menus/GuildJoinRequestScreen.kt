@@ -16,8 +16,8 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 @Composable
 fun GuildUIScope.GuildJoinRequestScreen(from: OfflinePlayer) {

@@ -31,6 +31,7 @@ import org.joml.Vector3f
 
 val tutorial by DI.observe<TutorialContext>()
 interface TutorialContext {
+    val firstJoinLocation: Location?
     val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>>
     val entry: TutorialRegion
     val exit: TutorialRegion
@@ -38,6 +39,7 @@ interface TutorialContext {
 
 @Serializable
 data class Tutorial(
+    @EncodeDefault(NEVER) val firstJoinLocation: @Serializable(LocationSerializer::class) Location? = null,
     val tutorialEntities: List<TutorialEntity> = listOf(),
     val start: TutorialRegion = TutorialRegion(),
     val end: TutorialRegion = TutorialRegion(),

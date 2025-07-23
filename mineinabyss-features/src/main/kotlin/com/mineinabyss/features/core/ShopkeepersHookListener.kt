@@ -10,11 +10,12 @@ import org.bukkit.event.Listener
 
 class ShopkeepersHookListener : Listener {
 
-    val itemProvider = gearyPaper.worldManager.global.getAddon(ItemTracking).itemProvider
+    private val itemProvider by lazy { gearyPaper.worldManager.global.getAddon(ItemTracking).itemProvider }
 
     @EventHandler
     fun UpdateItemEvent.onStartup() {
         val prefab = itemProvider.deserializeItemStackToEntity(item.itemMeta?.persistentDataContainer ?: return)?.get<PrefabKey>() ?: return
-        item = UnmodifiableItemStack.ofNonNull(itemProvider.serializePrefabToItemStack(prefab))
+        val item = itemProvider.serializePrefabToItemStack(prefab) ?: return
+        this.item = UnmodifiableItemStack.ofNonNull(item)
     }
 }

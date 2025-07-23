@@ -1,9 +1,11 @@
 package com.mineinabyss.plugin
 
+import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI
 import com.mineinabyss.components.curse.AscensionEffect
+import com.mineinabyss.features.cosmetics.MiACosmeticProvider
+import com.mineinabyss.features.cosmetics.MiAUserProvider
 import com.mineinabyss.geary.addons.dsl.createAddon
 import com.mineinabyss.geary.autoscan.autoscan
-import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.configure
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -31,6 +33,12 @@ class MineInAbyssPlugin : JavaPlugin() {
         PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
 
         DI.add(AbyssFeatureManager(this@MineInAbyssPlugin))
+
+        //runCatching {
+        //    HMCCosmeticsAPI.registerCosmeticSlot("MIA_BACKPACK")
+        //    HMCCosmeticsAPI.registerCosmeticUserProvider(MiAUserProvider())
+        //    HMCCosmeticsAPI.registerCosmeticProvider(MiACosmeticProvider())
+        //}
     }
 
     override fun onEnable() {

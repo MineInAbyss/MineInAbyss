@@ -8,7 +8,7 @@ import com.mineinabyss.deeperworld.services.PlayerManager
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
+//import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
@@ -41,12 +41,12 @@ import kotlin.time.toJavaDuration
 class LayerListener : Listener {
 
     init {
-        if (abyss.isEternalFortuneLoaded) Bukkit.getPluginManager().registerEvents(object : Listener {
-            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            fun PlayerCreateGraveEvent.onCreateGrave() {
-                if (player.isInHub()) isCancelled = true
-            }
-        }, abyss.plugin)
+        //if (abyss.isEternalFortuneLoaded) Bukkit.getPluginManager().registerEvents(object : Listener {
+        //    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        //    fun PlayerCreateGraveEvent.onCreateGrave() {
+        //        if (player.isInHub()) isCancelled = true
+        //    }
+        //}, abyss.plugin)
     }
 
     private val titleCooldown = Cooldown(2.seconds, null, "mineinabyss:layer_title")

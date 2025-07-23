@@ -19,9 +19,12 @@ import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.entities.title
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.ItemLore
+import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -64,23 +67,24 @@ fun GuildUIScope.GuildMemberListScreen() {
 
 @Composable
 fun ScrollDownButton(modifier: Modifier = Modifier) {
-    Item(ItemStack(Material.PAPER).editItemMeta {
-        itemName("<green><b>Scroll Down".miniMsg())
-        setCustomModelData(1)
+    Item(ItemStack.of(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_NAME, "<green><b>Scroll Down".miniMsg())
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }, modifier)
 }
 
 @Composable
 fun ScrollUpButton(modifier: Modifier = Modifier) {
-    Item(ItemStack(Material.PAPER).editItemMeta {
-        itemName("<blue><b>Scroll Up".miniMsg())
-        setCustomModelData(1)
+    Item(ItemStack(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_NAME, "<blue><b>Scroll Up".miniMsg())
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
     }, modifier)
 }
 
 @Composable
 fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
-    val guildInvitePaper = TitleItem.of("Player Name").editItemMeta { isHideTooltip = true }
+    val guildInvitePaper = TitleItem.of("Player Name")
+    guildInvitePaper.setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,
@@ -141,10 +145,10 @@ private fun GuildUIScope.ManageGuildJoinRequestsButton(modifier: Modifier) {
 @Composable
 private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
     var joinType by remember { mutableStateOf(player.getGuildJoinType()) }
-    val item = ItemStack(Material.PAPER).editItemMeta {
-        setCustomModelData(1)
-        itemName("<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
-        lore(listOf("<yellow>Currently players can join via:<gold><i> ${joinType.name}".miniMsg()))
+    val item = ItemStack(Material.PAPER).apply {
+        setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
+        setData(DataComponentTypes.ITEM_NAME, "<dark_green><b>Toggle Guild GuildJoin Type".miniMsg())
+        setData(DataComponentTypes.LORE, ItemLore.lore(listOf("<yellow>Currently players can join via:<gold><i> ${joinType.name}".miniMsg())))
     }
     Button(
         modifier = modifier,
