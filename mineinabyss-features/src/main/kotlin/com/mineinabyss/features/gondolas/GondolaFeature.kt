@@ -68,8 +68,7 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                 "clear"(desc = "Removes all associated gondolas from a player") {
                     permission = "mineinabyss.gondola.clear"
                     playerAction {
-                        val gondolas = player.toGeary()
-                            .getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
+                        val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
                         gondolas.keys.clear()
                         player.error("Cleared all gondolas")
                     }
