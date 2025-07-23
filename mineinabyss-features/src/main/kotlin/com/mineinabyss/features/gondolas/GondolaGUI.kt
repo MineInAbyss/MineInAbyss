@@ -28,10 +28,7 @@ fun GondolaSelectionMenu(player: Player) {
         onClose = { owner.exit() }) {
         HorizontalGrid(Modifier.size(9, 6)) {
             gondolas.keys.forEach {
-                GondolaSpawn(
-                    player,
-                    LoadedGondolas.loaded[it] ?: return@forEach
-                )
+                GondolaSpawn(player,LoadedGondolas.loaded[it] ?: return@forEach)
             }
         }
     }
