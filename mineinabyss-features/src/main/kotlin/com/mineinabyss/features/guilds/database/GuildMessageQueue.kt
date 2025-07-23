@@ -1,6 +1,6 @@
 package com.mineinabyss.features.guilds.database
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 
 
 object GuildMessageQueue : IntIdTable() {
