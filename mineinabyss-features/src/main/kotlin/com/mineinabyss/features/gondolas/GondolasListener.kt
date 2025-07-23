@@ -24,29 +24,19 @@ class GondolasListener : Listener {
         val gondolas = LoadedGondolas.loaded
         val now = System.currentTimeMillis()
 
-        val nearbyGondolaData =
-            gondolas.entries.firstNotNullOfOrNull { (id, gondola) ->
-                val type = getClosestGondolaType(gondola, player.location)
-                if (type != GondolaType.NONE) Triple(
-                    id,
-                    gondola,
-                    type
-                ) else null
-            }
-
-        if (nearbyGondolaData == null) {
+        val nearbyGondolaData = gondolas.entries.firstNotNullOfOrNull { (id, gondola) ->
+            getClosestGondolaData(gondola, player.location, id)
+        }?.takeIf { it.type != GondolaType.NONE } ?: run {
             playerZoneEntry.remove(player.uniqueId)
             justWarped.remove(player.uniqueId)
             return
         }
 
-        val (id, gondola, type) = nearbyGondolaData
-
         val unlockedGondolas = player.toGeary().get<UnlockedGondolas>() ?: return
-        if (id !in unlockedGondolas.keys) return showError(player, gondola, now)
+        if (nearbyGondolaData.id !in unlockedGondolas.keys) return showError(player, nearbyGondolaData.gondola, now)
 
         if (player.uniqueId in justWarped) return
-        handleWarpCooldown(player, id, gondola, type, now)
+        handleWarpCooldown(player, nearbyGondolaData, now)
     }
 
     private fun showError(player: Player, gondola: Gondola, now: Long) {
@@ -59,26 +49,24 @@ class GondolasListener : Listener {
 
     private fun handleWarpCooldown(
         player: Player,
-        id: String,
-        gondola: Gondola,
-        type: GondolaType,
+        data: GondolaData,
         now: Long
     ) {
         val entry = playerZoneEntry[player.uniqueId]
 
         when {
-            entry?.first != id -> {
-                playerZoneEntry[player.uniqueId] = id to now
+            entry?.first != data.id -> {
+                playerZoneEntry[player.uniqueId] = data.id to now
             }
 
-            now - entry.second >= gondola.warpCooldown -> {
-                gondolaWarp(gondola, player, type)
+            now - entry.second >= data.gondola.warpCooldown -> {
+                gondolaWarp(data.gondola, player, data.type)
                 playerZoneEntry.remove(player.uniqueId)
                 justWarped.add(player.uniqueId)
             }
 
             else -> {
-                val remainingSeconds = (gondola.warpCooldown - (now - entry.second)) / 1000
+                val remainingSeconds = (data.gondola.warpCooldown - (now - entry.second)) / 1000
                 player.sendActionBar("Warping in $remainingSeconds seconds...")
             }
         }

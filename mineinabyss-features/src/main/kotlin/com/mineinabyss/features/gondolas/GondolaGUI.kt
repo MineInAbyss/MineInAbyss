@@ -11,6 +11,7 @@ import com.mineinabyss.guiy.inventory.LocalGuiyOwner
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import org.bukkit.entity.Player
@@ -27,10 +28,7 @@ fun GondolaSelectionMenu(player: Player) {
         onClose = { owner.exit() }) {
         HorizontalGrid(Modifier.size(9, 6)) {
             gondolas.keys.forEach {
-                GondolaSpawn(
-                    player,
-                    LoadedGondolas.loaded[it] ?: return@forEach
-                )
+                GondolaSpawn(player,LoadedGondolas.loaded[it] ?: return@forEach)
             }
         }
     }

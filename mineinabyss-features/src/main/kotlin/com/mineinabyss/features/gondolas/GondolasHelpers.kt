@@ -25,13 +25,16 @@ fun locContains(loc: Location, point: Location, radius: Double): Boolean {
     return loc.distanceSquared(point) <= radius * radius
 }
 
-fun getClosestGondolaType(gondola: Gondola, location: Location): GondolaType {
+fun getClosestGondolaData(gondola: Gondola, location: Location, id: String): GondolaData {
     val radius = gondola.warpZoneRange
     val upperLoc = gondola.upperLoc
     val lowerLoc = gondola.lowerLoc
 
-    // 0 for upperLoc, 1 for lowerLoc
-    if (locContains(upperLoc, location, radius)) return GondolaType.UPPER
-    if (locContains(lowerLoc, location, radius)) return GondolaType.LOWER
-    return GondolaType.NONE
+    if (locContains(upperLoc, location, radius))
+        return GondolaData(id, gondola,GondolaType.UPPER)
+
+    if (locContains(lowerLoc, location, radius))
+        return GondolaData(id, gondola,GondolaType.LOWER)
+
+    return GondolaData(id, gondola, GondolaType.NONE)
 }
