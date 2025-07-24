@@ -3,6 +3,8 @@ package com.mineinabyss.features.gondolas
 import com.bergerkiller.reflection.org.bukkit.BSimplePluginManager.plugins
 import com.mineinabyss.components.gondolas.UnlockedGondolas
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.gondolas.pass.TicketConfig
+import com.mineinabyss.features.gondolas.pass.unlockRoute
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature.Context
 import com.mineinabyss.geary.modules.geary
@@ -34,6 +36,7 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
     class Context : Configurable<GondolasConfig> {
         override val configManager =
             config("gondolas", abyss.dataPath, GondolasConfig())
+        val ticketsCfg by config("tickets", abyss.dataPath, TicketConfig())
         val gondolasListener = GondolasListener()
     }
 
@@ -50,13 +53,16 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                         guiy { GondolaSelectionMenu(player) }
                     }
                 }
-                "unlock"(desc = "Unlocks a gondola for a player") {
+                "unlock"(desc = "Unlocks a route for a player") {
                     permission = "mineinabyss.gondola.unlock"
-                    val gondola by stringArg()
+                    val passID by stringArg()
                     playerAction {
-                        val gondolas = player.toGeary().get<UnlockedGondolas>()?: return@playerAction
-                        gondolas.keys.add(gondola)
-                        player.success("Unlocked $gondola")
+//                        val gondolas = player.toGeary().get<UnlockedGondolas>()
+//                            ?: return@playerAction
+//                        gondolas.keys.add(gondola)
+//                        player.success("Unlocked $gondola")
+                        val ticket = context.ticketsCfg.tickets[passID]?: return@playerAction player.error("Ticket $passID not found")
+                        player.unlockRoute(ticket)
                     }
                 }
                 "clear"(desc = "Removes all associated gondolas from a player") {
@@ -74,9 +80,8 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                 1 -> listOf("gondola").filter { it.startsWith(args[0], true) }
                 2 -> if (args[0] == "gondola") listOf("list", "unlock", "clear").filter { it.startsWith(args[1], true) } else null
                 3 -> if (args[0] == "gondola" && args[1] == "unlock") {
-                    val player = sender as? Player ?: return@tabCompletion emptyList()
-                    val unlocked = player.toGeary().get<UnlockedGondolas>()?.keys ?: emptySet()
-                    context.config.gondolas.keys.filter { it !in unlocked && it.startsWith(args[2], true) }
+                    context.ticketsCfg.tickets.keys.filter { it.startsWith(args[2], true) }
+                    //context.config.gondolas.keys.filter { it.startsWith(args[2], true) }
                 } else null
                 else -> null
             }

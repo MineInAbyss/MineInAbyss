@@ -24,9 +24,9 @@ class GondolasListener : Listener {
         val gondolas = LoadedGondolas.loaded
         val now = System.currentTimeMillis()
 
-        val nearbyGondolaData = gondolas.entries.firstNotNullOfOrNull { (id, gondola) ->
-            getClosestGondolaData(gondola, player.location, id)
-        }?.takeIf { it.type != GondolaType.NONE } ?: run {
+        val nearbyGondolaData = gondolas.entries.asSequence()
+            .map { (id, gondola) -> getClosestGondolaData(gondola, player.location, id) }
+            .firstOrNull { it.type != GondolaType.NONE } ?: run {
             playerZoneEntry.remove(player.uniqueId)
             justWarped.remove(player.uniqueId)
             return
