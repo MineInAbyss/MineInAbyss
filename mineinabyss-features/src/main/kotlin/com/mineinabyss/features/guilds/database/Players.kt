@@ -1,6 +1,6 @@
 package com.mineinabyss.features.guilds.database
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object Players : Table() {
     val playerUUID = uuid("playerUUID").uniqueIndex()

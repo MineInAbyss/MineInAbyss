@@ -17,7 +17,6 @@ class Gondola(
     val upperLoc: Location,
     @Serializable(with = LocationSerializer::class)
     val lowerLoc: Location,
-    val unlockPrice: Int, // the price needed to unlock access to the line
     val displayItem: SerializableItemStack, // the item to display in the GUI
     val displayName: String,
     val warpZoneRange: Double, // the range in which the player needs to stay in order to be teleported
