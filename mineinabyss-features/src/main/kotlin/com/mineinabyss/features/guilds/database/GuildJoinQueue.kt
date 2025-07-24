@@ -1,6 +1,6 @@
 package com.mineinabyss.features.guilds.database
 
-import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.sql.Table
 
 object GuildJoinQueue : Table() {
     val playerUUID = uuid("playerUUID")

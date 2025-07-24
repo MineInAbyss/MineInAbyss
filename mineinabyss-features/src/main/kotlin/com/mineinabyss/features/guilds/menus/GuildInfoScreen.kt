@@ -15,7 +15,6 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
-import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.entity.Player
 
@@ -75,7 +74,7 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 @Composable
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
     val renameItem = TitleItem.of(guildName ?: "Guild Name")
-    renameItem.setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
+    renameItem.setData(DataComponentTypes.HIDE_TOOLTIP)
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,

@@ -31,7 +31,6 @@ import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
-import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.wesjd.anvilgui.AnvilGUI
 import net.wesjd.anvilgui.AnvilGUI.ResponseAction
 import org.bukkit.OfflinePlayer
@@ -163,7 +162,7 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
         enabled = !player.hasGuild(),
         onClick = {
             val guildRenamePaper = TitleItem.of("Guild Name")
-            guildRenamePaper.setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
+            guildRenamePaper.setData(DataComponentTypes.HIDE_TOOLTIP)
             if (player.hasGuild()) {
                 player.error("You already have a guild.")
                 nav.back()

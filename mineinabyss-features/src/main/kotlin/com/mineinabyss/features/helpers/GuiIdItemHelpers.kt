@@ -8,7 +8,6 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
 import io.papermc.paper.datacomponent.item.ItemLore
-import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -16,7 +15,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
 
 object TitleItem {
-    val hideTooltip = TooltipDisplay.tooltipDisplay().hideTooltip(true)
     val headItemModel = Key.key("mineinabyss:head")
 
     fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).apply {
@@ -32,7 +30,7 @@ object TitleItem {
 
     val transparentItem = ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_MODEL, ResourcePacks.EMPTY_MODEL)
-        setData(DataComponentTypes.TOOLTIP_DISPLAY, hideTooltip)
+        setData(DataComponentTypes.HIDE_TOOLTIP)
     }
 
     fun head(
