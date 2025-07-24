@@ -1,6 +1,10 @@
 package com.mineinabyss.features.gondolas
 
+import com.bergerkiller.reflection.org.bukkit.BSimplePluginManager.plugins
 import com.mineinabyss.components.gondolas.UnlockedGondolas
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.okibotravel.OkiboTravelFeature
+import com.mineinabyss.features.okibotravel.OkiboTravelFeature.Context
 import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
@@ -8,16 +12,35 @@ import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.inventory.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.config.config
+import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.plugin.listeners
+import org.bukkit.entity.Player
 
-class GondolaFeature : Feature() {
+/*
+ * Gondolas system:
+ * - Each player have an "UnlockedGondolas" component that stores the gondolas they have unlocked as strings. -> player.toGeary().get<UnlockedGondolas>()
+ * - The server has a "ExistingGondolas" list that stores all the gondolas, it gets them from a config file. -> GondolasConfig.gondolas
+ * - The server has a "LoadedGondolas" object stores all the active gondolas, that is, the ones players are able to use. -> LoadedGondolas.loaded
+ * - Players are able to use (teleport) gondolas if they have them unlocked, and they are active (loaded).
+ */
+class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
+
+    class Context : Configurable<GondolasConfig> {
+        override val configManager =
+            config("gondolas", abyss.dataPath, GondolasConfig())
+        val gondolasListener = GondolasListener()
+    }
+
     override fun FeatureDSL.enable() = gearyPaper.run {
         //LoadedGondolas
         //createGondolaTracker()
-
+        plugin.listeners(context.gondolasListener)
         mainCommand {
             "gondola"(desc = "Commands for gondolas") {
                 permission = "mineinabyss.gondola"
@@ -31,7 +54,7 @@ class GondolaFeature : Feature() {
                     permission = "mineinabyss.gondola.unlock"
                     val gondola by stringArg()
                     playerAction {
-                        val gondolas = player.toGeary().get<UnlockedGondolas>() ?: return@playerAction
+                        val gondolas = player.toGeary().get<UnlockedGondolas>()?: return@playerAction
                         gondolas.keys.add(gondola)
                         player.success("Unlocked $gondola")
                     }
@@ -44,6 +67,18 @@ class GondolaFeature : Feature() {
                         player.error("Cleared all gondolas")
                     }
                 }
+            }
+        }
+        tabCompletion {
+            when (args.size) {
+                1 -> listOf("gondola").filter { it.startsWith(args[0], true) }
+                2 -> if (args[0] == "gondola") listOf("list", "unlock", "clear").filter { it.startsWith(args[1], true) } else null
+                3 -> if (args[0] == "gondola" && args[1] == "unlock") {
+                    val player = sender as? Player ?: return@tabCompletion emptyList()
+                    val unlocked = player.toGeary().get<UnlockedGondolas>()?.keys ?: emptySet()
+                    context.config.gondolas.keys.filter { it !in unlocked && it.startsWith(args[2], true) }
+                } else null
+                else -> null
             }
         }
     }
