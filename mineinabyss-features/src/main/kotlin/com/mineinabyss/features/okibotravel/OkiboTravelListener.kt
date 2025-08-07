@@ -65,8 +65,6 @@ class OkiboTravelListener : Listener {
             if (player.isOnline) gearyPlayer.remove<OkiboTraveler>()
         }
 
-        if (cost == 0 && destination != playerStation) gearyPlayer.set(OkiboTraveler(destination))
-
         gearyPlayer.with { traveler: OkiboTraveler ->
             when (traveler.selectedDestination) {
                 destination -> {
@@ -87,9 +85,8 @@ class OkiboTravelListener : Listener {
         }
 
         // Only confirm when there is a cost
-        player.info("<gold>You selected <yellow>${destination.id}</yellow> station!")
-        player.info("<gold>The cost to travel there will be <yellow>$cost</yellow> Orth Coins.")
-        player.info("<gold>Click the map again to confirm your selection.")
+        player.info("<gold>Do you want a ride to <i>${destination.displayName}</i>?")
+        player.info("<gold>Click again to confirm!")
         gearyPlayer.set(OkiboTraveler(destination))
     }
 
