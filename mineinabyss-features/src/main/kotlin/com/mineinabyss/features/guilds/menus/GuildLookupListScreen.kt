@@ -16,6 +16,7 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.wesjd.anvilgui.AnvilGUI
 
 @Composable
@@ -90,7 +91,9 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Uni
                 UniversalScreens.Anvil(
                     AnvilGUI.Builder()
                         .title(":space_-61::guild_search_menu:")
-                        .itemLeft(TitleItem.of("Guild Name").apply { setData(DataComponentTypes.HIDE_TOOLTIP) })
+                        .itemLeft(TitleItem.of("Guild Name").apply {
+                            setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
+                        })
                         .itemOutput(TitleItem.transparentItem)
                         .plugin(guiyPlugin)
                         .onClose { nav.back() }

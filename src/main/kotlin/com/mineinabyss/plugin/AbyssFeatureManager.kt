@@ -13,8 +13,8 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureManager
 import com.mineinabyss.idofront.plugin.actions
 import org.bukkit.plugin.java.JavaPlugin
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal val featureManager by DI.observe<AbyssFeatureManager>()
 

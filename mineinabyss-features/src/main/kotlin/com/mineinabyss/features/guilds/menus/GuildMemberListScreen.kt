@@ -24,6 +24,7 @@ import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
+import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -83,7 +84,7 @@ fun ScrollUpButton(modifier: Modifier = Modifier) {
 @Composable
 fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
     val guildInvitePaper = TitleItem.of("Player Name")
-    guildInvitePaper.setData(DataComponentTypes.HIDE_TOOLTIP)
+    guildInvitePaper.setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,
