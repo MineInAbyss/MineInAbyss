@@ -6,6 +6,7 @@ on:
       - master
       - develop
     paths-ignore:
+      - docs
       - '**.md'
 
 jobs:
@@ -16,10 +17,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: MineInAbyss/publish-action@develop
+      - uses: MineInAbyss/publish-action@v3
         with:
-          maven-metadata-url: https://repo.mineinabyss.com/releases/com/mineinabyss/mineinabyss/maven-metadata.xml
-          maven-snapshot-metadata-url: https://repo.mineinabyss.com/snapshots/com/mineinabyss/mineinabyss/maven-metadata.xml
           maven-username: ${{ secrets.MAVEN_USERNAME }}
           maven-password: ${{ secrets.MAVEN_PASSWORD }}
           release-files: |
