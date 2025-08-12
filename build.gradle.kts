@@ -43,6 +43,11 @@ allprojects {
         compileOnly(libs.geary.papermc)
 
         // MineInAbyss platform
+        implementation(idofrontLibs.exposed.core) { isTransitive = false }
+        implementation(idofrontLibs.exposed.dao) { isTransitive = false }
+        implementation(idofrontLibs.exposed.jdbc) { isTransitive = false }
+        implementation(idofrontLibs.exposed.javatime) { isTransitive = false }
+
         compileOnly(idofrontLibs.bundles.idofront.core)
         compileOnly(idofrontLibs.kotlin.stdlib)
         compileOnly(idofrontLibs.kotlinx.serialization.json)
@@ -50,10 +55,6 @@ allprojects {
         compileOnly(idofrontLibs.kotlinx.coroutines)
         compileOnly(idofrontLibs.minecraft.mccoroutine)
         compileOnly(idofrontLibs.reflections)
-        compileOnly(idofrontLibs.exposed.core) { isTransitive = false }
-        compileOnly(idofrontLibs.exposed.dao) { isTransitive = false }
-        compileOnly(idofrontLibs.exposed.jdbc) { isTransitive = false }
-        compileOnly(idofrontLibs.exposed.javatime) { isTransitive = false }
         compileOnly(idofrontLibs.sqlite.jdbc)
         compileOnly(idofrontLibs.minecraft.anvilgui)
 

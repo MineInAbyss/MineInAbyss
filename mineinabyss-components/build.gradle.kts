@@ -1,7 +1,7 @@
 plugins {
-    id("com.mineinabyss.conventions.kotlin.jvm")
-    id("com.mineinabyss.conventions.papermc")
-    id("com.mineinabyss.conventions.nms")
+    alias(idofrontLibs.plugins.mia.kotlin.jvm)
+    alias(idofrontLibs.plugins.mia.papermc)
+    alias(idofrontLibs.plugins.mia.nms)
     kotlin("plugin.serialization")
     alias(idofrontLibs.plugins.mia.publication)
 }

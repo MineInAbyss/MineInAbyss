@@ -18,13 +18,12 @@ import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.UniversalScreens
-import com.mineinabyss.idofront.entities.title
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.nms.entities.title
 import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
-import io.papermc.paper.datacomponent.item.TooltipDisplay
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
