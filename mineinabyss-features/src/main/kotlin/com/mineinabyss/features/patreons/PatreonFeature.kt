@@ -62,6 +62,7 @@ class PatreonFeature(val config: Config) : Feature() {
 
                         player.editPlayerData { mittyTokensHeld += patreon.tier }
                         patreon.kitUsedMonth = month
+                        player.success("You redeemed a token for this month!")
                     }
                 }
                 "prefix"(desc = "Change your prefix emote") {
