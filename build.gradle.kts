@@ -8,8 +8,6 @@ plugins {
     alias(idofrontLibs.plugins.mia.papermc)
 }
 
-val mavenUser = if (project.hasProperty("mavenUser")) project.property("mavenUser") as String else System.getenv("MAVEN_USERNAME") ?: ""
-val mavenPassword = if (project.hasProperty("mavenPassword")) project.property("mavenPassword") as String else System.getenv("MAVEN_PASSWORD") ?: ""
 allprojects {
     apply(plugin = "java")
 
@@ -17,17 +15,8 @@ allprojects {
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
-        maven("https://repo.hibiscusmc.com/releases/")
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://repo.codemc.org/repository/maven-public/")
-        maven("https://repo.spaceio.xyz/repository/maven-public/")
-        maven("https://mvn.lumine.io/repository/maven-public/")
-        maven("https://nexus.scarsz.me/content/groups/public/") // DiscordSRV
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
-        maven("https://ci.mg-dev.eu/plugin/repository/everything") // TrainCarts
-        maven("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/") // Shopkeepers
-        maven("https://jitpack.io")
         mavenLocal()
     }
 
