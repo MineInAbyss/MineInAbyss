@@ -13,6 +13,7 @@ import com.mineinabyss.features.guilds.menus.GuildScreen.*
 import com.mineinabyss.features.guilds.menus.GuildScreen.Invite
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -27,13 +28,10 @@ import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.Navigator
-import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
-import io.papermc.paper.datacomponent.item.TooltipDisplay
-import net.wesjd.anvilgui.AnvilGUI
-import net.wesjd.anvilgui.AnvilGUI.ResponseAction
+import io.papermc.paper.registry.data.dialog.input.DialogInput
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
@@ -164,26 +162,31 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
         onClick = {
             val guildRenamePaper = TitleItem.of("Guild Name")
             guildRenamePaper.setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
-            if (player.hasGuild()) {
-                player.error("You already have a guild.")
-                nav.back()
-            } else if (!openedFromHQ) {
-                player.error("You need to register your guild")
-                player.error("with the Guild Master at Orth GuildHQ.")
-                player.closeInventory()
-            } else nav.open(UniversalScreens.Anvil(
-                AnvilGUI.Builder()
-                    .title(":space_-61::guild_name_menu:")
-                    .itemLeft(guildRenamePaper)
-                    .itemOutput(TitleItem.transparentItem)
-                    .plugin(guiyPlugin)
-                    .onClose { nav.back() }
-                    .onClick { _, snapshot ->
-                        snapshot.player.createGuild(snapshot.text)
-                        nav.open(Default(snapshot.player))
-                        listOf(ResponseAction.close())
+            when {
+                player.hasGuild() -> {
+                    player.error("You already have a guild.")
+                    nav.back()
+                }
+                !openedFromHQ -> {
+                    player.error("You need to register your guild")
+                    player.error("with the Guild Master at Orth GuildHQ.")
+                    player.closeInventory()
+                }
+                else -> {
+                    val maxGuildLength = Features.guilds.config.guildNameMaxLength
+                    val dialog = GuildDialogs(":space_1000:", "<gold>Create Guild...", listOf(
+                        DialogInput.text("guildname", "<gold>Create Guild with name...".miniMsg())
+                            .initial("${player.name}'s Guild").width(maxGuildLength * 10)
+                            .maxLength(maxGuildLength)
+                            .build()
+                    )).createGuildLookDialog {
+                        player.createGuild(it)
+                        nav.open(Default(player))
                     }
-            ))
+
+                    player.showDialog(dialog)
+                }
+            }
         }
     ) { enabled ->
         if (enabled) Text("<gold><b>Create a Guild".miniMsg(), modifier = Modifier.size(2, 2))

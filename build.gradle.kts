@@ -45,7 +45,6 @@ allprojects {
         compileOnly(idofrontLibs.minecraft.mccoroutine)
         compileOnly(idofrontLibs.reflections)
         compileOnly(idofrontLibs.sqlite.jdbc)
-        compileOnly(idofrontLibs.minecraft.anvilgui)
 
         // Plugin libs
         compileOnly(idofrontLibs.minecraft.plugin.modelengine)

@@ -3,20 +3,16 @@ package com.mineinabyss.features.guilds.menus
 import androidx.compose.runtime.Composable
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Spacer
-import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.layout.Column
 import com.mineinabyss.guiy.layout.Row
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import io.papermc.paper.datacomponent.DataComponentTypes
-import io.papermc.paper.datacomponent.item.TooltipDisplay
-import net.wesjd.anvilgui.AnvilGUI
+import io.papermc.paper.registry.data.dialog.input.DialogInput
 import org.bukkit.entity.Player
 
 @Composable
@@ -74,26 +70,21 @@ fun GuildUIScope.GuildMemberManagement(modifier: Modifier = Modifier) {
 
 @Composable
 fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
-    val renameItem = TitleItem.of(guildName ?: "Guild Name")
-    renameItem.setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
     Button(
         enabled = player.isCaptainOrAbove(),
         modifier = modifier,
         onClick = {
             if (!player.isCaptainOrAbove()) return@Button
-            nav.open(
-                UniversalScreens.Anvil(
-                    AnvilGUI.Builder()
-                        .title(":space_-61::guild_name_menu:")
-                        .itemLeft(renameItem)
-                        .itemOutput(TitleItem.transparentItem)
-                        .plugin(guiyPlugin)
-                        .onClose { nav.back() }
-                        .onClick { _, snapshot ->
-                            snapshot.player.changeStoredGuildName(snapshot.text)
-                            listOf(AnvilGUI.ResponseAction.close())
-                        }
-                ))
+
+            val maxGuildLength = Features.guilds.config.guildNameMaxLength
+            val dialog = GuildDialogs(":space_1000:", "<gold>Rename Guild!", listOf(
+                DialogInput.text("guildname", "<gold>Rename Guild...".miniMsg())
+                    .initial(guildName ?: "").width(maxGuildLength * 10)
+                    .maxLength(maxGuildLength)
+                    .build()
+            )).createGuildLookDialog { player.changeStoredGuildName(it) }
+
+            player.showDialog(dialog)
         }
     ) {
         Text(

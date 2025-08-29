@@ -4,20 +4,23 @@ import androidx.compose.runtime.*
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.Paginated
-import com.mineinabyss.guiy.guiyPlugin
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.guiy.navigation.UniversalScreens
 import com.mineinabyss.idofront.textcomponents.miniMsg
-import io.papermc.paper.datacomponent.DataComponentTypes
-import io.papermc.paper.datacomponent.item.TooltipDisplay
-import net.wesjd.anvilgui.AnvilGUI
+import io.papermc.paper.dialog.Dialog
+import io.papermc.paper.registry.data.dialog.ActionButton
+import io.papermc.paper.registry.data.dialog.DialogBase
+import io.papermc.paper.registry.data.dialog.action.DialogAction
+import io.papermc.paper.registry.data.dialog.input.DialogInput
+import io.papermc.paper.registry.data.dialog.type.DialogType
+import net.kyori.adventure.text.event.ClickCallback
 
 @Composable
 fun GuildUIScope.GuildLookupListScreen() {
@@ -87,21 +90,15 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Uni
     Button(
         modifier = modifier.at(7, 5),
         onClick = {
-            nav.open(
-                UniversalScreens.Anvil(
-                    AnvilGUI.Builder()
-                        .title(":space_-61::guild_search_menu:")
-                        .itemLeft(TitleItem.of("Guild Name").apply {
-                            setData(DataComponentTypes.TOOLTIP_DISPLAY, TitleItem.hideTooltip)
-                        })
-                        .itemOutput(TitleItem.transparentItem)
-                        .plugin(guiyPlugin)
-                        .onClose { nav.back() }
-                        .onClick { _, snapshot ->
-                            onClick.invoke(snapshot.text)
-                            listOf(AnvilGUI.ResponseAction.close())
-                        }
-                ))
+            val maxGuildLength = Features.guilds.config.guildNameMaxLength
+            val dialog = GuildDialogs(":space_1000:", "<gold>Search for Guild...", listOf(
+                DialogInput.text("guildname", "<gold>Search for guilds with name...".miniMsg())
+                    .initial("Guild Name").width(maxGuildLength * 10)
+                    .maxLength(maxGuildLength)
+                    .build()
+            )).createGuildLookDialog(onClick)
+
+            player.showDialog(dialog)
         }
     ) { Text("<gold><b>Search for a Guild by name".miniMsg()) }
 }
