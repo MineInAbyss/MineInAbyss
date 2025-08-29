@@ -91,8 +91,8 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Uni
         modifier = modifier.at(7, 5),
         onClick = {
             val maxGuildLength = Features.guilds.config.guildNameMaxLength
-            val dialog = GuildDialogs(":space_1000:", "<gold>Search for Guild...", listOf(
-                DialogInput.text("guildname", "<gold>Search for guilds with name...".miniMsg())
+            val dialog = GuildDialogs(":space_-28::guild_search_menu:", "<gold>Search for Guild...", listOf(
+                DialogInput.text("guild_dialog", "<gold>Search for guilds with name...".miniMsg())
                     .initial("Guild Name").width(maxGuildLength * 10)
                     .maxLength(maxGuildLength)
                     .build()

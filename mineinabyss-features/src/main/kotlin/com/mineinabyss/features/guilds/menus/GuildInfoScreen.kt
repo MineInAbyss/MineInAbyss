@@ -77,9 +77,9 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
             if (!player.isCaptainOrAbove()) return@Button
 
             val maxGuildLength = Features.guilds.config.guildNameMaxLength
-            val dialog = GuildDialogs(":space_1000:", "<gold>Rename Guild!", listOf(
-                DialogInput.text("guildname", "<gold>Rename Guild...".miniMsg())
-                    .initial(guildName ?: "").width(maxGuildLength * 10)
+            val dialog = GuildDialogs(":space_-28::guild_name_menu:", "<gold>Rename Guild!", listOf(
+                DialogInput.text("guild_dialog", "<gold>Rename Guild...".miniMsg())
+                    .initial(guildName ?: "").width(maxGuildLength * 6)
                     .maxLength(maxGuildLength)
                     .build()
             )).createGuildLookDialog { player.changeStoredGuildName(it) }

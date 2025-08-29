@@ -174,8 +174,8 @@ fun GuildUIScope.CreateGuildButton(openedFromHQ: Boolean) {
                 }
                 else -> {
                     val maxGuildLength = Features.guilds.config.guildNameMaxLength
-                    val dialog = GuildDialogs(":space_1000:", "<gold>Create Guild...", listOf(
-                        DialogInput.text("guildname", "<gold>Create Guild with name...".miniMsg())
+                    val dialog = GuildDialogs(":space_-28::guild_search_menu:", "<gold>Create Guild...", listOf(
+                        DialogInput.text("guild_dialog", "<gold>Create Guild with name...".miniMsg())
                             .initial("${player.name}'s Guild").width(maxGuildLength * 10)
                             .maxLength(maxGuildLength)
                             .build()

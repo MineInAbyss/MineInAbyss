@@ -95,8 +95,8 @@ fun GuildUIScope.InviteToGuildButton(modifier: Modifier) {
                 return@Button
             }
 
-            val dialog = GuildDialogs(":space_1000:", "Send Guild-Invite!", listOf(
-                DialogInput.text("guildinvite", "<gold>Search for Player to invite to your Guild...".miniMsg())
+            val dialog = GuildDialogs(":space_-28::guild_search_menu:", "Send Guild-Invite!", listOf(
+                DialogInput.text("guild_dialog", "<gold>Search for Player to invite to your Guild...".miniMsg())
                     .initial("").width(200)
                     .maxLength(64)
                     .build()
