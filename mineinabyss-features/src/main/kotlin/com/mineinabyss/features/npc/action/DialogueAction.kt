@@ -1,13 +1,7 @@
-package com.mineinabyss.features.npc.NpcAction
+package com.mineinabyss.features.npc.action
 
-import com.mineinabyss.features.abyss
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.aselstudios.luxdialoguesapi.Builders.Answer
 import org.bukkit.entity.Player
-import org.aselstudios.luxdialoguesapi.Builders.Dialogue
-import org.aselstudios.luxdialoguesapi.Builders.Page
-import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 
 fun customAction(player: Player) {
     player.sendMessage("Custom action executed!")

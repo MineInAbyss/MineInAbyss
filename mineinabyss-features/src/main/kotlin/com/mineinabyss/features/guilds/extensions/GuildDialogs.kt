@@ -1,6 +1,5 @@
 package com.mineinabyss.features.guilds.extensions
 
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.dialog.Dialog
 import io.papermc.paper.registry.data.dialog.ActionButton

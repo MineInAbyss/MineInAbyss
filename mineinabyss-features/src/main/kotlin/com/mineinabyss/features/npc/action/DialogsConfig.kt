@@ -1,8 +1,8 @@
-package com.mineinabyss.features.npc.NpcAction
+package com.mineinabyss.features.npc.action
 
 import com.mineinabyss.features.npc.Npc
 import com.mineinabyss.idofront.messaging.error
-import kotlinx.serialization.SerialName
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import org.aselstudios.luxdialoguesapi.Builders.Answer
 import org.aselstudios.luxdialoguesapi.Builders.Dialogue
@@ -30,9 +30,9 @@ data class DialogueAction(
 @Serializable
 class AnswerData(
     val text: String,
-    val placeholderCondition: String? = null,
-    val replyMessage: String? = null,
-    val action: DialogueAction? = null
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val placeholderCondition: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val replyMessage: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val action: DialogueAction? = null
 ) {
     val npc = null
     fun build(npc: Npc): Answer? {
@@ -47,9 +47,9 @@ class AnswerData(
 
 @Serializable
 class PageData(
-    val lines: List<String> = emptyList(),
-    val preAction: String? = null,
-    val postAction: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val lines: List<String> = emptyList(),
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val preAction: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val postAction: String? = null,
 ) {
 
     fun build(): Page? {
@@ -82,8 +82,8 @@ class DialogData(
     val dialogBackgroundImageColor: String = "#f8ffe0",
     val answerBackgroundImageColor: String = "#f8ffe0",
     val cursorIconImage: String = "hand",
-    val answers: List<AnswerData> = emptyList(),
-    val pages: List<PageData> = emptyList(),
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val answers: List<AnswerData> = emptyList(),
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val pages: List<PageData> = emptyList(),
 ) {
 
     fun build(id: String, npc: Npc): Dialogue? {
@@ -123,6 +123,5 @@ class DialogData(
 }
 
 @Serializable
-class DialogsConfig(
-    val configs: Map<String, DialogData> = mapOf()
-)
+@JvmInline
+value class DialogsConfig(val configs: Map<String, DialogData> = mapOf())

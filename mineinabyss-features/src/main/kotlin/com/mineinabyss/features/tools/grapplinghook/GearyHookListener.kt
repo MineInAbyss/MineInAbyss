@@ -2,8 +2,6 @@ package com.mineinabyss.features.tools.grapplinghook
 
 import com.mineinabyss.components.tools.grappling.*
 import com.mineinabyss.geary.modules.Geary
-import com.mineinabyss.geary.modules.GearyModule
-import com.mineinabyss.geary.modules.geary
 import com.mineinabyss.geary.modules.observeWithData
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.systems.query.query

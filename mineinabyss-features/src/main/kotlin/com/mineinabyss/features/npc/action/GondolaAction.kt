@@ -1,4 +1,4 @@
-package com.mineinabyss.features.npc.NpcAction
+package com.mineinabyss.features.npc.action
 
 import kotlinx.serialization.Serializable
 

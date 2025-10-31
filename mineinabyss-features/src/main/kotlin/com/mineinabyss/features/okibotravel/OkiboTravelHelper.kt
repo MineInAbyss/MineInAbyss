@@ -5,7 +5,6 @@ import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.adventure.PaperAdventure
 import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
@@ -15,8 +14,6 @@ import net.minecraft.world.phys.Vec3
 import org.bukkit.Color
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
-import org.bukkit.util.Vector
-import org.joml.Matrix4f
 import org.joml.Vector3f
 import java.util.*
 

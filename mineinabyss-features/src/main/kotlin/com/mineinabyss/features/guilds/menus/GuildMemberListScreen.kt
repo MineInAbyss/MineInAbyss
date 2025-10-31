@@ -162,7 +162,7 @@ private fun GuildUIScope.ToggleGuildJoinTypeButton(modifier: Modifier) {
         onClick = {
             if (!player.isCaptainOrAbove()) return@Button
             joinType = player.changeGuildJoinType()
-            player.openInventory.title(":space_-8:${DecideMenus.decideMemberMenu(player, joinType)}".miniMsg())
+            player.openInventory.title(":space_-8:${decideMemberMenu(player, joinType)}".miniMsg())
         }
     ) {
         Item(item)

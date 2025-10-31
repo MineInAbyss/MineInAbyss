@@ -2,13 +2,7 @@ package com.mineinabyss.features.relics
 
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.features.abyss
-import com.mineinabyss.geary.datatypes.GearyEntity
-import com.mineinabyss.geary.helpers.entity
-import com.mineinabyss.geary.helpers.parent
 import com.mineinabyss.geary.modules.Geary
-import com.mineinabyss.geary.modules.GearyModule
-import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.time.ticks

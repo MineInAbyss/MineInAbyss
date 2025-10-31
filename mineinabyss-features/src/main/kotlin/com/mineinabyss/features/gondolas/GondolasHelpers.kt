@@ -1,11 +1,9 @@
 package com.mineinabyss.features.gondolas
 
 import com.mineinabyss.components.gondolas.Gondola
-import com.mineinabyss.features.gondolas.pass.TicketConfig
 import com.mineinabyss.features.gondolas.pass.removeRoute
 import org.bukkit.entity.Player
 import org.bukkit.Location
-import kotlin.math.abs
 
 enum class GondolaType() {
     UPPER,

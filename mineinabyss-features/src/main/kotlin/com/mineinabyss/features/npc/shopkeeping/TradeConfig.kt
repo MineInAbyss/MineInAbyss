@@ -3,6 +3,7 @@ package com.mineinabyss.features.npc.shopkeeping
 import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.prefabs.serializers.PrefabKeySerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit.getWorld
 import org.bukkit.inventory.ItemStack
@@ -10,7 +11,7 @@ import org.bukkit.inventory.MerchantRecipe
 
 @Serializable
 data class TradeEntry(
-    val prefab: String,
+    val prefab: @Serializable(PrefabKeySerializer::class) PrefabKey,
     val amount: Int = 1,
 )
 
@@ -27,17 +28,13 @@ class TradeTable(
 ) {
     fun createMerchantRecipes(): List<MerchantRecipe>? {
         val gearyItems = getWorld("world")?.toGeary()?.getAddon(ItemTracking) ?: return null
-        val recipes = mutableListOf<MerchantRecipe>()
-        for (trade in trades) {
-            val inputItem: ItemStack = gearyItems.createItem(PrefabKey.of(trade.input.prefab)) ?: error("Incorrect prefab key: ${trade.input.prefab}")
-            inputItem.amount = trade.input.amount
-            val outputItem = gearyItems.createItem(PrefabKey.of(trade.output.prefab)) ?: error("Incorrect prefab key: ${trade.output.prefab}")
-            outputItem.amount = trade.output.amount
+        return trades.map { trade ->
+            val inputItem = gearyItems.createItem(trade.input.prefab)?.asQuantity(trade.input.amount)
+                ?: error("Incorrect prefab key: ${trade.input.prefab}")
+            val outputItem = gearyItems.createItem(trade.output.prefab)?.asQuantity(trade.output.amount)
+                ?: error("Incorrect prefab key: ${trade.output.prefab}")
 
-            val recipe = MerchantRecipe(outputItem, 99999)
-            recipe.addIngredient(inputItem)
-            recipes.add(recipe)
+            MerchantRecipe(outputItem, 99999).apply { addIngredient(inputItem) }
         }
-        return recipes
     }
 }

@@ -2,7 +2,6 @@ package com.mineinabyss.features.gondolas
 
 import com.mineinabyss.components.gondolas.Gondola
 import com.mineinabyss.components.gondolas.UnlockedGondolas
-import com.mineinabyss.features.gondolas.pass.TicketConfig
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.entity.Player
@@ -10,15 +9,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.UUID
-import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.sound.Sound
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.collections.remove
-import kotlin.compareTo
-import kotlin.div
-import kotlin.text.get
 import net.kyori.adventure.key.Key
-import org.bukkit.Location
+import kotlin.collections.iterator
 
 class GondolasListener : Listener {
     private val playerZoneEntry = mutableMapOf<UUID, Pair<String, Long>>()

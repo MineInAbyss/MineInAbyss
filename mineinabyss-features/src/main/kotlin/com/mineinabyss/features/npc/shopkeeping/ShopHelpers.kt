@@ -9,8 +9,6 @@ import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.datatypes.EntityType
 import com.mineinabyss.geary.modules.Geary
-import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.helpers.GearyMobPrefabQuery
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.configuration.components.Prefab

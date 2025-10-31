@@ -1,10 +1,6 @@
 package com.mineinabyss.features.guilds.listeners
 
 //import com.mineinabyss.eternalfortune.api.events.PlayerOpenGraveEvent
-import com.mineinabyss.features.guilds.extensions.getGuildName
-import com.mineinabyss.features.guilds.extensions.hasGuild
-import com.mineinabyss.features.helpers.di.Features
-import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
 class EternalFortuneGuildListener : Listener {

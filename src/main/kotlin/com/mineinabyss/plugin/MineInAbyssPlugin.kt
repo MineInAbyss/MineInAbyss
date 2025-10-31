@@ -1,9 +1,6 @@
 package com.mineinabyss.plugin
 
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI
 import com.mineinabyss.components.curse.AscensionEffect
-import com.mineinabyss.features.cosmetics.MiACosmeticProvider
-import com.mineinabyss.features.cosmetics.MiAUserProvider
 import com.mineinabyss.geary.addons.dsl.createAddon
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.configure

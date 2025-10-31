@@ -1,15 +1,14 @@
 package com.mineinabyss.features.npc
 
-import com.mineinabyss.features.npc.NpcAction.DialogData
-import com.mineinabyss.features.npc.NpcAction.DialogsConfig
+import com.mineinabyss.features.npc.action.DialogData
+import com.mineinabyss.features.npc.action.DialogsConfig
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import org.bukkit.World
-import org.bukkit.event.EventHandler
-import org.bukkit.event.world.ChunkLoadEvent
-import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import org.bukkit.entity.Interaction
+import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.world.ChunkLoadEvent
 
 
 // how to use:

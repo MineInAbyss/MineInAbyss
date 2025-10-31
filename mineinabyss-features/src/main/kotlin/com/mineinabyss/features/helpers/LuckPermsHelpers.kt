@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 val luckPerms by lazy { Bukkit.getServicesManager().getRegistration(LuckPerms::class.java)?.provider ?: LuckPermsProvider.get() }
 
 val OfflinePlayer.luckpermGroups
-    get() = kotlin.runCatching {
+    get() = runCatching {
         luckPerms.userManager.loadUser(uniqueId).get(4, TimeUnit.SECONDS)
             .getNodes(NodeType.INHERITANCE).stream().map(InheritanceNode::getGroupName).toList()
     }.getOrNull() ?: emptyList()

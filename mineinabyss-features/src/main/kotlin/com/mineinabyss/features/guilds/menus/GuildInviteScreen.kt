@@ -16,7 +16,6 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
-import org.bukkit.block.Chest
 
 @Composable
 fun GuildUIScope.GuildInviteScreen(

@@ -2,7 +2,6 @@ package com.mineinabyss.features.orthbanking
 
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
-import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.messaging.error

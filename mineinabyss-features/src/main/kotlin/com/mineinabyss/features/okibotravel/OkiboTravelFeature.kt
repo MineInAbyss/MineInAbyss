@@ -1,7 +1,6 @@
 package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -10,7 +9,6 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
-import org.bukkit.Bukkit
 
 class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
     class Context : Configurable<OkiboTravelConfig> {
