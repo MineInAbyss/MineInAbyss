@@ -19,46 +19,52 @@ import com.mineinabyss.idofront.messaging.idofrontLogger
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.serialization.LocationSerializer
+import com.mineinabyss.idofront.serialization.Vector3fSerializer
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.MenuType
+import org.joml.Vector3f
 
 @Serializable
 data class Npc(
     val id: String,
-    val displayName: String,
+    val customName: String,
     val location: @Serializable(LocationSerializer::class) Location,
-    val scale: List<Double>, // ??
-    val bbModel: String, // unsure, actually I guess it would be serializable
+    val scale: @Serializable(Vector3fSerializer::class) Vector3f,
+    val bbModel: String,
     val tradeTable: TradeTable, // todo: remove
     val tradeTableId: String, // use id pulled from config instead to be more modular
-    val type: String, // "trader", "gondola_unlocker", "quest_giver", "dialogue"
-    val dialogId: String? = null,
-    val ticketId: String? = null,
-    val questId: String? = null,
+    val type: Type, // "trader", "gondola_unlocker", "quest_giver", "dialogue"
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val dialogId: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val ticketId: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val questId: String? = null,
     val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
 ) {
+
+    enum class Type {
+        TRADER, GONDOLA_UNLOCKER, QUEST_GIVER, DIALOGUE
+    }
 
 
     fun defaultInteraction(player: Player, dialogId: String, dialogData: DialogData, questDialogData: QuestDialogData) {
         when (type) {
-            "trader" -> traderInteraction(player)
-            "gondola_unlocker" -> dialogInteraction(player, dialogId, dialogData)
-            "quest_giver" -> questGiverInteraction(player, questDialogData, dialogData)
-            "dialogue" -> dialogInteraction(player, dialogId, dialogData)
-            else -> throw IllegalArgumentException("Unknown NPC type: $type")
+            Type.TRADER -> traderInteraction(player)
+            Type.GONDOLA_UNLOCKER -> dialogInteraction(player, dialogId, dialogData)
+            Type.QUEST_GIVER -> questGiverInteraction(player, questDialogData, dialogData)
+            Type.DIALOGUE -> dialogInteraction(player, dialogId, dialogData)
         }
     }
 
     fun fallbackInteraction(player: Player) {
         when (type) {
-            "trader" -> traderInteraction(player)
-            "gondola_unlocker" -> gondolaUnlockerInteraction(player)
-            "quest_giver" -> questGiverInteraction(player)
-            "dialogue" -> player.sendMessage("dialog data missing")
-            else -> throw IllegalArgumentException("Unknown NPC type: $type")
+            Type.TRADER -> traderInteraction(player)
+            Type.GONDOLA_UNLOCKER -> gondolaUnlockerInteraction(player)
+            Type.QUEST_GIVER -> questGiverInteraction(player, null)
+            Type.DIALOGUE -> player.error("dialog data missing for $id")
         }
     }
 
@@ -79,35 +85,21 @@ data class Npc(
         questId ?: return
         when {
             // Quest is done, reward is claimed
-            playerHasCompletedQuest(player, questId) -> {
-                player.info("You have already completed this quest.")
-            }
-
+            playerHasCompletedQuest(player, questId) -> player.info("You have already completed this quest.")
             // Quest is done but reward not claimed yet
-            isQuestCompleted(player, questId) -> {
-                questDialogData.dialogData.startDialogue(player, questId, this)
-            }
-
+            isQuestCompleted(player, questId) -> questDialogData.dialogData.startDialogue(player, questId, this)
             // Quest is started but not completed
-            playerHasUnlockedQuest(player, questId) -> {
-                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
-            }
-
+            playerHasUnlockedQuest(player, questId) -> player.error("Come back when you've completed this quest: ${QuestManager.questInformation(player, questId)}")
             // Quest is not started
-            dialogData != null && !playerHasUnlockedQuest(player, questId) -> {
-                dialogData.startDialogue(player, dialogId ?: return, this)
-            }
+            dialogData != null && !playerHasUnlockedQuest(player, questId) -> dialogData.startDialogue(player, dialogId ?: return, this)
         }
     }
 
 
     fun traderInteraction(player: Player) {
         if (tradeTable.trades.isEmpty()) return
-        val recipes = tradeTable.createMerchantRecipes() ?: return
-        val merchant = Bukkit.createMerchant()
-        merchant.recipes = recipes
+        val merchant = Bukkit.createMerchant().apply { recipes = tradeTable.createMerchantRecipes() ?: return }
         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()
-        return
     }
 
     fun dialogInteraction(player: Player, dialogId: String, dialogData: DialogData) {

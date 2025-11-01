@@ -2,17 +2,9 @@ package com.mineinabyss.features.npc.NpcAction
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.Npc
-import com.mineinabyss.geary.actions.Action
-import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.Task
-import com.mineinabyss.geary.actions.Tasks
-import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.aselstudios.luxdialoguesapi.Builders.Answer
 import org.aselstudios.luxdialoguesapi.Builders.Dialogue
@@ -61,21 +53,24 @@ import org.bukkit.entity.Player
 
 @Serializable
 data class DialogueAction(
-    val name: String,
+    val type: Type,
 ) {
     fun customAction(player: Player) {
         player.sendMessage("Custom action executed!")
     }
 
+    enum class Type {
+        CUSTOM, GONDOLA, UNLOCK_QUEST, COMPLETE_QUEST
+    }
+
 
     fun execute(player: Player, npc: Npc) {
         val plugin = abyss.plugin // Adjust if plugin access differs
-        when (name) {
-            "customAction" -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
-            "gondolaAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
-            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
-            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
-            else -> player.error("Error resolving action: $name")
+        when (type) {
+            Type.CUSTOM -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
+            Type.GONDOLA -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
+            Type.UNLOCK_QUEST -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
+            Type.COMPLETE_QUEST -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
         }
     }
 

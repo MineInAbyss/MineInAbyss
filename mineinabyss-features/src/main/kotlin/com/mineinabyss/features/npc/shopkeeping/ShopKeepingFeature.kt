@@ -3,8 +3,6 @@ package com.mineinabyss.features.npc.shopkeeping
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.gondolas.GondolaFeature
-import com.mineinabyss.features.gondolas.GondolaFeature.Context
 import com.mineinabyss.features.npc.NpcAction.DialogsConfig
 import com.mineinabyss.features.npc.NpcEntity
 import com.mineinabyss.features.npc.NpcManager
@@ -19,11 +17,9 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.IdofrontConfig
 import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.plugin.listeners
-import com.ticxo.modelengine.api.utils.config.ConfigManager
 import com.mineinabyss.idofront.config.config
 import kotlinx.coroutines.delay
 import org.bukkit.Bukkit.getWorld
@@ -62,7 +58,7 @@ class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Cont
             "test" {
                 playerAction {
                     context.npcconfig.npcs.values.forEach {
-                        player.sendMessage("${it.displayName} - ${it.id}")
+                        player.sendMessage("${it.customName} - ${it.id}")
                     }
                 }
             }

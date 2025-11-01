@@ -9,6 +9,7 @@ import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.Component
 import net.luckperms.api.node.Node
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -28,38 +29,38 @@ object QuestManager {
 
     // we use this to store a player visited location and look it up;
     // will probably be moved to database implementation later on
-    private fun getQuestData(player: Player): QuestData {
+    private fun questData(player: Player): QuestData {
         return player.toGeary().getOrSetPersisting<QuestData> { QuestData() }
     }
 
 
     private fun update(player: Player, update: (QuestData) -> QuestData) {
-        val data = getQuestData(player)
+        val data = questData(player)
         val newData = update(data)
         player.toGeary().setPersisting(newData)
     }
 
-    fun getActiveQuests(player: Player): Set<String> {
-        val data = getQuestData(player)
+    fun activeQuests(player: Player): Set<String> {
+        val data = questData(player)
         return data.activeQuests
     }
 
-    fun getCompletedQuests(player: Player): Set<String> {
-        val data = getQuestData(player)
+    fun completedQuests(player: Player): Set<String> {
+        val data = questData(player)
         return data.completedQuests
     }
 
-    fun getVisitedLocations(player: Player): Set<String> {
-        val data = getQuestData(player)
+    fun visitedLocations(player: Player): Set<String> {
+        val data = questData(player)
         return data.visitedLocations
     }
 
-    fun getQuestInformation(player: Player, questId: String): String {
+    fun questInformation(player: Player, questId: String): Component {
         val config = QuestConfigHolder.config!!
-        val visitQuest = config.visitQuests[questId]?.displayName ?: return "\"$questId\""
-        val progress = getVisitQuestProgress(player, questId)
+        val visitQuest = config.visitQuests[questId]?.displayName ?: return Component.text("\"$questId\"")
+        val progress = visitQuestProgress(player, questId)
         //TODO make work for other quest types
-        return """"$visitQuest" - ${progress.first}/${progress.second} locations visited."""
+        return Component.text("$visitQuest\" - ${progress.first}/${progress.second} locations visited.")
     }
 
     fun addVisitedLocation(player: Player, locationName: String) {
@@ -96,7 +97,7 @@ object QuestManager {
         visitQuest.vanillaRewards.forEach { (itemName, amount) ->
             val material = Material.matchMaterial(itemName) ?: error("Failed to complete quest $questId: Material $itemName not found")
             val itemStack = ItemStack(material)
-            itemStack.amount = amount.coerceIn(1, itemStack.maxStackSize)
+            itemStack.amount = amount.coerceIn(1, material.maxStackSize)
             player.inventory.addItem(itemStack)
         }
 
@@ -111,7 +112,7 @@ object QuestManager {
         if (questId !in config.visitQuests.keys) {
             error("Trying to unlock quest $questId but it does not exist in the QuestConfig")
         }
-        val questData = getQuestData(player)
+        val questData = questData(player)
         if (questId in questData.activeQuests) {
             error("Trying to unlock quest $questId but player already has it active")
         }
@@ -121,10 +122,10 @@ object QuestManager {
         addQuest(player, questId)
     }
 
-    fun getVisitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
+    fun visitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
         val config = QuestConfigHolder.config ?: error("Trying to get progress of quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: error("Trying to get progress of quest $questId but it does not exist in the QuestConfig")
-        val questData = getQuestData(player)
+        val questData = questData(player)
 
         val totalLocations = visitQuest.locations.size
         if (totalLocations == 0) return 0 to 0
@@ -157,9 +158,8 @@ object QuestManager {
 
     fun isQuestCompleted(player: Player, questId: String): Boolean {
         val config = QuestConfigHolder.config ?: error("Trying to check completion of quest $questId but QuestConfig is not initialized")
-        val questData = getQuestData(player)
-        val activeQuests = questData.activeQuests
-        if (questId !in activeQuests) return false
+        val questData = questData(player)
+        if (questId !in questData.activeQuests) return false
         return isVisitQuestCompleted(questId, config, questData) || isKillQuestCompleted(questId, config, questData) || isFetchQuestCompleted(questId, config, questData)
     }
 
@@ -173,16 +173,14 @@ object QuestManager {
     }
 
     fun playerHasUnlockedQuest(player: Player, questId: String): Boolean {
-        val questData = getQuestData(player)
-        return questId in questData.activeQuests
+        return questId in questData(player).activeQuests
     }
 
     fun playerHasCompletedQuest(player: Player, questId: String): Boolean {
-        val questData = getQuestData(player)
-        return questId in questData.completedQuests
+        return questId in questData(player).completedQuests
     }
 
     fun resetQuests(player: Player) {
-        player.toGeary().setPersisting(QuestData())
+        player.toGeary().remove(QuestData::class)
     }
 }
