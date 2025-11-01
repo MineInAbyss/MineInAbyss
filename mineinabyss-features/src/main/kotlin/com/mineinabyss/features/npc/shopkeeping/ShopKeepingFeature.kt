@@ -5,6 +5,7 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.gondolas.GondolaFeature
 import com.mineinabyss.features.gondolas.GondolaFeature.Context
 import com.mineinabyss.features.npc.NpcAction.DialogsConfig
+import com.mineinabyss.features.npc.NpcEntity
 import com.mineinabyss.features.npc.NpcManager
 import com.mineinabyss.features.npc.NpcsConfig
 import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
@@ -25,21 +26,42 @@ import com.ticxo.modelengine.api.utils.config.ConfigManager
 import com.mineinabyss.idofront.config.config
 import org.bukkit.Bukkit.getWorld
 
+
+object listenerSingleton {
+    var sgl: NpcsConfig? = null
+    var bstgth: MutableMap<Long, List<NpcEntity>>? = null
+}
+
 class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Context) {
 
     class Context : Configurable<NpcsConfig> {
         override val configManager: IdofrontConfig<NpcsConfig> = config("npc", abyss.dataPath, NpcsConfig())
         val npcconfig by  config("npc", abyss.dataPath, NpcsConfig())
         val dialogsConfig by config("dialogs", abyss.dataPath, DialogsConfig())
+        val manager = NpcManager(npcconfig, getWorld("world")!!, dialogsConfig)
+        init {
+            manager.initNpc()
+
+        }
     }
     override fun FeatureDSL.enable() = gearyPaper.run {
-        println("Enabling Shopkeeping Feature")
+//        println("Enabling Shopkeeping Feature")
         plugin.listeners(ShopKeepingListener())
-        val manager = NpcManager(context.npcconfig, getWorld("world")!!, context.dialogsConfig)
-        manager.initNpc()
-        plugin.listeners(manager)
-        println("Shopkeeping Feature Enabled")
+        context.manager.initNpc()
+        plugin.listeners(context.manager)
+//        println("dialogconfig keys are ${context.dialogsConfig.configs.keys}")
+//        val manager = NpcManager(context.npcconfig, getWorld("world")!!, context.dialogsConfig)
+//        manager.initNpc()
+//        plugin.listeners(manager)
+//        println("Shopkeeping Feature Enabled")
         mainCommand {
+            "test" {
+                playerAction {
+                    context.npcconfig.npcs.values.forEach {
+                        player.sendMessage("${it.displayName} - ${it.id}")
+                    }
+                }
+            }
             "shops" {
                 val shopKey by optionArg(options = ShopKeepers.getKeys().map { it.toString() }) {
                     parseErrorMessage = { "No such shopkeeper: $passed" }

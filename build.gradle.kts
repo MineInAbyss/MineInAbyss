@@ -20,10 +20,8 @@ allprojects {
         mavenLocal()
 
         // LuxDialogues
-        maven {
-            name = "aselstudiosRepository"
-            url = uri("https://repo.aselstudios.com/releases")
-        }
+        maven("https://repo.aselstudios.com/releases")
+
     }
 
     dependencies {
@@ -73,8 +71,9 @@ allprojects {
         compileOnly(libs.minecraft.plugin.mythichud)
         compileOnly(libs.minecraft.plugin.shopkeepers)
 
-        // LuxDialogue
-        compileOnly("org.aselstudios:LuxDialoguesAPI:2.0.6")
+//        // LuxDialogue
+//        compileOnly("org.aselstudios:LuxDialoguesAPI:2.0.6")
+        compileOnly(libs.luxdialogs.api)
 
     }
 }

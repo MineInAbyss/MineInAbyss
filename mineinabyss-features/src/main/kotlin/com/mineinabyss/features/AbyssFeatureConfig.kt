@@ -23,6 +23,7 @@ import com.mineinabyss.features.orthbanking.OrthBankingFeature
 import com.mineinabyss.features.patreons.PatreonFeature
 import com.mineinabyss.features.playerprofile.PlayerProfileFeature
 import com.mineinabyss.features.pvp.PvpFeature
+import com.mineinabyss.features.quests.QuestFeature
 import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
@@ -93,6 +94,7 @@ class AbyssFeatureConfig(
             add(tools.enabled) { ToolsFeature() }
             add(tutorial.enabled) { TutorialFeature() }
             add(ansiblePull.enabled) { ConfigPullFeature() }
+            add(true) { QuestFeature() }
         }
     }
 }

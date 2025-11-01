@@ -1,7 +1,17 @@
 package com.mineinabyss.features.npc.NpcAction
 
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.Npc
+import com.mineinabyss.geary.actions.Action
+import com.mineinabyss.geary.actions.ActionGroupContext
+import com.mineinabyss.geary.actions.Task
+import com.mineinabyss.geary.actions.Tasks
+import com.mineinabyss.geary.actions.execute
+import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.messaging.error
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.EncodeDefault.Mode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.aselstudios.luxdialoguesapi.Builders.Answer
@@ -9,6 +19,45 @@ import org.aselstudios.luxdialoguesapi.Builders.Dialogue
 import org.aselstudios.luxdialoguesapi.Builders.Page
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import org.bukkit.entity.Player
+
+//@Serializable
+//@SerialName("mineinabyss:custom_action")
+//class CustomAction : Action {
+//    override fun ActionGroupContext.execute() {
+//        entity?.get<Player>()?.sendMessage("Custom action executed!")
+//    }
+//}
+//
+//// TODO: pass ticket id in the action serializer so we can tie unlocks to actions in config and avoid dealing with npc holding ticket id and such
+//@Serializable
+//@SerialName("mineinabyss:unlock_gondola_action")
+//class gondolaUnlockerInteractionAction : Action {
+//    override fun ActionGroupContext.execute() {
+//        val player = entity?.get<Player>() ?: return
+//        val npc = environment["npc"] as? Npc ?: return
+//        npc.gondolaUnlockerInteraction(player)
+//    }
+//}
+//@Serializable
+//@SerialName("mineinabyss:unlock_quest_action")
+//class unlockQuestAction(val questId: String) : Action {
+//    override fun ActionGroupContext.execute() {
+//        val player = entity?.get<Player>() ?: return
+//        val npc = environment["npc"] as? Npc ?: return
+//        npc.questUnlockInteraction(player, questId)
+//    }
+//}
+//
+//
+//@Serializable
+//@SerialName("mineinabyss:complete_quest_action")
+//class completeQuestAction(val questId: String) : Action {
+//    override fun ActionGroupContext.execute() {
+//        val player = entity?.get<Player>() ?: return
+//        val npc = environment["npc"] as? Npc ?: return
+//        npc.questCompleteInteraction(player, questId)
+//    }
+//}
 
 @Serializable
 data class DialogueAction(
@@ -18,20 +67,30 @@ data class DialogueAction(
         player.sendMessage("Custom action executed!")
     }
 
+
     fun execute(player: Player, npc: Npc) {
+        val plugin = abyss.plugin // Adjust if plugin access differs
         when (name) {
-            "customAction" -> customAction(player)
-//            "gondolaAction" ->
+            "customAction" -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
+            "gondolaAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
+            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
+            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
             else -> player.error("Error resolving action: $name")
         }
     }
+
 }
+
+
 
 @Serializable
 class AnswerData(
     val text: String,
+    @EncodeDefault(Mode.NEVER)
     val placeholderCondition: String? = null,
+    @EncodeDefault(Mode.NEVER)
     val replyMessage: String? = null,
+    @EncodeDefault(Mode.NEVER)
     val action: DialogueAction? = null
 ) {
     val npc = null
@@ -48,7 +107,9 @@ class AnswerData(
 @Serializable
 class PageData(
     val lines: List<String> = emptyList(),
+    @EncodeDefault(Mode.NEVER)
     val preAction: String? = null,
+    @EncodeDefault(Mode.NEVER)
     val postAction: String? = null,
 ) {
 
@@ -63,27 +124,27 @@ class PageData(
 
 @Serializable
 class DialogData(
-    val typingSpeed: Int = 1,
-    val typingSound: String = "luxdialogues:luxdialogues.sounds.typing",
-    val selectionSound : String = "luxdialogues:luxdialogues.sounds.selection",
-    val range: Double = 3.0,
-    val effect: String = "Slowness",
-    val answerNumbers: Boolean = true,
-    val dialogueTextColor: String = "#4f4a3e",
-    val backgroundFog: Boolean = true,
-    val characterName : String = "default name",
-    val characterNameColor: String = "#4f4a3e",
-    val characterImage: String = "character-background",
-    val nameStartImage: String = "name-start",
-    val nameMidImage: String = "name-mid",
-    val nameEndImage: String = "name-end",
-    val answerBackgroundImage: String = "answer-background",
-    val dialogueBackgroundImage: String = "dialogue-background",
-    val dialogBackgroundImageColor: String = "#f8ffe0",
-    val answerBackgroundImageColor: String = "#f8ffe0",
-    val cursorIconImage: String = "hand",
-    val answers: List<AnswerData> = emptyList(),
-    val pages: List<PageData> = emptyList(),
+    @EncodeDefault(Mode.NEVER) val typingSpeed: Int = 1,
+    @EncodeDefault(Mode.NEVER) val typingSound: String = "luxdialogues:luxdialogues.sounds.typing",
+    @EncodeDefault(Mode.NEVER) val selectionSound : String = "luxdialogues:luxdialogues.sounds.selection",
+    @EncodeDefault(Mode.NEVER) val range: Double = 3.0,
+    @EncodeDefault(Mode.NEVER) val effect: String = "Slowness",
+    @EncodeDefault(Mode.NEVER) val answerNumbers: Boolean = true,
+    @EncodeDefault(Mode.NEVER) val dialogueTextColor: String = "#4f4a3e",
+    @EncodeDefault(Mode.NEVER) val backgroundFog: Boolean = true,
+    @EncodeDefault(Mode.NEVER) val characterName : String = "default name",
+    @EncodeDefault(Mode.NEVER) val characterNameColor: String = "#4f4a3e",
+    @EncodeDefault(Mode.NEVER) val characterImage: String = "character-background",
+    @EncodeDefault(Mode.NEVER) val nameStartImage: String = "name-start",
+    @EncodeDefault(Mode.NEVER) val nameMidImage: String = "name-mid",
+    @EncodeDefault(Mode.NEVER) val nameEndImage: String = "name-end",
+    @EncodeDefault(Mode.NEVER) val answerBackgroundImage: String = "answer-background",
+    @EncodeDefault(Mode.NEVER) val dialogueBackgroundImage: String = "dialogue-background",
+    @EncodeDefault(Mode.NEVER) val dialogBackgroundImageColor: String = "#f8ffe0",
+    @EncodeDefault(Mode.NEVER) val answerBackgroundImageColor: String = "#f8ffe0",
+    @EncodeDefault(Mode.NEVER) val cursorIconImage: String = "hand",
+    @EncodeDefault(Mode.NEVER) val answers: List<AnswerData> = emptyList(),
+    @EncodeDefault(Mode.NEVER) val pages: List<PageData> = emptyList(),
 ) {
 
     fun build(id: String, npc: Npc): Dialogue? {
@@ -121,6 +182,11 @@ class DialogData(
         LuxDialoguesAPI.getProvider().sendDialogue(player, dialog)
     }
 }
+
+@Serializable
+data class QuestDialogData(
+    val dialogData: DialogData,
+)
 
 @Serializable
 class DialogsConfig(
