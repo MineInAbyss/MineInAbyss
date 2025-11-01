@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.world.ChunkLoadEvent
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import org.bukkit.entity.Interaction
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 
@@ -59,9 +60,7 @@ class NpcManager(
         val gearyEntity = entity.toGearyOrNull() ?: return
         val NpcData = gearyEntity.get<Npc>() ?: return
         val dialogId: String? = NpcData.dialogId
-        if (entity !is Interaction) {
-            return
-        }
+        if (entity !is ItemDisplay) return
 //        val previous = entity.lastInteraction
 //        val timeprev = previous?.timestamp
 //        val prevplayer = previous?.player

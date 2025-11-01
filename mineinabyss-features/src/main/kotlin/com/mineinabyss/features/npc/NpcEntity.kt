@@ -11,10 +11,13 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.spawning.spawn
+import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.ticxo.modelengine.api.ModelEngineAPI
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.entity.Interaction
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
@@ -45,7 +48,7 @@ class NpcEntity(
             }
         }
 
-        val entity = location.world.spawn(location, Interaction::class.java)
+        val entity = location.world.spawn(location, ItemDisplay::class.java)
         val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
         val activeModel = ModelEngineAPI.createActiveModel(config.bbModel)
         modeledEntity.addModel(activeModel, true)
@@ -54,7 +57,6 @@ class NpcEntity(
         entity.customName = config.displayName
         entity.isCustomNameVisible = true
         entity.isPersistent = false
-        entity.isResponsive = true
         val gearyEntity = entity.toGearyOrNull()?: return
         gearyEntity.set<Npc>(this@NpcEntity.config)
         if (dialogData != null) {
