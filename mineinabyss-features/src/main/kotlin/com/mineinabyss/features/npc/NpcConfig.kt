@@ -9,7 +9,7 @@ import com.mineinabyss.features.npc.NpcAction.DialogData
 import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeTable
 import com.mineinabyss.features.quests.QuestManager.checkAndCompleteQuest
-import com.mineinabyss.features.quests.QuestManager.completeQuest
+import com.mineinabyss.features.quests.QuestManager.isQuestCompleted
 import com.mineinabyss.features.quests.QuestManager.playerHasCompletedQuest
 import com.mineinabyss.features.quests.QuestManager.playerHasUnlockedQuest
 import com.mineinabyss.features.quests.QuestManager.unlockQuest
@@ -36,10 +36,9 @@ data class Npc(
     val type: String, // "trader", "gondola_unlocker", "quest_giver", "dialogue"
     val dialogId: String? = null,
     val ticketId: String? = null,
-    val questId : String? = null,
+    val questId: String? = null,
     val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
 ) {
-
 
 
     fun defaultInteraction(player: Player, dialogId: String, dialogData: DialogData, questDialogData: QuestDialogData) {
@@ -75,15 +74,28 @@ data class Npc(
     // Or return an error in chat if the player hasn't completed the quest yet.
     // this is really messy, and it could definitely use a "quest progress dialog" and a "quest end dialog".
     fun questGiverInteraction(player: Player, questDialogData: QuestDialogData? = null, dialogData: DialogData? = null) {
-        if (questDialogData != null && playerHasUnlockedQuest(player, questId ?: return)) {
-            questDialogData.dialogData.startDialogue(player, questId, this)
-        } else if (questDialogData != null && dialogData != null && !playerHasCompletedQuest(player, questId ?: return)) {
-            dialogData.startDialogue(player, dialogId ?: return, this)
-//            questUnlockInteraction(player)
-        }
-        if (playerHasCompletedQuest(player, questId ?: return)) {
-            player.info("You have already completed this quest.")
-            return
+        questDialogData ?: return
+        questId ?: return
+        when {
+            // Quest is done, reward is claimed
+            playerHasCompletedQuest(player, questId) -> {
+                player.info("You have already completed this quest.")
+            }
+
+            // Quest is done but reward not claimed yet
+            isQuestCompleted(player, questId) -> {
+                questDialogData.dialogData.startDialogue(player, questId, this)
+            }
+
+            // Quest is started but not completed
+            playerHasUnlockedQuest(player, questId) -> {
+                player.error("Come back when you've completed this quest!")
+            }
+
+            // Quest is not started
+            dialogData != null && !playerHasUnlockedQuest(player, questId) -> {
+                dialogData.startDialogue(player, dialogId ?: return, this)
+            }
         }
     }
 
@@ -104,7 +116,7 @@ data class Npc(
 
     fun gondolaUnlockerInteraction(player: Player) {
         // instead of printing messages in chat, we should open an error dialog instead
-        ticketId ?: return idofrontLogger.e{"Ticket id is null for gondola unlocker NPC $id"}
+        ticketId ?: return idofrontLogger.e { "Ticket id is null for gondola unlocker NPC $id" }
         val ticket: Ticket = TicketConfigHolder.config?.tickets?.get(ticketId)
             ?: return idofrontLogger.e("Ticket with id $ticketId not found")
         player.editPlayerData {
@@ -127,6 +139,7 @@ data class Npc(
         }
         checkAndCompleteQuest(player, qid)
     }
+
     fun questUnlockInteraction(player: Player, qid: String) {
         if (questId == null) {
             player.error("Missing questId")
@@ -153,5 +166,5 @@ data class Npc(
 
 @Serializable
 class NpcsConfig(
-    val npcs: Map<String, Npc> = mapOf()
+    val npcs: Map<String, Npc> = mapOf(),
 )
