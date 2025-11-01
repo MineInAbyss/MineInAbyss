@@ -11,9 +11,9 @@ data class VisitQuest(
     val questId: String,
     val displayName: String,
     val locations: List<LocationData>,
-    val gearyRewards: Map<PrefabKey, Int>? = null,
-    val vanillaRewards: Map<String, Int>? = null,
-    val perms: List<String>? = null,
+    val gearyRewards: Map<PrefabKey, Int> = emptyMap(),
+    val vanillaRewards: Map<String, Int> = emptyMap(),
+    val perms: List<String> = emptyList(),
 )
 
 @Serializable
