@@ -66,9 +66,8 @@ class GondolasListener : Listener {
                 val gondolaData = LoadedGondolas.loaded[entry.first] ?: continue
                 val remaining = gondolaData.warpCooldown - (now - entry.second)
                 if (remaining == gondolaData.warpCooldown) {
-                    player.playSound(
-                        Sound.sound(Key.key("minecraft:ambient.cave.cave_18"), Sound.Source.AMBIENT, 1f, 1f)
-                    )
+                    val soundKey = Key.key("minecraft:ambient.cave.cave_18")
+                    player.playSound(Sound.sound(soundKey,Sound.Source.AMBIENT,1f,1f))
                 }
                 if (remaining > 0) {
                     val seconds = remaining / 1000
