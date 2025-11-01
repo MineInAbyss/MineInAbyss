@@ -9,13 +9,12 @@ import org.bukkit.Location
 @Serializable
 data class VisitQuest(
     val questId: String,
+    val displayName: String,
     val locations: List<LocationData>,
     val gearyRewards: Map<PrefabKey, Int>? = null,
     val vanillaRewards: Map<String, Int>? = null,
     val perms: List<String>? = null,
-) {
-
-}
+)
 
 @Serializable
 

@@ -54,6 +54,14 @@ object QuestManager {
         return data.visitedLocations
     }
 
+    fun getQuestInformation(player: Player, questId: String): String {
+        val config = QuestConfigHolder.config!!
+        val visitQuest = config.visitQuests[questId]?.displayName ?: return "\"$questId\""
+        val progress = getVisitQuestProgress(player, questId)
+        //TODO make work for other quest types
+        return """"$visitQuest" - ${progress.first}/${progress.second} locations visited."""
+    }
+
     fun addVisitedLocation(player: Player, locationName: String) {
         update(player) { data -> data.copy(visitedLocations = data.visitedLocations + locationName) }
     }

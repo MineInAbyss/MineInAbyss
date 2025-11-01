@@ -8,6 +8,7 @@ import com.mineinabyss.features.gondolas.pass.unlockRoute
 import com.mineinabyss.features.npc.NpcAction.DialogData
 import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeTable
+import com.mineinabyss.features.quests.QuestManager
 import com.mineinabyss.features.quests.QuestManager.checkAndCompleteQuest
 import com.mineinabyss.features.quests.QuestManager.isQuestCompleted
 import com.mineinabyss.features.quests.QuestManager.playerHasCompletedQuest
@@ -89,7 +90,7 @@ data class Npc(
 
             // Quest is started but not completed
             playerHasUnlockedQuest(player, questId) -> {
-                player.error("Come back when you've completed this quest!")
+                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
             }
 
             // Quest is not started

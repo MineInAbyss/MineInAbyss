@@ -36,7 +36,7 @@ class QuestListener(
                 if (location.name !in playerVisitedLocations && location.isInside(to)) {
                     QuestManager.addVisitedLocation(player, location.name)
                     val progress = getVisitQuestProgress(player, quest.key)
-                    player.sendActionBar("${progress.first}/${progress.second} locations visited for current quest!")
+                    player.sendActionBar(QuestManager.getQuestInformation(player, quest.key))
                 }
             }
         }
