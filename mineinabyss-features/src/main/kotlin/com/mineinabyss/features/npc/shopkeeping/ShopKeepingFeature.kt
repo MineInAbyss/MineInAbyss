@@ -1,5 +1,6 @@
 package com.mineinabyss.features.npc.shopkeeping
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.gondolas.GondolaFeature
@@ -24,30 +25,33 @@ import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.plugin.listeners
 import com.ticxo.modelengine.api.utils.config.ConfigManager
 import com.mineinabyss.idofront.config.config
+import kotlinx.coroutines.delay
 import org.bukkit.Bukkit.getWorld
+import kotlin.time.Duration.Companion.seconds
 
 
 object listenerSingleton {
     var sgl: NpcsConfig? = null
-    var bstgth: MutableMap<Long, List<NpcEntity>>? = null
+    var bstgth: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 }
 
 class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Context) {
+
+    override val dependsOn: Set<String> = setOf("ModelEngine")
 
     class Context : Configurable<NpcsConfig> {
         override val configManager: IdofrontConfig<NpcsConfig> = config("npc", abyss.dataPath, NpcsConfig())
         val npcconfig by  config("npc", abyss.dataPath, NpcsConfig())
         val dialogsConfig by config("dialogs", abyss.dataPath, DialogsConfig())
         val manager = NpcManager(npcconfig, getWorld("world")!!, dialogsConfig)
-        init {
-            manager.initNpc()
-
-        }
     }
     override fun FeatureDSL.enable() = gearyPaper.run {
 //        println("Enabling Shopkeeping Feature")
         plugin.listeners(ShopKeepingListener())
-        context.manager.initNpc()
+        plugin.launch {
+            delay(10.seconds)
+            runCatching { context.manager.initNpc() }.onFailure { it.printStackTrace() }
+        }
         plugin.listeners(context.manager)
 //        println("dialogconfig keys are ${context.dialogsConfig.configs.keys}")
 //        val manager = NpcManager(context.npcconfig, getWorld("world")!!, context.dialogsConfig)
@@ -70,6 +74,13 @@ class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Cont
                     player.withGeary {
                         val shopKeeper = PrefabKey.of(shopKey).toEntityOrNull()?.get<ShopKeeper>() ?: return@playerAction
                         guiy(player) { ShopMainMenu(player, shopKeeper) }
+                    }
+                }
+            }
+            "npcs" {
+                "reload" {
+                    action {
+                        context.manager.initNpc()
                     }
                 }
             }

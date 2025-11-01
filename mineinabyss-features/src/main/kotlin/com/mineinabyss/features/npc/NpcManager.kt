@@ -30,7 +30,6 @@ class NpcManager(
     var npcEntities: List<NpcEntity> = emptyList()
     val npcMap: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 
-//    val api = LuxDialoguesAPI.getAPI().getProvider()
     fun initNpc() {
         // load npc config
         for (npc in npcsConfig.npcs.values) {
@@ -39,17 +38,19 @@ class NpcManager(
 
             val chunkKey = npc.location.chunk.chunkKey
             npcMap[chunkKey] = npcMap.getOrDefault(chunkKey, emptyList()) + npcEntity
-            println("Loaded NPC ${npc.id} at chunk $chunkKey")
+            println("Loaded NPC ${npc.id} at chunk ${npc.location}")
+
+            if (npc.location.isWorldLoaded && npc.location.isChunkLoaded) npcEntity.createBaseNpc()
+
         }
-    println("NPC Manager initialized with ${npcEntities.size} NPCs.")
-    println("npc values are ${npcsConfig.npcs.values}")
-    listenerSingleton.bstgth = npcMap
+        println("NPC Manager initialized with ${npcEntities.size} NPCs.")
+        println("npc values are ${npcsConfig.npcs.values}")
+        listenerSingleton.bstgth = npcMap
     }
 
     @EventHandler
     fun ChunkLoadEvent.handleNpcSpawn() {
-        //spawn npc
-        listenerSingleton.bstgth!![chunk.chunkKey]?.forEach(NpcEntity::createBaseNpc)
+        listenerSingleton.bstgth[chunk.chunkKey]?.forEach(NpcEntity::createBaseNpc)
     }
 
 
