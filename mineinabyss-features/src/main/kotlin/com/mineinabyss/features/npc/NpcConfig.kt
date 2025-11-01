@@ -8,6 +8,7 @@ import com.mineinabyss.features.gondolas.pass.unlockRoute
 import com.mineinabyss.features.npc.NpcAction.DialogData
 import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeTable
+import com.mineinabyss.features.quests.QuestManager.checkAndCompleteQuest
 import com.mineinabyss.features.quests.QuestManager.completeQuest
 import com.mineinabyss.features.quests.QuestManager.playerHasCompletedQuest
 import com.mineinabyss.features.quests.QuestManager.playerHasUnlockedQuest
@@ -124,7 +125,7 @@ data class Npc(
             player.error("Missing questId")
             return
         }
-        completeQuest(player, qid)
+        checkAndCompleteQuest(player, qid)
     }
     fun questUnlockInteraction(player: Player, qid: String) {
         if (questId == null) {

@@ -6,6 +6,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
+import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.luckperms.api.node.Node
@@ -158,6 +159,8 @@ object QuestManager {
     fun checkAndCompleteQuest(player: Player, questId: String) {
         if (isQuestCompleted(player, questId)) {
             completeQuest(player, questId)
+        } else {
+            player.error("You haven't completed this quest yet!")
         }
     }
 
