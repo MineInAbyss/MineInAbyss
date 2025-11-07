@@ -29,6 +29,8 @@ import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
 import com.mineinabyss.idofront.features.Feature
 import kotlinx.serialization.Serializable
+import org.koin.core.context.unloadKoinModules
+import org.koin.dsl.koinApplication
 
 @Serializable
 class Toggle(val enabled: Boolean = false)
@@ -65,6 +67,13 @@ class AbyssFeatureConfig(
     val tutorial: Toggle = Toggle(),
 ) {
     val features by lazy {
+        val application = koinApplication() {
+            modules(TutorialFeature.createModule())
+        }
+        application.koin
+            .createScope<TutorialFeature>()
+            .get<TutorialFeature>()
+
         buildList<Feature> {
             fun add(condition: Boolean, feature: () -> Feature) {
                 if (enableAll || condition) add(feature())
@@ -92,7 +101,7 @@ class AbyssFeatureConfig(
             add(pvp.enabled) { PvpFeature() }
             add(relics.enabled) { RelicsFeature() }
             add(tools.enabled) { ToolsFeature() }
-            add(tutorial.enabled) { TutorialFeature() }
+            add(tutorial.enabled) { TODO() }
             add(ansiblePull.enabled) { ConfigPullFeature() }
             add(true) { QuestFeature() }
         }

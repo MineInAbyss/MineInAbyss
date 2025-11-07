@@ -29,13 +29,12 @@ import org.bukkit.util.Transformation
 import org.joml.Quaternionf
 import org.joml.Vector3f
 
-val tutorial by DI.observe<TutorialContext>()
-interface TutorialContext {
-    val firstJoinLocation: Location?
-    val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>>
-    val entry: TutorialRegion
-    val exit: TutorialRegion
-}
+data class TutorialContext(
+    val firstJoinLocation: Location?,
+    val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>>,
+    val entry: TutorialRegion,
+    val exit: TutorialRegion,
+)
 
 @Serializable
 data class Tutorial(
