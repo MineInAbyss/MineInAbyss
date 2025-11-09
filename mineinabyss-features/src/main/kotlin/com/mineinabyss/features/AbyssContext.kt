@@ -9,12 +9,11 @@ import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.features.featureManager
 import com.mineinabyss.idofront.messaging.observeLogger
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.koin.core.scope.Scope
 import java.nio.file.Path
 
 val abyss by DI.observe<AbyssContext>()
@@ -39,7 +38,21 @@ class AbyssContext(
             )
         )
     )
-    val config by configManager
+    val config: AbyssFeatureConfig by configManager
+
+    val featureManager = featureManager {
+        globalModule {
+            single<AbyssContext> { abyss }
+        }
+
+        withMainCommand("mineinabyss", "mia", description = "The main command for Mine in Abyss")
+
+        install(*abyss.config.features.toTypedArray())
+    }
+
+    inline fun <reified T: Any> getScoped(feature: Feature): T {
+        return featureManager.getScope(feature).get<T>()
+    }
 
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isEternalFortuneLoaded get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")

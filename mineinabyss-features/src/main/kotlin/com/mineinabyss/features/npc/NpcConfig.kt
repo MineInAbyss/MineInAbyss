@@ -8,15 +8,8 @@ import com.mineinabyss.features.gondolas.pass.unlockRoute
 import com.mineinabyss.features.npc.NpcAction.DialogData
 import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeTable
-import com.mineinabyss.features.quests.QuestManager
-import com.mineinabyss.features.quests.QuestManager.checkAndCompleteQuest
-import com.mineinabyss.features.quests.QuestManager.isQuestCompleted
-import com.mineinabyss.features.quests.QuestManager.playerHasCompletedQuest
-import com.mineinabyss.features.quests.QuestManager.playerHasUnlockedQuest
-import com.mineinabyss.features.quests.QuestManager.unlockQuest
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.idofrontLogger
-import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import kotlinx.serialization.Serializable
@@ -77,27 +70,28 @@ data class Npc(
     fun questGiverInteraction(player: Player, questDialogData: QuestDialogData? = null, dialogData: DialogData? = null) {
         questDialogData ?: return
         questId ?: return
-        when {
-            // Quest is done, reward is claimed
-            playerHasCompletedQuest(player, questId) -> {
-                player.info("You have already completed this quest.")
-            }
-
-            // Quest is done but reward not claimed yet
-            isQuestCompleted(player, questId) -> {
-                questDialogData.dialogData.startDialogue(player, questId, this)
-            }
-
-            // Quest is started but not completed
-            playerHasUnlockedQuest(player, questId) -> {
-                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
-            }
-
-            // Quest is not started
-            dialogData != null && !playerHasUnlockedQuest(player, questId) -> {
-                dialogData.startDialogue(player, dialogId ?: return, this)
-            }
-        }
+        TODO("Reimplement with DI")
+//        when {
+//            // Quest is done, reward is claimed
+//            playerHasCompletedQuest(player, questId) -> {
+//                player.info("You have already completed this quest.")
+//            }
+//
+//            // Quest is done but reward not claimed yet
+//            isQuestCompleted(player, questId) -> {
+//                questDialogData.dialogData.startDialogue(player, questId, this)
+//            }
+//
+//            // Quest is started but not completed
+//            playerHasUnlockedQuest(player, questId) -> {
+//                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
+//            }
+//
+//            // Quest is not started
+//            dialogData != null && !playerHasUnlockedQuest(player, questId) -> {
+//                dialogData.startDialogue(player, dialogId ?: return, this)
+//            }
+//        }
     }
 
 
@@ -138,7 +132,8 @@ data class Npc(
             player.error("Missing questId")
             return
         }
-        checkAndCompleteQuest(player, qid)
+        TODO()
+//        checkAndCompleteQuest(player, qid)
     }
 
     fun questUnlockInteraction(player: Player, qid: String) {
@@ -146,7 +141,8 @@ data class Npc(
             player.error("Missing questId")
             return
         }
-        unlockQuest(player, qid)
+        TODO()
+//        unlockQuest(player, qid)
         // this one is a bit more finicky, tho I think i'll do something like:
         // give the player a "objective" component, which would be something like:
         // (quest_id | progress | max_progress | completion_action)

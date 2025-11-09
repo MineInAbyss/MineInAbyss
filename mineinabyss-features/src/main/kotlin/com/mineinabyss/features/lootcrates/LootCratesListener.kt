@@ -3,7 +3,6 @@ package com.mineinabyss.features.lootcrates
 import com.mineinabyss.components.lootcrates.ContainsLoot
 import com.mineinabyss.components.lootcrates.LootLocation
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.lootcrates.constants.LootCratePermissions
 import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.features.lootcrates.database.LootedChests.locationEq
@@ -31,7 +30,7 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.time.LocalDate
 
-class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
+class LootCratesListener(val msg: LootCratesConfig.Messages) : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun PlayerInteractEvent.onChestInteract() {
         (clickedBlock?.state as? Chest)?.withGeary { chest ->
@@ -106,8 +105,11 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
                     contents = chest.inventory.contents
                 }
             } else {
-                val table = Features.lootCrates.lootTables[loot.table] ?: run {
-                    player.error(Features.lootCrates.config.messages.tableNotFound.format(loot.table))
+                val scope = abyss.featureManager.getScope(LootCratesFeature)
+                val tables = scope.get<LootCratesContext>().lootTables
+                val messages = scope.get<LootCratesConfig.Messages>()
+                val table = tables[loot.table] ?: run {
+                    player.error(messages.tableNotFound.format(loot.table))
                     return
                 }
                 Bukkit.createInventory(null, 27, table.itemName ?: Component.text("Loot")).apply {

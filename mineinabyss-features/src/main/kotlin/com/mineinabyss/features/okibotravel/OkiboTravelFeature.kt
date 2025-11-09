@@ -1,80 +1,68 @@
 package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features.okiboLine
-import com.mineinabyss.idofront.commands.arguments.optionArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.commands.brigadier.Args
+import com.mineinabyss.idofront.commands.brigadier.playerExecutes
 import com.mineinabyss.idofront.config.config
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.plugin.listeners
-import org.bukkit.Bukkit
+import org.koin.core.module.dsl.scopedOf
 
-val OkiboTravelFeature = feature("okibo-travel") {
-    class Context : Configurable<OkiboTravelConfig> {
-        override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
-            removeOkiboMaps()
-
-            mapEntities.clear()
-            hitboxEntities.clear()
-            hitboxIconEntities.clear()
-
-            spawnOkiboMaps()
-        }, onLoad = { config ->
-            abyss.logger.s("Reloaded OkiboLines")
-        })
-        val okiboTravelListener = OkiboTravelListener()
+val OkiboTravelFeature: Feature = feature("okibo-travel") {
+    dependsOn {
+        plugins("BKCommonLib", "Train_Carts", "TCCoasters")
     }
 
-    override val dependsOn = setOf("BKCommonLib", "Train_Carts", "TCCoasters")
+    scopedModule {
+        scoped<OkiboTravelConfig> {
+            config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
+                removeOkiboMaps()
 
-    override fun FeatureDSL.enable() {
-        plugin.listeners(context.okiboTravelListener)
+                mapEntities.clear()
+                hitboxEntities.clear()
+                hitboxIconEntities.clear()
 
-        mainCommand {
-            "okibo" {
-                "reload" {
-                    context.configManager.reload()
-                }
-                val station by optionArg(context.config.allStations.map { it.id }) {
-                    default = context.config.okiboStations.first().id
-                }
-                "spawn" {
-                    var destination by optionArg(context.config.allStations.map { it.id }) {
-                        default = context.config.okiboStations.last().id
-                    }
-                    playerAction {
-                        destination =
-                            if (station == destination) context.config.okiboStations.firstOrNull { it.id != station }?.id
-                                ?: station else destination
-                        spawnOkiboCart(
-                            player,
-                            context.config.allStations.find { it.id == station }
-                                ?: return@playerAction player.error("Invalid station!"),
-                            context.config.allStations.find { it.id == destination }
-                                ?: return@playerAction player.error("Invalid destination!")
-                        )
-                    }
+                spawnOkiboMaps()
+            }, onLoad = { config ->
+                abyss.logger.s("Reloaded OkiboLines")
+            }).getOrLoad()
+        }
+
+        scopedOf(::OkiboTravelListener)
+    }
+
+    onEnable {
+        listeners(get<OkiboTravelListener>())
+    }
+
+    mainCommand {
+        "okibo" {
+            "reload" {
+                executes {
+                    featureManager.reload(OkiboTravelFeature)
                 }
             }
-        }
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("okibo").filter { it.startsWith(args[0]) }
-                2 -> if (args[0] == "okibo") listOf("spawn", "reload")
-                    .filter { it.startsWith(args[1]) } else null
-                3 -> when {
-                    args[1] in listOf("spawn") -> context.config.allStations.map { it.id }
-                    else -> null
-                }?.filter { it.startsWith(args[2], true) }
-
-                4 -> if (args[1] == "spawn") context.config.allStations.map { it.id }
-                    .filter { it.startsWith(args[3], true) } else null
-
-                else -> null
+            "spawn" {
+                playerExecutes(
+                    Args.options { get<OkiboTravelConfig>().allStations.map { it.id } },
+                    Args.options { get<OkiboTravelConfig>().allStations.map { it.id } }
+                        .default { get<OkiboTravelConfig>().okiboStations.first().id },
+                ) { destination, station ->
+                    val config = get<OkiboTravelConfig>()
+                    val destination = if (station == destination) {
+                        config.okiboStations.firstOrNull { it.id != station }?.id ?: station
+                    } else {
+                        destination
+                    }
+                    spawnOkiboCart(
+                        player,
+                        config.allStations.find { it.id == station }
+                            ?: return@playerExecutes player.error("Invalid station!"),
+                        config.allStations.find { it.id == destination }
+                            ?: return@playerExecutes player.error("Invalid destination!")
+                    )
+                }
             }
         }
     }

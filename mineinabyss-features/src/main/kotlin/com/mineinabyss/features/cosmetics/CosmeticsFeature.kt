@@ -1,46 +1,47 @@
 package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin
-import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.gui.Menus
 import com.hibiscusmc.hmccosmetics.gui.type.Types
 import com.mineinabyss.features.AbyssContext
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.cosmeticUser
-import com.mineinabyss.features.helpers.hmcCosmetics
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.serialization.Serializable
+import org.koin.core.module.dsl.scopedOf
 
 @Serializable
 class CosmeticsConfig {
     val enabled = false
     val equipWhistleCosmetic = false
 }
+
 val CosmeticsFeature = feature("cosmetics") {
     dependsOn {
         plugins("HMCCosmetics")
     }
+    scopedModule {
+        scoped<CosmeticsConfig> { get<AbyssContext>().config.cosmetics }
+        scopedOf(::CosmeticListener)
+    }
+
     onEnable {
-        val config = get<AbyssContext>().config.cosmetics
         Types.addType(TypeMiaCosmetic())
         HMCCosmeticsPlugin.setup()
         Cosmetics.addCosmetic(EmptyBackpackCosmetic)
-        listeners(CosmeticListener(config))
+        listeners(get<CosmeticListener>())
+    }
 
-        // TODO implement command
-//        mainCommand {
-//            "cosmetics" {
-//                "menu" {
-//                    playerAction {
-//                        if (hmcCosmetics.isEnabled) Menus.getDefaultMenu()?.openMenu(player.cosmeticUser)
-//                    }
-//                }
-//            }
-//        }
+    mainCommand {
+        "cosmetics" {
+            "menu" {
+                playerExecutes {
+                    if (abyss.isHMCCosmeticsEnabled) Menus.getDefaultMenu()?.openMenu(player.cosmeticUser)
+                }
+            }
+        }
+    }
 //        tabCompletion {
 //            when (args.size) {
 //                1 -> listOf("cosmetics").filter { it.startsWith(args[0]) }
@@ -63,5 +64,4 @@ val CosmeticsFeature = feature("cosmetics") {
 //                else -> listOf()
 //            }
 //        }
-    }
 }

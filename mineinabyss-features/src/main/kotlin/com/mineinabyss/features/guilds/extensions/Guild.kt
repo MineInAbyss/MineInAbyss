@@ -8,10 +8,11 @@ import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.guilds.GuildsConfig
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.features.helpers.CoinFactory
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.papermc.withGeary
@@ -33,7 +34,7 @@ import org.jetbrains.exposed.v1.jdbc.update
 typealias GuildName = String
 
 fun OfflinePlayer.createGuild(guildName: String) {
-    val config = Features.guilds.config
+    val config = abyss.featureManager.getScope(GuildFeature).get<GuildsConfig>()
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
 
     if (newGuildName.length > config.guildNameMaxLength) {
@@ -476,7 +477,10 @@ fun Player.guildChat(): ChattyChannel? {
     }
 }
 
-private fun GuildName.createChattyChannel() = Features.guilds.config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
+private fun GuildName.createChattyChannel(): ChattyChannel {
+    val config = abyss.featureManager.getScope(GuildFeature).get<GuildsConfig>()
+    return config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
+}
 
 fun GuildName.guildChatId() = "$this $guildChannelId"
 fun Player.guildChatId() = "${getGuildName()} $guildChannelId"

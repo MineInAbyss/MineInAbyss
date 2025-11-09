@@ -5,7 +5,6 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
@@ -18,8 +17,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class PatreonListener(private val config: PatreonFeature.Config) : Listener {
-
+class PatreonListener(private val config: PatreonConfig) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun PlayerJoinEvent.addPatreonComponent() {
         val member = API.DiscordSRV?.plugin?.run { DiscordUtil.getMemberById(accountLinkManager.getDiscordId(player.uniqueId) ?: "") }

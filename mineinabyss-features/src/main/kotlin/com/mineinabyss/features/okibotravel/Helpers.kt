@@ -7,7 +7,6 @@ import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup
 import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features.okiboLine
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
@@ -39,7 +38,9 @@ fun OkiboLineStation.costTo(destination: OkiboLineStation): Int? {
     val trainWorld = TrainCarts.plugin.pathProvider.getWorld(location.world)
     val startNode = trainWorld.getNodeByName(id) ?: trainWorld.getNodeAtRail(location.block) ?: return null
     val destNode = trainWorld.getNodeByName(destination.id) ?: trainWorld.getNodeAtRail(destination.location.block) ?: return null
-    return (startNode.findConnection(destNode)?.distance?.times(okiboLine.config.costPerKM)?.div(1000))?.roundToInt()
+
+    val config = abyss.getScoped<OkiboTravelConfig>(OkiboTravelFeature)
+    return (startNode.findConnection(destNode)?.distance?.times(config.costPerKM)?.div(1000))?.roundToInt()
 }
 
 val tccoasters by lazy { Bukkit.getPluginManager().getPlugin("TCCoasters") as TCCoasters }

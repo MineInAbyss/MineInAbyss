@@ -1,19 +1,48 @@
 package com.mineinabyss.features.layers
 
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
+import com.charleskorn.kaml.AnchorsAndAliases
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.features.abyss
+import com.mineinabyss.geary.serialization.SerializableComponents
+import com.mineinabyss.idofront.config.ConfigFormats
+import com.mineinabyss.idofront.config.Format
+import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.plugin.listeners
-import org.bukkit.event.HandlerList
+import org.koin.core.module.dsl.scopedOf
+import org.koin.dsl.bind
 
 val LayersFeature = feature("layers") {
-    override val dependsOn = setOf("DeeperWorld")
-
-    override fun FeatureDSL.enable() {
-        plugin.listeners(context.layersListener)
+    dependsOn {
+        plugins("DeeperWorld")
     }
 
-    override fun FeatureDSL.disable() {
-        HandlerList.unregisterAll(context.layersListener)
+    scopedModule {
+        scoped<LayersConfig> {
+            config(
+                "layers", abyss.plugin.dataFolder.toPath(), LayersConfig(), formats = ConfigFormats(
+                    overrides = listOf(
+                        Format(
+                            "yml", Yaml(
+                                // We autoscan in our Feature classes so need to use Geary's module.
+                                serializersModule = abyss.gearyGlobal.getAddon(SerializableComponents).serializers.module,
+                                configuration = YamlConfiguration(
+                                    extensionDefinitionPrefix = "x-",
+                                    anchorsAndAliases = AnchorsAndAliases.Permitted(),
+                                )
+                            )
+                        )
+                    )
+                )
+            ).getOrLoad()
+        }
+
+
+        scopedOf(::SingleAbyssWorldManager) bind AbyssWorldManager::class
+        scopedOf(::LayerListener)
+    }
+
+    onEnable {
+        listeners(get<LayerListener>())
     }
 }

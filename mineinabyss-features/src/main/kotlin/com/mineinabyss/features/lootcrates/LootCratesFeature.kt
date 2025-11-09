@@ -9,39 +9,19 @@ import com.mineinabyss.geary.helpers.entity
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.commands.arguments.optionArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
+import com.mineinabyss.idofront.commands.brigadier.Args
+import com.mineinabyss.idofront.commands.brigadier.playerExecutes
 import com.mineinabyss.idofront.config.config
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.plugin.unregisterListeners
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import org.koin.core.module.dsl.scopedOf
 
-val LootCratesFeature = feature("lootcrates") {
-    @Serializable
-    class Config(val messages: Messages = Messages())
-    class Context : Configurable<Config> {
-        override val configManager = config("lootTables", abyss.dataPath, Config())
-        val listeners = arrayOf(LootCratesListener(config.messages), LootCrateEditingListener(config.messages))
-        val lootTables by lazy {
-            with(abyss.gearyGlobal) {
-                queryManager.getEntitiesMatchingAsSequence(family {
-                    hasSet<LootTable>()
-                    hasSet<PrefabKey>()
-                }).map { it.toGeary() }.associate {
-                    it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!!
-                }
-            }
-        }
-    }
-
+@Serializable
+class LootCratesConfig(val messages: Messages = Messages()) {
     @Serializable
     class Messages(
         val tableNotFound: String = "Could not find loot table %s. Please let an administrator know!",
@@ -51,58 +31,54 @@ val LootCratesFeature = feature("lootcrates") {
         val noPermissionToBreak: String = "You don't have permission to break loot crates, ask a member of staff if you need one removed.",
         val lootTableItemTitle: String = "<green>Loot Crate: <gold>%s<yellow>:%s",
     )
+}
 
-    override fun FeatureDSL.enable() {
-        plugin.listeners(*context.listeners)
+class LootCratesContext {
+    val lootTables = with(abyss.gearyGlobal) {
+        queryManager.getEntitiesMatchingAsSequence(family {
+            hasSet<LootTable>()
+            hasSet<PrefabKey>()
+        }).map { it.toGeary() }.associate {
+            it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!!
+        }
+    }
+}
+
+val LootCratesFeature = feature("lootcrates") {
+    scopedModule {
+        scoped { config("lootTables", abyss.dataPath, LootCratesConfig()).getOrLoad() }
+        scoped { get<LootCratesConfig>().messages }
+        scopedOf(::LootCratesListener)
+        scopedOf(::LootCrateEditingListener)
+        scopedOf(::LootCratesContext)
+    }
+
+    onEnable {
+        listeners(get<LootCratesListener>(), get<LootCrateEditingListener>())
 
         abyss.gearyGlobal.entity {
             set(LootTable.empty())
             set(PrefabKey.of(LootCrateConstants.CUSTOM_LOOT_TABLE))
         }
-
-        mainCommand {
-            "lootcrates" {
-                "give" {
-                    val lootTable by optionArg(context.lootTables.keys.toList())
-
-                    playerAction {
-                        val (namespace, key) = PrefabKey.of(lootTable)
-                        player.withGeary {
-                            player.inventory.addItem(
-                                ItemStack(Material.STICK).apply {
-                                    editPersistentDataContainer {
-                                        it.encode(ContainsLoot(lootTable))
-                                    }
-                                    val itemName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
-                                    setData(DataComponentTypes.ITEM_NAME, itemName)
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        tabCompletion {
-            when (args.getOrNull(0)) {
-                "lootcrates" -> {
-                    when (args.getOrNull(1)) {
-                        "give" ->
-                            if (args.size == 3) context.lootTables.keys.toList()
-                                .filter { it.startsWith(args[2], ignoreCase = true) }
-                            else null
-
-                        else -> if (args.size == 2) listOf("give") else null
-                    }
-                }
-
-                else ->
-                    if (args.size == 1) listOf("lootcrates").filter { it.startsWith(args[0], ignoreCase = true) }
-                    else null
-            }
-        }
     }
-
-    override fun FeatureDSL.disable() {
-        plugin.unregisterListeners(*context.listeners)
+    mainCommand {
+        "lootcrates" {
+            "give" {
+                playerExecutes(Args.options { get<LootCratesContext>().lootTables.keys.toList() }) { lootTable ->
+                    val (namespace, key) = PrefabKey.of(lootTable)
+                    player.withGeary {
+                        player.inventory.addItem(
+                            ItemStack(Material.STICK).apply {
+                                editPersistentDataContainer {
+                                    it.encode(ContainsLoot(lootTable))
+                                }
+                                val itemName = get<LootCratesConfig>().messages.lootTableItemTitle.format(namespace, key).miniMsg()
+                                setData(DataComponentTypes.ITEM_NAME, itemName)
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 }

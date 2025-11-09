@@ -2,57 +2,42 @@ package com.mineinabyss.features.keepinventory
 
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.features.abyss
-import com.mineinabyss.idofront.commands.arguments.booleanArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.commands.brigadier.Args
+import com.mineinabyss.idofront.commands.brigadier.playerExecutes
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.plugin.unregisterListeners
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
+import org.koin.core.module.dsl.scopedOf
+
+@Serializable
+class KeepInvConfig {
+    val enabled = true
+    val keepInvInVoid: Boolean = true
+}
 
 val KeepInvFeature = feature("keep-inventory") {
-    @Serializable
-    class Config {
-        val enabled = true
-        val keepInvInVoid: Boolean = true
+    scopedModule {
+        scoped { abyss.config.keepInventory }
+        scopedOf(::KeepInvListener)
+        scopedOf(::KeepInvGraveListener)
     }
 
-    class Context(val config: Config) {
-        val listeners = buildList {
-            add(KeepInvListener(config))
-            if (abyss.isEternalFortuneLoaded) KeepInvGraveListener(config)
-        }.toTypedArray()
+    onEnable {
+        listeners(get<KeepInvListener>())
+        if (abyss.isEternalFortuneLoaded) listeners(get<KeepInvGraveListener>())
     }
 
-    override fun FeatureDSL.enable() {
-        plugin.listeners(*context.listeners)
-
-        mainCommand {
-            "keepinv"(desc = "Commands to toggle keepinventory status") {
-                val toggled by booleanArg()
-
-                playerAction {
-                    val player = sender as Player
-                    player.editPlayerData { keepInvStatus = toggled }
-                    if (toggled) player.success("Keep Inventory enabled for ${player.name}")
-                    else sender.error("Keep Inventory disabled for ${player.name}")
-                }
+    mainCommand {
+        "keepinv" {
+            description = "Commands to toggle keepinventory status"
+            playerExecutes(Args.bool()) { toggled ->
+                val player = sender as Player
+                player.editPlayerData { keepInvStatus = toggled }
+                if (toggled) player.success("Keep Inventory enabled for ${player.name}")
+                else sender.error("Keep Inventory disabled for ${player.name}")
             }
         }
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("keepinv").filter { it.startsWith(args[0]) }
-                2 -> if (args[0] == "keepinv") listOf("on", "off") else null
-                else -> null
-            }
-        }
-    }
-
-    override fun FeatureDSL.disable() {
-        plugin.unregisterListeners(*context.listeners)
     }
 }

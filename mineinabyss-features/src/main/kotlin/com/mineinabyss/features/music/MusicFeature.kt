@@ -1,19 +1,24 @@
 package com.mineinabyss.features.music
 
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.features.abyss
+import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
-import org.bukkit.event.HandlerList
+import org.koin.core.module.dsl.scopedOf
 
 val MusicFeature = feature("music") {
-    override fun FeatureDSL.enable() {
-        plugin.listeners(context.queueMusicListener)
+    scopedModule {
+        scoped<MusicConfig> { config("music", abyss.dataPath, MusicConfig()).getOrLoad() }
+        scopedOf(::MusicScheduler)
+        scopedOf(::QueueMusicListener)
     }
 
-    override fun FeatureDSL.disable() {
-        HandlerList.unregisterAll(context.queueMusicListener)
-        Bukkit.getServer().onlinePlayers.forEach(MusicScheduler::stopSchedulingMusic)
+    onEnable {
+        listeners(get<QueueMusicListener>())
+    }
+
+    onDisable {
+        val scheduler = get<MusicScheduler>()
+        Bukkit.getServer().onlinePlayers.forEach(scheduler::stopSchedulingMusic)
     }
 }

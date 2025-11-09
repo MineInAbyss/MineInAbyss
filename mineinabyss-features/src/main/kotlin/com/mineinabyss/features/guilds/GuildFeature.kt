@@ -80,7 +80,7 @@ val GuildFeature = feature("guilds") {
     onEnable {
         listeners(GuildListener())
         TODO()
-//        plugin.listeners(*context.listeners)
+//        listeners(*context.listeners)
 
         //ProfileManager.startProfileFetching()
 
@@ -93,64 +93,64 @@ val GuildFeature = feature("guilds") {
         displayGuildList()
 
 //        mainCommand {
-//            "guild"(desc = "Guild related commands") {
-//                "balance"(desc = "Guild Balance related commands") {
-//                    "view"(desc = "View your guilds balance") {
-//                        playerAction {
+//            "guild"(description = "Guild related commands") {
+//                "balance"(description = "Guild Balance related commands") {
+//                    "view"(description = "View your guilds balance") {
+//                        playerExecutes {
 //                            val player = sender as Player
 //                            if (!player.hasGuild()) {
 //                                player.error("You do not have any guild.")
-//                                return@playerAction
+//                                return@playerExecutes
 //                            }
 //
 //                            player.info("<yellow>Your guild's balance is <gold>${player.getGuildBalance()}</gold>.")
 //                        }
 //                    }
-//                    "deposit"(desc = "Deposit Orth Coins into your guild balance") {
+//                    "deposit"(description = "Deposit Orth Coins into your guild balance") {
 //                        val amount by intArg { default = 1 }
-//                        playerAction {
+//                        playerExecutes {
 //                            val player = sender as Player
 //                            if (amount <= 0) {
 //                                player.error("You must deposit at least 1 coin.")
-//                                return@playerAction
+//                                return@playerExecutes
 //                            }
 //                            if (amount > player.inventory.itemInMainHand.amount) {
 //                                player.error("You don't have that many coins.")
-//                                return@playerAction
+//                                return@playerExecutes
 //                            }
 //                            player.depositCoinsToGuild(amount)
 //                        }
 //                    }
-//                    "withdraw"(desc = "Withdraw Orth Coins from your guild balance") {
+//                    "withdraw"(description = "Withdraw Orth Coins from your guild balance") {
 //                        var amount by intArg { default = 1 }
-//                        playerAction {
+//                        playerExecutes {
 //                            val player = sender as Player
 //                            if (amount <= 0) {
 //                                player.error("You can't withdraw 0 or less coins!")
-//                                return@playerAction
+//                                return@playerExecutes
 //                            }
 //                            if (amount > 64) amount = 64
 //                            player.withdrawCoinsFromGuild(amount)
 //                        }
 //                    }
 //                }
-//                "chat"(desc = "Toggle guild chat") {
-//                    playerAction {
-//                        val player = sender as? Player ?: return@playerAction
+//                "chat"(description = "Toggle guild chat") {
+//                    playerExecutes {
+//                        val player = sender as? Player ?: return@playerExecutes
 //
-//                        if (!abyss.isChattyLoaded) return@playerAction player.error("Chatty is not loaded")
+//                        if (!abyss.isChattyLoaded) return@playerExecutes player.error("Chatty is not loaded")
 //                        player.guildChat()?.let { ChattyCommands.swapChannel(player, it) }
-//                            ?: return@playerAction player.error("You cannot use guild chat without a guild")
+//                            ?: return@playerExecutes player.error("You cannot use guild chat without a guild")
 //                    }
 //                }
-//                "menu"(desc = "Open Guild Menu") {
-//                    playerAction {
+//                "menu"(description = "Open Guild Menu") {
+//                    playerExecutes {
 //                        guiy(player) { GuildMainMenu(player, true) }
 //                    }
 //                }
 //                "admin" {
 //                    "spy" {
-//                        playerAction {
+//                        playerExecutes {
 //                            val player = (sender as Player).toGeary()
 //                            if (player.has<SpyOnGuildChat>()) player.remove<SpyOnGuildChat>()
 //                            else player.getOrSetPersisting<SpyOnGuildChat> { SpyOnGuildChat() }

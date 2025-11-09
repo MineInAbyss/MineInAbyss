@@ -1,14 +1,12 @@
 package com.mineinabyss.features.quests
 
-import com.mineinabyss.features.quests.QuestManager.getVisitQuestProgress
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 
 class QuestListener(
     val questConfig: QuestConfig,
+    val quests: QuestManager,
 ): Listener {
 
     @EventHandler
@@ -16,8 +14,8 @@ class QuestListener(
         if (!this.hasExplicitlyChangedBlock()) {
             return
         }
-       val activeQuests = QuestManager.getActiveQuests(player)
-        val playerVisitedLocations = QuestManager.getVisitedLocations(player)
+       val activeQuests = quests.getActiveQuests(player)
+        val playerVisitedLocations = quests.getVisitedLocations(player)
 
 //        activeQuests.activeVisitQuests.forEach { visitQuest ->
 //            visitQuest.locations.forEach { location ->
@@ -34,9 +32,9 @@ class QuestListener(
             // tldr: i'll optimize it later
             quest.value.locations.forEach { location ->
                 if (location.name !in playerVisitedLocations && location.isInside(to)) {
-                    QuestManager.addVisitedLocation(player, location.name)
-                    val progress = getVisitQuestProgress(player, quest.key)
-                    player.sendActionBar(QuestManager.getQuestInformation(player, quest.key))
+                    quests.addVisitedLocation(player, location.name)
+                    val progress = quests.getVisitQuestProgress(player, quest.key)
+                    player.sendActionBar(quests.getQuestInformation(player, quest.key))
                 }
             }
         }

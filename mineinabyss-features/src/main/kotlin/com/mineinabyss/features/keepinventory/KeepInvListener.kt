@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.world.WorldLoadEvent
 
-class KeepInvListener(private val config: KeepInvFeature.Config) : Listener {
+class KeepInvListener(private val config: KeepInvConfig) : Listener {
     // Force keepinv to be false
     @EventHandler
     fun WorldLoadEvent.onWorldLoad() {
@@ -18,7 +18,8 @@ class KeepInvListener(private val config: KeepInvFeature.Config) : Listener {
     @EventHandler
     fun PlayerDeathEvent.optionalKeepInventory() {
         if ((config.keepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||
-            player.playerDataOrNull?.keepInvStatus != false) {
+            player.playerDataOrNull?.keepInvStatus != false
+        ) {
             keepInventory = true
             keepLevel = true
             droppedExp = 0

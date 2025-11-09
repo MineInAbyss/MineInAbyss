@@ -6,7 +6,7 @@ import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.plugin.listeners
 
 val MiscFeature = feature("misc") {
-    override fun FeatureDSL.enable() {
-        plugin.listeners(MiscListener())
+    onEnable {
+        listeners(MiscListener())
     }
 }

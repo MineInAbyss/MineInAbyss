@@ -23,9 +23,9 @@ data class QuestData(
 )
 
 
-object QuestManager {
-
-
+class QuestManager(
+    val config: QuestConfig,
+) {
     // we use this to store a player visited location and look it up;
     // will probably be moved to database implementation later on
     private fun getQuestData(player: Player): QuestData {
@@ -55,7 +55,6 @@ object QuestManager {
     }
 
     fun getQuestInformation(player: Player, questId: String): String {
-        val config = QuestConfigHolder.config!!
         val visitQuest = config.visitQuests[questId]?.displayName ?: return "\"$questId\""
         val progress = getVisitQuestProgress(player, questId)
         //TODO make work for other quest types
@@ -84,7 +83,6 @@ object QuestManager {
 
     fun giveQuestReward(player: Player, questId: String) {
         val gearyItems = player.world.toGeary().getAddon(ItemTracking)
-        val config = QuestConfigHolder.config ?: error("Trying to complete quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: return
 
         visitQuest.gearyRewards.forEach { (item, amount) ->
@@ -107,7 +105,6 @@ object QuestManager {
     }
 
     fun unlockQuest(player: Player, questId: String) {
-        val config = QuestConfigHolder.config ?: error("Trying to unlock quest $questId but QuestConfig is not initialized")
         if (questId !in config.visitQuests.keys) {
             error("Trying to unlock quest $questId but it does not exist in the QuestConfig")
         }
@@ -122,7 +119,6 @@ object QuestManager {
     }
 
     fun getVisitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
-        val config = QuestConfigHolder.config ?: error("Trying to get progress of quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: error("Trying to get progress of quest $questId but it does not exist in the QuestConfig")
         val questData = getQuestData(player)
 
@@ -156,7 +152,6 @@ object QuestManager {
     }
 
     fun isQuestCompleted(player: Player, questId: String): Boolean {
-        val config = QuestConfigHolder.config ?: error("Trying to check completion of quest $questId but QuestConfig is not initialized")
         val questData = getQuestData(player)
         val activeQuests = questData.activeQuests
         if (questId !in activeQuests) return false

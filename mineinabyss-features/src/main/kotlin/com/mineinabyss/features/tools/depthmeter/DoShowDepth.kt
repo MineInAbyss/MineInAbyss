@@ -1,11 +1,13 @@
 package com.mineinabyss.features.tools.depthmeter
 
 import com.mineinabyss.components.tools.ShowDepthMeterHud
-import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.deeperworld.services.WorldManager
-import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
+import com.mineinabyss.features.layers.LayersConfig
+import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.modules.observe
 import com.mineinabyss.geary.systems.query.query
@@ -50,6 +52,7 @@ class ShowDepthSystem(val world: Geary) {
  */
 fun Location.getAbyssDepth(): Int? {
     return WorldManager.getDepthFor(this)?.let { depth ->
-        depth - (world.maxHeight - Features.layers.config.hubSection.region.min.y - 1 /* Always start at depth 1 */)
+        val config = abyss.featureManager.getScope(LayersFeature).get<LayersConfig>()
+        depth - (world.maxHeight - config.hubSection.region.min.y - 1 /* Always start at depth 1 */)
     }
 }

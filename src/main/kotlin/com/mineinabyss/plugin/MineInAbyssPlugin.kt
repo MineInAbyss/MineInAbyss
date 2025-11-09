@@ -34,17 +34,6 @@ class MineInAbyssPlugin : JavaPlugin() {
 //    override fun getKoin(): Koin = koinApplication {
 //    }.koin
 
-    val featureManager = featureManager {
-        globalModule {
-            single<AbyssContext> { abyss }
-        }
-
-        withMainCommand("mineinabyss", "mia", description = "The main command for Mine in Abyss")
-
-        install(*abyss.config.features.toTypedArray())
-    }
-
-
     override fun onLoad() {
         gearyPaper.configure {
             install(createAddon("MineInAbyss", configuration = {
@@ -69,14 +58,14 @@ class MineInAbyssPlugin : JavaPlugin() {
         if (abyss.isPlaceholderApiLoaded) {
             Placeholders().register()
         }
-        featureManager.load()
+        abyss.featureManager.load()
     }
 
     override fun onEnable() {
-        featureManager.enable()
+        abyss.featureManager.enable()
     }
 
     override fun onDisable() {
-        featureManager.disable()
+        abyss.featureManager.disable()
     }
 }

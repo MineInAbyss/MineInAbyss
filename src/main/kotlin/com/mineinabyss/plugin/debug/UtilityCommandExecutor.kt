@@ -4,7 +4,8 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.layer.Layer
 import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.features.layers.AbyssWorldManager
+import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.execution.IdofrontCommandExecutor
 import com.mineinabyss.idofront.commands.execution.stopCommand
@@ -23,16 +24,17 @@ class UtilityCommandExecutor : IdofrontCommandExecutor() {
 
             playerAction {
                 val parsedItem = Material.getMaterial(itemToClear) ?: command.stopCommand("Item not found")
+                val worldManager = abyss.getScoped<AbyssWorldManager>(LayersFeature)
 
                 if (layerToClear == "all") {
                     sender.info("Start clearing out $parsedItem from containers in all layers.")
-                    Features.layers.worldManager.layers.values.forEach {
+                    worldManager.layers.values.forEach {
                         abyss.plugin.launch {
                             clearItemFromContainers(it, parsedItem, sender)
                         }
                     }
                 } else {
-                    val parsedLayer = Features.layers.worldManager.getLayerFor(LayerKey(layerToClear))
+                    val parsedLayer = worldManager.getLayerFor(LayerKey(layerToClear))
                         ?: command.stopCommand("Layer not found")
                     sender.info("Start clearing out $parsedItem from containers in ${parsedLayer.name}.")
                     abyss.plugin.launch {
@@ -47,7 +49,7 @@ class UtilityCommandExecutor : IdofrontCommandExecutor() {
     private suspend fun clearItemFromContainers(
         layer: Layer,
         item: Material,
-        sender: CommandSender
+        sender: CommandSender,
     ) {
         val worldsToBeChecked = layer.sections.groupBy { it.world }
         worldsToBeChecked.forEach { (world, sections) ->
