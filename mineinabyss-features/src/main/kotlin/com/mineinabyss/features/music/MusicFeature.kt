@@ -2,12 +2,12 @@ package com.mineinabyss.features.music
 
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 
-class MusicFeature : FeatureWithContext<MusicContext>(::MusicContext) {
-
+val MusicFeature = feature("music") {
     override fun FeatureDSL.enable() {
         plugin.listeners(context.queueMusicListener)
     }

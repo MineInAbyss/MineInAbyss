@@ -8,11 +8,12 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.Bukkit
 
-class OkiboTravelFeature : FeatureWithContext<OkiboTravelFeature.Context>(::Context) {
+val OkiboTravelFeature = feature("okibo-travel") {
     class Context : Configurable<OkiboTravelConfig> {
         override val configManager = config("okiboTravel", abyss.dataPath, OkiboTravelConfig(), onReload = {
             removeOkiboMaps()

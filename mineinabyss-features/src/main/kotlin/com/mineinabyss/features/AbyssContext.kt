@@ -14,19 +14,19 @@ import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.observeLogger
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.koin.core.scope.Scope
 import java.nio.file.Path
 
 val abyss by DI.observe<AbyssContext>()
 
 class AbyssContext(
-    override val plugin: JavaPlugin,
-) : FeatureDSL(mainCommandProvider = { ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss", it) }),
-    Configurable<AbyssFeatureConfig> {
+    val plugin: JavaPlugin,
+) {
     val logger by plugin.observeLogger()
     val dataPath: Path = plugin.dataFolder.toPath()
     val gearyGlobal get() = gearyPaper.worldManager.global
 
-    override val configManager = config<AbyssFeatureConfig>(
+    val configManager = config<AbyssFeatureConfig>(
         "config", dataPath, AbyssFeatureConfig(), formats = ConfigFormats(
             overrides = listOf(
                 Format(
@@ -39,9 +39,7 @@ class AbyssContext(
             )
         )
     )
-
-    override val features get() = config.features
-
+    val config by configManager
 
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isEternalFortuneLoaded get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")

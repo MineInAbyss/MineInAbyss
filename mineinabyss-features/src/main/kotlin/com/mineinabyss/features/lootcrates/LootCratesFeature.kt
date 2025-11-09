@@ -15,6 +15,7 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.plugin.listeners
 import com.mineinabyss.idofront.plugin.unregisterListeners
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -23,7 +24,7 @@ import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Context) {
+val LootCratesFeature = feature("lootcrates") {
     @Serializable
     class Config(val messages: Messages = Messages())
     class Context : Configurable<Config> {

@@ -31,3 +31,5 @@ include(
     "mineinabyss-components",
     "mineinabyss-features"
 )
+
+includeBuild("../Idofront")

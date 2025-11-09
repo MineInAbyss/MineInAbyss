@@ -15,8 +15,8 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 
-object ShowDepthSystem {
-    fun register(world: Geary) = world.observe<ShowDepth>().exec(world.query<Player>()) { (player) ->
+class ShowDepthSystem(val world: Geary) {
+    fun register() = world.observe<ShowDepth>().exec(world.query<Player>()) { (player) ->
         if (entity.has<ShowDepthMeterHud>()) return@exec
         player.sendDepthMessage()
     }

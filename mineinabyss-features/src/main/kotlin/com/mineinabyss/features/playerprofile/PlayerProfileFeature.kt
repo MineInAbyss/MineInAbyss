@@ -12,12 +12,12 @@ import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.success
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-class PlayerProfileFeature(val config: Config) : Feature() {
-
+val PlayerProfileFeature = feature("profiles") {
     @Serializable
     class Config {
         val enabled = true

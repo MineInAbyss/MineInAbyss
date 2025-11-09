@@ -3,6 +3,7 @@ package com.mineinabyss.features
 import com.charleskorn.kaml.YamlComment
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
+import com.mineinabyss.features.core.CoreConfig
 import com.mineinabyss.features.core.CoreFeature
 import com.mineinabyss.features.cosmetics.CosmeticsFeature
 import com.mineinabyss.features.curse.CurseFeature
@@ -42,7 +43,7 @@ class AbyssFeatureConfig(
     val ansiblePull: Toggle = Toggle(),
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),
-    val core: CoreFeature.Config = CoreFeature.Config(),
+    val core: CoreConfig = CoreConfig(),
     val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
     val curse: Toggle = Toggle(),
     val custom_hud: Toggle = Toggle(),
@@ -67,43 +68,36 @@ class AbyssFeatureConfig(
     val tutorial: Toggle = Toggle(),
 ) {
     val features by lazy {
-        val application = koinApplication() {
-            modules(TutorialFeature.createModule())
-        }
-        application.koin
-            .createScope<TutorialFeature>()
-            .get<TutorialFeature>()
-
         buildList<Feature> {
             fun add(condition: Boolean, feature: () -> Feature) {
                 if (enableAll || condition) add(feature())
             }
-            add(antiCheese.enabled) { AntiCheeseFeature() }
-            add(core.enabled) { CoreFeature(core) }
-            add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }
-            add(curse.enabled) { CurseFeature() }
-            add(custom_hud.enabled) { CustomHudFeature() }
-            add(descent.enabled) { DescentFeature() }
-            add(displayLocker.enabled) { DisplayLockerFeature() }
-            add(gondolas.enabled) { GondolaFeature() }
-            add(guilds.enabled) { GuildFeature() }
-            add(hubstorage.enabled) { HubStorageFeature() }
-            add(keepInventory.enabled) { KeepInvFeature(keepInventory) }
-            add(layers.enabled) { LayersFeature() }
-            add(lootCrates.enabled) { LootCratesFeature() }
-            add(misc.enabled) { MiscFeature() }
-            add(music.enabled) { MusicFeature() }
-            add(shopkeeping.enabled) { ShopKeepingFeature() }
-            add(okiboTravel.enabled) { OkiboTravelFeature() }
-            add(orthBanking.enabled) { OrthBankingFeature(orthBanking) }
-            add(patreon.enabled) { PatreonFeature(patreon) }
-            add(playerProfile.enabled) { PlayerProfileFeature(playerProfile) }
-            add(pvp.enabled) { PvpFeature() }
-            add(relics.enabled) { RelicsFeature() }
-            add(tools.enabled) { ToolsFeature() }
-            add(tutorial.enabled) { TODO() }
-            add(ansiblePull.enabled) { ConfigPullFeature() }
-            add(true) { QuestFeature() }
+//            add(antiCheese.enabled) { AntiCheeseFeature() }
+//            add(core.enabled) { CoreFeature(core) }
+//            add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }
+//            add(curse.enabled) { CurseFeature() }
+//            add(custom_hud.enabled) { CustomHudFeature() }
+//            add(descent.enabled) { DescentFeature() }
+//            add(displayLocker.enabled) { DisplayLockerFeature() }
+//            add(gondolas.enabled) { GondolaFeature() }
+//            add(guilds.enabled) { GuildFeature() }
+//            add(hubstorage.enabled) { HubStorageFeature() }
+//            add(keepInventory.enabled) { KeepInvFeature(keepInventory) }
+//            add(layers.enabled) { LayersFeature() }
+//            add(lootCrates.enabled) { LootCratesFeature() }
+//            add(misc.enabled) { MiscFeature() }
+//            add(music.enabled) { MusicFeature() }
+//            add(shopkeeping.enabled) { ShopKeepingFeature() }
+//            add(okiboTravel.enabled) { OkiboTravelFeature() }
+//            add(orthBanking.enabled) { OrthBankingFeature(orthBanking) }
+//            add(patreon.enabled) { PatreonFeature(patreon) }
+//            add(playerProfile.enabled) { PlayerProfileFeature(playerProfile) }
+//            add(pvp.enabled) { PvpFeature() }
+//            add(relics.enabled) { RelicsFeature() }
+            add(tools.enabled) { ToolsFeature }
+            add(tutorial.enabled) { TutorialFeature }
+//            add(ansiblePull.enabled) { ConfigPullFeature() }
+//            add(true) { QuestFeature() }
         }
     }
 }

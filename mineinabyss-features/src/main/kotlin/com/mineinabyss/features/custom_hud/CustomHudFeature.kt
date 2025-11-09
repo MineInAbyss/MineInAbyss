@@ -4,13 +4,14 @@ import com.mineinabyss.components.custom_hud.customHudData
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 
-class CustomHudFeature(
-    val backgroundLayout: String = "backgrounds",
+
+val CustomHudFeature = feature("custom-hud") {
+    val backgroundLayout: String = "backgrounds"
     val customHudTemplate: String = "custom_hud"
-) : Feature() {
     override val dependsOn: Set<String> get() = setOf("MythicHUD", "Packy")
     override fun FeatureDSL.enable() {
         plugin.listeners(CustomHudListener(this@CustomHudFeature))

@@ -7,10 +7,11 @@ import com.mineinabyss.idofront.commands.execution.stopCommand
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.plugin.listeners
 
-class DescentFeature : Feature() {
+val DescentFeature = feature("descent") {
     override fun FeatureDSL.enable() {
         plugin.listeners(
             DescentListener()

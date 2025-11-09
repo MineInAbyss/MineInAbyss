@@ -3,10 +3,11 @@ package com.mineinabyss.features.hubstorage
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.entity.Player
 
-class HubStorageFeature : Feature() {
+val HubStorageFeature = feature("hub-storage") {
     override fun FeatureDSL.enable() {
         mainCommand {
             "storage"(desc = "Opens player storage") {

@@ -9,12 +9,12 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.world.ChunkLoadEvent
 
 class TutorialListener(
-    val tutorial: TutorialContext
+    val tutorial: TutorialContext,
 ) : Listener {
-     @EventHandler
-     fun PlayerJoinEvent.onJoin() {
-         if (!player.hasPlayedBefore()) tutorial.firstJoinLocation?.let(player::teleportAsync)
-     }
+    @EventHandler
+    fun PlayerJoinEvent.onJoin() {
+        if (!player.hasPlayedBefore()) tutorial.firstJoinLocation?.let(player::teleportAsync)
+    }
 
     @EventHandler
     fun ChunkLoadEvent.onChunkLoad() {

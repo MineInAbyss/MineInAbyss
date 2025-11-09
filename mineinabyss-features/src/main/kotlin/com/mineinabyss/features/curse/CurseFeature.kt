@@ -5,10 +5,11 @@ import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 
-class CurseFeature : Feature() {
+val CurseFeature = feature("curse") {
     override val dependsOn = setOf("DeeperWorld")
 
     override fun FeatureDSL.enable() {

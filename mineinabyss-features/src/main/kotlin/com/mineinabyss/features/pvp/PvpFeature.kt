@@ -2,36 +2,28 @@ package com.mineinabyss.features.pvp
 
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.guiy.canvas.guiy
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.plugin.listeners
 import org.bukkit.entity.Player
 
-class PvpFeature : Feature() {
-    override fun FeatureDSL.enable() {
-        plugin.listeners(
+val PvpFeature = feature("pvp") {
+    onEnable {
+        listeners(
             PvpDamageListener(),
             PvpListener()
         )
+    }
 
-        mainCommand {
-            "pvp"(desc = "Commands to toggle pvp status") {
-                playerAction {
-                    val player = sender as Player
-                    if (player.location.layer?.hasPvpDefault == true) {
-                        player.error("Pvp cannot be toggled in this layer.")
-                        return@playerAction
-                    }
-                    guiy(player) { PvpPrompt(player) }
+    mainCommand {
+        "pvp" {
+            //TODO description "Commands to toggle pvp status"
+            playerExecutes {
+                val player = sender as Player
+                if (player.location.layer?.hasPvpDefault == true) {
+                    player.error("Pvp cannot be toggled in this layer.")
+                    return@playerExecutes
                 }
-            }
-        }
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("pvp").filter { it.startsWith(args.first()) }
-                else -> emptyList()
+                guiy(player) { PvpPrompt(player) }
             }
         }
     }

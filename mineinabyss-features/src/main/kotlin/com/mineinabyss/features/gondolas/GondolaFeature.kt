@@ -15,6 +15,7 @@ import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.plugin.listeners
 
@@ -25,8 +26,7 @@ import com.mineinabyss.idofront.plugin.listeners
  * - The server has a "LoadedGondolas" object stores all the active gondolas, that is, the ones players are able to use. -> LoadedGondolas.loaded
  * - Players are able to use (teleport) gondolas if they have them unlocked, and they are active (loaded).
  */
-class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
-
+val GondolaFeature = feature("gondolas") {
     class Context : Configurable<GondolasConfig> {
         override val configManager =
             config("gondolas", abyss.dataPath, GondolasConfig())

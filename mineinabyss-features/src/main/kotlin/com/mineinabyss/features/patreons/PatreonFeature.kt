@@ -12,6 +12,7 @@ import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player
 import java.time.Month
 import java.util.*
 
-class PatreonFeature(val config: Config) : Feature() {
+val PatreonFeature = feature("patreon") {
     override val dependsOn = setOf("LuckPerms", "DiscordSRV")
 
     val prefixContexts = listOf("global", "orth", "layerone", "layertwo", "layerthree", "layerfour", "layerfive")

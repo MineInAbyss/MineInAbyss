@@ -11,12 +11,13 @@ import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-class OrthBankingFeature(val config: Config) : Feature() {
+val OrthBankingFeature = feature("orth-branking") {
     @Serializable
     class Config {
         val enabled = false

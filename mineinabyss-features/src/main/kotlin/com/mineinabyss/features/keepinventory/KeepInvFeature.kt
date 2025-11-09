@@ -6,6 +6,7 @@ import com.mineinabyss.idofront.commands.arguments.booleanArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
@@ -13,7 +14,7 @@ import com.mineinabyss.idofront.plugin.unregisterListeners
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
 
-class KeepInvFeature(config: Config) : FeatureWithContext<KeepInvFeature.Context>({ Context(config) }) {
+val KeepInvFeature = feature("keep-inventory") {
     @Serializable
     class Config {
         val enabled = true

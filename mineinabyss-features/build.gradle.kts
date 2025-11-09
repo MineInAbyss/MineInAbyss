@@ -18,7 +18,7 @@ kotlin {
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-Xcontext-receivers",
+            "-Xcontext-parameters",
         )
     }
 }

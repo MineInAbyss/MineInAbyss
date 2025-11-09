@@ -4,7 +4,9 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
 import com.mineinabyss.deeperworld.world.Region
 import com.mineinabyss.features.abyss
+import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import com.mineinabyss.geary.serialization.SerializableComponents
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
@@ -19,6 +21,7 @@ import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.modules.SerializersModule
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Location
@@ -34,7 +37,11 @@ data class TutorialContext(
     val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>>,
     val entry: TutorialRegion,
     val exit: TutorialRegion,
-)
+) {
+    fun spawnTutorialEntities() {
+        tutorialEntities.values.flatten().forEach(TutorialEntity::spawn)
+    }
+}
 
 @Serializable
 data class Tutorial(

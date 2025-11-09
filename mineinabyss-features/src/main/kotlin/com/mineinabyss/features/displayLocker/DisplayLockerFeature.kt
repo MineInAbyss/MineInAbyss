@@ -10,6 +10,7 @@ import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
@@ -18,8 +19,7 @@ import com.mineinabyss.idofront.plugin.unregisterListeners
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class DisplayLockerFeature : Feature() {
-
+val DisplayLockerFeature = feature("display-locker") {
     private val listeners = listOf(DisplayLockerListener(), BookshelfLocker())
 
     override fun FeatureDSL.enable() {

@@ -3,8 +3,6 @@ package com.mineinabyss.features.npc.shopkeeping
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.gondolas.GondolaFeature
-import com.mineinabyss.features.gondolas.GondolaFeature.Context
 import com.mineinabyss.features.npc.NpcAction.DialogsConfig
 import com.mineinabyss.features.npc.NpcEntity
 import com.mineinabyss.features.npc.NpcManager
@@ -18,13 +16,11 @@ import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.IdofrontConfig
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
-import com.mineinabyss.idofront.plugin.listeners
-import com.ticxo.modelengine.api.utils.config.ConfigManager
 import com.mineinabyss.idofront.config.config
+import com.mineinabyss.idofront.features.Configurable
+import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
+import com.mineinabyss.idofront.plugin.listeners
 import kotlinx.coroutines.delay
 import org.bukkit.Bukkit.getWorld
 import kotlin.time.Duration.Companion.seconds
@@ -35,16 +31,16 @@ object listenerSingleton {
     var bstgth: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 }
 
-class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Context) {
-
+val ShopKeepingFeature = feature("shopkeepers") {
     override val dependsOn: Set<String> = setOf("ModelEngine")
 
     class Context : Configurable<NpcsConfig> {
         override val configManager: IdofrontConfig<NpcsConfig> = config("npc", abyss.dataPath, NpcsConfig())
-        val npcconfig by  config("npc", abyss.dataPath, NpcsConfig())
+        val npcconfig by config("npc", abyss.dataPath, NpcsConfig())
         val dialogsConfig by config("dialogs", abyss.dataPath, DialogsConfig())
         val manager = NpcManager(npcconfig, getWorld("world")!!, dialogsConfig)
     }
+
     override fun FeatureDSL.enable() = gearyPaper.run {
 //        println("Enabling Shopkeeping Feature")
         plugin.listeners(ShopKeepingListener())
