@@ -9,31 +9,17 @@ import com.mineinabyss.features.guilds.database.Guilds
 import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.helpers.Placeholders
 import com.mineinabyss.features.lootcrates.database.LootedChests
-import com.mineinabyss.features.tools.ToolsFeature
-import com.mineinabyss.features.tutorial.TutorialFeature
 import com.mineinabyss.geary.addons.dsl.createAddon
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.configure
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.di.Idofront
-import com.mineinabyss.idofront.features.featureManager
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.koin.core.module.Module
-
-context(plugin: Plugin)
-fun Idofront.pluginModule(block: Module.() -> Unit) {
-
-}
 
 class MineInAbyssPlugin : JavaPlugin() {
-//    override fun getKoin(): Koin = koinApplication {
-//    }.koin
-
     override fun onLoad() {
         gearyPaper.configure {
             install(createAddon("MineInAbyss", configuration = {
@@ -48,8 +34,11 @@ class MineInAbyssPlugin : JavaPlugin() {
                 }
             }))
         }
+    }
 
+    override fun onEnable() {
         DI.add<AbyssContext>(AbyssContext(this))
+
         PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
         transaction(abyss.db) {
             SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue, LootedChests)
@@ -59,9 +48,6 @@ class MineInAbyssPlugin : JavaPlugin() {
             Placeholders().register()
         }
         abyss.featureManager.load()
-    }
-
-    override fun onEnable() {
         abyss.featureManager.enable()
     }
 

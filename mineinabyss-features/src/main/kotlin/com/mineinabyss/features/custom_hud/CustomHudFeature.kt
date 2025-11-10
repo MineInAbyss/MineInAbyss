@@ -31,7 +31,7 @@ val CustomHudFeature = feature("custom-hud") {
         "custom_hud" {
             "toggle" {
                 "backgrounds" {
-                    playerExecutes {
+                    executes.asPlayer {
                         player.customHudData.showBackgrounds = !player.customHudData.showBackgrounds
                         get<CustomHuds>().toggleBackgroundLayouts(player)
                         player.success("Backgrounds are now ${if (player.customHudData.showBackgrounds) "shown" else "hidden"}")

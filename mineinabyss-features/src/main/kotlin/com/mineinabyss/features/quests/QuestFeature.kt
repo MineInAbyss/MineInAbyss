@@ -2,7 +2,6 @@ package com.mineinabyss.features.quests
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
@@ -32,7 +31,7 @@ val QuestFeature = feature("quests") {
                 description = "Unlocks a quest for a player"
                 permission = "mineinabyss.quests.unlock"
 
-                playerExecutes(Args.string()) { questId ->
+                executes.asPlayer().args("quest" to Args.string()) { questId ->
                     if (questId in get<QuestConfig>().visitQuests.keys) {
                         get<QuestManager>().unlockQuest(player, questId)
                     } else {
@@ -44,7 +43,7 @@ val QuestFeature = feature("quests") {
                 description = "Completes a quest for a player"
                 permission = "mineinabyss.quests.complete"
 
-                playerExecutes(Args.string()) { questId ->
+                executes.asPlayer().args("quest" to Args.string()) { questId ->
                     if (questId in get<QuestConfig>().visitQuests.keys) {
                         get<QuestManager>().completeQuest(player, questId)
                     } else {
@@ -55,7 +54,7 @@ val QuestFeature = feature("quests") {
             "reset" {
                 description = "Resets all quests for a player"
                 permission = "mineinabyss.quests.reset"
-                playerExecutes {
+                executes.asPlayer {
 //                        context.questManager.completeQuest(...)
                     get<QuestManager>().resetQuests(player)
                     player.success("All quests have been reset.")
@@ -64,7 +63,7 @@ val QuestFeature = feature("quests") {
             "getProgressStatus" {
                 description = "Gets the progress status of a quest for a player"
                 permission = "mineinabyss.quests.getProgressStatus"
-                playerExecutes(Args.string()) { questId ->
+                executes.asPlayer().args("quest" to Args.string()) { questId ->
                     val manager = get<QuestManager>()
                     when (questId) {
                         in manager.getCompletedQuests(player) -> {

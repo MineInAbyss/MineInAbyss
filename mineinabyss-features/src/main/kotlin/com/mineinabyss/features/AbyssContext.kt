@@ -3,6 +3,7 @@ package com.mineinabyss.features
 import com.charleskorn.kaml.AnchorsAndAliases
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.serialization.SerializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
@@ -40,14 +41,15 @@ class AbyssContext(
     )
     val config: AbyssFeatureConfig by configManager
 
-    val featureManager = featureManager {
+    val featureManager = plugin.featureManager {
         globalModule {
-            single<AbyssContext> { abyss }
+            single<AbyssContext> { this@AbyssContext }
+            single<Geary> { gearyGlobal }
         }
 
         withMainCommand("mineinabyss", "mia", description = "The main command for Mine in Abyss")
 
-        install(*abyss.config.features.toTypedArray())
+        install(*config.features.toTypedArray())
     }
 
     inline fun <reified T: Any> getScoped(feature: Feature): T {

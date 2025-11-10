@@ -17,11 +17,11 @@ val PvpFeature = feature("pvp") {
     mainCommand {
         "pvp" {
             //TODO description "Commands to toggle pvp status"
-            playerExecutes {
+            executes.asPlayer {
                 val player = sender as Player
                 if (player.location.layer?.hasPvpDefault == true) {
                     player.error("Pvp cannot be toggled in this layer.")
-                    return@playerExecutes
+                    return@asPlayer
                 }
                 guiy(player) { PvpPrompt(player) }
             }

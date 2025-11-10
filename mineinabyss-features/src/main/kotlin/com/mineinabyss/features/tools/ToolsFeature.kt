@@ -42,7 +42,7 @@ val ToolsFeature = feature("tools") {
 
     mainCommand {
         "replant" {
-            playerExecutes {
+            executes.asPlayer {
                 player.playerData.replant = !player.playerData.replant
                 when {
                     player.playerData.replant -> {
@@ -58,7 +58,7 @@ val ToolsFeature = feature("tools") {
             }
         }
         "depth" {
-            playerExecutes {
+            executes.asPlayer {
                 get<ShowDepthSystem>().run {
                     player.sendDepthMessage()
                 }

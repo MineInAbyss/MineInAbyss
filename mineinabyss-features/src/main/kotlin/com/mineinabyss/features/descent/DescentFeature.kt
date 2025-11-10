@@ -23,7 +23,7 @@ val DescentFeature = feature("descent") {
 
     mainCommand {
         "start" {
-            playerExecutes {
+            executes.asPlayer {
                 player.toGeary().apply {
                     if (has<DescentContext>())
                         fail("You are already ingame!\nYou can leave using /stopdescent")
@@ -32,7 +32,7 @@ val DescentFeature = feature("descent") {
             }
         }
         "stopdescent" {
-            playerExecutes {
+            executes.asPlayer {
                 with(player.toGeary()) {
                     val descent = get<DescentContext>()
                         ?: fail("You are not currently ingame!\nStart by using /start")

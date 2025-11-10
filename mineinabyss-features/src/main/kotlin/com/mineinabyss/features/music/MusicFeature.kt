@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import org.koin.core.module.dsl.scopedOf
 
 val MusicFeature = feature("music") {
+    dependsOn { plugins("DeeperWorld") }
     scopedModule {
         scoped<MusicConfig> { config("music", abyss.dataPath, MusicConfig()).getOrLoad() }
         scopedOf(::MusicScheduler)

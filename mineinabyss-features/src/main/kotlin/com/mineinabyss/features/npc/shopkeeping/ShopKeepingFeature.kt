@@ -3,6 +3,7 @@ package com.mineinabyss.features.npc.shopkeeping
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.lootcrates.prefabKey
 import com.mineinabyss.features.npc.NpcAction.DialogsConfig
 import com.mineinabyss.features.npc.NpcEntity
 import com.mineinabyss.features.npc.NpcManager
@@ -10,10 +11,9 @@ import com.mineinabyss.features.npc.NpcsConfig
 import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
 import com.mineinabyss.geary.papermc.toEntityOrNull
 import com.mineinabyss.geary.papermc.withGeary
-import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
+import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
 import kotlinx.coroutines.delay
@@ -53,16 +53,16 @@ val ShopKeepingFeature = feature("shopkeepers") {
     }
     mainCommand {
         "shops" {
-            playerExecutes(Args.options { ShopKeepers.getKeys().map { it.toString() } }) { shopKey ->
+            executes.asPlayer().args("key" to Args.prefabKey().oneOf { ShopKeepers.getKeys() }) { shopKey ->
                 player.withGeary {
-                    val shopKeeper = PrefabKey.of(shopKey).toEntityOrNull()?.get<ShopKeeper>() ?: return@playerExecutes
+                    val shopKeeper = shopKey.toEntityOrNull()?.get<ShopKeeper>() ?: return@args
                     guiy(player) { ShopMainMenu(player, shopKeeper) }
                 }
             }
         }
         "npcs" {
             "test" {
-                playerExecutes {
+                executes.asPlayer {
                     get<NpcsConfig>().npcs.values.forEach {
                         player.sendMessage("${it.displayName} - ${it.id}")
                     }

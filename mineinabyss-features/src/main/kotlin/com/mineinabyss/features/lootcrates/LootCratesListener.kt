@@ -11,6 +11,7 @@ import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.datastore.remove
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.papermc.withGeary
+import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.entities.leftClicked
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
@@ -108,7 +109,7 @@ class LootCratesListener(val msg: LootCratesConfig.Messages) : Listener {
                 val scope = abyss.featureManager.getScope(LootCratesFeature)
                 val tables = scope.get<LootCratesContext>().lootTables
                 val messages = scope.get<LootCratesConfig.Messages>()
-                val table = tables[loot.table] ?: run {
+                val table = tables[PrefabKey.of(loot.table)] ?: run {
                     player.error(messages.tableNotFound.format(loot.table))
                     return
                 }

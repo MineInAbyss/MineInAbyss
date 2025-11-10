@@ -6,7 +6,6 @@ import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
 import com.mineinabyss.idofront.entities.toPlayer
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
@@ -24,7 +23,7 @@ val DisplayLockerFeature = feature("display-locker") {
             description = "Protection related commands"
             "default_state" {
                 description = "Toggles the default lockstate of player"
-                playerExecutes {
+                executes.asPlayer {
                     player.editPlayerData {
                         defaultDisplayLockState = !defaultDisplayLockState
                         player.success("Your default lockstate is now ${if (defaultDisplayLockState) "locked" else "unlocked"}")
@@ -33,10 +32,10 @@ val DisplayLockerFeature = feature("display-locker") {
             }
             "toggle" {
                 description = "Toggles if a display item should be protected or not"
-                playerExecutes {
+                executes.asPlayer {
                     val player = sender as Player
-                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerExecutes
-                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerExecutes
+                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@asPlayer
+                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@asPlayer
                     locked.lockState = !locked.lockState
                     entity.setGravity(!locked.lockState)
 
@@ -46,14 +45,14 @@ val DisplayLockerFeature = feature("display-locker") {
             }
             "add" {
                 description = "Add a player to this display item."
-                playerExecutes(Args.offlinePlayer()) { offlinePlayer ->
+                executes.asPlayer().args("player" to Args.offlinePlayer()) { offlinePlayer ->
                     val player = sender as Player
-                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerExecutes
-                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerExecutes
+                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@args
+                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@args
                     val uuid = offlinePlayer.uniqueId
 
                     if (uuid in locked.allowedAccess)
-                        return@playerExecutes player.error("${offlinePlayer.name} can already interact with this ${entity.name}")
+                        return@args player.error("${offlinePlayer.name} can already interact with this ${entity.name}")
 
                     locked.allowedAccess.add(uuid)
                     entity.toGeary().encodeComponentsTo(entity.persistentDataContainer)
@@ -63,10 +62,10 @@ val DisplayLockerFeature = feature("display-locker") {
 
             "remove" {
                 description = "Remove a player to this display item."
-                playerExecutes(Args.offlinePlayer()) { offlinePlayer ->
+                executes.asPlayer().args("player" to Args.offlinePlayer()) { offlinePlayer ->
                     val player = sender as Player
-                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerExecutes
-                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerExecutes
+                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@args
+                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@args
                     val uuid = offlinePlayer.uniqueId
 
                     if (uuid in locked.allowedAccess) {
@@ -79,10 +78,10 @@ val DisplayLockerFeature = feature("display-locker") {
 
             "clear" {
                 description = "Clear all other players from this display item"
-                playerExecutes {
+                executes.asPlayer {
                     val player = sender as Player
-                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerExecutes
-                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerExecutes
+                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@asPlayer
+                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@asPlayer
 
                     locked.allowedAccess.clear()
                     locked.allowedAccess.add(locked.owner)
@@ -93,10 +92,10 @@ val DisplayLockerFeature = feature("display-locker") {
 
             "list" {
                 description = "Get a list of all players allowed to interact with this display item."
-                playerExecutes {
+                executes.asPlayer {
                     val player = sender as Player
-                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@playerExecutes
-                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@playerExecutes
+                    val entity = player.playerDataOrNull?.getRecentEntity() ?: return@asPlayer
+                    val locked = entity.toGeary().get<LockDisplayItem>() ?: return@asPlayer
 
                     if (locked.lockState) {
                         player.success("The following people can interact with your ${entity.name}:")

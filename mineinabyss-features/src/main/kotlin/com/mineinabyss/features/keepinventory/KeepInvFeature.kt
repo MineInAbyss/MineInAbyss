@@ -3,7 +3,6 @@ package com.mineinabyss.features.keepinventory
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -32,7 +31,7 @@ val KeepInvFeature = feature("keep-inventory") {
     mainCommand {
         "keepinv" {
             description = "Commands to toggle keepinventory status"
-            playerExecutes(Args.bool()) { toggled ->
+            executes.asPlayer().args("enabled" to Args.bool()) { toggled ->
                 val player = sender as Player
                 player.editPlayerData { keepInvStatus = toggled }
                 if (toggled) player.success("Keep Inventory enabled for ${player.name}")

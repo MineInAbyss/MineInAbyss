@@ -1,42 +1,19 @@
 package com.mineinabyss.features.guilds
 
-import com.bergerkiller.bukkit.coasters.rails.TrackRailsSectionsAtPosition.single
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import com.mineinabyss.chatty.ChattyChannel
-import com.mineinabyss.chatty.commands.ChattyCommands
 import com.mineinabyss.chatty.components.ChannelType
-import com.mineinabyss.components.guilds.SpyOnGuildChat
-import com.mineinabyss.features.AbyssContext
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.guilds.database.GuildRank
-import com.mineinabyss.features.guilds.extensions.*
+import com.mineinabyss.features.guilds.extensions.displayGuildList
+import com.mineinabyss.features.guilds.extensions.refreshGuildChats
 import com.mineinabyss.features.guilds.listeners.ChattyGuildListener
 import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
-import com.mineinabyss.features.guilds.menus.GuildMainMenu
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.serialization.getOrSetPersisting
-import com.mineinabyss.guiy.canvas.guiy
-import com.mineinabyss.idofront.commands.arguments.intArg
-import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
-import com.mineinabyss.idofront.commands.arguments.optionArg
-import com.mineinabyss.idofront.commands.arguments.stringArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.Plugins
-import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.plugin.unregisterListeners
 import kotlinx.serialization.Serializable
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.koin.core.module.dsl.scopedOf
 
 const val guildChannelId: String = "Guild Chat"
@@ -71,9 +48,8 @@ val GuildFeature = feature("guilds") {
 
     scopedModule {
         scoped<GuildsConfig> { config("guilds", abyss.dataPath, GuildsConfig()).getOrLoad() }
-
-        if (abyss.isChattyLoaded) scopedOf(::ChattyGuildListener)
-        if (abyss.isEternalFortuneLoaded) scopedOf(::EternalFortuneGuildListener)
+        scopedOf(::ChattyGuildListener)
+        scopedOf(::EternalFortuneGuildListener)
     }
 
 
@@ -96,7 +72,7 @@ val GuildFeature = feature("guilds") {
 //            "guild"(description = "Guild related commands") {
 //                "balance"(description = "Guild Balance related commands") {
 //                    "view"(description = "View your guilds balance") {
-//                        playerExecutes {
+//                        executes.asPlayer {
 //                            val player = sender as Player
 //                            if (!player.hasGuild()) {
 //                                player.error("You do not have any guild.")
@@ -108,7 +84,7 @@ val GuildFeature = feature("guilds") {
 //                    }
 //                    "deposit"(description = "Deposit Orth Coins into your guild balance") {
 //                        val amount by intArg { default = 1 }
-//                        playerExecutes {
+//                        executes.asPlayer {
 //                            val player = sender as Player
 //                            if (amount <= 0) {
 //                                player.error("You must deposit at least 1 coin.")
@@ -123,7 +99,7 @@ val GuildFeature = feature("guilds") {
 //                    }
 //                    "withdraw"(description = "Withdraw Orth Coins from your guild balance") {
 //                        var amount by intArg { default = 1 }
-//                        playerExecutes {
+//                        executes.asPlayer {
 //                            val player = sender as Player
 //                            if (amount <= 0) {
 //                                player.error("You can't withdraw 0 or less coins!")
@@ -135,7 +111,7 @@ val GuildFeature = feature("guilds") {
 //                    }
 //                }
 //                "chat"(description = "Toggle guild chat") {
-//                    playerExecutes {
+//                    executes.asPlayer {
 //                        val player = sender as? Player ?: return@playerExecutes
 //
 //                        if (!abyss.isChattyLoaded) return@playerExecutes player.error("Chatty is not loaded")
@@ -144,13 +120,13 @@ val GuildFeature = feature("guilds") {
 //                    }
 //                }
 //                "menu"(description = "Open Guild Menu") {
-//                    playerExecutes {
+//                    executes.asPlayer {
 //                        guiy(player) { GuildMainMenu(player, true) }
 //                    }
 //                }
 //                "admin" {
 //                    "spy" {
-//                        playerExecutes {
+//                        executes.asPlayer {
 //                            val player = (sender as Player).toGeary()
 //                            if (player.has<SpyOnGuildChat>()) player.remove<SpyOnGuildChat>()
 //                            else player.getOrSetPersisting<SpyOnGuildChat> { SpyOnGuildChat() }

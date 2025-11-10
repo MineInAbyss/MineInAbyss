@@ -9,8 +9,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
-import com.mineinabyss.idofront.commands.brigadier.suggests
+import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
@@ -46,30 +45,28 @@ val GondolaFeature = feature("gondolas") {
             "list" {
                 description = "Opens the gondola menu"
                 permission = "mineinabyss.gondola.list"
-                playerExecutes {
+                executes.asPlayer {
                     guiy(player) { GondolaSelectionMenu(player) }
                 }
             }
             "unlock" {
                 description = "Unlocks a route for a player"
                 permission = "mineinabyss.gondola.unlock"
-                playerExecutes(
-                    Args.string().suggests {
-                        suggestFiltering(get<TicketConfig>().tickets.keys.toList())
-                    }
+                executes.asPlayer().args(
+                    "key" to Args.string().oneOf { get<TicketConfig>().tickets.keys.toList() }
                 ) { passID ->
 //                        val gondolas = player.toGeary().get<UnlockedGondolas>()
 //                            ?: return@playerExecutes
 //                        gondolas.keys.add(gondola)
 //                        player.success("Unlocked $gondola")
-                    val ticket = get<TicketConfig>().tickets[passID] ?: return@playerExecutes player.error("Ticket $passID not found")
+                    val ticket = get<TicketConfig>().tickets[passID] ?: return@args player.error("Ticket $passID not found")
                     player.unlockRoute(ticket)
                 }
             }
             "clear" {
                 description = "Removes all associated gondolas from a player"
                 permission = "mineinabyss.gondola.clear"
-                playerExecutes {
+                executes.asPlayer {
                     val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
                     gondolas.keys.clear()
                     player.error("Cleared all gondolas")

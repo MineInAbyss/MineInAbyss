@@ -36,7 +36,7 @@ val CosmeticsFeature = feature("cosmetics") {
     mainCommand {
         "cosmetics" {
             "menu" {
-                playerExecutes {
+                executes.asPlayer {
                     if (abyss.isHMCCosmeticsEnabled) Menus.getDefaultMenu()?.openMenu(player.cosmeticUser)
                 }
             }

@@ -2,11 +2,10 @@ package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
+import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.messaging.error
 import org.koin.core.module.dsl.scopedOf
 
 val OkiboTravelFeature: Feature = feature("okibo-travel") {
@@ -44,9 +43,9 @@ val OkiboTravelFeature: Feature = feature("okibo-travel") {
                 }
             }
             "spawn" {
-                playerExecutes(
-                    Args.options { get<OkiboTravelConfig>().allStations.map { it.id } },
-                    Args.options { get<OkiboTravelConfig>().allStations.map { it.id } }
+                executes.asPlayer().args(
+                    "destination" to Args.string().oneOf { get<OkiboTravelConfig>().allStations.map { it.id } },
+                    "station" to Args.string().oneOf { get<OkiboTravelConfig>().allStations.map { it.id } }
                         .default { get<OkiboTravelConfig>().okiboStations.first().id },
                 ) { destination, station ->
                     val config = get<OkiboTravelConfig>()
@@ -57,10 +56,8 @@ val OkiboTravelFeature: Feature = feature("okibo-travel") {
                     }
                     spawnOkiboCart(
                         player,
-                        config.allStations.find { it.id == station }
-                            ?: return@playerExecutes player.error("Invalid station!"),
-                        config.allStations.find { it.id == destination }
-                            ?: return@playerExecutes player.error("Invalid destination!")
+                        config.allStations.find { it.id == station } ?: fail("Invalid station!"),
+                        config.allStations.find { it.id == destination } ?: fail("Invalid destination!")
                     )
                 }
             }

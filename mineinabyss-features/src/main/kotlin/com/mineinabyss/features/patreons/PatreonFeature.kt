@@ -8,7 +8,7 @@ import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
+import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
@@ -54,17 +54,17 @@ val PatreonFeature = feature("patreon") {
             description = "Patreon-supporter related commands"
             "token" {
                 description = "Redeem token"
-                playerExecutes {
+                executes.asPlayer {
                     val player = sender as Player
                     if ((player.toGeary().get<Patreon>()?.tier ?: 0) == 0)
-                        return@playerExecutes player.error("This command is only for Patreon supporters!")
+                        return@asPlayer player.error("This command is only for Patreon supporters!")
 
-                    val patreon = player.toGeary().get<Patreon>() ?: return@playerExecutes
+                    val patreon = player.toGeary().get<Patreon>() ?: return@asPlayer
                     val month = Month.of(Calendar.getInstance().get(Calendar.MONTH) + 1)
 
                     if (patreon.kitUsedMonth == month) {
                         player.error("You can only redeem this once a month.")
-                        return@playerExecutes
+                        return@asPlayer
                     }
 
                     player.editPlayerData { mittyTokensHeld += patreon.tier }
@@ -75,7 +75,7 @@ val PatreonFeature = feature("patreon") {
             "prefix" {
                 description = "Change your prefix emote"
                 "remove" {
-                    playerExecutes {
+                    executes.asPlayer {
                         val player = sender as Player
                         val console = Bukkit.getServer().consoleSender
                         Bukkit.dispatchCommand(console, "luckperms user ${player.name} meta clear prefix")
@@ -83,9 +83,9 @@ val PatreonFeature = feature("patreon") {
                     }
                 }
                 "set" {
-                    playerExecutes(
-                        Args.string(),
-                        Args.options(prefixContexts).default { "global" }
+                    executes.asPlayer().args(
+                        "emote" to Args.string(),
+                        "location" to Args.string().oneOf(prefixContexts).default { "global" }
                     ) { emote, loc ->
                         val player = sender as Player
 
@@ -152,23 +152,23 @@ val PatreonFeature = feature("patreon") {
             }
             "admin" {
                 "give_token" {
-                    playerExecutes(Args.integer(min = 0)) { amount ->
+                    executes.asPlayer().args("amount" to Args.integer(min = 0)) { amount ->
                         player.editPlayerData { mittyTokensHeld += amount }
                         sender.success("Gave $amount tokens to ${player.name}")
                     }
                 }
                 "check_token" {
-                    playerExecutes {
+                    executes.asPlayer {
                         sender.success("${player.name} has ${player.playerDataOrNull?.mittyTokensHeld} tokens")
                     }
                 }
                 "check_patreon" {
-                    playerExecutes {
+                    executes.asPlayer {
                         sender.success("${player.name}: ${player.toGeary().get<Patreon>()}")
                     }
                 }
                 "set_patreon" {
-                    playerExecutes(Args.integer(min = 0)) { tier ->
+                    executes.asPlayer().args("tier" to Args.integer(min = 0)) { tier ->
                         with(player.toGeary()) {
                             val patreon = (get<Patreon>() ?: Patreon()).copy(tier = tier)
                             setPersisting(patreon)

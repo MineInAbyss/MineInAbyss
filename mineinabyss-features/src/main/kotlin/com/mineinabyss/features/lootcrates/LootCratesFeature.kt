@@ -10,7 +10,9 @@ import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
+import com.mineinabyss.idofront.commands.brigadier.ArgsMinecraft
+import com.mineinabyss.idofront.commands.brigadier.map
+import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -39,7 +41,7 @@ class LootCratesContext {
             hasSet<LootTable>()
             hasSet<PrefabKey>()
         }).map { it.toGeary() }.associate {
-            it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!!
+            it.get<PrefabKey>()!! to it.get<LootTable>()!!
         }
     }
 }
@@ -64,13 +66,13 @@ val LootCratesFeature = feature("lootcrates") {
     mainCommand {
         "lootcrates" {
             "give" {
-                playerExecutes(Args.options { get<LootCratesContext>().lootTables.keys.toList() }) { lootTable ->
-                    val (namespace, key) = PrefabKey.of(lootTable)
+                executes.asPlayer().args("item" to Args.prefabKey().oneOf { get<LootCratesContext>().lootTables.keys.toList() }) { lootTable ->
+                    val (namespace, key) = lootTable
                     player.withGeary {
                         player.inventory.addItem(
                             ItemStack(Material.STICK).apply {
                                 editPersistentDataContainer {
-                                    it.encode(ContainsLoot(lootTable))
+                                    it.encode(ContainsLoot(lootTable.toString()))
                                 }
                                 val itemName = get<LootCratesConfig>().messages.lootTableItemTitle.format(namespace, key).miniMsg()
                                 setData(DataComponentTypes.ITEM_NAME, itemName)
@@ -82,3 +84,6 @@ val LootCratesFeature = feature("lootcrates") {
         }
     }
 }
+
+fun Args.prefabKey() = ArgsMinecraft.key()
+    .map { PrefabKey.of(it.namespace(), it.value()) }

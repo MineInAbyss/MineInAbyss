@@ -1,10 +1,7 @@
 package com.mineinabyss.features.tutorial
 
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.idofront.commands.brigadier.IdoRootCommand
-import com.mineinabyss.idofront.commands.brigadier.context.IdoCommandContext
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.feature
@@ -15,14 +12,13 @@ import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
-import org.bukkit.event.Listener
-import org.koin.core.module.Module
 import org.koin.core.module.dsl.scopedOf
-import org.koin.core.scope.Scope
-import org.koin.dsl.ScopeDSL
-import org.koin.dsl.module
 
 val TutorialFeature: Feature = feature("tutorial") {
+    dependsOn {
+        plugins("DeeperWorld")
+    }
+
     scopedModule {
         scoped<Tutorial> { config<Tutorial>("tutorial", abyss.dataPath, Tutorial()).getOrLoad() }
         scoped<TutorialContext> {

@@ -6,13 +6,9 @@ import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
-import com.mineinabyss.idofront.commands.arguments.intArg
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.default
-import com.mineinabyss.idofront.commands.brigadier.playerExecutes
-import com.mineinabyss.idofront.commands.extensions.actions.ensureSenderIsPlayer
 import com.mineinabyss.idofront.features.feature
-import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -25,15 +21,19 @@ class OrthBankingConfig {
 }
 
 val OrthBankingFeature = feature("orth-branking") {
+    dependsOn {
+        plugins("DeeperWorld")
+    }
 
     onEnable {
         //listeners(OrthBankingListener())
     }
+
     mainCommand {
         "bank" {
             description = "Orthbanking related commands"
             /*"balance"(description = "Toggles whether or not the balance should be shown.") {
-                playerExecutes {
+                executes.asPlayer {
                     val player = sender as Player
                     player.info("Balance is now ${if (player.playerData.showPlayerBalance) "hidden" else "shown"}.")
                     player.info("You have ${player.playerData.orthCoinsHeld} Orth Coins and ${player.playerData.mittyTokensHeld} Mitty Tokens.")
@@ -47,7 +47,7 @@ val OrthBankingFeature = feature("orth-branking") {
             }*/
             "deposit" {
                 description = "Dev command until Guiy can take items"
-                playerExecutes(Args.integer(min = 1).default { 1 }) { amount ->
+                executes.asPlayer().args("amount" to Args.integer(min = 1).default { 1 }) { amount ->
                     val player = sender as Player
                     val currItem = player.inventory.itemInMainHand
                     val gearyItem = player.inventory.toGeary()?.itemInMainHand
@@ -65,9 +65,9 @@ val OrthBankingFeature = feature("orth-branking") {
             }
             "withdraw" {
                 description = "Dev command until Guiy can take items"
-                playerExecutes(Args.integer(min = 1).default { 1 }) { amount ->
+                executes.asPlayer().args("amount" to Args.integer(min = 1).default { 1 }) { amount ->
                     var amount = amount
-                    val player = sender as? Player ?: return@playerExecutes
+                    val player = sender as? Player ?: return@args
                     val slot = player.inventory.firstEmpty()
                     val item = CoinFactory.orthCoin ?: fail("Failed to create Orth Coin.")
                     val heldAmount = player.playerData.orthCoinsHeld
