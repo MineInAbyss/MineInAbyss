@@ -69,6 +69,7 @@ class AbyssFeatureConfig(
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
+    val quests: Toggle = Toggle(),
 ) {
     val features by lazy {
         buildList<Feature> {
@@ -100,7 +101,7 @@ class AbyssFeatureConfig(
             add(tools.enabled) { ToolsFeature }
             add(tutorial.enabled) { TutorialFeature }
             add(ansiblePull.enabled) { ConfigPullFeature }
-            add(true) { QuestFeature }
+            add(quests.enabled) { QuestFeature }
         }
     }
 }
