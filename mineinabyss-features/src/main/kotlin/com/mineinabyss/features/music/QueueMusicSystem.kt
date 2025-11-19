@@ -5,14 +5,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
-class QueueMusicListener : Listener {
+class QueueMusicListener(
+    val scheduler: MusicScheduler
+) : Listener {
     @EventHandler
     fun PlayerJoinEvent.onJoin() {
-        MusicScheduler.scheduleMusicPlaying(player)
+        scheduler.scheduleMusicPlaying(player)
     }
 
     @EventHandler
     fun PlayerQuitEvent.onQuit() {
-        MusicScheduler.stopSchedulingMusic(player)
+        scheduler.stopSchedulingMusic(player)
     }
 }

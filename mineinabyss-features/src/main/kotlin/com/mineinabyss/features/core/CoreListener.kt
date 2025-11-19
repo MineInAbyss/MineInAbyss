@@ -17,7 +17,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent
 import kotlin.random.Random
 
 class CoreListener : Listener {
-
     @EventHandler
     fun PlayerFailMoveEvent.onMoveWrongly() {
         when (failReason) {

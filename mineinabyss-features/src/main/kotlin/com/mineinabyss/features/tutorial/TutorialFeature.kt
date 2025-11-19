@@ -3,96 +3,79 @@ package com.mineinabyss.features.tutorial
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.config.config
-import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.listeners
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
-import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
+import org.koin.core.module.dsl.scopedOf
 
-class TutorialFeature : Feature() {
-
-    private fun spawnTutorialEntities() {
-        tutorial.tutorialEntities.values.flatten().forEach(TutorialEntity::spawn)
+val TutorialFeature: Feature = feature("tutorial") {
+    dependsOn {
+        plugins("DeeperWorld")
     }
 
-    private fun setTutorialContext() {
-        DI.remove<TutorialContext>()
-        DI.add<TutorialContext>(object : TutorialContext {
-            val tutorial by config<Tutorial>("tutorial", abyss.dataPath, Tutorial())
-            override val firstJoinLocation: Location? = tutorial.firstJoinLocation
-            override val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>> =
-                tutorial.tutorialEntities.groupByTo(Long2ObjectOpenHashMap()) {
-                    Chunk.getChunkKey(it.location)
-                }.mapValuesTo(Long2ObjectOpenHashMap()) { (_, entities) ->
-                    ObjectArrayList(entities)
-                }
+    scopedModule {
+        scoped<Tutorial> { config<Tutorial>("tutorial", abyss.dataPath, Tutorial()).getOrLoad() }
+        scoped<TutorialContext> {
+            val tutorial = get<Tutorial>()
 
-            override val entry: TutorialRegion = tutorial.start
-            override val exit: TutorialRegion = tutorial.end
-        })
+            TutorialContext(
+                firstJoinLocation = tutorial.firstJoinLocation,
+                tutorialEntities = tutorial.tutorialEntities
+                    .groupBy { Chunk.getChunkKey(it.location) }
+                    .mapValuesTo(Long2ObjectOpenHashMap()) { (_, entities) -> ObjectArrayList(entities) },
+                entry = tutorial.start,
+                exit = tutorial.end,
+            )
+        }
+        scopedOf(::TutorialListener)
     }
 
-    override fun FeatureDSL.enable() {
-        setTutorialContext()
-        spawnTutorialEntities()
+    onEnable {
+        listeners(get<TutorialListener>())
+        get<TutorialContext>().spawnTutorialEntities()
+    }
 
-        plugin.listeners(TutorialListener())
-
-        mainCommand {
-            "tutorial"(desc = "Opens the tutorial") {
-                "reload" {
-                    action {
-                        Bukkit.getWorlds().flatMap { it.entities }
-                            .filter { it is TextDisplay && it.toGearyOrNull()?.has<TutorialEntity>() == true }
-                            .forEach(Entity::remove)
-                        setTutorialContext()
-                        spawnTutorialEntities()
-                        sender.success("Tutorial reloaded")
-                    }
-                }
-                "save" {
-                    action {
-                        Bukkit.getWorlds().flatMap { it.entities.filterIsInstance<TextDisplay>() }
-                            .mapNotNull { it to (it.toGearyOrNull()?.get<TutorialEntity>() ?: return@mapNotNull null) }
-                            .map { (entity, tutorial) ->
-                                tutorial.copy(
-                                    location = entity.location,
-                                    lineWidth = entity.lineWidth,
-                                    textOpacity = entity.textOpacity,
-                                    backgroundColor = entity.backgroundColor ?: tutorial.backgroundColor,
-                                    shadow = entity.isShadowed,
-                                    alignment = entity.alignment,
-                                    billboard = entity.billboard,
-                                    scale = entity.transformation.scale,
-                                    leftRotation = entity.transformation.leftRotation,
-                                    rightRotation = entity.transformation.rightRotation,
-                                )
-                            }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(tutorial.firstJoinLocation, it, tutorial.entry, tutorial.exit)).write(Tutorial(tutorial.firstJoinLocation, it, tutorial.entry, tutorial.exit)) }
-
-                        setTutorialContext()
-                        sender.success("Successfully saved tutorial-entities")
-                    }
+    mainCommand {
+        "tutorial" {
+            "reload" {
+                executes {
+                    Bukkit.getWorlds().flatMap { it.entities }
+                        .filter { it is TextDisplay && it.toGearyOrNull()?.has<TutorialEntity>() == true }
+                        .forEach(Entity::remove)
+                    get<TutorialContext>().spawnTutorialEntities()
+                    sender.success("Tutorial reloaded")
                 }
             }
         }
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("tutorial").filter { it.startsWith(args[0]) }
-                2 -> if (args.first() == "tutorial") listOf(
-                    "reload",
-                    "save"
-                ).filter { it.startsWith(args[1]) } else listOf()
+        "save" {
+            executes {
+                val context = get<TutorialContext>()
+                Bukkit.getWorlds().flatMap { it.entities.filterIsInstance<TextDisplay>() }
+                    .mapNotNull { it to (it.toGearyOrNull()?.get<TutorialEntity>() ?: return@mapNotNull null) }
+                    .map { (entity, tutorial) ->
+                        tutorial.copy(
+                            location = entity.location,
+                            lineWidth = entity.lineWidth,
+                            textOpacity = entity.textOpacity,
+                            backgroundColor = entity.backgroundColor ?: tutorial.backgroundColor,
+                            shadow = entity.isShadowed,
+                            alignment = entity.alignment,
+                            billboard = entity.billboard,
+                            scale = entity.transformation.scale,
+                            leftRotation = entity.transformation.leftRotation,
+                            rightRotation = entity.transformation.rightRotation,
+                        )
+                    }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(context.firstJoinLocation, it, context.entry, context.exit)).write(Tutorial(context.firstJoinLocation, it, context.entry, context.exit)) }
 
-                else -> emptyList()
+                featureManager.reload(TutorialFeature)
+                sender.success("Successfully saved tutorial-entities")
             }
         }
     }
-
 }

@@ -10,7 +10,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status
 
-class CustomHudListener(private val feature: CustomHudFeature) : Listener {
+class CustomHudListener(
+    private val feature: CustomHuds,
+) : Listener {
 
     @EventHandler
     fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
@@ -28,7 +30,7 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
             val hudHolder = player.hudHolder ?: HudHolder(player)
             mythicHud.createBarHandler(hudHolder)
             hudHolder.initialize()
-            toggleBackgroundLayouts(player, feature)
+            feature.toggleBackgroundLayouts(player)
         } else {
             val holder = player.hudHolder ?: return
             mythicHud.layouts().layouts.forEach(holder::removeLayout)

@@ -39,7 +39,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 class LayerListener : Listener {
-
     init {
         //if (abyss.isEternalFortuneLoaded) Bukkit.getPluginManager().registerEvents(object : Listener {
         //    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

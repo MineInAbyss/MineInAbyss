@@ -3,15 +3,21 @@ package com.mineinabyss.features.npc
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.NpcAction.DialogData
 import com.mineinabyss.features.npc.NpcAction.DialogsConfig
+import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.Trade
+import com.mineinabyss.geary.papermc.spawning.spawn_types.mythic.MythicSpawnType
 import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.spawning.spawn
+import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.ticxo.modelengine.api.ModelEngineAPI
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.entity.Interaction
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
@@ -22,8 +28,9 @@ import org.bukkit.inventory.MerchantRecipe
 class NpcEntity(
     val config: Npc,
     val mainWorld: World,
-    dialogsConfig: DialogsConfig,
-    val dialogData: DialogData? = dialogsConfig.configs[config.dialogId]
+    val dialogsConfig: DialogsConfig,
+    val dialogData: DialogData? = dialogsConfig.configs[config.dialogId],
+    val questDialog: DialogData? = dialogsConfig.configs[config.questEndId]
 ) {
 
     fun createBaseNpc() {
@@ -36,16 +43,22 @@ class NpcEntity(
                 println("removed old npc entity with id ${config.id}")
                 it.remove()
             } else {
+                println("dialog config is ${dialogsConfig.configs.keys}")
                 println("no old npc entity with id ${config.id} found")
             }
         }
 
-        val entity = location.world.spawn(location, Interaction::class.java)
+        val entity = location.world.spawn(location, ItemDisplay::class.java)
+        val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
+        val activeModel = ModelEngineAPI.createActiveModel(config.bbModel)
+        modeledEntity.addModel(activeModel, true)
+
         entity.addScoreboardTag(config.id)
         entity.customName = config.displayName
         entity.isCustomNameVisible = true
         entity.isPersistent = false
-        entity.isResponsive = true
+//        entity.isResponsive = true
+        entity.teleport(location)
         val gearyEntity = entity.toGearyOrNull()?: return
         gearyEntity.set<Npc>(this@NpcEntity.config)
         if (dialogData != null) {
@@ -53,6 +66,9 @@ class NpcEntity(
             println("dialogg data set")
         } else {
             println("couldnt set dialog data for npc ${config.id}")
+        }
+        if (questDialog != null) {
+            gearyEntity.set<QuestDialogData>(QuestDialogData(questDialog))
         }
 
     }

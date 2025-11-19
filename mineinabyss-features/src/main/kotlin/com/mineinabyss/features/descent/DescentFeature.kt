@@ -1,50 +1,53 @@
 package com.mineinabyss.features.descent
 
 import com.mineinabyss.components.descent.DescentContext
+import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
-import com.mineinabyss.idofront.commands.execution.stopCommand
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.plugin.listeners
+import org.koin.core.module.dsl.scopedOf
 
-class DescentFeature : Feature() {
-    override fun FeatureDSL.enable() {
-        plugin.listeners(
-            DescentListener()
-        )
+val DescentFeature = feature("descent") {
+    dependsOn {
+        features(LayersFeature)
+    }
 
-        mainCommand {
-            "start" {
-                playerAction {
-                    player.toGeary().apply {
-                        if (has<DescentContext>())
-                            this@mainCommand.stopCommand("You are already ingame!\nYou can leave using /stopdescent")
-                        setPersisting(DescentContext())
-                    }
-//                    GondolaGUI(player).show(player)
+    scopedModule {
+        scopedOf(::DescentListener)
+    }
+
+    onEnable {
+        listeners(get<DescentListener>())
+    }
+
+    mainCommand {
+        "start" {
+            executes.asPlayer {
+                player.toGeary().apply {
+                    if (has<DescentContext>())
+                        fail("You are already ingame!\nYou can leave using /stopdescent")
+                    setPersisting(DescentContext())
                 }
             }
-            "stopdescent" {
-                playerAction {
-                    with(player.toGeary()) {
-                        val descent = get<DescentContext>()
-                            ?: this@mainCommand.stopCommand("You are not currently ingame!\nStart by using /start")
-                        if (!descent.confirmedLeave) {
-                            descent.confirmedLeave = true
-                            sender.info(
-                                """
+        }
+        "stopdescent" {
+            executes.asPlayer {
+                with(player.toGeary()) {
+                    val descent = get<DescentContext>()
+                        ?: fail("You are not currently ingame!\nStart by using /start")
+                    if (!descent.confirmedLeave) {
+                        descent.confirmedLeave = true
+                        sender.info(
+                            """
                         <red>You are about to leave the game!!!
                         <b>Your progress will be lost</b>, but any xp and money you earned will stay with you.
                         Type /stopdescent again to leave.
                         """.trimIndent()
-                            )
-                        } else {
-                            player.health = 0.0
-                            player.removeDescentContext()
-                        }
+                        )
+                    } else {
+                        player.health = 0.0
+                        player.removeDescentContext()
                     }
                 }
             }

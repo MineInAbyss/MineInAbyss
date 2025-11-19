@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.guilds.GuildsConfig
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideMainMenu
@@ -11,7 +14,6 @@ import com.mineinabyss.features.guilds.menus.GuildScreen.*
 import com.mineinabyss.features.guilds.menus.GuildScreen.Invite
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.canvas.GuiyOwner
 import com.mineinabyss.guiy.canvas.LocalGuiyOwner
@@ -216,7 +218,8 @@ fun GuildUIScope.CreateGuildButton(
                 }
 
                 else -> {
-                    val maxGuildLength = Features.guilds.config.guildNameMaxLength
+                    val config = abyss.featureManager.getScope(GuildFeature).get<GuildsConfig>()
+                    val maxGuildLength = config.guildNameMaxLength
                     val dialog = GuildDialogs(
                         ":space_-28::guild_search_menu:", "<gold>Create Guild...", listOf(
                             DialogInput.text("guild_dialog", "<gold>Create Guild with name...".miniMsg())

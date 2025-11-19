@@ -1,10 +1,12 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.guilds.GuildsConfig
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideInfoMenu
 import com.mineinabyss.features.helpers.Text
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
@@ -80,7 +82,7 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
         onClick = {
             if (!player.isCaptainOrAbove()) return@Button
 
-            val maxGuildLength = Features.guilds.config.guildNameMaxLength
+            val maxGuildLength = abyss.featureManager.getScope(GuildFeature).get<GuildsConfig>().guildNameMaxLength
             val dialog = GuildDialogs(
                 ":space_-28::guild_name_menu:", "<gold>Rename Guild!", listOf(
                     DialogInput.text("guild_dialog", "<gold>Rename Guild...".miniMsg())

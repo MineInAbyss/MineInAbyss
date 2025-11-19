@@ -1,10 +1,12 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.*
+import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.guilds.GuildsConfig
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
@@ -87,7 +89,8 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Uni
     Button(
         modifier = modifier.at(7, 5),
         onClick = {
-            val maxGuildLength = Features.guilds.config.guildNameMaxLength
+            val config = abyss.featureManager.getScope(GuildFeature).get<GuildsConfig>()
+            val maxGuildLength = config.guildNameMaxLength
             val dialog = GuildDialogs(
                 ":space_-28::guild_search_menu:", "<gold>Search for Guild...", listOf(
                     DialogInput.text("guild_dialog", "<gold>Search for guilds with name...".miniMsg())

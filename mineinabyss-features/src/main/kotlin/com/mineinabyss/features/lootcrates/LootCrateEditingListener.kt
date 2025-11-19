@@ -19,7 +19,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class LootCrateEditingListener(val msg: LootCratesFeature.Messages) : Listener {
+class LootCrateEditingListener(val msg: LootCratesConfig.Messages) : Listener {
     @EventHandler
     fun BlockPlaceEvent.onPlaceCopiedLootChest() {
         (blockPlaced.state as? Chest)?.withGeary { chest ->

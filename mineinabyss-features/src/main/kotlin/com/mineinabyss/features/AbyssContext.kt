@@ -3,14 +3,15 @@ package com.mineinabyss.features
 import com.charleskorn.kaml.AnchorsAndAliases
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.geary.modules.Geary
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.serialization.SerializableComponents
 import com.mineinabyss.idofront.config.ConfigFormats
 import com.mineinabyss.idofront.config.Format
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.Feature
+import com.mineinabyss.idofront.features.featureManager
 import com.mineinabyss.idofront.messaging.observeLogger
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -19,14 +20,13 @@ import java.nio.file.Path
 val abyss by DI.observe<AbyssContext>()
 
 class AbyssContext(
-    override val plugin: JavaPlugin,
-) : FeatureDSL(mainCommandProvider = { ("mineinabyss" / "mia")(desc = "The main command for Mine in Abyss", it) }),
-    Configurable<AbyssFeatureConfig> {
+    val plugin: JavaPlugin,
+) {
     val logger by plugin.observeLogger()
     val dataPath: Path = plugin.dataFolder.toPath()
     val gearyGlobal get() = gearyPaper.worldManager.global
 
-    override val configManager = config<AbyssFeatureConfig>(
+    val configManager = config<AbyssFeatureConfig>(
         "config", dataPath, AbyssFeatureConfig(), formats = ConfigFormats(
             overrides = listOf(
                 Format(
@@ -39,9 +39,22 @@ class AbyssContext(
             )
         )
     )
+    val config: AbyssFeatureConfig by configManager
 
-    override val features get() = config.features
+    val featureManager = plugin.featureManager {
+        globalModule {
+            single<AbyssContext> { this@AbyssContext }
+            single<Geary> { gearyGlobal }
+        }
 
+        withMainCommand("mineinabyss", "mia", description = "The main command for Mine in Abyss")
+
+        install(*config.features.toTypedArray())
+    }
+
+    inline fun <reified T: Any> getScoped(feature: Feature): T {
+        return featureManager.getScope(feature).get<T>()
+    }
 
     val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
     val isEternalFortuneLoaded get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")

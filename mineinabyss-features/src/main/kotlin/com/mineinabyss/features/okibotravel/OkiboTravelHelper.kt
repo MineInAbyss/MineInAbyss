@@ -1,12 +1,15 @@
 package com.mineinabyss.features.okibotravel
 
+import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboMap
-import com.mineinabyss.features.helpers.di.Features.okiboLine
+import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.adventure.PaperAdventure
 import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.*
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.network.protocol.game.ClientboundBundlePacket
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.world.entity.Entity
@@ -15,8 +18,6 @@ import net.minecraft.world.phys.Vec3
 import org.bukkit.Color
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
-import org.bukkit.util.Vector
-import org.joml.Matrix4f
 import org.joml.Vector3f
 import java.util.*
 
@@ -24,21 +25,34 @@ val mapEntities = mutableMapOf<String, Int>()
 val hitboxEntities = mutableMapOf<String, MutableMap<String, Int>>()
 val hitboxIconEntities = mutableMapOf<String, MutableMap<String, Int>>()
 
-val OkiboMap.getStation get() = okiboLine.config.okiboStations.firstOrNull { it.id == station }
+val OkiboMap.getStation: OkiboLineStation?
+    get() {
+        val config = abyss.getScoped<OkiboTravelConfig>(OkiboTravelFeature)
+        return config.okiboStations.firstOrNull { it.id == station }
+    }
 
 fun getHitboxStation(entityId: Int) =
-    hitboxEntities.values.flatMap { it.toList() }.firstOrNull { it.second == entityId }?.first?.let { okiboLine.config.okiboMaps.firstOrNull { o -> it.startsWith(o.station) } }
+    hitboxEntities.values
+        .flatMap { it.toList() }
+        .firstOrNull { it.second == entityId }
+        ?.first
+        ?.let {
+            val config = abyss.getScoped<OkiboTravelConfig>(OkiboTravelFeature)
+            config.okiboMaps.firstOrNull { o -> it.startsWith(o.station) }
+        }
 
 fun Player.sendOkiboMap(okiboMap: OkiboMap) {
     val connection = (this as CraftPlayer).handle.connection
 
     // Remove existing entities
-    connection.send(ClientboundRemoveEntitiesPacket(
-        *mutableListOf(mapEntities[okiboMap.station] ?: -1)
-            .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
-            .plus(hitboxIconEntities[okiboMap.station]?.values ?: listOf())
-            .toIntArray()
-    ))
+    connection.send(
+        ClientboundRemoveEntitiesPacket(
+            *mutableListOf(mapEntities[okiboMap.station] ?: -1)
+                .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
+                .plus(hitboxIconEntities[okiboMap.station]?.values ?: listOf())
+                .toIntArray()
+        )
+    )
 
     // Map text entity
     val textLoc = okiboMap.location
@@ -103,7 +117,7 @@ fun Player.sendOkiboMap(okiboMap: OkiboMap) {
                     SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, icon.scale), // Translation offset from hitbox
                     SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
                     SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(icon.text.miniMsg()) ?: Component.empty()),
-                    SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0,0,0,0).asARGB()),
+                    SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0, 0, 0, 0).asARGB()),
                 )
             )
 
@@ -127,7 +141,8 @@ fun Player.removeOkiboMap(okiboMap: OkiboMap) {
 }
 
 fun spawnOkiboMaps() {
-    okiboLine.config.okiboMaps.forEach {
+    val config = abyss.getScoped<OkiboTravelConfig>(OkiboTravelFeature)
+    config.okiboMaps.forEach {
         if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@forEach
         it.location.chunk.playersSeeingChunk.forEach { player ->
             player.sendOkiboMap(it)
@@ -136,7 +151,8 @@ fun spawnOkiboMaps() {
 }
 
 fun removeOkiboMaps() {
-    okiboLine.config.okiboMaps.forEach {
+    val config = abyss.getScoped<OkiboTravelConfig>(OkiboTravelFeature)
+    config.okiboMaps.forEach {
         if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@forEach
         it.location.chunk.playersSeeingChunk.forEach { player ->
             player.removeOkiboMap(it)

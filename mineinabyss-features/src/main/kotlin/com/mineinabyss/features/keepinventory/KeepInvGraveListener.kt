@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 
-class KeepInvGraveListener(private val config: KeepInvFeature.Config): Listener {
+class KeepInvGraveListener(private val config: KeepInvConfig): Listener {
     //@EventHandler
     //fun PlayerCreateGraveEvent.onCreateGrave() {
     //    if ((config.keepInvInVoid && player.lastDamageCause?.cause == EntityDamageEvent.DamageCause.VOID) ||

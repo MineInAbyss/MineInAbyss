@@ -1,63 +1,68 @@
 package com.mineinabyss.features.tools
 
 import com.mineinabyss.components.playerData
-import com.mineinabyss.features.abyss
+import com.mineinabyss.features.AbyssContext
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.createDepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.createToggleDepthHudAction
 import com.mineinabyss.features.tools.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.tools.sickle.SickleListener
 import com.mineinabyss.features.tools.sickle.createHarvestAction
-import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.papermc.gearyPaper
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
+import com.mineinabyss.idofront.features.feature
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.plugin.listeners
+import org.koin.core.module.dsl.scopedOf
 
-class ToolsFeature : Feature() {
-    override val dependsOn: Set<String> = setOf("DeeperWorld")
-    override fun FeatureDSL.enable() = abyss.gearyGlobal.run {
-        mainCommand {
-            "replant" {
-                playerAction {
-                    player.playerData.replant = !player.playerData.replant
-                    when {
-                        player.playerData.replant -> {
-                            player.success("Crops will now automatically be replanted!")
-                            if (sender != player) sender.info("Crops will now automatically be replanted for ${player.name}!")
-                        }
+val ToolsFeature = feature("tools") {
+    dependsOn {
+        plugins("DeeperWorld")
+    }
 
-                        else -> {
-                            player.error("Crops will not automatically be replanted!")
-                            if (sender != player) sender.info("Crops will not automatically be replanted for ${player.name}!")
-                        }
-                    }
-                }
-            }
-            "depth" {
-                playerAction {
-                    ShowDepthSystem.run {
-                        player.sendDepthMessage()
-                    }
-                }
-            }
+    scopedModule {
+        scopedOf(::SickleListener)
+        scopedOf(::GrapplingHookListener)
+        scopedOf(::ShowDepthSystem)
+    }
+
+    onEnable {
+        //TODO geary system hot reloading
+        get<ShowDepthSystem>().register()
+        get<AbyssContext>().gearyGlobal.run {
+            createToggleDepthHudAction()
+            createHarvestAction()
+            createDepthHudSystem()
         }
-        tabCompletion {
-            if (args.size == 1) listOf("replant", "depth").filter { it.startsWith(args[0]) }
-            else emptyList()
-        }
-        ShowDepthSystem.register(abyss.gearyGlobal)
-        createToggleDepthHudAction()
-        createHarvestAction()
-        createDepthHudSystem()
 
-        plugin.listeners(
-            SickleListener(),
-            GrapplingHookListener(),
+        listeners(
+            get<SickleListener>(),
+            get<GrapplingHookListener>(),
         )
+    }
+
+    mainCommand {
+        "replant" {
+            executes.asPlayer {
+                player.playerData.replant = !player.playerData.replant
+                when {
+                    player.playerData.replant -> {
+                        player.success("Crops will now automatically be replanted!")
+                        if (sender != player) sender.info("Crops will now automatically be replanted for ${player.name}!")
+                    }
+
+                    else -> {
+                        player.error("Crops will not automatically be replanted!")
+                        if (sender != player) sender.info("Crops will not automatically be replanted for ${player.name}!")
+                    }
+                }
+            }
+        }
+        "depth" {
+            executes.asPlayer {
+                get<ShowDepthSystem>().run {
+                    player.sendDepthMessage()
+                }
+            }
+        }
     }
 }

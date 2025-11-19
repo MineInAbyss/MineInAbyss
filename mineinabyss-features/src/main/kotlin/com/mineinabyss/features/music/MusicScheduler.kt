@@ -6,7 +6,6 @@ import com.mineinabyss.components.music.RecentlyPlayed
 import com.mineinabyss.components.music.ScheduledMusicJob
 import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import kotlinx.coroutines.delay
@@ -15,9 +14,9 @@ import org.bukkit.entity.Player
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-object MusicScheduler {
-    private val conf get() = Features.music.config
-
+class MusicScheduler(
+    val conf: MusicConfig
+) {
     fun stopSchedulingMusic(player: Player) {
         player.toGeary().apply {
             get<ScheduledMusicJob>()?.job?.cancel()
