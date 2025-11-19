@@ -20,6 +20,7 @@ import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.misc.MiscFeature
 import com.mineinabyss.features.music.MusicFeature
+import com.mineinabyss.features.npc.NpcFeature
 import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.features.orthbanking.OrthBankingConfig
@@ -70,6 +71,7 @@ class AbyssFeatureConfig(
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
     val quests: Toggle = Toggle(),
+    val npc: Toggle = Toggle()
 ) {
     val features by lazy {
         buildList<Feature> {
@@ -102,6 +104,7 @@ class AbyssFeatureConfig(
             add(tutorial.enabled) { TutorialFeature }
             add(ansiblePull.enabled) { ConfigPullFeature }
             add(quests.enabled) { QuestFeature }
+            add(npc.enabled) { NpcFeature }
         }
     }
 }

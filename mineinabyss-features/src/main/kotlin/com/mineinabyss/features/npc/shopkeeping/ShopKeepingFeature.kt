@@ -34,22 +34,14 @@ val ShopKeepingFeature = feature("shopkeepers") {
     }
 
     scopedModule {
-        scoped<NpcsConfig> { config("npc", abyss.dataPath, NpcsConfig()).getOrLoad() }
-        scoped<DialogsConfig> { config("dialogs", abyss.dataPath, DialogsConfig()).getOrLoad() }
         scoped<World> { getWorld("world")!! }
         scopedOf(::ShopKeepingListener)
-        scopedOf(::NpcManager)
     }
 
     onEnable {
-        val manager = get<NpcManager>()
 
-        listeners(get<ShopKeepingListener>(), manager)
+        listeners(get<ShopKeepingListener>())
 
-        abyss.plugin.launch {
-            delay(10.seconds) //TODO correctly schedule loading when necessary
-            runCatching { manager.initNpc() }.onFailure { it.printStackTrace() }
-        }
     }
     mainCommand {
         "shops" {
@@ -57,20 +49,6 @@ val ShopKeepingFeature = feature("shopkeepers") {
                 player.withGeary {
                     val shopKeeper = shopKey.toEntityOrNull()?.get<ShopKeeper>() ?: return@args
                     guiy(player) { ShopMainMenu(player, shopKeeper) }
-                }
-            }
-        }
-        "npcs" {
-            "test" {
-                executes.asPlayer {
-                    get<NpcsConfig>().npcs.values.forEach {
-                        player.sendMessage("${it.displayName} - ${it.id}")
-                    }
-                }
-            }
-            "reload" {
-                executes {
-                    get<NpcManager>().initNpc()
                 }
             }
         }
