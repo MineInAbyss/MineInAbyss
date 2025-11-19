@@ -10,14 +10,12 @@ class NpcEntity(
     val mainWorld: World,
     val dialogsConfig: DialogsConfig,
     val dialogData: DialogData? = dialogsConfig.configs[config.dialogId],
-//    val questDialog: DialogData? = dialogsConfig.configs[config.questEndId]
 ) {
 
     fun createBaseNpc() {
         val location = config.location
         val chunk = location.chunk
-        // delete the old entity if it exists and respawn a newer version instead
-        // note: we can't respawn an entity a player is interacting with as it only triggers on chunk load (i.e. when no players are nearby)
+
         chunk.entities.forEach {
             if (config.id in it.scoreboardTags) {
                 println("removed old npc entity with id ${config.id}")
@@ -31,8 +29,8 @@ class NpcEntity(
         val entity = location.world.spawn(location, ItemDisplay::class.java)
         val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
         val activeModel = ModelEngineAPI.createActiveModel(config.bbModel)
-        modeledEntity.addModel(activeModel, true)
 
+        modeledEntity.addModel(activeModel, true)
         entity.addScoreboardTag(config.id)
         entity.customName = config.displayName
         entity.isCustomNameVisible = true
@@ -42,14 +40,9 @@ class NpcEntity(
         gearyEntity.set<Npc>(this@NpcEntity.config)
         if (dialogData != null) {
             gearyEntity.set<DialogData>(this@NpcEntity.dialogData)
-            println("dialogg data set")
         } else {
-            println("couldnt set dialog data for npc ${config.id}")
+            error("couldnt set dialog data for npc ${config.id}")
         }
-//        if (questDialog != null) {
-//            gearyEntity.set<QuestDialogData>(QuestDialogData(questDialog))
-//        }
-
     }
 
     // everything else in this file is probably not gonna get used

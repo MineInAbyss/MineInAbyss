@@ -1,17 +1,7 @@
 package com.mineinabyss.features.npc
 
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.lootcrates.prefabKey
-import com.mineinabyss.features.npc.shopkeeping.ShopKeepers
-import com.mineinabyss.features.npc.shopkeeping.ShopKeepingListener
-import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
-import com.mineinabyss.geary.papermc.toEntityOrNull
-import com.mineinabyss.geary.papermc.withGeary
-import com.mineinabyss.guiy.canvas.guiy
-import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.features.feature
 import kotlinx.coroutines.delay

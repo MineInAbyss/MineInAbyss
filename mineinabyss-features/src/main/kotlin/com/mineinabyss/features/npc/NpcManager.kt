@@ -14,25 +14,20 @@ class NpcManager(
     val world: World,
     val dialogsConfig: DialogsConfig,
 ): Listener {
-    // probably not needed
     var npcEntities: List<NpcEntity> = emptyList()
     val npcMap: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 
     fun initNpc() {
-        // load npc config
         for (npc in npcsConfig.npcs.values) {
             val npcEntity = NpcEntity(npc, world, dialogsConfig)
             npcEntities = npcEntities + npcEntity
 
             val chunkKey = npc.location.chunk.chunkKey
             npcMap[chunkKey] = npcMap.getOrDefault(chunkKey, emptyList()) + npcEntity
-            println("Loaded NPC ${npc.id} at chunk ${npc.location}")
 
-            if (npc.location.isWorldLoaded && npc.location.isChunkLoaded) npcEntity.createBaseNpc()
-
+            if (npc.location.isWorldLoaded && npc.location.isChunkLoaded)
+                npcEntity.createBaseNpc()
         }
-        println("NPC Manager initialized with ${npcEntities.size} NPCs.")
-        println("npc values are ${npcsConfig.npcs.values}")
         listenerSingleton.bstgth = npcMap
     }
 
@@ -50,9 +45,9 @@ class NpcManager(
         val NpcData = gearyEntity.get<Npc>() ?: return
         val dialogId: String? = NpcData.dialogId
         if (entity !is ItemDisplay) return
-
         val dialogData = gearyEntity.get<DialogData>()
         val questDialogData = gearyEntity.get<QuestDialogData>()
+
         if (dialogData == null) {
             player.sendMessage("dialog data missing for npc ${NpcData.id}")
         }

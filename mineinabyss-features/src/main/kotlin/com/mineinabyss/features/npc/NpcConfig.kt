@@ -28,8 +28,6 @@ data class Npc(
     val type: String, // "trader", "gondola_unlocker", "quest_giver", "dialogue"
     val dialogId: String? = null,
     val ticketId: String? = null,
-//    val questId: String? = null,
-//    val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
 ) {
 
 
@@ -99,6 +97,7 @@ data class Npc(
 
     fun gondolaUnlockerInteraction(player: Player, ticketId: String) {
         // instead of printing messages in chat, we should open an error dialog instead
+        // require adding support for redirects most likely
 //        ticketId ?: return idofrontLogger.e { "Ticket id is null for gondola unlocker NPC $id" }
         val ticket: Ticket = TicketConfigHolder.config?.tickets?.get(ticketId)
             ?: return idofrontLogger.e("Ticket with id $ticketId not found")
