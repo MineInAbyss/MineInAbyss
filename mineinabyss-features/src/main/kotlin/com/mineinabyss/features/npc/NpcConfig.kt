@@ -46,7 +46,7 @@ data class Npc(
     fun fallbackInteraction(player: Player) {
         when (type) {
             "trader" -> traderInteraction(player)
-            "gondola_unlocker" -> gondolaUnlockerInteraction(player)
+//            "gondola_unlocker" -> gondolaUnlockerInteraction(player)
 //            "quest_giver" -> questGiverInteraction(player)
             "dialogue" -> player.sendMessage("dialog data missing")
             else -> throw IllegalArgumentException("Unknown NPC type: $type")
@@ -97,9 +97,9 @@ data class Npc(
     }
 
 
-    fun gondolaUnlockerInteraction(player: Player) {
+    fun gondolaUnlockerInteraction(player: Player, ticketId: String) {
         // instead of printing messages in chat, we should open an error dialog instead
-        ticketId ?: return idofrontLogger.e { "Ticket id is null for gondola unlocker NPC $id" }
+//        ticketId ?: return idofrontLogger.e { "Ticket id is null for gondola unlocker NPC $id" }
         val ticket: Ticket = TicketConfigHolder.config?.tickets?.get(ticketId)
             ?: return idofrontLogger.e("Ticket with id $ticketId not found")
         player.editPlayerData {
