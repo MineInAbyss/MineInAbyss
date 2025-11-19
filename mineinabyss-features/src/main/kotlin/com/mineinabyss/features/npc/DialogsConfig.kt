@@ -1,18 +1,9 @@
-package com.mineinabyss.features.npc.NpcAction
+package com.mineinabyss.features.npc
 
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.npc.Npc
-import com.mineinabyss.geary.actions.Action
-import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.Task
-import com.mineinabyss.geary.actions.Tasks
-import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.aselstudios.luxdialoguesapi.Builders.Answer
 import org.aselstudios.luxdialoguesapi.Builders.Dialogue
@@ -73,8 +64,8 @@ data class DialogueAction(
         when (name) {
             "customAction" -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
             "gondolaAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
-            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
-            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
+//            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
+//            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
             else -> player.error("Error resolving action: $name")
         }
     }

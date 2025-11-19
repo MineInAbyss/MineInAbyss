@@ -1,26 +1,14 @@
 package com.mineinabyss.features.npc
 
-import com.mineinabyss.features.npc.NpcAction.DialogData
-import com.mineinabyss.features.npc.NpcAction.DialogsConfig
-import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.listenerSingleton
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import org.bukkit.World
 import org.bukkit.event.EventHandler
 import org.bukkit.event.world.ChunkLoadEvent
-import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
-import org.bukkit.entity.Interaction
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 
-
-// how to use:
-// load npcs config from config
-// load list of all dialogs ids
-// create NpcManager with npcs config, world, and dialogs ids
-// init it
-// register listeners
 class NpcManager(
     val npcsConfig: NpcsConfig,
     val world: World,
@@ -62,16 +50,7 @@ class NpcManager(
         val NpcData = gearyEntity.get<Npc>() ?: return
         val dialogId: String? = NpcData.dialogId
         if (entity !is ItemDisplay) return
-//        val previous = entity.lastInteraction
-//        val timeprev = previous?.timestamp
-//        val prevplayer = previous?.player
-//        val now = System.currentTimeMillis()
-//        val five_sec = 5000L
-//        if (prevplayer == player && timeprev != null && now - timeprev < five_sec) {
-//            player.error("Please wait before interacting again.")
-//            this.isCancelled = true
-//            return
-//        }
+
         val dialogData = gearyEntity.get<DialogData>()
         val questDialogData = gearyEntity.get<QuestDialogData>()
         if (dialogData == null) {

@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.lootcrates.prefabKey
-import com.mineinabyss.features.npc.NpcAction.DialogsConfig
+import com.mineinabyss.features.npc.DialogsConfig
 import com.mineinabyss.features.npc.NpcEntity
 import com.mineinabyss.features.npc.NpcManager
 import com.mineinabyss.features.npc.NpcsConfig

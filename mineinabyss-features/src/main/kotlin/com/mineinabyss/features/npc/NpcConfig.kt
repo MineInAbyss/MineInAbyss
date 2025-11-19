@@ -5,8 +5,6 @@ import com.mineinabyss.components.gondolas.Ticket
 import com.mineinabyss.features.gondolas.pass.TicketConfigHolder
 import com.mineinabyss.features.gondolas.pass.isRouteUnlocked
 import com.mineinabyss.features.gondolas.pass.unlockRoute
-import com.mineinabyss.features.npc.NpcAction.DialogData
-import com.mineinabyss.features.npc.NpcAction.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeTable
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.idofrontLogger
@@ -30,8 +28,8 @@ data class Npc(
     val type: String, // "trader", "gondola_unlocker", "quest_giver", "dialogue"
     val dialogId: String? = null,
     val ticketId: String? = null,
-    val questId: String? = null,
-    val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
+//    val questId: String? = null,
+//    val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
 ) {
 
 
@@ -39,7 +37,7 @@ data class Npc(
         when (type) {
             "trader" -> traderInteraction(player)
             "gondola_unlocker" -> dialogInteraction(player, dialogId, dialogData)
-            "quest_giver" -> questGiverInteraction(player, questDialogData, dialogData)
+//            "quest_giver" -> questGiverInteraction(player, questDialogData, dialogData)
             "dialogue" -> dialogInteraction(player, dialogId, dialogData)
             else -> throw IllegalArgumentException("Unknown NPC type: $type")
         }
@@ -49,52 +47,42 @@ data class Npc(
         when (type) {
             "trader" -> traderInteraction(player)
             "gondola_unlocker" -> gondolaUnlockerInteraction(player)
-            "quest_giver" -> questGiverInteraction(player)
+//            "quest_giver" -> questGiverInteraction(player)
             "dialogue" -> player.sendMessage("dialog data missing")
             else -> throw IllegalArgumentException("Unknown NPC type: $type")
         }
     }
 
 
-    // On the quest behaviour:
-    // each npc of type "quest" have 2 dialogs associated with them, one "regular" dialog which contains the quest offer and the action to unlock it
-    // and another dialog, which will be triggered subsequently.
-    // this second dialog is represented by questEndId and is stored under questDialogData on the geary entity.
-    // So when a player interact with a quest npc for the first time, if he accepts the quest, he will then see the dialog associated with questEndId.
-    // This dialog should be something along the line of "come back when you've done X", with 2 options :
-    // - "I did it!"
-    // - "Goodbye"
-    // should the player select I did it, the npc will then run the quest completion check and give rewards if they are any.
-    // Or return an error in chat if the player hasn't completed the quest yet.
-    // this is really messy, and it could definitely use a "quest progress dialog" and a "quest end dialog".
-    fun questGiverInteraction(player: Player, questDialogData: QuestDialogData? = null, dialogData: DialogData? = null) {
-        questDialogData ?: return
-        questId ?: return
-        TODO("Reimplement with DI")
-//        when {
-//            // Quest is done, reward is claimed
-//            playerHasCompletedQuest(player, questId) -> {
-//                player.info("You have already completed this quest.")
-//            }
-//
-//            // Quest is done but reward not claimed yet
-//            isQuestCompleted(player, questId) -> {
-//                questDialogData.dialogData.startDialogue(player, questId, this)
-//            }
-//
-//            // Quest is started but not completed
-//            playerHasUnlockedQuest(player, questId) -> {
-//                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
-//            }
-//
-//            // Quest is not started
-//            dialogData != null && !playerHasUnlockedQuest(player, questId) -> {
-//                dialogData.startDialogue(player, dialogId ?: return, this)
-//            }
-//        }
-    }
+//    fun questGiverInteraction(player: Player, questDialogData: QuestDialogData? = null, dialogData: DialogData? = null) {
+//        questDialogData ?: return
+//        questId ?: return
+//        TODO("Reimplement with DI")
+////        when {
+////            // Quest is done, reward is claimed
+////            playerHasCompletedQuest(player, questId) -> {
+////                player.info("You have already completed this quest.")
+////            }
+////
+////            // Quest is done but reward not claimed yet
+////            isQuestCompleted(player, questId) -> {
+////                questDialogData.dialogData.startDialogue(player, questId, this)
+////            }
+////
+////            // Quest is started but not completed
+////            playerHasUnlockedQuest(player, questId) -> {
+////                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
+////            }
+////
+////            // Quest is not started
+////            dialogData != null && !playerHasUnlockedQuest(player, questId) -> {
+////                dialogData.startDialogue(player, dialogId ?: return, this)
+////            }
+////        }
+//    }
 
 
+    // TODO: update
     fun traderInteraction(player: Player) {
         if (tradeTable.trades.isEmpty()) return
         val recipes = tradeTable.createMerchantRecipes() ?: return
@@ -127,37 +115,19 @@ data class Npc(
         }
     }
 
-    fun questCompleteInteraction(player: Player, qid: String) {
-        if (questId == null) {
-            player.error("Missing questId")
-            return
-        }
-        TODO()
-//        checkAndCompleteQuest(player, qid)
-    }
+//    fun questCompleteInteraction(player: Player, qid: String) {
+//        if (questId == null) {
+//            player.error("Missing questId")
+//            return
+//        }
+//    }
 
-    fun questUnlockInteraction(player: Player, qid: String) {
-        if (questId == null) {
-            player.error("Missing questId")
-            return
-        }
-        TODO()
-//        unlockQuest(player, qid)
-        // this one is a bit more finicky, tho I think i'll do something like:
-        // give the player a "objective" component, which would be something like:
-        // (quest_id | progress | max_progress | completion_action)
-        // so most of them are straightforward, and completion_action would be like an event listener of a specific type
-        // so I guess it would also be like another object like
-        // (event_type | event_data), where type could be like "kill" and data would be like "mob", so when we register our quest listeners,
-        // we would do something like :
-        // onMobKill
-        // killer = player
-        // if (killer has objective component with event_type "kill" and event_data == mob)
-        // objective.progress++
-        // same for every quest type we support
-        // then we could also have a "success" function, the listener would invoke if objective.progress >= objective.max_progress
-        // and it would go like, player.objective.displaysuccessmessage or some variation of that
-    }
+//    fun questUnlockInteraction(player: Player, qid: String) {
+//        if (questId == null) {
+//            player.error("Missing questId")
+//            return
+//        }
+//    }
 
 }
 
