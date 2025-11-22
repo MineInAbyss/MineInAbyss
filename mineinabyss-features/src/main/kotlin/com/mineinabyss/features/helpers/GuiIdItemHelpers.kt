@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack
 
 object TitleItem {
     val hideTooltip = TooltipDisplay.tooltipDisplay().hideTooltip(true)
-    val headItemModel = Key.key("mineinabyss:head")
+    val headItemModel = Key.key("mineinabyss:ui/head")
 
     fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_NAME, name.miniMsg())
