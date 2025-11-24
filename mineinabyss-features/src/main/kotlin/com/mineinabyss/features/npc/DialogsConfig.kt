@@ -1,14 +1,11 @@
-package com.mineinabyss.features.npc.NpcAction
+package com.mineinabyss.features.npc
 
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.npc.Npc
 import com.mineinabyss.geary.actions.Action
 import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.Task
 import com.mineinabyss.geary.actions.Tasks
 import com.mineinabyss.geary.actions.execute
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode
@@ -20,24 +17,19 @@ import org.aselstudios.luxdialoguesapi.Builders.Page
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import org.bukkit.entity.Player
 
-//@Serializable
-//@SerialName("mineinabyss:custom_action")
-//class CustomAction : Action {
-//    override fun ActionGroupContext.execute() {
-//        entity?.get<Player>()?.sendMessage("Custom action executed!")
-//    }
-//}
-//
-//// TODO: pass ticket id in the action serializer so we can tie unlocks to actions in config and avoid dealing with npc holding ticket id and such
-//@Serializable
-//@SerialName("mineinabyss:unlock_gondola_action")
-//class gondolaUnlockerInteractionAction : Action {
-//    override fun ActionGroupContext.execute() {
-//        val player = entity?.get<Player>() ?: return
-//        val npc = environment["npc"] as? Npc ?: return
-//        npc.gondolaUnlockerInteraction(player)
-//    }
-//}
+@Serializable
+@SerialName("mineinabyss:unlock_gondola_action")
+class gondolaUnlockerInteractionAction(
+    val ticketId: String,
+) : Action {
+    override fun ActionGroupContext.execute() {
+        val player = entity?.get<Player>() ?: return
+        val npc = environment["npc"] as? Npc ?: return
+        npc.gondolaUnlockerInteraction(player, ticketId)
+    }
+}
+
+
 //@Serializable
 //@SerialName("mineinabyss:unlock_quest_action")
 //class unlockQuestAction(val questId: String) : Action {
@@ -47,8 +39,8 @@ import org.bukkit.entity.Player
 //        npc.questUnlockInteraction(player, questId)
 //    }
 //}
-//
-//
+
+
 //@Serializable
 //@SerialName("mineinabyss:complete_quest_action")
 //class completeQuestAction(val questId: String) : Action {
@@ -59,27 +51,27 @@ import org.bukkit.entity.Player
 //    }
 //}
 
-@Serializable
-data class DialogueAction(
-    val name: String,
-) {
-    fun customAction(player: Player) {
-        player.sendMessage("Custom action executed!")
-    }
-
-
-    fun execute(player: Player, npc: Npc) {
-        val plugin = abyss.plugin // Adjust if plugin access differs
-        when (name) {
-            "customAction" -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
-            "gondolaAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
-            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
-            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
-            else -> player.error("Error resolving action: $name")
-        }
-    }
-
-}
+//@Serializable
+//data class DialogueAction(
+//    val name: String,
+//) {
+//    fun customAction(player: Player) {
+//        player.sendMessage("Custom action executed!")
+//    }
+//
+//
+//    fun execute(player: Player, npc: Npc) {
+//        val plugin = abyss.plugin
+//        when (name) {
+//            "customAction" -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
+////            "gondolaAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
+////            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
+////            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
+//            else -> player.error("Error resolving action: $name")
+//        }
+//    }
+//
+//}
 
 
 
@@ -91,7 +83,7 @@ class AnswerData(
     @EncodeDefault(Mode.NEVER)
     val replyMessage: String? = null,
     @EncodeDefault(Mode.NEVER)
-    val action: DialogueAction? = null
+    val action: Tasks? = null
 ) {
     val npc = null
     fun build(npc: Npc): Answer? {
@@ -99,7 +91,10 @@ class AnswerData(
             .setAnswerText(text)
         if (placeholderCondition != null) answer.addCondition(placeholderCondition)
         if (replyMessage != null) answer.addReplyMessage(replyMessage)
-        if (action != null) answer.addCallback { player -> action.execute(player, npc) }
+        if (action != null) answer.addCallback { player ->
+            val ctx = ActionGroupContext(entity = player.toGeary())
+            ctx.environment["npc"] = npc
+            action.execute(ctx) }
         return answer.build()
     }
 }
