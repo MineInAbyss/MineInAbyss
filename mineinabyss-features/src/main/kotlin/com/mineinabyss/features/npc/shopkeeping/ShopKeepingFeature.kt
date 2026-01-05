@@ -4,7 +4,6 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.action.DialogsConfig
-import com.mineinabyss.features.npc.NpcEntity
 import com.mineinabyss.features.npc.NpcManager
 import com.mineinabyss.features.npc.NpcsConfig
 import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
@@ -26,11 +25,6 @@ import org.bukkit.Bukkit.getWorld
 import kotlin.time.Duration.Companion.seconds
 
 
-object ListenerSingleton {
-    var sgl: NpcsConfig? = null
-    var bstgth: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
-}
-
 class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Context) {
 
     override val dependsOn: Set<String> = setOf("ModelEngine")
@@ -42,18 +36,13 @@ class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Cont
         val manager = NpcManager(npcconfig, getWorld("world")!!, dialogsConfig)
     }
     override fun FeatureDSL.enable() = gearyPaper.run {
-//        println("Enabling Shopkeeping Feature")
         plugin.listeners(ShopKeepingListener())
         plugin.launch {
             delay(10.seconds)
             runCatching { context.manager.initNpc() }.onFailure { it.printStackTrace() }
         }
         plugin.listeners(context.manager)
-//        println("dialogconfig keys are ${context.dialogsConfig.configs.keys}")
-//        val manager = NpcManager(context.npcconfig, getWorld("world")!!, context.dialogsConfig)
-//        manager.initNpc()
-//        plugin.listeners(manager)
-//        println("Shopkeeping Feature Enabled")
+
         mainCommand {
             "test" {
                 playerAction {

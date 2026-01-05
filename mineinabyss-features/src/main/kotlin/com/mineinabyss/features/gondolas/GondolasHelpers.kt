@@ -13,12 +13,9 @@ enum class GondolaType() {
 
 object GondolasHelpers {
     fun gondolaWarp(gondola: Gondola, player: Player, gondolaType: GondolaType, gondolaId: String? = null) {
-        val loc =
-            if (gondolaType == GondolaType.LOWER) gondola.upperLoc else gondola.lowerLoc
-        player.teleportAsync(loc)
-        if (gondola.consumeTicket && (gondolaId != null)) {
+        player.teleportAsync(if (gondolaType == GondolaType.LOWER) gondola.upperLoc else gondola.lowerLoc)
+        if (gondola.consumeTicket && (gondolaId != null))
             player.removeRoute(gondolaId)
-        }
     }
 
     fun locContains(loc: Location, point: Location, radius: Double): Boolean {

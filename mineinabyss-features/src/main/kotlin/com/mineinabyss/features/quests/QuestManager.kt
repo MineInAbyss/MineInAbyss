@@ -81,21 +81,12 @@ object QuestManager {
     }
 
     fun giveQuestReward(player: Player, questId: String) {
-        val gearyItems = player.world.toGeary().getAddon(ItemTracking)
         val config = QuestConfigHolder.config ?: error("Trying to complete quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: return
 
-        visitQuest.gearyRewards.forEach { (item, amount) ->
-            val gearyItem = gearyItems.createItem(item) ?: error("Failed to complete quest $questId: Geary prefab $item not found")
-            gearyItem.amount = amount.coerceIn(1, gearyItem.maxStackSize)
-            player.inventory.addItem(gearyItem)
-        }
-
-        visitQuest.vanillaRewards.forEach { (itemName, amount) ->
-            val material = Material.matchMaterial(itemName) ?: error("Failed to complete quest $questId: Material $itemName not found")
-            val itemStack = ItemStack(material)
-            itemStack.amount = amount.coerceIn(1, itemStack.maxStackSize)
-            player.inventory.addItem(itemStack)
+        visitQuest.rewards.forEach { serializable ->
+            val item = serializable.toItemStackOrNull() ?: error("Failed to complete quest $questId: Reward not found")
+            player.inventory.addItem(item)
         }
 
         val nodes = visitQuest.perms.map { Node.builder(it).value(true).build() }

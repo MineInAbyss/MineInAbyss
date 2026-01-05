@@ -46,12 +46,6 @@ class QuestFeature : FeatureWithContext<QuestFeature.Context>(::Context) {
         QuestConfigHolder.config = context.questConfig
         plugin.listeners(QuestListener(context.questConfig))
 
-//        val player: Player = ////
-//        val act = ActionGroupContext().apply { entity = player}
-//        DropItemsAction(emptyList()).execute(act)
-
-
-
         mainCommand {
             "quests"(desc = "Commands for quests") {
                 permission = "mineinabyss.quests"

@@ -2,6 +2,7 @@ package com.mineinabyss.features.quests
 
 import com.mineinabyss.features.quests.QuestManager.visitQuestProgress
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 
@@ -9,12 +10,11 @@ class QuestListener(
     val questConfig: QuestConfig,
 ): Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun PlayerMoveEvent.onLocationEnter() {
-        if (!this.hasExplicitlyChangedBlock()) {
-            return
-        }
-       val activeQuests = QuestManager.activeQuests(player)
+        if (!hasExplicitlyChangedBlock()) return
+
+        val activeQuests = QuestManager.activeQuests(player)
         val playerVisitedLocations = QuestManager.visitedLocations(player)
 
 //        activeQuests.activeVisitQuests.forEach { visitQuest ->

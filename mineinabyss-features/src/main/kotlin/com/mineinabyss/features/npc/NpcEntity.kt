@@ -61,16 +61,11 @@ class NpcEntity(
         entity.teleport(location)
         val gearyEntity = entity.toGearyOrNull()?: return
         gearyEntity.set<Npc>(this@NpcEntity.config)
-        if (dialogData != null) {
-            gearyEntity.set<DialogData>(this@NpcEntity.dialogData)
-            println("dialogg data set")
-        } else {
-            println("couldnt set dialog data for npc ${config.id}")
-        }
-        if (questDialog != null) {
-            gearyEntity.set<QuestDialogData>(QuestDialogData(questDialog))
-        }
 
+        if (dialogData != null) gearyEntity.set<DialogData>(this@NpcEntity.dialogData)
+        else abyss.logger.w("Could not set dialog data for npc ${config.id}")
+
+        if (questDialog != null) gearyEntity.set<QuestDialogData>(QuestDialogData(questDialog))
     }
 
     // everything else in this file is probably not gonna get used
@@ -103,20 +98,14 @@ class NpcEntity(
             val location = config.location
             val chunk = location.chunk
 
-            for (e in chunk.entities) {
-                if (config.id in e.scoreboardTags) {
-                    // delete the old entity if it exists and respawn a newer version instead
-                    e.remove()
-                }
-            }
+            // delete the old entity if it exists and respawn a newer version instead
+            for (entity in chunk.entities) if (config.id in entity.scoreboardTags) entity.remove()
             val entity = location.world.spawn(location, Interaction::class.java)
 
             val recipes = createMerchantRecipes(config.tradeTable.trades)
             val merchant = Bukkit.createMerchant()
 
             merchant.recipes = recipes
-            entity.customName(Component.text("a"))
-            entity.addScoreboardTag("custom trade ig")
             entity.addScoreboardTag(config.id)
             Bukkit.getPluginManager().registerEvents(object : Listener {
                 @EventHandler

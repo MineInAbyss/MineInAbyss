@@ -12,31 +12,22 @@ import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 
-
-// how to use:
-// load npcs config from config
-// load list of all dialogs ids
-// create NpcManager with npcs config, world, and dialogs ids
-// init it
-// register listeners
 class NpcManager(
     val npcsConfig: NpcsConfig,
     val world: World,
     val dialogsConfig: DialogsConfig,
 ): Listener {
     // probably not needed
-    var npcEntities: List<NpcEntity> = emptyList()
+    val npcEntities = mutableListOf<NpcEntity>()
     val npcMap: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 
     fun initNpc() {
         // load npc config
         for (npc in npcsConfig.npcs.values) {
             val npcEntity = NpcEntity(npc, world, dialogsConfig)
-            npcEntities = npcEntities + npcEntity
 
-            val chunkKey = npc.location.chunk.chunkKey
-            npcMap[chunkKey] = npcMap.getOrDefault(chunkKey, emptyList()) + npcEntity
-
+            npcEntities += npcEntity
+            npcMap.compute(npc.location.chunk.chunkKey) { _, list -> (list ?: listOf()).plus(npcEntity) }
             if (npc.location.isWorldLoaded && npc.location.isChunkLoaded) npcEntity.createBaseNpc()
 
         }
