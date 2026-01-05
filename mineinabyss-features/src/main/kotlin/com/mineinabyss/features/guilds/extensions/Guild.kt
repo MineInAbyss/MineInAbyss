@@ -230,7 +230,7 @@ fun Player.getGuildMembers(): List<GuildMember> {
 fun String.getGuildMembers(): List<GuildMember> {
     return transaction(abyss.db) {
         val guild =
-            Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.singleOrNull()?.get(Guilds.id)
+            Guilds.selectAll().where { Guilds.name.lowerCase() eq lowercase() }.singleOrNull()?.get(Guilds.id)
                 ?: return@transaction emptyList()
 
         Players.selectAll().where { (Players.guildId eq guild) }.map { row ->
@@ -376,7 +376,7 @@ fun Player.levelUpGuild() {
     val guildMembers = getGuildMembers().filter { it.player.uniqueId != uniqueId }.map { it.player }
     updateGuildBalance(-cost)
     transaction(abyss.db) {
-        val lvl = Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq guildName.lowercase() }.firstOrNull()
+        val lvl = Guilds.selectAll().where { Guilds.name.lowerCase() eq guildName.lowercase() }.firstOrNull()
             ?.get(Guilds.level) ?: return@transaction 0
 
         Guilds.update({ Guilds.name.lowerCase() eq guildName.lowercase() }) {

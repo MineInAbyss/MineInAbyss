@@ -32,15 +32,15 @@ class CoreListener : Listener {
         vehicle.passengers.filterIsInstance<Player>().forEach { player ->
             if (player.gameMode.isInvulnerable) return@forEach
 
-            player.location.findLocationAround(radius = 1, scale = 0.30) {
+            player.location.findLocationAround(1, 0.30) {
                 it.block.isFlowing && it.up(4.0).block.isFlowing
             }?.also { player.handleWaterfall() }
 
-            player.location.findLocationAround(radius = 1, scale = 0.30) {
+            player.location.findLocationAround(1, 0.30) {
                 it.clone().add(0.0, 4.0, 0.0).block.isBubbleColumn
             }?.also { player.handleBubbleColumn() }
 
-            if (!player.isInWaterOrBubbleColumn) player.maximumAir = 300
+            if (!player.isInWater) player.maximumAir = 300
         }
     }
 
@@ -48,7 +48,7 @@ class CoreListener : Listener {
     fun PlayerMoveEvent.playerMove() {
         if (player.gameMode.isInvulnerable || !hasExplicitlyChangedBlock()) return
 
-        player.location.findLocationAround(radius = 1, scale = 0.30) {
+        player.location.findLocationAround(1, 0.30) {
                 it.block.isFlowing && it.up(4.0).block.isFlowing
         }?.also { player.handleWaterfall() }
 
@@ -56,7 +56,7 @@ class CoreListener : Listener {
             it.clone().add(0.0, 4.0, 0.0).block.isBubbleColumn
         }?.also { player.handleBubbleColumn() }
 
-        if (!player.isInWaterOrBubbleColumn) player.maximumAir = 300
+        if (!player.isInWater) player.maximumAir = 300
     }
 
     private fun Player.handleWaterfall() {

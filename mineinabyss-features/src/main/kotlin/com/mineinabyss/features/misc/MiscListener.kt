@@ -5,6 +5,7 @@ import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.rightClicked
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.Effect
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -63,7 +64,7 @@ class MiscListener : Listener {
             if (newBlock.type != Material.DIRT) continue
             newBlock.type = Material.GRASS_BLOCK
             if (Random.nextDouble() < 0.5) newBlock.location.getNearbyPlayers(16.0).forEach { p ->
-                p.playEffect(newBlock.location, org.bukkit.Effect.BONE_MEAL_USE, 1)
+                p.playEffect(newBlock.location, Effect.BONE_MEAL_USE, null)
             }
         }
     }

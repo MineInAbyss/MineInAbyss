@@ -5,7 +5,6 @@ import kotlinx.coroutines.Job
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.craftbukkit.entity.CraftEntity
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.Bat

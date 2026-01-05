@@ -1,12 +1,5 @@
 package com.mineinabyss.features.quests
 
-import com.mineinabyss.geary.papermc.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
-import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-
 //fun unlockQuest(player: Player, questId: String) {
 //    val config = QuestConfigHolder.config ?: error("Trying to unlock quest $questId but QuestConfig is not initialized")
 //    val playerActiveQuests  = player.toGearyOrNull()?.get<PlayerActiveQuests>() ?: error("Could not unlock quest $questId: PlayerActiveQuests component not found")

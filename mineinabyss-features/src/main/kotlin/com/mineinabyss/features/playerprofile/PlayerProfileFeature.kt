@@ -3,10 +3,8 @@ package com.mineinabyss.features.playerprofile
 import com.mineinabyss.components.playerprofile.PlayerProfile
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.guiy.canvas.guiy
-import com.mineinabyss.idofront.commands.arguments.genericArg
 import com.mineinabyss.idofront.commands.arguments.offlinePlayerArg
 import com.mineinabyss.idofront.commands.arguments.optionArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction

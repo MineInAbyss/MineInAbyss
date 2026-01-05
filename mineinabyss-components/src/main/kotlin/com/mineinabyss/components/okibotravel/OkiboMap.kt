@@ -1,6 +1,5 @@
 package com.mineinabyss.components.okibotravel
 
-import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import kotlinx.serialization.EncodeDefault
@@ -57,10 +56,9 @@ data class OkiboMap(
         @Transient val offset = vectorFromString(_offset, 0f)
 
         fun offset(angle: Float): Vector {
-            var angle = angle
-            if (angle < 0) angle += 360f
+            val angle = if (angle < 0f) angle + 360.0 else angle.toDouble()
 
-            val radians = Math.toRadians(-angle.toDouble()) // Negate for clockwise yaw
+            val radians = Math.toRadians(-angle) // Negate for clockwise yaw
             val x = offset.x * cos(radians) - offset.z * sin(radians)
             val z = offset.x * sin(radians) + offset.z * cos(radians)
 
@@ -72,14 +70,13 @@ data class OkiboMap(
 
     @Serializable
     data class Icon(val text: String = ":orthmap_icon:", @SerialName("offset") private val _offset: String = "0,0,2", @SerialName("scale") private val _scale: String = "1,1,1") {
-        @Transient val offset = vectorFromString(_offset, 0f).toVector3f().rotateY(90f)
+        @Transient val offset: Vector3f = vectorFromString(_offset, 0f).toVector3f().rotateY(90f)
         @Transient val scale = vectorFromString(_scale, 0f).toVector3f()
 
         fun offset(angle: Float): Vector3f {
-            var angle = angle
-            if (angle < 0) angle += 360f
+            val angle = if (angle < 0f) angle + 360.0 else angle.toDouble()
 
-            val radians = Math.toRadians(-angle.toDouble()) // Negate for clockwise yaw
+            val radians = Math.toRadians(-angle) // Negate for clockwise yaw
             val x = offset.x * cos(radians) - offset.z * sin(radians)
             val z = offset.x * sin(radians) + offset.z * cos(radians)
 

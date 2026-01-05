@@ -1,18 +1,10 @@
-package com.mineinabyss.features.npc.NpcAction
+package com.mineinabyss.features.npc.action
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.Npc
-import com.mineinabyss.geary.actions.Action
-import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.Task
-import com.mineinabyss.geary.actions.Tasks
-import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.aselstudios.luxdialoguesapi.Builders.Answer
 import org.aselstudios.luxdialoguesapi.Builders.Dialogue
@@ -81,22 +73,15 @@ data class DialogueAction(
 
 }
 
-
-
 @Serializable
 class AnswerData(
     val text: String,
-    @EncodeDefault(Mode.NEVER)
-    val placeholderCondition: String? = null,
-    @EncodeDefault(Mode.NEVER)
-    val replyMessage: String? = null,
-    @EncodeDefault(Mode.NEVER)
-    val action: DialogueAction? = null
+    @EncodeDefault(Mode.NEVER) val placeholderCondition: String? = null,
+    @EncodeDefault(Mode.NEVER) val replyMessage: String? = null,
+    @EncodeDefault(Mode.NEVER) val action: DialogueAction? = null
 ) {
-    val npc = null
     fun build(npc: Npc): Answer? {
-        val answer = Answer.Builder()
-            .setAnswerText(text)
+        val answer = Answer.Builder().setAnswerText(text)
         if (placeholderCondition != null) answer.addCondition(placeholderCondition)
         if (replyMessage != null) answer.addReplyMessage(replyMessage)
         if (action != null) answer.addCallback { player -> action.execute(player, npc) }
@@ -107,17 +92,17 @@ class AnswerData(
 @Serializable
 class PageData(
     val lines: List<String> = emptyList(),
-    @EncodeDefault(Mode.NEVER)
-    val preAction: String? = null,
-    @EncodeDefault(Mode.NEVER)
-    val postAction: String? = null,
+    @EncodeDefault(Mode.NEVER) val answers: List<AnswerData> = emptyList(),
+    @EncodeDefault(Mode.NEVER) val preAction: String? = null,
+    @EncodeDefault(Mode.NEVER) val postAction: String? = null,
 ) {
 
-    fun build(): Page? {
+    fun build(npc: Npc): Page? {
         val page = Page.Builder()
         lines.forEach { line -> page.addLine(line) }
         if (preAction != null) page.addPreAction(preAction)
         if (postAction != null) page.addPostAction(postAction)
+        answers.forEach { answer -> page.addAnswer(answer.build(npc)) }
         return page.build()
     }
 }
@@ -143,7 +128,6 @@ class DialogData(
     @EncodeDefault(Mode.NEVER) val dialogBackgroundImageColor: String = "#f8ffe0",
     @EncodeDefault(Mode.NEVER) val answerBackgroundImageColor: String = "#f8ffe0",
     @EncodeDefault(Mode.NEVER) val cursorIconImage: String = "hand",
-    @EncodeDefault(Mode.NEVER) val answers: List<AnswerData> = emptyList(),
     @EncodeDefault(Mode.NEVER) val pages: List<PageData> = emptyList(),
 ) {
 
@@ -151,11 +135,9 @@ class DialogData(
         val dialogue = Dialogue.Builder()
             .setDialogueID(id)
             .setDialogueSpeed(typingSpeed)
-            .setTypingSound(typingSound)
-            .setTypingSoundPitch(1.0)
-            .setTypingSoundVolume(1.0)
+            .setTypingSound(typingSound, "", 1.0, 1.0)
             .setRange(range)
-            .setSelectionSound(selectionSound)
+            .setSelectionSound(selectionSound, "", 1.0, 1.0)
             .setEffect(effect)
             .setAnswerNumbers(answerNumbers)
             .setArrowImage(cursorIconImage, "#4f4a3e", -7)
@@ -163,23 +145,19 @@ class DialogData(
             .setAnswerBackgroundImage(answerBackgroundImage, answerBackgroundImageColor, 140)
             .setDialogueText(dialogueTextColor, 10)
             .setAnswerText(dialogueTextColor, 13, dialogueTextColor)
-            .setCharacterImage(characterImage, -16)
+            .setCharacterImage(characterImage, "white", -16)
             .setCharacterNameText(characterName, characterNameColor, 20)
-            .setNameStartImage(nameStartImage)
-            .setNameMidImage(nameMidImage)
-            .setNameEndImage(nameEndImage)
-            .setNameImageColor("#f8ffe0")
+            .setNameImage(nameStartImage, nameMidImage, nameEndImage, "#f8ffe0", 0)
 
         if (backgroundFog) dialogue.setFogImage("fog", "#000000")
 
-        answers.forEach { answerData -> dialogue.addAnswer(answerData.build(npc)) }
-        pages.forEach { pageData -> dialogue.addPage(pageData.build()) }
+        pages.forEach { pageData -> dialogue.addPage(pageData.build(npc)) }
         return dialogue.build()
     }
 
     fun startDialogue(player: Player, id: String, npc: Npc) {
         val dialog = this.build(id, npc) ?: return
-        LuxDialoguesAPI.getProvider().sendDialogue(player, dialog)
+        LuxDialoguesAPI.getProvider().sendDialogue(player, dialog, "")
     }
 }
 

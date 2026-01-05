@@ -3,7 +3,6 @@ package com.mineinabyss.features.tools.sickle
 import com.mineinabyss.components.tools.Sickle
 import com.mineinabyss.features.helpers.BlockUtil
 import com.mineinabyss.geary.modules.Geary
-import com.mineinabyss.geary.modules.GearyModule
 import com.mineinabyss.geary.modules.observeWithData
 import com.mineinabyss.geary.systems.query.query
 import org.bukkit.Sound

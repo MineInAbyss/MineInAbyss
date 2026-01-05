@@ -130,7 +130,7 @@ fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
             else ->
                 Text(
                     "<red><b><st>Level up Guildrank".miniMsg(),
-                    "<red>You need <b>${guild?.getGuildLevelUpCost()} coins</b> in your".miniMsg(),
+                    "<red>You need <b>${guild.getGuildLevelUpCost()} coins</b> in your".miniMsg(),
                     "<red>guild balance to level up your guildrank.".miniMsg()
                 )
         }

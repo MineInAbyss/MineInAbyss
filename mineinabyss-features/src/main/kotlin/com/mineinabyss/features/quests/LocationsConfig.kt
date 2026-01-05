@@ -27,10 +27,3 @@ class LocationData(
 
 }
 
-@Serializable
-class LocationsConfig(
-    val locations: Map<String, LocationData> = emptyMap(),
-
-    ) {
-}
-

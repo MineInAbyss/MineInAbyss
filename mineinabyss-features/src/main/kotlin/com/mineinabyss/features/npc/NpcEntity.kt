@@ -1,19 +1,19 @@
 package com.mineinabyss.features.npc
 
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.npc.NpcAction.DialogData
-import com.mineinabyss.features.npc.NpcAction.DialogsConfig
-import com.mineinabyss.features.npc.NpcAction.QuestDialogData
+import com.mineinabyss.features.npc.action.DialogData
+import com.mineinabyss.features.npc.action.DialogsConfig
+import com.mineinabyss.features.npc.action.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.Trade
-import com.mineinabyss.geary.papermc.spawning.spawn_types.mythic.MythicSpawnType
 import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.info
-import com.mineinabyss.idofront.spawning.spawn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.ticxo.modelengine.api.ModelEngineAPI
+import net.kyori.adventure.text.Component
+import net.minecraft.advancements.AdvancementRewards.Builder.recipe
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.entity.Interaction
@@ -54,7 +54,7 @@ class NpcEntity(
         modeledEntity.addModel(activeModel, true)
 
         entity.addScoreboardTag(config.id)
-        entity.customName = config.displayName
+        entity.customName(config.displayName.miniMsg())
         entity.isCustomNameVisible = true
         entity.isPersistent = false
 //        entity.isResponsive = true
@@ -113,12 +113,9 @@ class NpcEntity(
 
             val recipes = createMerchantRecipes(config.tradeTable.trades)
             val merchant = Bukkit.createMerchant()
-            //entity.setItemStack(ItemStack(Material.WITHER_SKELETON_SKULL))
-            //entity.setAI(false)
+
             merchant.recipes = recipes
-//            entity.profession = org.bukkit.entity.Villager.Profession.LIBRARIAN
-//            entity.recipes = recipes
-            entity.customName = "a"
+            entity.customName(Component.text("a"))
             entity.addScoreboardTag("custom trade ig")
             entity.addScoreboardTag(config.id)
             Bukkit.getPluginManager().registerEvents(object : Listener {
@@ -129,8 +126,7 @@ class NpcEntity(
                     if (event.rightClicked == entity) {
                        player.info("bla bla bla")
                         event.isCancelled = true
-                        val new_recipe = createMerchantRecipes(config.tradeTable.trades)
-                        merchant.recipes = new_recipe
+                        merchant.recipes = createMerchantRecipes(config.tradeTable.trades)
 
                         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()
                     }
@@ -143,18 +139,15 @@ class NpcEntity(
 
     fun createMerchantRecipes(trades: List<Trade>): List<MerchantRecipe> {
         val gearyItems = mainWorld.toGeary().getAddon(ItemTracking)
-        val recipes = mutableListOf<MerchantRecipe>()
-        for (trade in trades) {
-            val inputItem: ItemStack = gearyItems.createItem(PrefabKey.Companion.of(trade.input.prefab)) ?: error("Incorrect prefab key: ${trade.input.prefab}")
-            inputItem.amount = trade.input.amount
-            val outputItem = gearyItems.createItem(PrefabKey.Companion.of(trade.output.prefab)) ?: error("Incorrect prefab key: ${trade.output.prefab}")
-            outputItem.amount = trade.output.amount
+
+        return trades.map { trade ->
+            val inputItem = gearyItems.createItem(PrefabKey.of(trade.input.prefab))?.asQuantity(trade.input.amount)
+                ?: error("Incorrect prefab key: ${trade.input.prefab}")
+            val outputItem = gearyItems.createItem(PrefabKey.of(trade.output.prefab))?.asQuantity(trade.output.amount)
+                ?: error("Incorrect prefab key: ${trade.output.prefab}")
 
             val recipe = MerchantRecipe(outputItem, 99999)
-            recipe.addIngredient(inputItem)
-
-            recipes.add(recipe)
+            recipe.apply { addIngredient(inputItem) }
         }
-        return recipes
     }
 }

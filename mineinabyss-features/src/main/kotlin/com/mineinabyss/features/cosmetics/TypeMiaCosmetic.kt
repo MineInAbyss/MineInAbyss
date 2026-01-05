@@ -2,7 +2,7 @@ package com.mineinabyss.features.cosmetics
 
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
-import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider
 import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.mineinabyss.components.editPlayerData
@@ -37,7 +37,7 @@ class TypeMiaCosmetic : TypeCosmetic("mia_cosmetic") {
 
             ClickType.RIGHT -> when {
                 cosmetic.isDyeable && (cosmetic == currentCosmetic || user.canEquipCosmetic(cosmetic, true)) ->
-                    DyeMenu.openMenu(user, cosmetic)
+                    DyeMenuProvider.openMenu(player, holder, cosmetic)
                 cosmetic.requiresPermission() && !player.hasPermission(cosmetic.permission) -> player.editPlayerData {
                     when (currency) {
                         "mitty_token" -> {

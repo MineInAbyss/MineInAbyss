@@ -1,16 +1,19 @@
 package com.mineinabyss.features.npc.shopkeeping
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.components.npc.shopkeeping.*
+import com.mineinabyss.components.npc.shopkeeping.ShopCurrency
+import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
+import com.mineinabyss.components.npc.shopkeeping.ShopTrade
+import com.mineinabyss.components.npc.shopkeeping.ShopTradeSerializer
+import com.mineinabyss.components.npc.shopkeeping.TradeAction
 import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.datatypes.EntityType
 import com.mineinabyss.geary.modules.Geary
-import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.helpers.GearyMobPrefabQuery
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.geary.prefabs.configuration.components.Prefab
@@ -40,7 +43,7 @@ object ShopKeepers {
 }
 
 
-fun getShopTradeCoin(type: ShopCurrency, stack: ItemStack?, cost: Int): ItemStack? {
+fun shopTradeCoin(type: ShopCurrency, stack: ItemStack?, cost: Int): ItemStack? {
     return when (type) {
         ShopCurrency.ORTH_COIN -> CoinFactory.orthCoin?.asQuantity(cost)
         ShopCurrency.MITTY_TOKEN -> CoinFactory.mittyToken?.asQuantity(cost)
@@ -48,21 +51,21 @@ fun getShopTradeCoin(type: ShopCurrency, stack: ItemStack?, cost: Int): ItemStac
     }
 }
 
-fun Player.getShopTradeCost(currencyType: ShopCurrency, currencyStack: ItemStack?): Int {
+fun Player.shopTradeCost(currencyType: ShopCurrency, currencyStack: ItemStack?): Int {
     return when (currencyType) {
-        ShopCurrency.ORTH_COIN -> playerData.orthCoinsHeld
-        ShopCurrency.MITTY_TOKEN -> playerData.mittyTokensHeld
-        ShopCurrency.ITEM -> getSimilarItemAmount(currencyStack)
+        ShopCurrency.ORTH_COIN -> playerDataOrNull?.orthCoinsHeld ?: 0
+        ShopCurrency.MITTY_TOKEN -> playerDataOrNull?.mittyTokensHeld ?: 0
+        ShopCurrency.ITEM -> similarItemAmount(currencyStack)
     }
 }
 
-fun Player.getFirstSimilarItem(item: ItemStack?) = inventory.contents.firstOrNull { i -> i?.isSimilar(item) ?: false }
-fun Player.getSimilarItems(item: ItemStack?) = inventory.contents.filter { i -> i != null && i.isSimilar(item) }
-fun Player.getSimilarItemAmount(item: ItemStack?) = getSimilarItems(item).sumOf { it?.amount ?: 0 }
+fun Player.firstSimilarItem(item: ItemStack?) = inventory.contents.firstOrNull { i -> i?.isSimilar(item) ?: false }
+fun Player.similarItems(item: ItemStack?) = inventory.contents.filter { i -> i != null && i.isSimilar(item) }
+fun Player.similarItemAmount(item: ItemStack?) = similarItems(item).sumOf { it?.amount ?: 0 }
 fun Player.adjustItemStackAmountFromCost(item: ItemStack?, c: Int): ItemStack? {
     var cost = c
-    if (item == null || getSimilarItemAmount(item) < c) return null
-    this.getSimilarItems(item).forEach { stack ->
+    if (item == null || similarItemAmount(item) < c) return null
+    this.similarItems(item).forEach { stack ->
         if (stack == null) return@forEach
 
         val amount = stack.amount
@@ -81,15 +84,15 @@ fun Player.adjustItemStackAmountFromCost(item: ItemStack?, c: Int): ItemStack? {
 
 @Composable
 fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrades(player: Player) {
-    val data = player.playerData
+    val data = player.playerDataOrNull ?: return
     this.forEach { (item, currency, currencyType, cost, tradeAction) ->
         val tradeItem = item.toItemStack()
         val currencyStack = currency?.toItemStack() ?: if (currencyType == ShopCurrency.ITEM) return@forEach else null
-        val coin = getShopTradeCoin(currencyType, currencyStack, cost) ?: return@forEach
+        val coin = shopTradeCoin(currencyType, currencyStack, cost) ?: return@forEach
 
         Button(
             onClick = {
-                if (player.getShopTradeCost(currencyType, currencyStack) < cost) {
+                if (player.shopTradeCost(currencyType, currencyStack) < cost) {
                     player.error("You don't have enough ${currencyType.name.lowercase()}'s!")
                     player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
                     return@Button
@@ -113,11 +116,9 @@ fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrade
                     }
 
                     TradeAction.PLAYER_COMMAND -> {
-                        if (player.performCommand(tradeAction.getValue(player))) {
+                        if (player.performCommand(tradeAction.getValue(player)))
                             player.playSound(player, Sound.ENTITY_VILLAGER_CELEBRATE, 1f, 1f)
-                        } else {
-                            player.error("Failed to execute command!")
-                        }
+                        else player.error("Failed to execute command!")
                     }
 
                     TradeAction.CONSOLE_COMMAND -> abyss.plugin.server.dispatchCommand(

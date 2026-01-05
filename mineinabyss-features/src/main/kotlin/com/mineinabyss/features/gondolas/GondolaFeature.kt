@@ -30,7 +30,7 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
     class Context : Configurable<GondolasConfig> {
         override val configManager =
             config("gondolas", abyss.dataPath, GondolasConfig())
-        val ticketsCfg by config("tickets", abyss.dataPath, TicketConfig())
+        val ticketConfig by config("tickets", abyss.dataPath, TicketConfig())
         val gondolasListener = GondolasListener()
     }
 
@@ -38,8 +38,8 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
         //LoadedGondolas
         //createGondolaTracker()
         plugin.listeners(context.gondolasListener)
-        context.gondolasListener.startCooldownDisplayTask(plugin)
-        TicketConfigHolder.config = context.ticketsCfg
+        context.gondolasListener.startCooldownDisplayTask()
+        TicketConfigHolder.config = context.ticketConfig
         mainCommand {
             "gondola"(desc = "Commands for gondolas") {
                 permission = "mineinabyss.gondola"
@@ -57,7 +57,7 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
 //                            ?: return@playerAction
 //                        gondolas.keys.add(gondola)
 //                        player.success("Unlocked $gondola")
-                        val ticket = context.ticketsCfg.tickets[passID] ?: return@playerAction player.error("Ticket $passID not found")
+                        val ticket = context.ticketConfig.tickets[passID] ?: return@playerAction player.error("Ticket $passID not found")
                         player.unlockRoute(ticket)
                     }
                 }
@@ -76,7 +76,7 @@ class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
                 1 -> listOf("gondola").filter { it.startsWith(args[0], true) }
                 2 -> if (args[0] == "gondola") listOf("list", "unlock", "clear").filter { it.startsWith(args[1], true) } else null
                 3 -> if (args[0] == "gondola" && args[1] == "unlock") {
-                    context.ticketsCfg.tickets.keys.filter { it.startsWith(args[2], true) }
+                    context.ticketConfig.tickets.keys.filter { it.startsWith(args[2], true) }
                     //context.config.gondolas.keys.filter { it.startsWith(args[2], true) }
                 } else null
 

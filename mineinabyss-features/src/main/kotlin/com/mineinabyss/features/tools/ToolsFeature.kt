@@ -8,8 +8,6 @@ import com.mineinabyss.features.tools.depthmeter.createToggleDepthHudAction
 import com.mineinabyss.features.tools.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.tools.sickle.SickleListener
 import com.mineinabyss.features.tools.sickle.createHarvestAction
-import com.mineinabyss.geary.modules.geary
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL

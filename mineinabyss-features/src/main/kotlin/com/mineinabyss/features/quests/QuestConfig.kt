@@ -1,10 +1,7 @@
 package com.mineinabyss.features.quests
 
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.serialization.LocationSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bukkit.Location
 
 @Serializable
 data class VisitQuest(

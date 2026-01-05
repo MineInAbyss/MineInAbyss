@@ -9,7 +9,6 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.listeners.ChattyGuildListener
-import com.mineinabyss.features.guilds.listeners.EternalFortuneGuildListener
 import com.mineinabyss.features.guilds.listeners.GuildContainerSystem
 import com.mineinabyss.features.guilds.listeners.GuildListener
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
@@ -68,7 +67,6 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
         override val configManager = config("guilds", abyss.dataPath, Config())
         val listeners = buildList {
             if (abyss.isChattyLoaded) add(ChattyGuildListener())
-            if (abyss.isEternalFortuneLoaded) add(EternalFortuneGuildListener())
         }.toTypedArray()
     }
 

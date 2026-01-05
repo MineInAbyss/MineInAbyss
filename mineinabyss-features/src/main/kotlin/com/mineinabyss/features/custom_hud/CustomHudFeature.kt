@@ -8,6 +8,7 @@ import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
 
 class CustomHudFeature(
+    var debugHandleLayering: Boolean = true,
     val backgroundLayout: String = "backgrounds",
     val customHudTemplate: String = "custom_hud"
 ) : Feature() {
@@ -16,6 +17,12 @@ class CustomHudFeature(
         plugin.listeners(CustomHudListener(this@CustomHudFeature))
         mainCommand {
             "custom_hud" {
+                "debug" {
+                    action {
+                        debugHandleLayering = !debugHandleLayering
+                        sender.success("debugHandleLayering is now $debugHandleLayering")
+                    }
+                }
                 "toggle" {
                     "backgrounds" {
                         playerAction {

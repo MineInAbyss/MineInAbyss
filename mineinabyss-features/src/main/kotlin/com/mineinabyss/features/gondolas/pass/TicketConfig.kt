@@ -9,5 +9,5 @@ data class TicketConfig (
 )
 
 object TicketConfigHolder {
-    var config: TicketConfig ?= null;
+    var config: TicketConfig ?= null
 }

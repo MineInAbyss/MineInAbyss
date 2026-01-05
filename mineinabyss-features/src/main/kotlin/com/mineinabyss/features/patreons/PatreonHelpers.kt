@@ -7,7 +7,6 @@ import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.datastore.remove
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
@@ -16,7 +15,6 @@ import net.luckperms.api.context.ImmutableContextSet
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.NodeType
 import net.luckperms.api.track.Track
-import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
 fun OfflinePlayer.removePatreonPerks() {

@@ -413,28 +413,32 @@ fun OfflinePlayer.hasGuild(): Boolean {
 
 fun OfflinePlayer.getGuildName(): GuildName? {
     return transaction(abyss.db) {
-        val playerGuild =
-            Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull()?.get(Players.guildId)
-                ?: return@transaction null
+        val playerGuild = Players.selectAll().where {
+            Players.playerUUID eq uniqueId
+        }.singleOrNull()?.get(Players.guildId) ?: return@transaction null
 
-        val guildName = Guilds.selectAll().where { Guilds.id eq playerGuild }.singleOrNull()?.get(Guilds.name)
-            ?: return@transaction null
+        val guildName = Guilds.selectAll().where {
+            Guilds.id eq playerGuild
+        }.singleOrNull()?.get(Guilds.name) ?: return@transaction null
+
         return@transaction guildName
     }
 }
 
 fun OfflinePlayer.getGuildOwner(): UUID? {
     return transaction(abyss.db) {
-        val playerGuild =
-            Players.selectAll().where { Players.playerUUID eq uniqueId }.singleOrNull()?.get(Players.guildId)
-                ?: return@transaction null
+        val playerGuild = Players.selectAll().where {
+            Players.playerUUID eq uniqueId
+        }.singleOrNull()?.get(Players.guildId) ?: return@transaction null
 
-        val guildId = Guilds.selectAll().where { Guilds.id eq playerGuild }.singleOrNull()?.get(Guilds.id)
-            ?: return@transaction null
+        val guildId = Guilds.selectAll().where {
+            Guilds.id eq playerGuild
+        }.singleOrNull()?.get(Guilds.id) ?: return@transaction null
 
-        val guildOwner =
-            Players.selectAll().where { (Players.guildId eq guildId) and (Players.guildRank eq GuildRank.OWNER) }
-                .singleOrNull()?.get(Players.playerUUID) ?: return@transaction null
+        val guildOwner = Players.selectAll().where {
+            (Players.guildId eq guildId) and (Players.guildRank eq GuildRank.OWNER)
+        }.singleOrNull()?.get(Players.playerUUID) ?: return@transaction null
+
         return@transaction guildOwner
     }
 }
@@ -467,7 +471,7 @@ fun OfflinePlayer.getGuildLevel(): Int {
 
 fun GuildName.getGuildLevel(): Int {
     return transaction(abyss.db) {
-        return@transaction Guilds.selectAll().where { Guilds.name.lowerCase<String>() eq lowercase() }.singleOrNull()
+        return@transaction Guilds.selectAll().where { Guilds.name.lowerCase() eq lowercase() }.singleOrNull()
             ?.get(Guilds.level) ?: return@transaction 0
     }
 }

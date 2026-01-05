@@ -2,7 +2,6 @@ package com.mineinabyss.features.orthbanking
 
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
-import com.mineinabyss.components.playerData
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.messaging.error
@@ -34,30 +33,13 @@ fun Player.depositCoins(amount: Int) {
 fun Player.withdrawCoins(amount: Int) = editPlayerData {
     val slot = inventory.firstEmpty()
 
-    if (slot == -1) {
-        error("No empty slots in inventory")
-        return
-    }
-
-    if (orthCoinsHeld == 0) {
-        error("Your account is empty...")
-        return
-    }
-
-    if (orthCoinsHeld < amount) {
-        error("You don't have that many Orth Coins!")
-        return
-    }
-
-    if (amount <= 0) {
-        error("You can't withdraw 0 coins!")
-        return
-    }
+    if (slot == -1) return@editPlayerData error("No empty slots in inventory")
+    if (orthCoinsHeld == 0) return@editPlayerData error("Your account is empty...")
+    if (orthCoinsHeld < amount) return@editPlayerData error("You don't have that many Orth Coins!")
+    if (amount <= 0) return@editPlayerData error("You can't withdraw 0 coins!")
 
     val item = CoinFactory.orthCoin ?: kotlin.error("No orth coin prefab found")
-    for (i in 1..amount) {
-        inventory.addItem(item)
-        orthCoinsHeld -= 1
-    }
+    inventory.addItem(item.asQuantity(amount))
+    orthCoinsHeld -= amount
     success("Your Orth Coins have been withdrawn!")
 }

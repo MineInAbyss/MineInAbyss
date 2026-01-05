@@ -3,6 +3,7 @@ package com.mineinabyss.features.orthbanking
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
@@ -67,7 +68,7 @@ class OrthBankingFeature(val config: Config) : Feature() {
                         val player = sender as? Player ?: return@playerAction
                         val slot = player.inventory.firstEmpty()
                         val item = CoinFactory.orthCoin ?: return@playerAction player.error("Failed to create Orth Coin.")
-                        val heldAmount = player.playerData.orthCoinsHeld
+                        val heldAmount = player.playerDataOrNull?.orthCoinsHeld ?: return@playerAction player.error("You don't have that many Orth Coins.")
 
                         when {
                             !player.isInHub() -> return@playerAction player.error("You must be in Orth to make a withdraw.")

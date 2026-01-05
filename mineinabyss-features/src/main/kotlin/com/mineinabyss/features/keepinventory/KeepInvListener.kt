@@ -2,6 +2,7 @@ package com.mineinabyss.features.keepinventory
 
 import com.mineinabyss.components.playerDataOrNull
 import org.bukkit.GameRule
+import org.bukkit.GameRules
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
@@ -12,7 +13,7 @@ class KeepInvListener(private val config: KeepInvFeature.Config) : Listener {
     // Force keepinv to be false
     @EventHandler
     fun WorldLoadEvent.onWorldLoad() {
-        world.setGameRule(GameRule.KEEP_INVENTORY, false)
+        world.setGameRule(GameRules.KEEP_INVENTORY, false)
     }
 
     @EventHandler

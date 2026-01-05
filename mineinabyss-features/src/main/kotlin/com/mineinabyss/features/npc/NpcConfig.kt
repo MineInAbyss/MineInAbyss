@@ -5,8 +5,8 @@ import com.mineinabyss.components.gondolas.Ticket
 import com.mineinabyss.features.gondolas.pass.TicketConfigHolder
 import com.mineinabyss.features.gondolas.pass.isRouteUnlocked
 import com.mineinabyss.features.gondolas.pass.unlockRoute
-import com.mineinabyss.features.npc.NpcAction.DialogData
-import com.mineinabyss.features.npc.NpcAction.QuestDialogData
+import com.mineinabyss.features.npc.action.DialogData
+import com.mineinabyss.features.npc.action.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeTable
 import com.mineinabyss.features.quests.QuestManager
 import com.mineinabyss.features.quests.QuestManager.checkAndCompleteQuest
@@ -90,7 +90,7 @@ data class Npc(
 
             // Quest is started but not completed
             playerHasUnlockedQuest(player, questId) -> {
-                player.error("Come back when you've completed this quest: ${QuestManager.getQuestInformation(player, questId)}")
+                player.error("Come back when you've completed this quest: ${QuestManager.questInformation(player, questId)}")
             }
 
             // Quest is not started

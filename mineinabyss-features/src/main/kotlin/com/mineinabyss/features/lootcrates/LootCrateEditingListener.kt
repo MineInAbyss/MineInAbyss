@@ -24,7 +24,7 @@ class LootCrateEditingListener(val msg: LootCratesFeature.Messages) : Listener {
     fun BlockPlaceEvent.onPlaceCopiedLootChest() {
         (blockPlaced.state as? Chest)?.withGeary { chest ->
             val pdc = chest.persistentDataContainer
-            val location = pdc.decode<LootLocation>() ?: return
+            if (!pdc.has<LootLocation>()) return
 
             if (!player.hasPermission(LootCratePermissions.EDIT)) {
                 pdc.remove<LootLocation>()

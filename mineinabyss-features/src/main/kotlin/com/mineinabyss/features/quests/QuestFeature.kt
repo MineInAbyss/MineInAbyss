@@ -2,15 +2,11 @@ package com.mineinabyss.features.quests
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.quests.QuestManager.completeQuest
-import com.mineinabyss.features.quests.QuestManager.getActiveQuests
-import com.mineinabyss.features.quests.QuestManager.getCompletedQuests
-import com.mineinabyss.features.quests.QuestManager.getVisitQuestProgress
+import com.mineinabyss.features.quests.QuestManager.activeQuests
+import com.mineinabyss.features.quests.QuestManager.completedQuests
+import com.mineinabyss.features.quests.QuestManager.visitQuestProgress
 import com.mineinabyss.features.quests.QuestManager.resetQuests
 import com.mineinabyss.features.quests.QuestManager.unlockQuest
-import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.papermc.features.common.actions.DropItemsAction
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
@@ -95,11 +91,11 @@ class QuestFeature : FeatureWithContext<QuestFeature.Context>(::Context) {
                     playerAction {
 
                         when (questId) {
-                            in getCompletedQuests(player) -> {
+                            in completedQuests(player) -> {
                                 player.success("Quest $questId is completed.")
                             }
-                            in getActiveQuests(player) -> {
-                                val progress = getVisitQuestProgress(player, questId)
+                            in activeQuests(player) -> {
+                                val progress = visitQuestProgress(player, questId)
                                 player.success("Quest $questId is in progress. Progress: ${progress.first}/${progress.second}")
                             }
                             else -> {

@@ -1,11 +1,11 @@
 package com.mineinabyss.features.anticheese
 
-import com.destroystokyo.paper.MaterialTags
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
+import org.bukkit.Tag
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
 import org.bukkit.entity.EntityType
@@ -61,7 +61,7 @@ class AntiCheeseListener : Listener {
 
     @EventHandler
     fun BlockDispenseEvent.preventBackpackPlace() {
-        if (MaterialTags.SHULKER_BOXES.isTagged(item)) {
+        if (Tag.ITEMS_SHULKER_BOXES.isTagged(item.type)) {
             val inv = (block.state as Dispenser).inventory.contents
             val relative = block.getRelative((block.blockData as Directional).facing)
             if (relative.isSolid || !relative.isReplaceable) return

@@ -9,6 +9,7 @@ import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.Component
 import net.luckperms.api.node.Node
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -39,27 +40,24 @@ object QuestManager {
         player.toGeary().setPersisting(newData)
     }
 
-    fun getActiveQuests(player: Player): Set<String> {
-        val data = getQuestData(player)
-        return data.activeQuests
+    fun activeQuests(player: Player): Set<String> {
+        return getQuestData(player).activeQuests
     }
 
-    fun getCompletedQuests(player: Player): Set<String> {
-        val data = getQuestData(player)
-        return data.completedQuests
+    fun completedQuests(player: Player): Set<String> {
+        return getQuestData(player).completedQuests
     }
 
-    fun getVisitedLocations(player: Player): Set<String> {
-        val data = getQuestData(player)
-        return data.visitedLocations
+    fun visitedLocations(player: Player): Set<String> {
+        return getQuestData(player).visitedLocations
     }
 
-    fun getQuestInformation(player: Player, questId: String): String {
+    fun questInformation(player: Player, questId: String): Component {
         val config = QuestConfigHolder.config!!
-        val visitQuest = config.visitQuests[questId]?.displayName ?: return "\"$questId\""
-        val progress = getVisitQuestProgress(player, questId)
+        val visitQuest = config.visitQuests[questId]?.displayName ?: return Component.text(questId)
+        val progress = visitQuestProgress(player, questId)
         //TODO make work for other quest types
-        return """"$visitQuest" - ${progress.first}/${progress.second} locations visited."""
+        return Component.text(""""$visitQuest" - ${progress.first}/${progress.second} locations visited.""")
     }
 
     fun addVisitedLocation(player: Player, locationName: String) {
@@ -121,7 +119,7 @@ object QuestManager {
         addQuest(player, questId)
     }
 
-    fun getVisitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
+    fun visitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
         val config = QuestConfigHolder.config ?: error("Trying to get progress of quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: error("Trying to get progress of quest $questId but it does not exist in the QuestConfig")
         val questData = getQuestData(player)

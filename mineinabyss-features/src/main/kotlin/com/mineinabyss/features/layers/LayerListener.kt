@@ -1,5 +1,6 @@
 package com.mineinabyss.features.layers
 
+//import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerChangeSectionEvent
@@ -8,8 +9,6 @@ import com.mineinabyss.deeperworld.services.PlayerManager
 import com.mineinabyss.deeperworld.world.section.Section
 import com.mineinabyss.deeperworld.world.section.centerLocation
 import com.mineinabyss.deeperworld.world.section.section
-//import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
-import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.actions.ActionGroupContext
@@ -23,7 +22,6 @@ import net.kyori.adventure.title.Title
 import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket
 import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket
 import net.minecraft.world.level.border.WorldBorder
-import org.bukkit.Bukkit
 import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
@@ -39,15 +37,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 class LayerListener : Listener {
-
-    init {
-        //if (abyss.isEternalFortuneLoaded) Bukkit.getPluginManager().registerEvents(object : Listener {
-        //    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-        //    fun PlayerCreateGraveEvent.onCreateGrave() {
-        //        if (player.isInHub()) isCancelled = true
-        //    }
-        //}, abyss.plugin)
-    }
 
     private val titleCooldown = Cooldown(2.seconds, null, "mineinabyss:layer_title")
 

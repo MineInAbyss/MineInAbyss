@@ -19,7 +19,6 @@ import org.bukkit.entity.Player
 @Composable
 fun GondolaSelectionMenu(player: Player) {
     val owner = LocalGuiyOwner.current
-    val gearyPlayer = player.toGeary()
     val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
 
     Chest(

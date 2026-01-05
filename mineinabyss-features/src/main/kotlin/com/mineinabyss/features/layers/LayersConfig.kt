@@ -1,7 +1,6 @@
 package com.mineinabyss.features.layers
 
 import com.mineinabyss.components.layer.Layer
-import com.mineinabyss.components.layer.LayerKey
 import com.mineinabyss.deeperworld.services.WorldManager
 import kotlinx.serialization.Serializable
 

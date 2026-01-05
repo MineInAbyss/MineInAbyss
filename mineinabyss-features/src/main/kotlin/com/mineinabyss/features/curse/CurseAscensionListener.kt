@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerTeleportEvent
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.ENDER_PEARL
 import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
@@ -59,7 +58,7 @@ class CurseAscensionListener : Listener {
     @EventHandler(ignoreCancelled = true)
     fun PlayerTeleportEvent.handleCurseOnTeleport() {
         val (player, from, to) = this
-        if (this.cause == ENDER_PEARL || this.cause == CHORUS_FRUIT)
+        if (this.cause == ENDER_PEARL || this.cause == PlayerTeleportEvent.TeleportCause.CONSUMABLE_EFFECT)
             handleCurse(player, from, to)
     }
 }

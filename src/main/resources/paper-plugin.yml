@@ -18,10 +18,6 @@ permissions:
 depend: [LuxDialogues]
 dependencies:
   server:
-    LuxDialogues:
-      required: true
-      load: BEFORE
-      join-classpath: true
     Geary:
       required: true
       load: BEFORE
@@ -31,6 +27,10 @@ dependencies:
       load: BEFORE
       join-classpath: true
     DeeperWorld:
+      required: false
+      load: BEFORE
+      join-classpath: true
+    LuxDialogues:
       required: false
       load: BEFORE
       join-classpath: true

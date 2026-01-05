@@ -11,7 +11,7 @@ class MiAUserProvider : CosmeticUserProvider() {
         return MiACosmeticUser(playerId)
     }
 
-    override fun getProviderPlugin(): Plugin? {
+    override fun getProviderPlugin(): Plugin {
         return abyss.plugin
     }
 }

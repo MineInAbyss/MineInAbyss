@@ -8,10 +8,11 @@ import java.util.*
 
 class MiACosmeticUser(uuid: UUID) : CosmeticUser(uuid) {
 
-    override fun updateCosmetic(slot: CosmeticSlot) {
+    override fun updateCosmetic(slot: CosmeticSlot): Boolean {
         super.updateCosmetic(slot)
-        if (slot != CosmeticSlot.BACKPACK) return
+        if (slot != CosmeticSlot.BACKPACK) return false
         if (abyss.config.cosmetics.equipWhistleCosmetic) equipWhistleCosmetic()
+        return true
     }
 
 }

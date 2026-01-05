@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 import kotlin.jvm.optionals.getOrNull
 
 internal val mythicHud by lazy { Bukkit.getPluginManager().getPlugin("MythicHUD") as MythicHUD }
-val HudHolder.activeLayouts: List<HudLayout> get() = mythicHud.layouts().layouts.mapNotNull { getActiveLayout(it.key).getOrNull() as? HudLayout }
+val HudHolder.activeLayouts: List<HudLayout> get() = mythicHud.layouts().layouts.mapNotNull { getActiveLayout(it.key).getOrNull()?.parent }
 fun CustomHudFeature.customHudEnabled(player: Player) = this.customHudTemplate in player.packyData.enabledPackIds
 
 val Player.hudHolder: HudHolder? get() = HudHolder.get(this)

@@ -43,7 +43,7 @@ class AbyssFeatureConfig(
     val core: CoreFeature.Config = CoreFeature.Config(),
     val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
     val curse: Toggle = Toggle(),
-    val custom_hud: Toggle = Toggle(),
+    val customHud: Toggle = Toggle(),
     val descent: Toggle = Toggle(),
     val displayLocker: Toggle = Toggle(),
     val gondolas: Toggle = Toggle(),
@@ -65,7 +65,7 @@ class AbyssFeatureConfig(
     val tutorial: Toggle = Toggle(),
 ) {
     val features by lazy {
-        buildList<Feature> {
+        buildList {
             fun add(condition: Boolean, feature: () -> Feature) {
                 if (enableAll || condition) add(feature())
             }
@@ -73,7 +73,7 @@ class AbyssFeatureConfig(
             add(core.enabled) { CoreFeature(core) }
             add(cosmetics.enabled) { CosmeticsFeature(cosmetics) }
             add(curse.enabled) { CurseFeature() }
-            add(custom_hud.enabled) { CustomHudFeature() }
+            add(customHud.enabled) { CustomHudFeature() }
             add(descent.enabled) { DescentFeature() }
             add(displayLocker.enabled) { DisplayLockerFeature() }
             add(gondolas.enabled) { GondolaFeature() }
