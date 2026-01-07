@@ -12,9 +12,9 @@ import kotlin.jvm.java
 data class VisitQuest(
     val questId: String,
     val displayName: String,
-    val locations: @Serializable(SingleOrListSerializer::class) List<LocationData>,
-    val rewards: @Serializable(SingleOrListSerializer::class) List<SerializableItemStack> = emptyList(),
-    val perms: @Serializable(SingleOrListSerializer::class) List<String> = emptyList(),
+    val locations: List<LocationData>,
+    val rewards: List<SerializableItemStack> = emptyList(),
+    val perms: List<String> = emptyList(),
 )
 
 @Serializable

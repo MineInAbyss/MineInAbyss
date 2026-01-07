@@ -5,7 +5,7 @@ import com.mineinabyss.features.gondolas.pass.removeRoute
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
-enum class GondolaType() {
+enum class GondolaType {
     UPPER,
     LOWER,
     NONE;

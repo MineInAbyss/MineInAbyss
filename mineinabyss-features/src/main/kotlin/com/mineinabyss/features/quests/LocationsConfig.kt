@@ -1,5 +1,6 @@
 package com.mineinabyss.features.quests
 
+import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Location
@@ -10,7 +11,7 @@ import org.bukkit.Location
 @Serializable
 class LocationData(
     val name: String,
-    val locationCenter: @Serializable(with = LocationSerializer::class) Location,
+    val locationCenter: @Serializable(with = LocationAltSerializer::class) Location,
     val radius: Int,
 ) {
     //    var visited : Boolean = false

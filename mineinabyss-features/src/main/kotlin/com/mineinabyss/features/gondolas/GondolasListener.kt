@@ -41,6 +41,7 @@ class GondolasListener : Listener {
         if (player.uniqueId in justWarped) return
         handleWarpCooldown(player, nearbyGondolaData, now, nearbyGondolaData.id)
     }
+
     @EventHandler
     fun PlayerMoveEvent.onPlayerMove() {
         if (!hasExplicitlyChangedBlock()) return
@@ -64,14 +65,14 @@ class GondolasListener : Listener {
                 val remaining = gondolaData.warpCooldown - (now - entry.second)
                 if (remaining == gondolaData.warpCooldown) {
                     val soundKey = Key.key("minecraft:ambient.cave.cave_18")
-                    player.playSound(Sound.sound(soundKey,Sound.Source.AMBIENT,1f,1f))
+                    player.playSound(Sound.sound(soundKey, Sound.Source.AMBIENT, 1f, 1f))
                 }
                 if (remaining > 0) player.sendActionBar(Component.text("Warping in ${remaining / 1000} seconds..."))
                 else handleGondola(player)
             }
         }
     }
-    
+
     private fun handleWarpCooldown(player: Player, data: GondolaData, now: Long, gondolaId: String? = null) {
         val entry = playerZoneEntry[player.uniqueId]
 
