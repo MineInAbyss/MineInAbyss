@@ -329,6 +329,5 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
 
     override fun FeatureDSL.disable() {
         plugin.unregisterListeners(*context.listeners)
-        ProfileManager.stopProfileFetching()
     }
 }

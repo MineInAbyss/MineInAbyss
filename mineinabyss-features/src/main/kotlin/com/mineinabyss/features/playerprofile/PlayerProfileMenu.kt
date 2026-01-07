@@ -128,7 +128,7 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
-            isLarge = true
+            isFlat = true, isLarge = true
         ), modifier = modifier
     )
     Item(

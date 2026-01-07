@@ -45,6 +45,7 @@ fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
             "<yellow><b>Guild Owner:</b> <i>${owner.name}".miniMsg(),
             "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
             "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
+            isFlat = true,
             isLarge = true,
             isCenterOfInv = true
         ), modifier = modifier

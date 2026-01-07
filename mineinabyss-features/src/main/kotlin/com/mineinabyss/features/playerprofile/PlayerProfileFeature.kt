@@ -25,10 +25,7 @@ class PlayerProfileFeature(val config: Config) : Feature() {
     override fun FeatureDSL.enable() {
         mainCommand {
             "profile"(desc = "Opens a players profile") {
-                playerAction {
-                    guiy(player) { PlayerProfile(sender as Player, player) }
-                }
-                val offlinePlayer by offlinePlayerArg { default = sender as? Player }
+                val offlinePlayer by offlinePlayerArg { this.name = "player" }
                 action {
                     guiy(sender as Player) { PlayerProfile(sender as Player, offlinePlayer) }
                 }

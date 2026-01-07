@@ -63,7 +63,7 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
         TitleItem.head(
             owner, "<gold><i>${owner.name}".miniMsg(),
             "<yellow><b>Guild Rank: <yellow><i>${owner.getGuildRank()}".miniMsg(),
-            isCenterOfInv = true, isLarge = true
+            isFlat = true, isCenterOfInv = true, isLarge = true
         ), modifier = modifier
     )
 }

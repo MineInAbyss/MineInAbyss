@@ -34,7 +34,7 @@ fun GuildUIScope.GuildJoinRequestScreen(
 
 @Composable
 fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Item(TitleItem.head(newMember, "<yellow><i>${newMember.name}".miniMsg(), isCenterOfInv = true, isLarge = true))
+    Item(TitleItem.head(newMember, "<yellow><i>${newMember.name}".miniMsg(), isFlat = true, isCenterOfInv = true, isLarge = true))
 }
 
 @Composable
