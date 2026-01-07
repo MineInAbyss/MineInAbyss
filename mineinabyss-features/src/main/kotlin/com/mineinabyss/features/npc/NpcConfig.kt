@@ -18,7 +18,7 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.idofrontLogger
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.idofront.serialization.LocationSerializer
+import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -29,7 +29,7 @@ import org.bukkit.inventory.MenuType
 data class Npc(
     val id: String,
     val displayName: String,
-    val location: @Serializable(LocationSerializer::class) Location,
+    val location: @Serializable(LocationAltSerializer::class) Location,
     val scale: List<Double>, // ??
     val bbModel: String, // unsure, actually I guess it would be serializable
     val tradeTable: TradeTable, // todo: remove

@@ -1,6 +1,7 @@
 package com.mineinabyss.components.gondolas
 
 
+import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.serialization.LocationSerializer
 import com.mineinabyss.idofront.serialization.SerializableItemStack
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -13,9 +14,9 @@ import org.bukkit.Location
 @Serializable
 @SerialName("mineinabyss:gondola")
 class Gondola(
-    @Serializable(with = LocationSerializer::class)
+    @Serializable(with = LocationAltSerializer::class)
     val upperLoc: Location,
-    @Serializable(with = LocationSerializer::class)
+    @Serializable(with = LocationAltSerializer::class)
     val lowerLoc: Location,
     val displayItem: SerializableItemStack, // the item to display in the GUI
     val displayName: String,

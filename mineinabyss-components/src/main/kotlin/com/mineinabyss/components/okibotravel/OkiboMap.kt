@@ -1,6 +1,6 @@
 package com.mineinabyss.components.okibotravel
 
-import com.mineinabyss.idofront.serialization.LocationSerializer
+import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
@@ -33,7 +33,7 @@ internal fun vector3fFromString(vector: String, defaultValue: Float): Vector3f {
 @SerialName("mineinabyss:okibo_map")
 data class OkiboMap(
     val station: String,
-    val location: @Serializable(LocationSerializer::class) Location,
+    val location: @Serializable(LocationAltSerializer::class) Location,
     @EncodeDefault(NEVER) @SerialName("text") private val _text: String = ":orthmap|1::space_-1::orthmap|2:<newline><newline><newline>:orthmap|3::space_-1::orthmap|4:",
     @EncodeDefault(NEVER) @SerialName("scale") private val _scale: String = "1,1,1",
     @EncodeDefault(NEVER) @SerialName("offset") private val _offset: String = "0,0,0",

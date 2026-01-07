@@ -8,7 +8,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
-import com.mineinabyss.idofront.serialization.LocationSerializer
+import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.serialization.Vector3fSerializer
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
@@ -39,7 +39,7 @@ interface TutorialContext {
 
 @Serializable
 data class Tutorial(
-    @EncodeDefault(NEVER) val firstJoinLocation: @Serializable(LocationSerializer::class) Location? = null,
+    @EncodeDefault(NEVER) val firstJoinLocation: @Serializable(LocationAltSerializer::class) Location? = null,
     val tutorialEntities: List<TutorialEntity> = listOf(),
     val start: TutorialRegion = TutorialRegion(),
     val end: TutorialRegion = TutorialRegion(),
@@ -63,7 +63,7 @@ data class TutorialRegion(
 @Serializable
 @SerialName("mineinabyss:tutorial_entity")
 data class TutorialEntity(
-    val location: @Serializable(LocationSerializer::class) Location,
+    val location: @Serializable(LocationAltSerializer::class) Location,
     val text: String,
     @EncodeDefault(NEVER) val textOpacity: Byte = (-1).toByte(),
     @EncodeDefault(NEVER) val lineWidth: Int = 200,
