@@ -38,15 +38,7 @@ class NpcEntity(
         val chunk = location.chunk
         // delete the old entity if it exists and respawn a newer version instead
         // note: we can't respawn an entity a player is interacting with as it only triggers on chunk load (i.e. when no players are nearby)
-        chunk.entities.forEach {
-            if (config.id in it.scoreboardTags) {
-                println("removed old npc entity with id ${config.id}")
-                it.remove()
-            } else {
-                println("dialog config is ${dialogsConfig.configs.keys}")
-                println("no old npc entity with id ${config.id} found")
-            }
-        }
+        for (entity in chunk.entities) if (config.id in entity.scoreboardTags) entity.remove()
 
         val entity = location.world.spawn(location, ItemDisplay::class.java)
         val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
