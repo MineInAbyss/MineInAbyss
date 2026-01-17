@@ -17,8 +17,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.*
 
+private data class ZoneEntry(val id: String, val timestamp: Long)
+
 class GondolasListener : Listener {
-    private val playerZoneEntry = mutableMapOf<UUID, Pair<String, Long>>()
+    private val playerZoneEntry = mutableMapOf<UUID, ZoneEntry>()
     private val justWarped = mutableSetOf<UUID>()
     private val lastErrorTime = mutableMapOf<UUID, Long>()
     private val errorCooldown = 5000
@@ -51,22 +53,21 @@ class GondolasListener : Listener {
     private fun showError(player: Player, gondola: Gondola, now: Long) {
         val lastTime = lastErrorTime[player.uniqueId] ?: 0L
         if (now - lastTime >= errorCooldown) {
-            player.error(gondola.rawNoAccessMessage)
+            player.error(gondola.noAccessMessage)
             lastErrorTime[player.uniqueId] = now
         }
     }
 
+    private val warpSound = Sound.sound(Key.key("minecraft:ambient.cave.cave_18"), Sound.Source.AMBIENT, 1f, 1f)
     fun startCooldownDisplayTask() {
         abyss.plugin.launchTickRepeating(1L) {
             val now = System.currentTimeMillis()
             for ((uuid, entry) in playerZoneEntry) {
                 val player = uuid.toPlayer() ?: continue
-                val gondolaData = LoadedGondolas.loaded[entry.first] ?: continue
-                val remaining = gondolaData.warpCooldown - (now - entry.second)
-                if (remaining == gondolaData.warpCooldown) {
-                    val soundKey = Key.key("minecraft:ambient.cave.cave_18")
-                    player.playSound(Sound.sound(soundKey, Sound.Source.AMBIENT, 1f, 1f))
-                }
+                val gondolaData = LoadedGondolas.loaded[entry.id] ?: continue
+                val remaining = gondolaData.warpCooldown.inWholeMilliseconds - (now - entry.timestamp)
+
+                if (remaining == gondolaData.warpCooldown.inWholeMilliseconds) player.playSound(warpSound)
                 if (remaining > 0) player.sendActionBar(Component.text("Warping in ${remaining / 1000} seconds..."))
                 else handleGondola(player)
             }
@@ -77,8 +78,8 @@ class GondolasListener : Listener {
         val entry = playerZoneEntry[player.uniqueId]
 
         when {
-            entry?.first != data.id -> playerZoneEntry[player.uniqueId] = data.id to now
-            now - entry.second >= data.gondola.warpCooldown -> {
+            entry?.id != data.id -> playerZoneEntry[player.uniqueId] = ZoneEntry(data.id, now)
+            now - entry.timestamp >= data.gondola.warpCooldown.inWholeMilliseconds -> {
                 gondolaWarp(data.gondola, player, data.type, gondolaId)
                 playerZoneEntry.remove(player.uniqueId)
                 justWarped.add(player.uniqueId)

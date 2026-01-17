@@ -14,6 +14,7 @@ import com.mineinabyss.guiy.modifiers.click.clickable
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.DataComponentTypes
 import org.bukkit.entity.Player
 
 @Composable
@@ -34,8 +35,9 @@ fun GondolaSelectionMenu(player: Player) {
 
 @Composable
 fun GondolaSpawn(player: Player, gondola: Gondola) = Item(
-    gondola.displayItem.toItemStack()
-        .editItemMeta { itemName(gondola.displayName.miniMsg()) },
+    gondola.displayItem.toItemStack().apply {
+        setData(DataComponentTypes.ITEM_NAME, gondola.itemName.miniMsg())
+    },
     Modifier.clickable {
         player.teleportAsync(gondola.upperLoc)
     }
