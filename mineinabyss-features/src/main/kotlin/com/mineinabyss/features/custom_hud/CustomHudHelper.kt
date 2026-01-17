@@ -15,16 +15,16 @@ fun CustomHudFeature.customHudEnabled(player: Player) = this.customHudTemplate i
 
 val Player.hudHolder: HudHolder? get() = HudHolder.get(this)
 fun toggleBackgroundLayouts(player: Player, feature: CustomHudFeature) {
-    val backgroundLayout = mythicHud.layouts().layouts.find { it.key == feature.backgroundLayout } ?: return
-    val hudHolder = player.hudHolder ?: return
-    val oldActiveLayouts = hudHolder.activeLayouts.minus(backgroundLayout)
+    val backgroundLayout = mythicHud.layouts().get(feature.backgroundLayout) ?: return
+    val layouts = mythicHud.layouts().defaults.minus(backgroundLayout)
 
     player.hudHolder?.let { hudHolder ->
         // Clear layouts and add backgrounds back in if they were enabled
-        oldActiveLayouts.forEach(hudHolder::removeLayout)
+        layouts.forEach(hudHolder::removeLayout)
         if (player.customHudData.showBackgrounds) hudHolder.addLayout(backgroundLayout)
         else hudHolder.removeLayout(backgroundLayout)
-        oldActiveLayouts.forEach(hudHolder::addLayout)
+        layouts.forEach(hudHolder::addLayout)
+        hudHolder.reloadLayouts()
         hudHolder.send()
     }
 }
