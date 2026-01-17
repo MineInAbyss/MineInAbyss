@@ -47,7 +47,7 @@ class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Cont
             "test" {
                 playerAction {
                     context.npcconfig.npcs.values.forEach {
-                        player.sendMessage("${it.displayName} - ${it.id}")
+                        player.sendMessage("${it.customName} - ${it.id}")
                     }
                 }
             }

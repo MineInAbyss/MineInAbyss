@@ -25,4 +25,4 @@ minecraft-plugin-bkcommonlib = "com.bergerkiller.bukkit:BKCommonLib:1.21.11-v1-S
 minecraft-plugin-traincarts = "com.bergerkiller.bukkit:TrainCarts:1.21.11-v1-SNAPSHOT"
 minecraft-plugin-tccoasters = "com.bergerkiller.bukkit:TCCoasters:1.21.11-v2-SNAPSHOT"
 minecraft-plugin-shopkeepers = "com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0"
-minecraft-plugin-luxdialogs = "org.aselstudios:LuxDialoguesAPI:3.0.4"
+minecraft-plugin-luxdialogs = "org.aselstudios:LuxDialoguesAPI:3.0.5"

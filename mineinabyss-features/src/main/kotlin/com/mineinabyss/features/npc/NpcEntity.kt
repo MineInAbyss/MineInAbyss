@@ -12,8 +12,6 @@ import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.ticxo.modelengine.api.ModelEngineAPI
-import net.kyori.adventure.text.Component
-import net.minecraft.advancements.AdvancementRewards.Builder.recipe
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.entity.Interaction
@@ -21,7 +19,6 @@ import org.bukkit.entity.ItemDisplay
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MenuType
 import org.bukkit.inventory.MerchantRecipe
 
@@ -46,7 +43,7 @@ class NpcEntity(
         modeledEntity.addModel(activeModel, true)
 
         entity.addScoreboardTag(config.id)
-        entity.customName(config.displayName.miniMsg())
+        entity.customName(config.customName.miniMsg())
         entity.isCustomNameVisible = true
         entity.isPersistent = false
 //        entity.isResponsive = true
@@ -64,11 +61,10 @@ class NpcEntity(
     //-------------------------------------------
     fun createTypedNpc() {
         when (config.type) {
-            "trader" -> createTraderNpc()
-            "gondola_unlocker" -> createGondolaUnlockerNpc()
-            "quest_giver" -> createQuestGiverNpc()
-            "dialogue" -> createDialogueNpc()
-            else -> throw IllegalArgumentException("Unknown type ${config.type}")
+            NPCType.TRADER -> createTraderNpc()
+            NPCType.GONDOLA -> createGondolaUnlockerNpc()
+            NPCType.QUEST -> createQuestGiverNpc()
+            NPCType.DIALOGUE -> createDialogueNpc()
         }
     }
 

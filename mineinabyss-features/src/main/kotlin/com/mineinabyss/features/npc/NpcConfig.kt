@@ -19,46 +19,52 @@ import com.mineinabyss.idofront.messaging.idofrontLogger
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.serialization.LocationAltSerializer
+import com.mineinabyss.idofront.serialization.VectorAltSerializer
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.MenuType
+import org.bukkit.util.Vector
+
+enum class NPCType {
+    TRADER, GONDOLA, QUEST, DIALOGUE
+}
 
 @Serializable
 data class Npc(
     val id: String,
-    val displayName: String,
+    val customName: String,
+    val type: NPCType,
     val location: @Serializable(LocationAltSerializer::class) Location,
-    val scale: List<Double>, // ??
-    val bbModel: String, // unsure, actually I guess it would be serializable
+    val scale: @Serializable(VectorAltSerializer::class) Vector,
+    val bbModel: String,
     val tradeTable: TradeTable, // todo: remove
     val tradeTableId: String, // use id pulled from config instead to be more modular
-    val type: String, // "trader", "gondola_unlocker", "quest_giver", "dialogue"
-    val dialogId: String? = null,
-    val ticketId: String? = null,
-    val questId: String? = null,
-    val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
+    @EncodeDefault(NEVER) val dialogId: String? = null,
+    @EncodeDefault(NEVER) val ticketId: String? = null,
+    @EncodeDefault(NEVER) val questId: String? = null,
+    @EncodeDefault(NEVER) val questEndId: String? = null, // basically the dialog of id to use when talking to the npc after unlocking the quest; idk what i was cooking but this aint it
 ) {
 
 
     fun defaultInteraction(player: Player, dialogId: String, dialogData: DialogData, questDialogData: QuestDialogData) {
         when (type) {
-            "trader" -> traderInteraction(player)
-            "gondola_unlocker" -> dialogInteraction(player, dialogId, dialogData)
-            "quest_giver" -> questGiverInteraction(player, questDialogData, dialogData)
-            "dialogue" -> dialogInteraction(player, dialogId, dialogData)
-            else -> throw IllegalArgumentException("Unknown NPC type: $type")
+            NPCType.TRADER -> traderInteraction(player)
+            NPCType.GONDOLA -> dialogInteraction(player, dialogId, dialogData)
+            NPCType.QUEST -> questGiverInteraction(player, questDialogData, dialogData)
+            NPCType.DIALOGUE -> dialogInteraction(player, dialogId, dialogData)
         }
     }
 
     fun fallbackInteraction(player: Player) {
         when (type) {
-            "trader" -> traderInteraction(player)
-            "gondola_unlocker" -> gondolaUnlockerInteraction(player)
-            "quest_giver" -> questGiverInteraction(player)
-            "dialogue" -> player.sendMessage("dialog data missing")
-            else -> throw IllegalArgumentException("Unknown NPC type: $type")
+            NPCType.TRADER -> traderInteraction(player)
+            NPCType.GONDOLA -> gondolaUnlockerInteraction(player)
+            NPCType.QUEST -> questGiverInteraction(player)
+            NPCType.DIALOGUE -> player.sendMessage("dialog data missing")
         }
     }
 
