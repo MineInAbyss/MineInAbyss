@@ -102,12 +102,11 @@ class NpcEntity(
             entity.addScoreboardTag(config.id)
             Bukkit.getPluginManager().registerEvents(object : Listener {
                 @EventHandler
-                fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
-                    val player = event.player
+                fun PlayerInteractEntityEvent.onPlayerInteractEntity() {
                     player.info("bleh bleh bleh")
-                    if (event.rightClicked == entity) {
+                    if (rightClicked == entity) {
                        player.info("bla bla bla")
-                        event.isCancelled = true
+                        isCancelled = true
                         merchant.recipes = createMerchantRecipes(config.tradeTable.trades)
 
                         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()
