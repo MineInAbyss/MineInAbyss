@@ -110,10 +110,8 @@ data class Npc(
     fun traderInteraction(player: Player) {
         if (tradeTable.trades.isEmpty()) return
         val recipes = tradeTable.createMerchantRecipes() ?: return
-        val merchant = Bukkit.createMerchant()
-        merchant.recipes = recipes
+        val merchant = Bukkit.createMerchant().apply { this.recipes = recipes }
         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()
-        return
     }
 
     fun dialogInteraction(player: Player, dialogId: String, dialogData: DialogData) {
@@ -126,6 +124,7 @@ data class Npc(
         ticketId ?: return idofrontLogger.e { "Ticket id is null for gondola unlocker NPC $id" }
         val ticket: Ticket = TicketConfigHolder.config?.tickets?.get(ticketId)
             ?: return idofrontLogger.e("Ticket with id $ticketId not found")
+
         player.editPlayerData {
             when {
                 player.isRouteUnlocked(ticket) -> player.error("You already own this ticket!")
@@ -139,20 +138,14 @@ data class Npc(
         }
     }
 
-    fun questCompleteInteraction(player: Player, qid: String) {
-        if (questId == null) {
-            player.error("Missing questId")
-            return
-        }
-        checkAndCompleteQuest(player, qid)
+    fun questCompleteInteraction(player: Player) {
+        if (questId == null) return player.error("Missing questId")
+        checkAndCompleteQuest(player, questId)
     }
 
-    fun questUnlockInteraction(player: Player, qid: String) {
-        if (questId == null) {
-            player.error("Missing questId")
-            return
-        }
-        unlockQuest(player, qid)
+    fun questUnlockInteraction(player: Player) {
+        if (questId == null) return player.error("Missing questId")
+        unlockQuest(player, questId)
         // this one is a bit more finicky, tho I think i'll do something like:
         // give the player a "objective" component, which would be something like:
         // (quest_id | progress | max_progress | completion_action)

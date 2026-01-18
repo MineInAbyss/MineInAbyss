@@ -51,26 +51,24 @@ import org.bukkit.entity.Player
 //    }
 //}
 
-@Serializable
-data class DialogueAction(
-    val name: String,
-) {
+//TODO When we need this more, change into a class for each which inherit from a shared interface
+// Then we can easier have custom per-type properties. For now enum is fine
+enum class DialogueAction {
+    CUSTOM, GONDOLA, QUEST_UNLOCK, QUEST_COMPLETE;
+
     fun customAction(player: Player) {
         player.sendMessage("Custom action executed!")
     }
 
-
     fun execute(player: Player, npc: Npc) {
         val plugin = abyss.plugin // Adjust if plugin access differs
-        when (name) {
-            "customAction" -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
-            "gondolaAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
-            "unlockQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player, npc.questId!!) })
-            "completeQuestAction" -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player, npc.questId!!) })
-            else -> player.error("Error resolving action: $name")
+        when (this) {
+            CUSTOM -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
+            GONDOLA -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
+            QUEST_UNLOCK -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player) })
+            QUEST_COMPLETE -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player) })
         }
     }
-
 }
 
 @Serializable
@@ -162,11 +160,9 @@ class DialogData(
 }
 
 @Serializable
-data class QuestDialogData(
-    val dialogData: DialogData,
-)
+@JvmInline
+value class QuestDialogData(val dialogData: DialogData, )
 
 @Serializable
-class DialogsConfig(
-    val configs: Map<String, DialogData> = mapOf()
-)
+@JvmInline
+value class DialogsConfig(val configs: Map<String, DialogData> = mapOf())
