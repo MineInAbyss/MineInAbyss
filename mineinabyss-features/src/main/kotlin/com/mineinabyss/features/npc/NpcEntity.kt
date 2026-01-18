@@ -10,6 +10,7 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.plugin.Plugins
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.ticxo.modelengine.api.ModelEngineAPI
 import org.bukkit.Bukkit
@@ -38,9 +39,6 @@ class NpcEntity(
         for (entity in chunk.entities) if (config.id in entity.scoreboardTags) entity.remove()
 
         val entity = location.world.spawn(location, ItemDisplay::class.java)
-        val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
-        val activeModel = ModelEngineAPI.createActiveModel(config.bbModel)
-        modeledEntity.addModel(activeModel, true)
 
         entity.addScoreboardTag(config.id)
         entity.customName(config.customName.miniMsg())
@@ -48,8 +46,15 @@ class NpcEntity(
         entity.isPersistent = false
 //        entity.isResponsive = true
         entity.teleport(location)
+
         val gearyEntity = entity.toGearyOrNull()?: return
         gearyEntity.set<Npc>(this@NpcEntity.config)
+
+        if (Plugins.isEnabled("ModelEngine") && config.bbModel.isNotEmpty()) {
+            val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
+            val activeModel = ModelEngineAPI.createActiveModel(config.bbModel)
+            modeledEntity.addModel(activeModel, true)
+        }
 
         if (dialogData != null) gearyEntity.set<DialogData>(this@NpcEntity.dialogData)
         else abyss.logger.w("Could not set dialog data for npc ${config.id}")
@@ -64,7 +69,7 @@ class NpcEntity(
             NPCType.TRADER -> createTraderNpc()
             NPCType.GONDOLA -> createGondolaUnlockerNpc()
             NPCType.QUEST -> createQuestGiverNpc()
-            NPCType.DIALOGUE -> createDialogueNpc()
+            NPCType.DIALOG -> createDialogueNpc()
         }
     }
 

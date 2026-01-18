@@ -30,7 +30,7 @@ import org.bukkit.inventory.MenuType
 import org.bukkit.util.Vector
 
 enum class NPCType {
-    TRADER, GONDOLA, QUEST, DIALOGUE
+    TRADER, GONDOLA, QUEST, DIALOG
 }
 
 @Serializable
@@ -55,7 +55,7 @@ data class Npc(
             NPCType.TRADER -> traderInteraction(player)
             NPCType.GONDOLA -> dialogInteraction(player, dialogId, dialogData)
             NPCType.QUEST -> questGiverInteraction(player, questDialogData, dialogData)
-            NPCType.DIALOGUE -> dialogInteraction(player, dialogId, dialogData)
+            NPCType.DIALOG -> dialogInteraction(player, dialogId, dialogData)
         }
     }
 
@@ -64,7 +64,7 @@ data class Npc(
             NPCType.TRADER -> traderInteraction(player)
             NPCType.GONDOLA -> gondolaUnlockerInteraction(player)
             NPCType.QUEST -> questGiverInteraction(player)
-            NPCType.DIALOGUE -> player.sendMessage("dialog data missing")
+            NPCType.DIALOG -> player.sendMessage("dialog data missing")
         }
     }
 

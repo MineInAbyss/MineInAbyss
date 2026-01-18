@@ -28,8 +28,7 @@ import com.mineinabyss.idofront.plugin.listeners
 class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
 
     class Context : Configurable<GondolasConfig> {
-        override val configManager =
-            config("gondolas", abyss.dataPath, GondolasConfig())
+        override val configManager = config("gondolas", abyss.dataPath, GondolasConfig())
         val ticketConfig by config("tickets", abyss.dataPath, TicketConfig())
         val gondolasListener = GondolasListener()
     }

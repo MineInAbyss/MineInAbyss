@@ -3,16 +3,16 @@ package com.mineinabyss.features.npc.shopkeeping
 import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.prefabs.PrefabKey
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.Serializable
-import net.minecraft.advancements.AdvancementRewards.Builder.recipe
 import org.bukkit.Bukkit.getWorld
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
 
 @Serializable
 data class TradeEntry(
     val prefab: String,
-    val amount: Int = 1,
+    @EncodeDefault(NEVER) val amount: Int = 1,
 )
 
 @Serializable
@@ -24,7 +24,7 @@ data class Trade(
 @Serializable
 class TradeTable(
     val id: String,
-    val trades: List<Trade>,
+    @EncodeDefault(NEVER) val trades: List<Trade> = emptyList(),
 ) {
     fun createMerchantRecipes(): List<MerchantRecipe>? {
         val gearyItems = getWorld("world")?.toGeary()?.getAddon(ItemTracking) ?: return null

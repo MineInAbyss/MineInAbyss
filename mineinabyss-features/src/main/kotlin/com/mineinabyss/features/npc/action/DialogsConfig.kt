@@ -51,60 +51,6 @@ import org.bukkit.entity.Player
 //    }
 //}
 
-//TODO When we need this more, change into a class for each which inherit from a shared interface
-// Then we can easier have custom per-type properties. For now enum is fine
-enum class DialogueAction {
-    CUSTOM, GONDOLA, QUEST_UNLOCK, QUEST_COMPLETE;
-
-    fun customAction(player: Player) {
-        player.sendMessage("Custom action executed!")
-    }
-
-    fun execute(player: Player, npc: Npc) {
-        val plugin = abyss.plugin // Adjust if plugin access differs
-        when (this) {
-            CUSTOM -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
-            GONDOLA -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
-            QUEST_UNLOCK -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player) })
-            QUEST_COMPLETE -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player) })
-        }
-    }
-}
-
-@Serializable
-class AnswerData(
-    val text: String,
-    @EncodeDefault(Mode.NEVER) val placeholderCondition: String? = null,
-    @EncodeDefault(Mode.NEVER) val replyMessage: String? = null,
-    @EncodeDefault(Mode.NEVER) val action: DialogueAction? = null
-) {
-    fun build(npc: Npc): Answer? {
-        val answer = Answer.Builder().setAnswerText(text)
-        if (placeholderCondition != null) answer.addCondition(placeholderCondition)
-        if (replyMessage != null) answer.addReplyMessage(replyMessage)
-        if (action != null) answer.addCallback { player -> action.execute(player, npc) }
-        return answer.build()
-    }
-}
-
-@Serializable
-class PageData(
-    val lines: List<String> = emptyList(),
-    @EncodeDefault(Mode.NEVER) val answers: List<AnswerData> = emptyList(),
-    @EncodeDefault(Mode.NEVER) val preAction: String? = null,
-    @EncodeDefault(Mode.NEVER) val postAction: String? = null,
-) {
-
-    fun build(npc: Npc): Page? {
-        val page = Page.Builder()
-        lines.forEach { line -> page.addLine(line) }
-        if (preAction != null) page.addPreAction(preAction)
-        if (postAction != null) page.addPostAction(postAction)
-        answers.forEach { answer -> page.addAnswer(answer.build(npc)) }
-        return page.build()
-    }
-}
-
 @Serializable
 class DialogData(
     @EncodeDefault(Mode.NEVER) val typingSpeed: Int = 1,
@@ -156,6 +102,60 @@ class DialogData(
     fun startDialogue(player: Player, id: String, npc: Npc) {
         val dialog = this.build(id, npc) ?: return
         LuxDialoguesAPI.getProvider().sendDialogue(player, dialog, "")
+    }
+}
+
+@Serializable
+class AnswerData(
+    val text: String,
+    @EncodeDefault(Mode.NEVER) val placeholderCondition: String? = null,
+    @EncodeDefault(Mode.NEVER) val replyMessage: String? = null,
+    @EncodeDefault(Mode.NEVER) val action: DialogueAction? = null
+) {
+    fun build(npc: Npc): Answer? {
+        val answer = Answer.Builder().setAnswerText(text)
+        if (placeholderCondition != null) answer.addCondition(placeholderCondition)
+        if (replyMessage != null) answer.addReplyMessage(replyMessage)
+        if (action != null) answer.addCallback { player -> action.execute(player, npc) }
+        return answer.build()
+    }
+}
+
+//TODO When we need this more, change into a class for each which inherit from a shared interface
+// Then we can easier have custom per-type properties. For now enum is fine
+enum class DialogueAction {
+    CUSTOM, GONDOLA, QUEST_UNLOCK, QUEST_COMPLETE;
+
+    fun customAction(player: Player) {
+        player.sendMessage("Custom action executed!")
+    }
+
+    fun execute(player: Player, npc: Npc) {
+        val plugin = abyss.plugin // Adjust if plugin access differs
+        when (this) {
+            CUSTOM -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
+            GONDOLA -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
+            QUEST_UNLOCK -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questUnlockInteraction(player) })
+            QUEST_COMPLETE -> plugin.server.scheduler.runTask(plugin, Runnable { npc.questCompleteInteraction(player) })
+        }
+    }
+}
+
+@Serializable
+class PageData(
+    val lines: List<String> = emptyList(),
+    @EncodeDefault(Mode.NEVER) val answers: List<AnswerData> = emptyList(),
+    @EncodeDefault(Mode.NEVER) val preAction: String? = null,
+    @EncodeDefault(Mode.NEVER) val postAction: String? = null,
+) {
+
+    fun build(npc: Npc): Page? {
+        val page = Page.Builder()
+        lines.forEach { line -> page.addLine(line) }
+        if (preAction != null) page.addPreAction(preAction)
+        if (postAction != null) page.addPostAction(postAction)
+        answers.forEach { answer -> page.addAnswer(answer.build(npc)) }
+        return page.build()
     }
 }
 
