@@ -29,7 +29,6 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
             val hudHolder = player.hudHolder ?: HudHolder(player)
             mythicHud.createBarHandler(hudHolder)
             hudHolder.initialize()
-            toggleBackgroundLayouts(player, feature)
         } else {
             val holder = player.hudHolder ?: return
             mythicHud.layouts().layouts.forEach(holder::removeLayout)
