@@ -82,7 +82,7 @@ class DialogData(
             .setDialogueSpeed(typingSpeed)
             .setTypingSound(typingSound, SoundCategory.UI.name, 1.0, 1.0)
             .setRange(range)
-            .setSelectionSound(selectionSound, "", 1.0, 1.0)
+            .setSelectionSound(selectionSound, SoundCategory.UI.name, 1.0, 1.0)
             .setEffect(effect)
             .setAnswerNumbers(answerNumbers)
             .setArrowImage(cursorIconImage, "#4f4a3e", -7)
