@@ -59,7 +59,7 @@ class TutorialFeature : Feature() {
                 }
                 "save" {
                     action {
-                        Bukkit.getWorlds().flatMap { it.entities.filterIsInstance<TextDisplay>() }
+                        val tutorialEntities = Bukkit.getWorlds().flatMap { it.entities.filterIsInstance<TextDisplay>() }
                             .mapNotNull { it to (it.toGearyOrNull()?.get<TutorialEntity>() ?: return@mapNotNull null) }
                             .map { (entity, tutorial) ->
                                 tutorial.copy(
@@ -74,7 +74,9 @@ class TutorialFeature : Feature() {
                                     leftRotation = entity.transformation.leftRotation,
                                     rightRotation = entity.transformation.rightRotation,
                                 )
-                            }.let { config<Tutorial>("tutorial", abyss.dataPath, Tutorial(tutorial.firstJoinLocation, it, tutorial.entry, tutorial.exit)).write(Tutorial(tutorial.firstJoinLocation, it, tutorial.entry, tutorial.exit)) }
+                            }
+                        val tutorial = Tutorial(tutorial.firstJoinLocation, tutorialEntities, tutorial.entry, tutorial.exit)
+                        config<Tutorial>("tutorial", abyss.dataPath, tutorial).write(tutorial)
 
                         setTutorialContext()
                         sender.success("Successfully saved tutorial-entities")

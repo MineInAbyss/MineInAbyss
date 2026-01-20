@@ -9,7 +9,8 @@ import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationAltSerializer
-import com.mineinabyss.idofront.serialization.Vector3fSerializer
+import com.mineinabyss.idofront.serialization.QuaternionfAltSerializer
+import com.mineinabyss.idofront.serialization.Vector3fAltSerializer
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
@@ -71,9 +72,9 @@ data class TutorialEntity(
     @EncodeDefault(NEVER) val shadow: Boolean = true,
     @EncodeDefault(NEVER) val alignment: TextDisplay.TextAlignment = TextDisplay.TextAlignment.CENTER,
     @EncodeDefault(NEVER) val billboard: Display.Billboard = Display.Billboard.VERTICAL,
-    @EncodeDefault(NEVER) val scale: @Serializable(Vector3fSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
-    @EncodeDefault(NEVER) val leftRotation: @Serializable(QuaternionfSerializer::class) Quaternionf = Quaternionf(),
-    @EncodeDefault(NEVER) val rightRotation: @Serializable(QuaternionfSerializer::class) Quaternionf = Quaternionf(),
+    @EncodeDefault(NEVER) val scale: @Serializable(Vector3fAltSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
+    @EncodeDefault(NEVER) val leftRotation: @Serializable(QuaternionfAltSerializer::class) Quaternionf = Quaternionf(),
+    @EncodeDefault(NEVER) val rightRotation: @Serializable(QuaternionfAltSerializer::class) Quaternionf = Quaternionf(),
     @EncodeDefault(NEVER) val seeThrough: Boolean = false,
 ) {
     private fun TextDisplay.trackEntity(tutorial: TutorialEntity) {
