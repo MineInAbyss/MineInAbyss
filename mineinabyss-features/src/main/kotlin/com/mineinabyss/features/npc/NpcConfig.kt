@@ -50,7 +50,7 @@ data class Npc(
 ) {
 
 
-    fun defaultInteraction(player: Player, dialogId: String, dialogData: DialogData, questDialogData: QuestDialogData) {
+    fun defaultInteraction(player: Player, dialogId: String, dialogData: DialogData, questDialogData: QuestDialogData?) {
         when (type) {
             NPCType.TRADER -> traderInteraction(player)
             NPCType.GONDOLA -> dialogInteraction(player, dialogId, dialogData)
@@ -81,8 +81,8 @@ data class Npc(
     // Or return an error in chat if the player hasn't completed the quest yet.
     // this is really messy, and it could definitely use a "quest progress dialog" and a "quest end dialog".
     fun questGiverInteraction(player: Player, questDialogData: QuestDialogData? = null, dialogData: DialogData? = null) {
-        questDialogData ?: return
-        questId ?: return
+        if (questDialogData == null) return
+        if (questId == null) return
         when {
             // Quest is done, reward is claimed
             playerHasCompletedQuest(player, questId) -> {

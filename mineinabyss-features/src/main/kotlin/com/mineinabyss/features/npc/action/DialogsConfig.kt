@@ -10,6 +10,7 @@ import org.aselstudios.luxdialoguesapi.Builders.Answer
 import org.aselstudios.luxdialoguesapi.Builders.Dialogue
 import org.aselstudios.luxdialoguesapi.Builders.Page
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
+import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
 
 //@Serializable
@@ -75,11 +76,11 @@ class DialogData(
     @EncodeDefault(Mode.NEVER) val pages: List<PageData> = emptyList(),
 ) {
 
-    fun build(id: String, npc: Npc): Dialogue? {
+    fun build(id: String, npc: Npc): Dialogue {
         val dialogue = Dialogue.Builder()
             .setDialogueID(id)
             .setDialogueSpeed(typingSpeed)
-            .setTypingSound(typingSound, "", 1.0, 1.0)
+            .setTypingSound(typingSound, SoundCategory.UI.name, 1.0, 1.0)
             .setRange(range)
             .setSelectionSound(selectionSound, "", 1.0, 1.0)
             .setEffect(effect)
@@ -95,13 +96,13 @@ class DialogData(
 
         if (backgroundFog) dialogue.setFogImage("fog", "#000000")
 
-        pages.forEach { pageData -> dialogue.addPage(pageData.build(npc)) }
+        pages.forEachIndexed { i, pageData -> dialogue.addPage(pageData.build(npc, i)) }
         return dialogue.build()
     }
 
     fun startDialogue(player: Player, id: String, npc: Npc) {
-        val dialog = this.build(id, npc) ?: return
-        LuxDialoguesAPI.getProvider().sendDialogue(player, dialog, "")
+        val dialog = build(id, npc)
+        LuxDialoguesAPI.getProvider().sendDialogue(player, dialog, dialog.pages.keys.first())
     }
 }
 
@@ -149,8 +150,8 @@ class PageData(
     @EncodeDefault(Mode.NEVER) val postAction: String? = null,
 ) {
 
-    fun build(npc: Npc): Page? {
-        val page = Page.Builder()
+    fun build(npc: Npc, pageIndex: Int): Page {
+        val page = Page.Builder().setID(npc.id + "_" + pageIndex)
         lines.forEach { line -> page.addLine(line) }
         if (preAction != null) page.addPreAction(preAction)
         if (postAction != null) page.addPostAction(postAction)
