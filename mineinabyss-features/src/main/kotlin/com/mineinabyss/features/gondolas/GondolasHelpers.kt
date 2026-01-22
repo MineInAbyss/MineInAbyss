@@ -19,6 +19,7 @@ object GondolasHelpers {
     }
 
     fun locContains(loc: Location, point: Location, radius: Double): Boolean {
+        if (loc.world.uid != point.world.uid) return false
         return loc.distanceSquared(point) <= radius * radius
     }
 
