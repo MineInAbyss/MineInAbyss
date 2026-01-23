@@ -27,8 +27,9 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
     private fun PlayerResourcePackStatusEvent.handleStatusEvent() {
         if (status == Status.SUCCESSFULLY_LOADED && feature.customHudEnabled(player)) {
             val hudHolder = player.hudHolder ?: HudHolder(player)
-            mythicHud.createBarHandler(hudHolder)
             hudHolder.initialize()
+            mythicHud.layouts().defaults.forEach(hudHolder::resetLayout)
+            mythicHud.layouts().defaults.forEach(hudHolder::addLayout)
         } else {
             val holder = player.hudHolder ?: return
             mythicHud.layouts().layouts.forEach(holder::removeLayout)
