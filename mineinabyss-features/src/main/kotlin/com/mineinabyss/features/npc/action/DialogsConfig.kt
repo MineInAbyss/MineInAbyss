@@ -156,6 +156,7 @@ class PageData(
         if (preAction != null) page.addPreAction(preAction)
         if (postAction != null) page.addPostAction(postAction)
         answers.forEach { answer -> page.addAnswer(answer.build(npc)) }
+        page.setGoTo(listOf(npc.id + "_" + (pageIndex + 1)))
         return page.build()
     }
 }
