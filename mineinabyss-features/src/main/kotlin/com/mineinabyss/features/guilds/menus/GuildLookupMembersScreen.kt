@@ -42,7 +42,7 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
                 Button {
                     Item(
                         TitleItem.head(
-                            owner, "<gold><i>${member.name}".miniMsg(),
+                            member, "<gold><i>${member.name}".miniMsg(),
                             "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                             isFlat = true
                         )
