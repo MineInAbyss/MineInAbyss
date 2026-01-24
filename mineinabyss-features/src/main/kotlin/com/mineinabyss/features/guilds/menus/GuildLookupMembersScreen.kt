@@ -33,8 +33,8 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
         guildMembers, line,
         onLineChange = { line = it },
         ScrollDirection.VERTICAL,
-        nextButton = { ScrollDownButton(Modifier.at(0, 4)) },
-        previousButton = { ScrollUpButton(Modifier.at(0, 1)) },
+        nextButton = { ScrollDownButton() },
+        previousButton = { ScrollUpButton() },
         NavbarPosition.END, null
     ) { members ->
         VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {

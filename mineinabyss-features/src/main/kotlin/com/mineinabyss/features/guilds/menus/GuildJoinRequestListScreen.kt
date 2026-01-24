@@ -16,6 +16,7 @@ import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
+import com.mineinabyss.guiy.modifiers.placement.offset.offset
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer

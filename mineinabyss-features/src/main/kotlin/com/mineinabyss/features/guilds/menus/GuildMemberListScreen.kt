@@ -35,6 +35,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
 import io.papermc.paper.registry.data.dialog.input.DialogInput
+import net.kyori.adventure.key.Key
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
@@ -50,13 +51,13 @@ fun GuildUIScope.GuildMemberListScreen(
     Scrollable(
         guildMembers, line,
         onLineChange = { line = it },
-        nextButton = { ScrollDownButton(Modifier.at(0, 3)) },
-        previousButton = { ScrollUpButton(Modifier.at(0, 1)) },
+        nextButton = { ScrollDownButton() },
+        previousButton = { ScrollUpButton(Modifier) },
         scrollDirection = ScrollDirection.VERTICAL,
-        navbarPosition = NavbarPosition.START,
+        navbarPosition = NavbarPosition.END,
         navbarBackground = null
     ) { members ->
-        VerticalGrid(Modifier.at(1, 1).size(5, minOf(guildLevel + 1, 4))) {
+        VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {
             members.forEach { (rank, member) ->
                 Button(onClick = {
                     if (member != player && player.isCaptainOrAbove())
