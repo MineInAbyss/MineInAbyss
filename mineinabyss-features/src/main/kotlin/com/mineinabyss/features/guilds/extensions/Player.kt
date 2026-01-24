@@ -444,7 +444,7 @@ fun OfflinePlayer.getGuildOwner(): UUID? {
 }
 
 fun OfflinePlayer.isGuildOwner(): Boolean {
-    return player?.getGuildOwner() == player?.uniqueId
+    return getGuildOwner() == uniqueId
 }
 
 fun OfflinePlayer.getGuildOwnerFromInvite(): UUID {

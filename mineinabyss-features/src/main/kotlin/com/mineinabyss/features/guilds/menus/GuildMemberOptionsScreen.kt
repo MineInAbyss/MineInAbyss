@@ -38,31 +38,26 @@ fun GuildUIScope.GuildMemberOptionsScreen(
 fun GuildUIScope.ChangeMemberRankButton(
     member: OfflinePlayer, rank: GuildRank, modifier: Modifier = Modifier,
     onBack: () -> Unit,
-) =
-    Button(
-        modifier = modifier,
-        enabled = player.isCaptainOrAbove(),
-        onClick = {
-            player.setGuildRank(member, rank)
-            onBack()
-        }
-    ) {
+) {
+    Button(modifier, player.isCaptainOrAbove(), {
+        player.setGuildRank(member, rank)
+        onBack()
+    }) {
         Text("<dark_aqua>Change GuildRank to <blue>$rank".miniMsg(), modifier = modifier)
     }
+}
 
 @Composable
 fun GuildUIScope.KickGuildMemberButton(
     member: OfflinePlayer, modifier: Modifier = Modifier,
     onBack: () -> Unit,
-) =
-    Button(
-        modifier = modifier,
-        onClick = {
-            player.kickPlayerFromGuild(member)
-            onBack()
-        }
-    ) {
+) {
+    Button(modifier, onClick = {
+        player.kickPlayerFromGuild(member)
+        onBack()
+    }) {
         Text("<red><i>Kick Member".miniMsg())
     }
+}
 
 
