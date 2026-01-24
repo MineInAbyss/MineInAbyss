@@ -28,7 +28,7 @@ fun GuildUIScope.GuildJoinRequestListScreen(
     onNavigateToJoinRequest: (newMember: OfflinePlayer) -> Unit,
     onBack: () -> Unit,
 ) = Chest(":space_-8::guild_inbox_list_menu:", Modifier.height(5)) {
-    GuildJoinRequestButton(Modifier.at(1, 1), onNavigateToJoinRequest)
+    GuildJoinRequestButton(Modifier.at(1, 0), onNavigateToJoinRequest)
     DeclineAllGuildRequestsButton(Modifier.at(8, 4), onBack)
     BackButton(Modifier.at(2, 4))
 }
