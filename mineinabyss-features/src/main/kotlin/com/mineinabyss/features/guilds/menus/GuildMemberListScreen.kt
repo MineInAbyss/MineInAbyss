@@ -27,6 +27,7 @@ import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
+import com.mineinabyss.guiy.modifiers.placement.offset.offset
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.nms.entities.title
@@ -57,7 +58,7 @@ fun GuildUIScope.GuildMemberListScreen(
         navbarPosition = NavbarPosition.END,
         navbarBackground = null
     ) { members ->
-        VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {
+        VerticalGrid(Modifier.size(7, minOf(guildLevel + 1, 6))) {
             members.forEach { (rank, member) ->
                 Button(onClick = {
                     if (member != player && player.isCaptainOrAbove())
@@ -75,11 +76,11 @@ fun GuildUIScope.GuildMemberListScreen(
         }
     }
 
-    BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
+    BackButton(Modifier.at(8, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
 
     InviteToGuildButton(Modifier.at(7, 0))
     ManageGuildJoinRequestsButton(Modifier.at(8, 0), onNavigateToJoinRequests)
-    ToggleGuildJoinTypeButton(Modifier.at(0, 0))
+    ToggleGuildJoinTypeButton(Modifier.at(7, 1))
 }
 
 @Composable
