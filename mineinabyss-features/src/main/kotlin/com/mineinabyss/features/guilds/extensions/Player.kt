@@ -579,20 +579,10 @@ fun OfflinePlayer.getNumberOfGuildRequests(): Int {
 fun GuildName.removeGuildQueueEntries(player: OfflinePlayer, guildJoinType: GuildJoinType, removeAll: Boolean = false) {
     return transaction(abyss.db) {
         val guildId = getGuildId() ?: return@transaction
-        val id = GuildJoinQueue.selectAll().where { GuildJoinQueue.guildId eq guildId }.singleOrNull()
-            ?.get(GuildJoinQueue.guildId) ?: return@transaction
 
-        if (removeAll) {
-            GuildJoinQueue.deleteWhere {
-                (joinType eq guildJoinType) and
-                        (this.guildId eq id)
-            }
-        } else {
-            GuildJoinQueue.deleteWhere {
-                (playerUUID eq player.uniqueId) and
-                        (joinType eq guildJoinType) and
-                        (this.guildId eq id)
-            }
+        GuildJoinQueue.deleteWhere {
+            if (removeAll) (joinType eq guildJoinType) and (this.guildId eq guildId)
+            else (playerUUID eq player.uniqueId) and (joinType eq guildJoinType) and (this.guildId eq guildId)
         }
     }
 }
@@ -600,20 +590,9 @@ fun GuildName.removeGuildQueueEntries(player: OfflinePlayer, guildJoinType: Guil
 fun OfflinePlayer.removeGuildQueueEntries(guildJoinType: GuildJoinType, removeAll: Boolean = false) {
     return transaction(abyss.db) {
         val guildId = getGuildName()?.getGuildId() ?: return@transaction
-        val id = GuildJoinQueue.selectAll().where { GuildJoinQueue.guildId eq guildId }.singleOrNull()
-            ?.get(GuildJoinQueue.guildId) ?: return@transaction
-
-        if (removeAll) {
-            GuildJoinQueue.deleteWhere {
-                (joinType eq guildJoinType) and
-                        (this.guildId eq id)
-            }
-        } else {
-            GuildJoinQueue.deleteWhere {
-                (playerUUID eq uniqueId) and
-                        (joinType eq guildJoinType) and
-                        (this.guildId eq id)
-            }
+        GuildJoinQueue.deleteWhere {
+            if (removeAll) (joinType eq guildJoinType) and (this.guildId eq guildId)
+            else (playerUUID eq uniqueId) and (joinType eq guildJoinType) and (this.guildId eq guildId)
         }
     }
 }

@@ -48,7 +48,7 @@ fun GuildUIScope.GuildJoinRequestButton(
                 .map { row -> row[GuildJoinQueue.playerUUID] }
         }
     }
-    HorizontalGrid(modifier.size(9, 4)) {
+    HorizontalGrid(modifier.size(8, 4)) {
         requests.map { it.toOfflinePlayer() }.forEach { newMember ->
             Button(onClick = {
                 if (!player.hasGuildRequests()) owner.exit()
