@@ -37,6 +37,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
 import io.papermc.paper.registry.data.dialog.input.DialogInput
 import net.kyori.adventure.key.Key
+import net.minecraft.world.level.storage.loot.functions.SetAttributesFunction.modifier
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
@@ -52,13 +53,13 @@ fun GuildUIScope.GuildMemberListScreen(
     Scrollable(
         guildMembers, line,
         onLineChange = { line = it },
-        nextButton = { ScrollDownButton() },
-        previousButton = { ScrollUpButton(Modifier) },
+        nextButton = { modifier -> ScrollDownButton(modifier.at(0, 4)) },
+        previousButton = { modifier -> ScrollUpButton(modifier.at(0, 1)) },
         scrollDirection = ScrollDirection.VERTICAL,
         navbarPosition = NavbarPosition.END,
         navbarBackground = null
     ) { members ->
-        VerticalGrid(Modifier.size(7, minOf(guildLevel + 1, 6))) {
+        VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {
             members.forEach { (rank, member) ->
                 Button(onClick = {
                     if (member != player && player.isCaptainOrAbove())
@@ -76,11 +77,11 @@ fun GuildUIScope.GuildMemberListScreen(
         }
     }
 
-    BackButton(Modifier.at(8, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
+    BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
 
     InviteToGuildButton(Modifier.at(7, 0))
     ManageGuildJoinRequestsButton(Modifier.at(8, 0), onNavigateToJoinRequests)
-    ToggleGuildJoinTypeButton(Modifier.at(7, 1))
+    ToggleGuildJoinTypeButton(Modifier.at(0, 0))
 }
 
 @Composable

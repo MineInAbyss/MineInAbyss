@@ -9,14 +9,17 @@ import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
+import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.Paginated
 import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.height
 import com.mineinabyss.guiy.modifiers.placement.absolute.at
+import com.mineinabyss.guiy.modifiers.placement.offset.offset
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.registry.data.dialog.input.DialogInput
+import net.minecraft.world.level.storage.loot.functions.SetAttributesFunction.modifier
 
 @Composable
 fun GuildUIScope.GuildLookupListScreen(
@@ -29,8 +32,8 @@ fun GuildUIScope.GuildLookupListScreen(
     Paginated(
         guildPageList, pageNum,
         onPageChange = { pageNum = it },
-        nextButton = { NextPageButton(Modifier.at(5, 0)) },
-        previousButton = { PreviousPageButton(Modifier.at(3, 0)) },
+        nextButton = { modifier -> NextPageButton(modifier.offset(-1, 0)) },
+        previousButton = { modifier -> PreviousPageButton(modifier.offset(1, 0)) },
         NavbarPosition.BOTTOM, null
     ) { pageItems ->
         HorizontalGrid(Modifier.at(1, 0).size(7, 5)) {
