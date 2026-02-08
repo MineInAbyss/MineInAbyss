@@ -96,7 +96,7 @@ class DialogData(
 
         if (backgroundFog) dialogue.setFogImage("fog", "#000000")
 
-        pages.forEachIndexed { i, pageData -> dialogue.addPage(pageData.build(npc, i)) }
+        pages.forEachIndexed { i, pageData -> dialogue.addPage(pageData.build(npc, i, pages.size)) }
         return dialogue.build()
     }
 
@@ -150,13 +150,15 @@ class PageData(
     @EncodeDefault(Mode.NEVER) val postAction: String? = null,
 ) {
 
-    fun build(npc: Npc, pageIndex: Int): Page {
+    fun build(npc: Npc, pageIndex: Int, nbPages: Int): Page {
         val page = Page.Builder().setID(npc.id + "_" + pageIndex)
         lines.forEach { line -> page.addLine(line) }
         if (preAction != null) page.addPreAction(preAction)
         if (postAction != null) page.addPostAction(postAction)
         answers.forEach { answer -> page.addAnswer(answer.build(npc)) }
-        page.setGoTo(listOf(npc.id + "_" + (pageIndex + 1)))
+        if (pageIndex < nbPages - 1) {
+            page.setGoTo(listOf("${npc.id}_${pageIndex + 1}"))
+        }
         return page.build()
     }
 }
