@@ -4,6 +4,7 @@ guiy = "0.14.4"
 deeperworld = "0.12.0"
 chatty = "0.9.0"
 packy = "0.9.0"
+extracommands = "0.14.0"
 
 
 [libraries]
@@ -11,8 +12,8 @@ geary-papermc = { module = "com.mineinabyss:geary-papermc", version.ref = "geary
 deeperworld = { module = "com.mineinabyss:deeperworld", version.ref = "deeperworld" }
 guiy = { module = "com.mineinabyss:guiy-compose", version.ref = "guiy" }
 chatty = { module = "com.mineinabyss:chatty-paper", version.ref = "chatty" }
-
 packy = { module = "com.mineinabyss:packy", version.ref = "packy" }
+extracommands = { module = "com.mineinabyss:extracommands", version.ref = "extracommands" }
 
 minecraft-plugin-blocklocker = "nl.rutgerkok:blocklocker:1.14.1"
 minecraft-plugin-hibiscuscommons = "me.lojosho:HibiscusCommons:0.8.3-810b5ec2"

@@ -58,6 +58,7 @@ allprojects {
         compileOnly(libs.chatty)
         compileOnly(libs.deeperworld)
         compileOnly(libs.packy)
+        compileOnly(libs.extracommands)
 
         compileOnly(libs.minecraft.plugin.blocklocker)
         compileOnly(libs.minecraft.plugin.hmccosmetics)
