@@ -9,6 +9,7 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.idofront.util.randomOrMin
 import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -28,12 +29,12 @@ object MusicScheduler {
 
     fun scheduleMusicPlaying(player: Player) {
         val musicPlayingJob = abyss.plugin.launch {
-            val waitOnLogin = chooseTimeBetween(conf.minWaitTimeOnLogin, conf.maxWaitTimeOnLogin)
+            val waitOnLogin = conf.waitTimeOnLogin.randomOrMin()
             abyss.logger.i("Starting music scheduler for ${player.name}, waiting $waitOnLogin before playing.")
             delay(waitOnLogin)
             while (player.isConnected) {
                 val playable = getPlayableSongsAtLocation(player.location)
-                if (playable.isEmpty()) delay(conf.maxSongWaitTime)
+                if (playable.isEmpty()) delay(conf.songWaitTime.endInclusive)
                 else {
                     val recentlyPlayed = player.toGeary().getOrSet<RecentlyPlayed> { RecentlyPlayed(setOf()) }
                     val notRecentlyPlayed = playable.filter { it !in recentlyPlayed.songs }
@@ -49,12 +50,11 @@ object MusicScheduler {
                         playSongIfNotPlaying(song, player)
 
                         // Choose a random wait time as defined in config
-                        val wait = chooseTimeBetween(conf.minSongWaitTime, conf.maxSongWaitTime)
-                        abyss.logger.i("Finished playing $song, waiting $wait before playing another.")
-                        wait
-                    } ?: run {
-                        abyss.logger.i("No songs to play, waiting ${conf.maxSongWaitTime} before trying again.")
-                        conf.maxSongWaitTime
+                        conf.songWaitTime.randomOrMin().also {
+                            abyss.logger.i("Finished playing $song, waiting $it before playing another.")
+                        }
+                    } ?: conf.songWaitTime.endInclusive.also {
+                        abyss.logger.i("No songs to play, waiting $it before trying again.")
                     })
                 }
             }
@@ -80,9 +80,5 @@ object MusicScheduler {
         player.playSound(player, song.key, song.category, song.volume, song.pitch)
         delay(song.duration)
         if (player.isConnected) player.toGeary().remove<NowPlaying>()
-    }
-
-    private fun chooseTimeBetween(start: Duration, end: Duration): Duration {
-        return (start.inWholeSeconds..end.inWholeSeconds).random().seconds
     }
 }

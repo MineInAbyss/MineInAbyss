@@ -4,7 +4,9 @@ package com.mineinabyss.features.music
 
 import com.charleskorn.kaml.YamlComment
 import com.mineinabyss.components.music.Song
+import com.mineinabyss.idofront.serialization.DurationRangeSerializer
 import com.mineinabyss.idofront.serialization.DurationSerializer
+import com.mineinabyss.idofront.util.DurationRange
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
@@ -14,15 +16,10 @@ import kotlin.time.Duration.Companion.minutes
 
 @Serializable
 class MusicConfig(
-    @YamlComment(
-        "The min/max amount of time to wait before playing a song after once finishes",
-        "Default is 10-20 minutes in Minecraft."
-    )
-    val minSongWaitTime: Duration = 10.minutes,
-    val maxSongWaitTime: Duration = 20.minutes,
+    @YamlComment("The min/max amount of time to wait before playing a song after once finishes", "Default is 10..20 minutes in Minecraft.")
+    val songWaitTime: @Serializable(DurationRangeSerializer::class) DurationRange = 5.minutes..10.minutes,
     @YamlComment("How long to wait before playing a song after a player logs in")
-    val minWaitTimeOnLogin: Duration = 2.minutes,
-    val maxWaitTimeOnLogin: Duration = 5.minutes,
+    val waitTimeOnLogin: @Serializable(DurationRangeSerializer::class) DurationRange = 2.minutes..5.minutes,
     @YamlComment(
         "A list of song definitions, options are:",
         "key: The resourcepack key for this song",
