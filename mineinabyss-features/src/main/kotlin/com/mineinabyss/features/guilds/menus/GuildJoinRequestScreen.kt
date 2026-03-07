@@ -20,6 +20,7 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.uuid.toKotlinUuid
 
 @Composable
 fun GuildUIScope.GuildJoinRequestScreen(
@@ -77,7 +78,7 @@ fun GuildUIScope.DeclineGuildRequestButton(
             transaction(abyss.db) {
                 GuildMessageQueue.insert {
                     it[content] = requestDeniedMessage
-                    it[playerUUID] = newMember.uniqueId
+                    it[playerUUID] = newMember.uniqueId.toKotlinUuid()
                 }
             }
         }

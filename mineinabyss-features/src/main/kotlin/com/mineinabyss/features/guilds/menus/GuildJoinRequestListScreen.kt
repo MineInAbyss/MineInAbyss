@@ -21,8 +21,11 @@ import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 
 @Composable
 fun GuildUIScope.GuildJoinRequestListScreen(
@@ -42,7 +45,7 @@ fun GuildUIScope.GuildJoinRequestButton(
     /* Transaction to query GuildInvites and playerUUID */
     val requests = remember {
         transaction(abyss.db) {
-            val id = Players.selectAll().where { Players.playerUUID eq player.uniqueId }.first()[Players.guildId]
+            val id = Players.selectAll().where { Players.playerUUID eq player.uniqueId.toKotlinUuid() }.first()[Players.guildId]
 
             GuildJoinQueue.selectAll()
                 .where { (GuildJoinQueue.guildId eq id) and (GuildJoinQueue.joinType eq GuildJoinType.REQUEST) }
@@ -50,7 +53,7 @@ fun GuildUIScope.GuildJoinRequestButton(
         }
     }
     HorizontalGrid(modifier.size(8, 4)) {
-        requests.map { it.toOfflinePlayer() }.forEach { newMember ->
+        requests.map { it.toJavaUuid().toOfflinePlayer() }.forEach { newMember ->
             Button(onClick = {
                 if (!player.hasGuildRequests()) owner.exit()
                 else onNavigateToJoinRequest(newMember)

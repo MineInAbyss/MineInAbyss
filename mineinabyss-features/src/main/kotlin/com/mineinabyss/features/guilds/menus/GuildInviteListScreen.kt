@@ -19,8 +19,10 @@ import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.uuid.toKotlinUuid
 
 @Composable
 fun GuildUIScope.GuildInviteListScreen(
@@ -40,7 +42,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier, onNavigateToInviteS
     val invites = transaction(abyss.db) {
         GuildJoinQueue.selectAll().where {
             (GuildJoinQueue.joinType eq GuildJoinType.INVITE) and
-                    (GuildJoinQueue.playerUUID eq player.uniqueId)
+                    (GuildJoinQueue.playerUUID eq player.uniqueId.toKotlinUuid())
         }.map { row -> Invite(memberCount, row[GuildJoinQueue.guildId]) }
 
     }

@@ -16,11 +16,12 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.toKotlinUuid
 
 class GuildListener : Listener {
     @EventHandler
@@ -36,10 +37,10 @@ class GuildListener : Listener {
         delay(1.seconds)
         withContext(databaseDispatcher) {
             transaction(abyss.db) {
-                GuildMessageQueue.selectAll().where { GuildMessageQueue.playerUUID eq player.uniqueId }.forEach {
+                GuildMessageQueue.selectAll().where { GuildMessageQueue.playerUUID eq player.uniqueId.toKotlinUuid() }.forEach {
                     player.info(it[content].miniMsg())
                 }
-                GuildMessageQueue.deleteWhere { playerUUID eq player.uniqueId }
+                GuildMessageQueue.deleteWhere { playerUUID eq player.uniqueId.toKotlinUuid() }
             }
         }
     }
