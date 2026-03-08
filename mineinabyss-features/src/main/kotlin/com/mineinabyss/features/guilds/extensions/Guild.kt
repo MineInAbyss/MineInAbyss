@@ -22,7 +22,10 @@ import com.mineinabyss.idofront.messaging.success
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.lowerCase
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
@@ -307,14 +310,8 @@ fun GuildName.getOwnerFromGuildName(): OfflinePlayer {
 }
 
 fun Player.depositCoinsToGuild(amount: Int) {
-    if (!hasGuild()) {
-        error("You must be in a guild to withdraw coins.")
-        return
-    }
-    if (inventory.toGeary()?.itemInMainHand?.has<OrthCoin>() != true) {
-        error("You must be holding an Orth Coin to make a deposit.")
-        return
-    }
+    if (!hasGuild()) return error("You must be in a guild to withdraw coins.")
+    if (inventory.toGeary()?.itemInMainHand?.has<OrthCoin>() != true) return error("You must be holding an Orth Coin to make a deposit.")
 
     inventory.itemInMainHand.subtract(amount)
     updateGuildBalance(amount)
@@ -323,26 +320,12 @@ fun Player.depositCoinsToGuild(amount: Int) {
 
 fun Player.withdrawCoinsFromGuild(amount: Int) {
     withGeary {
-        if (!hasGuild()) {
-            error("You must be in a guild to withdraw coins.")
-            return
-        }
-
-        if (!isGuildOwner()) {
-            error("You must be the guild owner to withdraw coins.")
-            return
-        }
-
-        if (getGuildBalance() - amount < 0) {
-            error("You do not have enough coins in your guild to withdraw $amount coins.")
-            return
-        }
+        if (!hasGuild()) return error("You must be in a guild to withdraw coins.")
+        if (!isGuildOwner()) return error("You must be the guild owner to withdraw coins.")
+        if (getGuildBalance() - amount < 0) return error("You do not have enough coins in your guild to withdraw $amount coins.")
 
         val slot = inventory.firstEmpty()
-        if (slot == -1) {
-            error("You do not have enough space in your inventory to withdraw the coins.")
-            return
-        }
+        if (slot == -1) return error("You do not have enough space in your inventory to withdraw the coins.")
 
         val orthCoin = CoinFactory.orthCoin
         if (orthCoin == null) {
