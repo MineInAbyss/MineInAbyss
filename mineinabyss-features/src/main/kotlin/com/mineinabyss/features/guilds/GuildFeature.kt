@@ -292,7 +292,7 @@ class GuildFeature : FeatureWithContext<GuildFeature.Context>(::Context) {
                             Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[3], true) }
 
                         "clearJoinRequests", "clearGuildInvites", "addGuildMember", "removeGuildMember" ->
-                            getAllGuilds().map { it.guildName.getOwnerFromGuildName().name.toString() }
+                            Bukkit.getOnlinePlayers().filter { it.isGuildOwner() }.map { it.name }
                                 .filter { it.startsWith(args[3], true) }
 
                         else -> null
