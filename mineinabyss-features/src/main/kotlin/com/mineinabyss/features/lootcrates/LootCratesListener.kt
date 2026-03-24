@@ -77,7 +77,7 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
                         it[y] = chest.location.blockY
                         it[z] = chest.location.blockZ
                         it[world] = chest.location.world.name
-                        it[dateLooted] = LocalDate.now()
+                        it[dateLooted] = LocalDate.now().toString()
                         it[lootType] = loot.table
                     }
                 }

@@ -5,11 +5,10 @@ import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
-import org.jetbrains.exposed.v1.javatime.date
 
 object LootedChests : IntIdTable() {
     val playerUUID = uuid("playerUUID")
-    val dateLooted = date("dateLooted")
+    val dateLooted = varchar("dateLooted", 10)
     val x = integer("x")
     val y = integer("y")
     val z = integer("z")
