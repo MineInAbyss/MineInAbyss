@@ -24,6 +24,7 @@ fun Player.removeRoute(gondolaId: String) {
 }
 
 fun Player.isRouteUnlocked(ticket: Ticket): Boolean {
+    if (ticket.unlockedByDefault) return true
     val unlocked =  this.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
     return ticket.gondolasInRoute.all { it in unlocked.keys }
 }

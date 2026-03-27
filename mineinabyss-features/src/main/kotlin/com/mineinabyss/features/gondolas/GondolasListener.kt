@@ -4,6 +4,7 @@ import com.mineinabyss.components.gondolas.Gondola
 import com.mineinabyss.components.gondolas.UnlockedGondolas
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.gondolas.GondolasHelpers.gondolaWarp
+import com.mineinabyss.features.gondolas.pass.TicketConfigHolder
 import com.mineinabyss.geary.papermc.launchTickRepeating
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.entities.toPlayer
@@ -37,8 +38,12 @@ class GondolasListener : Listener {
             return
         }
 
-        val unlockedGondolas = player.toGeary().get<UnlockedGondolas>() ?: return
-        if (nearbyGondolaData.id !in unlockedGondolas.keys) return showError(player, nearbyGondolaData.gondola, now)
+        val isUnlockedByDefault = TicketConfigHolder.config?.tickets?.values
+            ?.any { nearbyGondolaData.id in it.gondolasInRoute && it.unlockedByDefault } == true
+        if (!isUnlockedByDefault) {
+            val unlockedGondolas = player.toGeary().get<UnlockedGondolas>() ?: return showError(player, nearbyGondolaData.gondola, now)
+            if (nearbyGondolaData.id !in unlockedGondolas.keys) return showError(player, nearbyGondolaData.gondola, now)
+        }
 
         if (player.uniqueId in justWarped) return
         handleWarpCooldown(player, nearbyGondolaData, now, nearbyGondolaData.id)
