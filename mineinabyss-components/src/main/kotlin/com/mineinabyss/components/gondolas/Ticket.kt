@@ -16,4 +16,5 @@ class Ticket (
     val ticketName: String, // Name of the ticket
     val ticketPrice: Int,
     val consumeWhenUsed: Boolean = false,
+    val unlockedByDefault: Boolean = false,
 )
