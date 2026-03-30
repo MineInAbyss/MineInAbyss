@@ -59,7 +59,7 @@ class DialogData(
     @EncodeDefault(Mode.NEVER) val selectionSound : String = "luxdialogues:luxdialogues.sounds.selection",
     @EncodeDefault(Mode.NEVER) val range: Double = 3.0,
     @EncodeDefault(Mode.NEVER) val effect: String = "Slowness",
-    @EncodeDefault(Mode.NEVER) val answerNumbers: Boolean = true,
+    @EncodeDefault(Mode.NEVER) val answerNumbers: Boolean = false,
     @EncodeDefault(Mode.NEVER) val dialogueTextColor: String = "#4f4a3e",
     @EncodeDefault(Mode.NEVER) val backgroundFog: Boolean = true,
     @EncodeDefault(Mode.NEVER) val characterName : String = "default name",

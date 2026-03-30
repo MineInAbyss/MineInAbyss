@@ -5,10 +5,12 @@ import com.mineinabyss.features.npc.action.DialogsConfig
 import com.mineinabyss.features.npc.action.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.ListenerSingleton
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import org.bukkit.World
 import org.bukkit.event.EventHandler
 import org.bukkit.event.world.ChunkLoadEvent
 import org.bukkit.entity.ItemDisplay
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEntityEvent
 
@@ -37,9 +39,12 @@ class NpcManager(
     }
 
 
-    @EventHandler
+    @EventHandler // we want high priority to catch is in dialogue before the dialogue closes
     fun PlayerInteractEntityEvent.handleNpcInteraction() {
         val entity = rightClicked as? ItemDisplay ?: return
+        // works mid dialog and with non rightclick confirm method, but isindialogue returns false when we use the same event to both close and open
+        if (LuxDialoguesAPI.getProvider().isInDialogue(player) == true) return
+
         val gearyEntity = entity.toGearyOrNull() ?: return
         val npcData = gearyEntity.get<Npc>() ?: return
 
