@@ -52,10 +52,12 @@ class NpcManager(
         val questDialogData = gearyEntity.get<QuestDialogData>()
         when {
             npcData.dialogId == null -> return
-            npcData.type == NPCType.QUEST && questDialogData != null ->
+            npcData.type == NPCType.QUEST && questDialogData != null -> {
                 npcData.questGiverInteraction(player, questDialogData, dialogData)
-            npcData.type != NPCType.QUEST && dialogData != null ->
+            }
+            npcData.type != NPCType.QUEST && dialogData != null -> {
                 npcData.defaultInteraction(player, npcData.dialogId, dialogData, questDialogData)
+            }
             else -> {
                 if (dialogData == null && questDialogData == null)
                     player.sendMessage("This NPC is missing dialog data for ID: ${npcData.dialogId}")
