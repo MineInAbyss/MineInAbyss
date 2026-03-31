@@ -10,6 +10,7 @@ import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
 import net.luckperms.api.node.Node
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -52,7 +53,7 @@ object QuestManager {
         return getQuestData(player).visitedLocations
     }
 
-    fun questInformation(player: Player, questId: String): Component {
+    fun questInformation(player: Player, questId: String): TextComponent {
         val config = QuestConfigHolder.config!!
         val visitQuest = config.visitQuests[questId]?.displayName ?: return Component.text(questId)
         val progress = visitQuestProgress(player, questId)

@@ -18,11 +18,14 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.idofrontLogger
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.messaging.warn
 import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.serialization.VectorAltSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode.NEVER
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -91,12 +94,21 @@ data class Npc(
 
             // Quest is done but reward not claimed yet
             isQuestCompleted(player, questId) -> {
-                questDialogData.dialogData.startDialogue(player, questId, this)
+                if (questEndId != null) {
+                    questDialogData.dialogData.startDialogue(player, questEndId, this)
+                }
+                else {
+                    player.warn("No end dialog set for questId '$questId', you should probably report this")
+                }
             }
 
             // Quest is started but not completed
             playerHasUnlockedQuest(player, questId) -> {
-                player.error("Come back when you've completed this quest: ${QuestManager.questInformation(player, questId)}")
+                player.error(
+                    "Come back when you've completed this quest: " +
+                            PlainTextComponentSerializer.plainText()
+                                .serialize(QuestManager.questInformation(player, questId))
+                )
             }
 
             // Quest is not started
