@@ -10,6 +10,7 @@ class TradeAction {
 data class TradeEntry(
     val prefab: String,
     val amount: Int = 1,
+    val components: String? = null,
 )
 
 @Serializable
