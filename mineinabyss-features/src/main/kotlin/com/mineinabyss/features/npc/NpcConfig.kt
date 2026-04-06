@@ -7,7 +7,7 @@ import com.mineinabyss.features.gondolas.pass.isRouteUnlocked
 import com.mineinabyss.features.gondolas.pass.unlockRoute
 import com.mineinabyss.features.npc.action.DialogData
 import com.mineinabyss.features.npc.action.QuestDialogData
-import com.mineinabyss.features.npc.shopkeeping.TradeTable
+import com.mineinabyss.features.npc.shopkeeping.TradeConfigHolder
 import com.mineinabyss.features.quests.QuestManager
 import com.mineinabyss.features.quests.QuestManager.checkAndCompleteQuest
 import com.mineinabyss.features.quests.QuestManager.isQuestCompleted
@@ -44,8 +44,7 @@ data class Npc(
     val location: @Serializable(LocationAltSerializer::class) Location,
     val scale: @Serializable(VectorAltSerializer::class) Vector,
     val bbModel: String,
-    val tradeTable: TradeTable, // todo: remove
-    val tradeTableId: String, // use id pulled from config instead to be more modular
+    @EncodeDefault(NEVER) val tradeTableId: String = "",
     @EncodeDefault(NEVER) val dialogId: String? = null,
     @EncodeDefault(NEVER) val ticketId: String? = null,
     @EncodeDefault(NEVER) val questId: String? = null,
@@ -120,7 +119,26 @@ data class Npc(
 
 
     fun traderInteraction(player: Player) {
-        if (tradeTable.trades.isEmpty()) return
+        val npcPlainName = PlainTextComponentSerializer.plainText()
+            .serialize(MiniMessage.miniMessage().deserialize(customName))
+
+        val tableId = tradeTableId.trim()
+        if (tableId.isEmpty()) {
+            player.error("Missing trade table for $npcPlainName, report this")
+            return
+        }
+
+        val tradeTable = TradeConfigHolder.config?.tradeTables?.get(tableId)
+        if (tradeTable == null) {
+            player.error("Invalid trade table for $npcPlainName, report this")
+            return
+        }
+
+        if (tradeTable.trades.isEmpty()) {
+            player.error("No trades configured for $npcPlainName, report this")
+            return
+        }
+
         val recipes = tradeTable.createMerchantRecipes() ?: return
         val merchant = Bukkit.createMerchant().apply { this.recipes = recipes }
         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()

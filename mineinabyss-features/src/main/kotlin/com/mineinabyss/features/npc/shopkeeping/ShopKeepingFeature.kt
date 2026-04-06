@@ -32,10 +32,12 @@ class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Cont
     class Context : Configurable<NpcsConfig> {
         override val configManager: IdofrontConfig<NpcsConfig> = config("npc", abyss.dataPath, NpcsConfig())
         val npcconfig by  config("npc", abyss.dataPath, NpcsConfig())
+        val tradesConfig by config("trades", abyss.dataPath, TradeTablesConfig())
         val dialogsConfig by config("dialogs", abyss.dataPath, DialogsConfig())
         val manager = NpcManager(npcconfig, getWorld("world")!!, dialogsConfig)
     }
     override fun FeatureDSL.enable() = gearyPaper.run {
+        TradeConfigHolder.config = context.tradesConfig
         plugin.listeners(ShopKeepingListener())
         plugin.launch {
             delay(10.seconds)

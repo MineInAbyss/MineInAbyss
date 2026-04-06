@@ -4,6 +4,7 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.action.DialogData
 import com.mineinabyss.features.npc.action.DialogsConfig
 import com.mineinabyss.features.npc.action.QuestDialogData
+import com.mineinabyss.features.npc.shopkeeping.TradeConfigHolder
 import com.mineinabyss.features.npc.shopkeeping.Trade
 import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
@@ -86,7 +87,8 @@ class NpcEntity(
     }
 
     fun createTraderNpc() {
-        if (config.tradeTable.trades.isNotEmpty()) {
+        val tradeTable = TradeConfigHolder.config?.tradeTables?.get(config.tradeTableId)
+        if (tradeTable?.trades?.isNotEmpty() == true) {
 
             val location = config.location
             val chunk = location.chunk
@@ -95,7 +97,7 @@ class NpcEntity(
             for (entity in chunk.entities) if (config.id in entity.scoreboardTags) entity.remove()
             val entity = location.world.spawn(location, Interaction::class.java)
 
-            val recipes = createMerchantRecipes(config.tradeTable.trades)
+            val recipes = createMerchantRecipes(tradeTable.trades)
             val merchant = Bukkit.createMerchant()
 
             merchant.recipes = recipes
@@ -107,7 +109,7 @@ class NpcEntity(
                     if (rightClicked == entity) {
                        player.info("bla bla bla")
                         isCancelled = true
-                        merchant.recipes = createMerchantRecipes(config.tradeTable.trades)
+                        merchant.recipes = createMerchantRecipes(tradeTable.trades)
 
                         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()
                     }
