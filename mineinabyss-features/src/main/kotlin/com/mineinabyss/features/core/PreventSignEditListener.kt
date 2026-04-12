@@ -13,11 +13,6 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
 class PreventSignEditListener : Listener {
-
-    companion object {
-        private const val BYPASS_PERMISSION = "mineinabyss.preventsignedit.bypass"
-    }
-
     @EventHandler
     fun PlayerInteractEvent.onPlayerEditSign() {
         val signOwner = (clickedBlock?.state as? Sign)?.withGeary { it.persistentDataContainer.decode<SignOwner>() } ?: return
@@ -34,5 +29,9 @@ class PreventSignEditListener : Listener {
             sign.persistentDataContainer.encode(SignOwner(player.uniqueId))
             sign.update()
         }
+    }
+
+    companion object {
+        private const val BYPASS_PERMISSION = "mineinabyss.preventsignedit.bypass"
     }
 }

@@ -1,11 +1,11 @@
 package com.mineinabyss.features.anticheese
 
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.plugin.listeners
+import com.mineinabyss.dependencies.get
+import com.mineinabyss.dependencies.module
+import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.idofront.features.listeners
 
-class AntiCheeseFeature : Feature() {
-    override fun FeatureDSL.enable() {
-        plugin.listeners(AntiCheeseListener())
-    }
+val AntiCheeseFeature = module("anticheese") {
+    require(get<AbyssFeatureConfig>().antiCheese.enabled)
+    listeners(AntiCheeseListener())
 }

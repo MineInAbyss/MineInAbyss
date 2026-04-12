@@ -1,6 +1,6 @@
 package com.mineinabyss.features.core
 
-import com.mineinabyss.features.abyss
+import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.idofront.location.up
 import io.papermc.paper.event.player.PlayerFailMoveEvent
 import org.bukkit.Location
@@ -16,8 +16,9 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 import kotlin.random.Random
 
-class CoreListener : Listener {
-
+class CoreListener(
+    val config: AbyssFeatureConfig,
+) : Listener {
     @EventHandler
     fun PlayerFailMoveEvent.onMoveWrongly() {
         when (failReason) {
@@ -49,7 +50,7 @@ class CoreListener : Listener {
         if (player.gameMode.isInvulnerable || !hasExplicitlyChangedBlock()) return
 
         player.location.findLocationAround(1, 0.30) {
-                it.block.isFlowing && it.up(4.0).block.isFlowing
+            it.block.isFlowing && it.up(4.0).block.isFlowing
         }?.also { player.handleWaterfall() }
 
         player.location.findLocationAround(radius = 1, scale = 0.30) {
@@ -62,18 +63,18 @@ class CoreListener : Listener {
     private fun Player.handleWaterfall() {
         //bypass armor damage reduction
         damage(0.0001) // trigger damage sound effect
-        health = (health - (0.25 * abyss.config.core.waterfallDamageMultiplier)).coerceAtLeast(0.0)
+        health = (health - (0.25 * config.core.waterfallDamageMultiplier)).coerceAtLeast(0.0)
 
         world.spawnParticle(Particle.CLOUD, location.add(0.0, 0.75, 0.0), 1, 0.5, 0.5, 0.5, 0.3)
         velocity = velocity.apply {
             x = Random.nextDouble(
-                -abyss.config.core.waterfallMoveMultiplier,
-                abyss.config.core.waterfallMoveMultiplier
+                -config.core.waterfallMoveMultiplier,
+                config.core.waterfallMoveMultiplier
             )
             y = -0.1
             z = Random.nextDouble(
-                -abyss.config.core.waterfallMoveMultiplier,
-                abyss.config.core.waterfallMoveMultiplier
+                -config.core.waterfallMoveMultiplier,
+                config.core.waterfallMoveMultiplier
             )
         }
     }
@@ -83,10 +84,10 @@ class CoreListener : Listener {
             remainingAir = remainingAir
             damage(0.0001) // trigger damage sound effect
             health =
-                (health - (0.25 * abyss.config.core.bubbleColumnDamageMultiplier)).coerceAtLeast(0.0)
+                (health - (0.25 * config.core.bubbleColumnDamageMultiplier)).coerceAtLeast(0.0)
 
         } else {
-            remainingAir = (maximumAir - abyss.config.core.bubbleColumnBreathMultiplier)
+            remainingAir = (maximumAir - config.core.bubbleColumnBreathMultiplier)
             maximumAir = remainingAir.coerceAtLeast(0)
         }
 
