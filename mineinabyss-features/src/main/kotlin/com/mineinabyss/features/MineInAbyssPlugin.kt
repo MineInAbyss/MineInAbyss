@@ -4,10 +4,7 @@ import com.charleskorn.kaml.AnchorsAndAliases
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.components.curse.AscensionEffect
-import com.mineinabyss.dependencies.DI
-import com.mineinabyss.dependencies.getLazy
-import com.mineinabyss.dependencies.loadAllCatching
-import com.mineinabyss.dependencies.single
+import com.mineinabyss.dependencies.*
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
 import com.mineinabyss.features.core.CoreFeature
@@ -44,10 +41,14 @@ import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.serialization.SerializableComponents
+import com.mineinabyss.idofront.config.SingleConfig
+import com.mineinabyss.idofront.config.WriteMode
 import com.mineinabyss.idofront.features.MainCommand
+import com.mineinabyss.idofront.features.MainCommandFeature
 import com.mineinabyss.idofront.features.singleConfig
 import com.mineinabyss.idofront.features.singlePluginLogger
 import com.mineinabyss.idofront.messaging.ComponentLogger
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
@@ -55,17 +56,26 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
     override val di = DI.Companion {
+        single<Plugin> { this@MineInAbyssPlugin }
         singlePluginLogger(this@MineInAbyssPlugin)
         singleConfig<AbyssFeatureConfig>("config.yml") {
+            writeBack = WriteMode.ALWAYS
             format = Yaml(
                 serializersModule = gearyPaper.worldManager.global.getAddon(SerializableComponents).formats.module,
-                configuration = YamlConfiguration(anchorsAndAliases = AnchorsAndAliases.Permitted())
+                configuration = YamlConfiguration(
+                    anchorsAndAliases = AnchorsAndAliases.Permitted(),
+                    strictMode = false
+                ),
             )
         }
         single {
             MainCommand(
                 names = listOf("mineinabyss", "mia"),
-                description = "The main command for Mine in Abyss"
+                description = "The main command for Mine in Abyss",
+                reloadCommandName = "reload",
+                onBeforeReload = {
+                    get<SingleConfig<AbyssFeatureConfig>>().updateCached()
+                }
             )
         }
         // Exposed database connection
@@ -136,8 +146,8 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             RelicsFeature,
             ToolsFeature,
             TutorialFeature,
-            //TODO add remaining features
         )
+        di.scope.load(MainCommandFeature)
     }
 
     override fun onDisable() {

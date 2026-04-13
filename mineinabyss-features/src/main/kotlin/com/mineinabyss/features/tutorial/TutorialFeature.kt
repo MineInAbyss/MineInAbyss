@@ -5,10 +5,7 @@ import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.config.SingleConfig
-import com.mineinabyss.idofront.features.get
-import com.mineinabyss.idofront.features.listeners
-import com.mineinabyss.idofront.features.mainCommand
-import com.mineinabyss.idofront.features.singleConfig
+import com.mineinabyss.idofront.features.*
 import com.mineinabyss.idofront.messaging.success
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
@@ -20,6 +17,7 @@ import org.bukkit.entity.TextDisplay
 
 val TutorialFeature: DI.Module = module("tutorial") {
     require(get<AbyssFeatureConfig>().tutorial.enabled) { "Tutorial feature is disabled" }
+    requirePlugins("DeeperWorld")
 
     val config by singleConfig<Tutorial>("tutorial.yml")
     single<TutorialContext> {

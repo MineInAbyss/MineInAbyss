@@ -5,9 +5,11 @@ import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.components.playerData
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.singleModule
 import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.features.helpers.CoinFactory
 import com.mineinabyss.features.hubstorage.isInHub
+import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.default
@@ -25,6 +27,7 @@ class OrthBankConfig {
 
 val OrthBankingFeature = module("orth-banking") {
     require(get<AbyssFeatureConfig>().orthBanking.enabled) { "Orth Banking feature is disabled" }
+    singleModule(LayersFeature)
 }.mainCommand {
     "bank" {
         description = "Orthbanking related commands"

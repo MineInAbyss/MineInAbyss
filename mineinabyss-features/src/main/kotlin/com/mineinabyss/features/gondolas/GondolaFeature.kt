@@ -1,6 +1,7 @@
 package com.mineinabyss.features.gondolas
 
 import com.mineinabyss.components.gondolas.UnlockedGondolas
+import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
 import com.mineinabyss.dependencies.new
 import com.mineinabyss.dependencies.single
@@ -12,11 +13,7 @@ import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.oneOf
-import com.mineinabyss.idofront.di.DI.get
-import com.mineinabyss.idofront.features.listeners
-import com.mineinabyss.idofront.features.mainCommand
-import com.mineinabyss.idofront.features.singleConfig
-import com.mineinabyss.idofront.features.task
+import com.mineinabyss.idofront.features.*
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 
@@ -29,6 +26,7 @@ import com.mineinabyss.idofront.messaging.success
  */
 val GondolaFeature = module("gondola") {
     require(get<AbyssFeatureConfig>().gondolas.enabled) { "Gondolas feature is disabled" }
+    requirePlugins("DeeperWorld")
 
     // config
     val gondolaConfig by singleConfig<GondolasConfig>("gondolas.yml") { default = GondolasConfig() }

@@ -55,6 +55,7 @@ interface LootCrates {
 val LootCratesFeature = module("lootcrates") {
     require(get<AbyssFeatureConfig>().lootCrates.enabled) { "Lootcrates feature is disabled" }
     val config by singleConfig<LootCratesConfig>("lootTables.yml")
+    single { config.messages }
 
     val implementation = object : LootCrates {
         override val lootTables: Map<PrefabKey, LootTable> = with(gearyPaper.worldManager.global) {

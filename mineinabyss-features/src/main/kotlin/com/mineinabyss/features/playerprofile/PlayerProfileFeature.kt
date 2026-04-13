@@ -12,6 +12,7 @@ import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.get
 import com.mineinabyss.idofront.features.mainCommand
+import com.mineinabyss.idofront.features.requirePlugins
 import com.mineinabyss.idofront.messaging.success
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -25,6 +26,7 @@ class PlayerProfileConfig {
 val PlayerProfileFeature = module("player-profile") {
     val config = get<AbyssFeatureConfig>().playerProfile
     require(config.enabled) { "Player Profile feature is disabled" }
+    requirePlugins("Guiy")
 
     single<PlayerProfileConfig> { config }
 }.mainCommand {
