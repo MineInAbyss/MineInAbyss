@@ -7,6 +7,7 @@ plugins {
     alias(idofrontLibs.plugins.compose.compiler) apply false
     alias(idofrontLibs.plugins.mia.publication) apply false
     alias(idofrontLibs.plugins.mia.autoversion)
+    alias(idofrontLibs.plugins.mia.docs)
 }
 //
 allprojects {
@@ -21,4 +22,8 @@ allprojects {
         // LuxDialogues
         maven("https://repo.aselstudios.com/releases")
     }
+}
+
+idofront {
+    docsVersion = "0.0.8"
 }
