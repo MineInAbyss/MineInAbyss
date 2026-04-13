@@ -1,12 +1,7 @@
 package com.mineinabyss.features.npc.shopkeeping
 
 import androidx.compose.runtime.Composable
-import com.mineinabyss.components.npc.shopkeeping.ShopCurrency
-import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
-import com.mineinabyss.components.npc.shopkeeping.ShopTrade
-import com.mineinabyss.components.npc.shopkeeping.ShopTradeSerializer
-import com.mineinabyss.components.npc.shopkeeping.TradeAction
-import com.mineinabyss.components.playerData
+import com.mineinabyss.components.npc.shopkeeping.*
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.CoinFactory
@@ -121,8 +116,8 @@ fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrade
                         else player.error("Failed to execute command!")
                     }
 
-                    TradeAction.CONSOLE_COMMAND -> abyss.plugin.server.dispatchCommand(
-                        abyss.plugin.server.consoleSender,
+                    TradeAction.CONSOLE_COMMAND -> abyss.server.dispatchCommand(
+                        abyss.server.consoleSender,
                         tradeAction.getValue(player)
                     )
 

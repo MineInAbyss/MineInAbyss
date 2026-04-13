@@ -15,7 +15,7 @@ sealed class AbstractAscensionEffect : AscensionEffect {
     abstract val iterations: Int
 
     override fun applyEffect(player: Player, ticks: Int) {
-        abyss.plugin.launch {
+        abyss.launch {
             delay(offset)
             repeat(iterations) {
                 applyEffect(player)

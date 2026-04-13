@@ -26,7 +26,7 @@ class MusicScheduler(
     }
 
     fun scheduleMusicPlaying(player: Player) {
-        val musicPlayingJob = abyss.plugin.launch {
+        val musicPlayingJob = abyss.launch {
             val waitOnLogin = conf.waitTimeOnLogin.randomOrMin()
             abyss.logger.i("Starting music scheduler for ${player.name}, waiting $waitOnLogin before playing.")
             delay(waitOnLogin)

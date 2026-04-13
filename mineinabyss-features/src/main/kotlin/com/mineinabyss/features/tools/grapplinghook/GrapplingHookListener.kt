@@ -93,7 +93,7 @@ class GrapplingHookListener : Listener {
     }
 
     private fun manualHookJob(player: Player): Job {
-        return abyss.plugin.launch {
+        return abyss.launch {
             val playerHook = hookMap[player.uniqueId] ?: return@launch
             player.isGrappling = true
             do {
@@ -125,7 +125,7 @@ class GrapplingHookListener : Listener {
         pBatAdd: Double,
         aBatAdd: Double
     ): Job {
-        return abyss.plugin.launch {
+        return abyss.launch {
             var counter = 0
             do {
                 if (!player.isSneaking) counter++

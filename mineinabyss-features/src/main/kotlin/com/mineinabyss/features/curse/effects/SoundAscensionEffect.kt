@@ -29,7 +29,7 @@ data class SoundAscensionEffect(
     override fun applyEffect(player: Player) { //TODO do not play sounds too quickly together
         val soundLocation = player.location + (Vector.getRandom() * 5 - Vector(2.5, 2.5, 2.5))
         val sound = sounds.random()
-        abyss.plugin.launch {
+        abyss.launch {
             delay(Random.nextLong(10).ticks)
             player.playSound(soundLocation, sound, 1f, 1f)
         }

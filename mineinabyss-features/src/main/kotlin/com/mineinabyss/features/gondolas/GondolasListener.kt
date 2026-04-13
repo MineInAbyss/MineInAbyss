@@ -65,7 +65,7 @@ class GondolasListener : Listener {
 
     private val warpSound = Sound.sound(Key.key("minecraft:ambient.cave.cave_18"), Sound.Source.AMBIENT, 1f, 1f)
     fun startCooldownDisplayTask() {
-        abyss.plugin.launchTickRepeating(1L) {
+        abyss.launchTickRepeating(1L) {
             val now = System.currentTimeMillis()
             for ((uuid, entry) in playerZoneEntry) {
                 val player = uuid.toPlayer() ?: continue

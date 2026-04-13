@@ -30,7 +30,7 @@ class OkiboTravelListener(
 
     @EventHandler
     fun PlayerChunkLoadEvent.onLoad() {
-        abyss.plugin.launch {
+        abyss.launch {
             delay(2.ticks)
             val chunkKey = chunk.chunkKey
             val okiboMap = config.okiboMaps.firstOrNull {
@@ -60,7 +60,7 @@ class OkiboTravelListener(
         val playerStation = config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
         val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
 
-        abyss.plugin.launch {
+        abyss.launch {
             delay(5.seconds)
             if (player.isOnline) gearyPlayer.remove<OkiboTraveler>()
         }

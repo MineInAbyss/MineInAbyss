@@ -17,7 +17,9 @@ import com.mineinabyss.idofront.textcomponents.serialize
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.lowerCase
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
@@ -326,7 +328,7 @@ fun OfflinePlayer.kickPlayerFromGuild(member: OfflinePlayer): Boolean {
             return@transaction false
         }
 
-        abyss.plugin.launch {
+        abyss.launch {
             val gearyPlayer = member.player?.toGeary() ?: return@launch
             val channelData = gearyPlayer.get<ChannelData>() ?: return@launch
             // Remove player from guild-chat. Offline members handled when they join
@@ -377,7 +379,7 @@ fun Player.leaveGuild() {
             return@transaction
         }
 
-        abyss.plugin.launch {
+        abyss.launch {
             val gearyPlayer = this@leaveGuild.player?.toGeary() ?: return@launch
             val channelData = gearyPlayer.get<ChannelData>() ?: return@launch
             if (channelData.channelId == guildName.guildChatId()) {

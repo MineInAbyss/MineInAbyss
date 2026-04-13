@@ -6,6 +6,6 @@ import org.bukkit.plugin.Plugin
 
 class MiACosmeticProvider : CosmeticProvider() {
     override fun getProviderPlugin(): Plugin {
-        return abyss.plugin
+        return abyss
     }
 }

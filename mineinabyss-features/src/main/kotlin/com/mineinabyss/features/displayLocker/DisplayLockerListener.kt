@@ -36,7 +36,7 @@ class DisplayLockerListener : Listener {
     fun HangingPlaceEvent.onPlaceItemFrame() {
         val (frame, player) = (entity as? ItemFrame ?: return) to (player ?: return)
         val lockState = player.playerDataOrNull?.defaultDisplayLockState ?: false
-        abyss.plugin.launch {
+        abyss.launch {
             yield()
             frame.toGeary().getOrSetPersisting<LockDisplayItem> {
                 LockDisplayItem(
@@ -57,7 +57,7 @@ class DisplayLockerListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun EntityPlaceEvent.onPlaceArmorStand() {
         val (entity, player) = (entity as? ArmorStand ?: return) to (player ?: return)
-        abyss.plugin.launch {
+        abyss.launch {
             yield()
             player.editPlayerData {
                 val lockState = defaultDisplayLockState

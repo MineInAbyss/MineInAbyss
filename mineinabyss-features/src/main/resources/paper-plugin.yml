@@ -1,7 +1,7 @@
 name: MineInAbyss
 version: "${plugin_version}"
 author: Derongan
-main: com.mineinabyss.plugin.MineInAbyssPlugin
+main: com.mineinabyss.features.MineInAbyssPlugin
 api-version: "1.21"
 
 prefix: MiA

@@ -117,7 +117,7 @@ fun Player.deleteGuild() {
         chatty.config.channels -= guildChatId
 
         // Rest will be reset when they join
-        abyss.plugin.launch {
+        abyss.launch {
             this@deleteGuild.getGuildMembers().map { it.player }
                 .filterIsInstance<Player>()
                 .forEach {
@@ -163,7 +163,7 @@ fun Player.changeStoredGuildName(newGuildName: String) {
         }
 
         // Update the guildchat ID on online players, rest handled on join
-        abyss.plugin.launch {
+        abyss.launch {
             this@changeStoredGuildName.getGuildMembers().mapNotNull { it.player.player }.forEach {
                 val gearyPlayer = it.toGeary()
                 val channelData = gearyPlayer.get<ChannelData>() ?: return@forEach

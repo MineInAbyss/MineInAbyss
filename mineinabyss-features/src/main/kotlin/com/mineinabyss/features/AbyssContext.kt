@@ -1,27 +1,26 @@
 package com.mineinabyss.features
 
 import com.mineinabyss.geary.papermc.gearyPaper
-import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.messaging.observeLogger
-import org.bukkit.plugin.java.JavaPlugin
+import com.mineinabyss.idofront.messaging.ComponentLogger
+import org.bukkit.plugin.Plugin
 import org.jetbrains.exposed.v1.jdbc.Database
-import java.nio.file.Path
 
-val abyss by DI.observe<AbyssContext>()
+val abyss get() = AbyssContext.instance ?: error("MineInAbyss plugin hasn't started yet!")
 
-class AbyssContext(
-    val plugin: JavaPlugin,
-) {
-    val di: com.mineinabyss.dependencies.DI get() = TODO()
-    val logger by plugin.observeLogger()
-    val dataPath: Path = plugin.dataFolder.toPath()
+interface AbyssContext : Plugin, com.mineinabyss.dependencies.DI {
+    val logger: ComponentLogger
+
+    @Deprecated("Use gearyPaper", ReplaceWith("gearyPaper.worldManager.global"))
     val gearyGlobal get() = gearyPaper.worldManager.global
-    val config: AbyssFeatureConfig get() = TODO()
-    val isChattyLoaded get() = plugin.server.pluginManager.isPluginEnabled("chatty")
-    val isEternalFortuneLoaded get() = plugin.server.pluginManager.isPluginEnabled("EternalFortune")
-    val isPlaceholderApiLoaded get() = plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")
-    val isHMCCosmeticsEnabled get() = plugin.server.pluginManager.isPluginEnabled("HMCCosmetics")
-    val isModelEngineEnabled get() = plugin.server.pluginManager.isPluginEnabled("ModelEngine")
+    val config: AbyssFeatureConfig
+    val isChattyLoaded get() = server.pluginManager.isPluginEnabled("chatty")
+    val isEternalFortuneLoaded get() = server.pluginManager.isPluginEnabled("EternalFortune")
+    val isPlaceholderApiLoaded get() = server.pluginManager.isPluginEnabled("PlaceholderAPI")
+    val isHMCCosmeticsEnabled get() = server.pluginManager.isPluginEnabled("HMCCosmetics")
+    val isModelEngineEnabled get() = server.pluginManager.isPluginEnabled("ModelEngine")
+    val db: Database
 
-    val db = Database.connect("jdbc:sqlite:" + plugin.dataFolder.path + "/data.db", "org.sqlite.JDBC")
+    companion object {
+        var instance: AbyssContext? = null
+    }
 }

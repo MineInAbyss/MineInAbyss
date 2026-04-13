@@ -33,6 +33,6 @@ class ChattyGuildListener : Listener {
         val channelData = player.toGeary().get<ChannelData>()?.withChannelVerified() ?: return
         val channelId = player.guildChat()?.key ?: defaultChannel().key
         if (!channelData.channelId.endsWith(guildChannelId)) return
-        abyss.plugin.launch { player.toGeary().setPersisting(channelData.copy(channelId = channelId)) }
+        abyss.launch { player.toGeary().setPersisting(channelData.copy(channelId = channelId)) }
     }
 }

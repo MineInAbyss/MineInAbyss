@@ -4,8 +4,8 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.action.DialogData
 import com.mineinabyss.features.npc.action.DialogsConfig
 import com.mineinabyss.features.npc.action.QuestDialogData
-import com.mineinabyss.features.npc.shopkeeping.TradeConfigHolder
 import com.mineinabyss.features.npc.shopkeeping.Trade
+import com.mineinabyss.features.npc.shopkeeping.TradeConfigHolder
 import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
@@ -114,7 +114,7 @@ class NpcEntity(
                         MenuType.MERCHANT.builder().merchant(merchant).build(player).open()
                     }
                 }
-            }, abyss.plugin)
+            }, abyss)
         }
 
         return

@@ -6,7 +6,6 @@ import com.mineinabyss.deeperworld.world.Region
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.serialization.setPersisting
-import com.mineinabyss.idofront.di.DI
 import com.mineinabyss.idofront.serialization.ColorSerializer
 import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.serialization.QuaternionfAltSerializer
@@ -30,12 +29,15 @@ import org.bukkit.util.Transformation
 import org.joml.Quaternionf
 import org.joml.Vector3f
 
-val tutorial by DI.observe<TutorialContext>()
 interface TutorialContext {
     val firstJoinLocation: Location?
     val tutorialEntities: Long2ObjectOpenHashMap<ObjectArrayList<TutorialEntity>>
     val entry: TutorialRegion
     val exit: TutorialRegion
+
+    fun spawnTutorialEntities() {
+        tutorialEntities.values.flatten().forEach(TutorialEntity::spawn)
+    }
 }
 
 @Serializable
@@ -79,7 +81,7 @@ data class TutorialEntity(
 ) {
     private fun TextDisplay.trackEntity(tutorial: TutorialEntity) {
         toGearyOrNull()?.setPersisting(tutorial) ?: run {
-            abyss.plugin.launch {
+            abyss.launch {
                 delay(10.ticks)
                 trackEntity(tutorial)
             }

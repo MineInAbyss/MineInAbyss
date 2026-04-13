@@ -2,7 +2,6 @@ package com.mineinabyss.features.npc.action
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.Npc
-import com.mineinabyss.idofront.messaging.error
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode
 import kotlinx.serialization.Serializable
@@ -132,7 +131,7 @@ enum class DialogueAction {
     }
 
     fun execute(player: Player, npc: Npc) {
-        val plugin = abyss.plugin // Adjust if plugin access differs
+        val plugin = abyss // Adjust if plugin access differs
         when (this) {
             CUSTOM -> plugin.server.scheduler.runTask(plugin, Runnable { customAction(player) })
             GONDOLA -> plugin.server.scheduler.runTask(plugin, Runnable { npc.gondolaUnlockerInteraction(player) })
