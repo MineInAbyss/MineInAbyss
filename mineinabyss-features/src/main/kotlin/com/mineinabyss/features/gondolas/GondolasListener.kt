@@ -64,18 +64,17 @@ class GondolasListener : Listener {
     }
 
     private val warpSound = Sound.sound(Key.key("minecraft:ambient.cave.cave_18"), Sound.Source.AMBIENT, 1f, 1f)
-    fun startCooldownDisplayTask() {
-        abyss.launchTickRepeating(1L) {
-            val now = System.currentTimeMillis()
-            for ((uuid, entry) in playerZoneEntry) {
-                val player = uuid.toPlayer() ?: continue
-                val gondolaData = LoadedGondolas.loaded[entry.id] ?: continue
-                val remaining = gondolaData.warpCooldown.inWholeMilliseconds - (now - entry.timestamp)
 
-                if (remaining == gondolaData.warpCooldown.inWholeMilliseconds) player.playSound(warpSound)
-                if (remaining > 0) player.sendActionBar(Component.text("Warping in ${remaining / 1000} seconds..."))
-                else handleGondola(player)
-            }
+    val job = abyss.launchTickRepeating(1L) {
+        val now = System.currentTimeMillis()
+        for ((uuid, entry) in playerZoneEntry) {
+            val player = uuid.toPlayer() ?: continue
+            val gondolaData = LoadedGondolas.loaded[entry.id] ?: continue
+            val remaining = gondolaData.warpCooldown.inWholeMilliseconds - (now - entry.timestamp)
+
+            if (remaining == gondolaData.warpCooldown.inWholeMilliseconds) player.playSound(warpSound)
+            if (remaining > 0) player.sendActionBar(Component.text("Warping in ${remaining / 1000} seconds..."))
+            else handleGondola(player)
         }
     }
 
