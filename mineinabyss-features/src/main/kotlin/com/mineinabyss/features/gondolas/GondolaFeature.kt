@@ -14,6 +14,7 @@ import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
 import com.mineinabyss.idofront.commands.brigadier.Args
+import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI.get
@@ -27,6 +28,7 @@ import com.mineinabyss.idofront.features.task
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import io.papermc.paper.util.Tick
 import org.jetbrains.exposed.v1.core.stringParam
 
 /*
@@ -129,9 +131,9 @@ val GondolaFeature = module("gondola") {
         "unlock"{
             description = "Unlocks a route for a player"
             permission = "mineinabyss.gondola.unlock"
-            val passID by stringArg()
-            executes.asPlayer {
-                val ticket = get<TicketConfig>().tickets[passID] ?: return@asPlayer player.error("Ticket $passID not found")
+            executes.asPlayer().args("keys" to Args.string().oneOf { get<TicketConfig>().tickets.keys.toList() })
+            { passID ->
+                val ticket = get<TicketConfig>().tickets[passID] ?: return@args player.error("Ticket $passID not found")
                 player.unlockRoute(ticket)
                 player.success("Successfully unlocked route $passID");
             }
