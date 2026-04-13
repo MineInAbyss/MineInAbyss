@@ -2,91 +2,61 @@ package com.mineinabyss.features.npc.shopkeeping
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.npc.shopkeeping.ShopKeeper
-import com.mineinabyss.features.abyss
-import com.mineinabyss.features.npc.action.DialogsConfig
+import com.mineinabyss.dependencies.get
+import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.single
+import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.features.lootcrates.prefabKey
 import com.mineinabyss.features.npc.NpcManager
 import com.mineinabyss.features.npc.NpcsConfig
+import com.mineinabyss.features.npc.action.DialogsConfig
 import com.mineinabyss.features.npc.shopkeeping.menu.ShopMainMenu
-import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.toEntityOrNull
 import com.mineinabyss.geary.papermc.withGeary
-import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.canvas.guiy
-import com.mineinabyss.idofront.commands.arguments.optionArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.config.IdofrontConfig
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
-import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.config.config
+import com.mineinabyss.idofront.commands.brigadier.Args
+import com.mineinabyss.idofront.commands.brigadier.oneOf
+import com.mineinabyss.idofront.features.*
 import kotlinx.coroutines.delay
 import org.bukkit.Bukkit.getWorld
 import kotlin.time.Duration.Companion.seconds
 
+val ShopKeepingFeature = module("shopkeeping") {
+    require(get<AbyssFeatureConfig>().shopkeeping.enabled) { "Shopkeeping feature is disabled" }
+    requirePlugins("ModelEngine")
 
-class ShopKeepingFeature : FeatureWithContext<ShopKeepingFeature.Context>(::Context) {
+    val npcs by singleConfig<NpcsConfig>("npc.yml")
+    val trades by singleConfig<TradeTablesConfig>("trades.yml")
+    val dialogs by singleConfig<DialogsConfig>("dialogs.yml")
+    val manager by single { NpcManager(npcs, getWorld("world")!!, dialogs) }
 
-    override val dependsOn: Set<String> = setOf("ModelEngine")
-
-    class Context : Configurable<NpcsConfig> {
-        override val configManager: IdofrontConfig<NpcsConfig> = config("npc", abyss.dataPath, NpcsConfig())
-        val npcconfig by  config("npc", abyss.dataPath, NpcsConfig())
-        val tradesConfig by config("trades", abyss.dataPath, TradeTablesConfig())
-        val dialogsConfig by config("dialogs", abyss.dataPath, DialogsConfig())
-        val manager = NpcManager(npcconfig, getWorld("world")!!, dialogsConfig)
+    TradeConfigHolder.config = trades
+    listeners(ShopKeepingListener())
+    plugin.launch {
+        delay(10.seconds)
+        runCatching { manager.initNpc() }.onFailure { it.printStackTrace() }
     }
-    override fun FeatureDSL.enable() = gearyPaper.run {
-        TradeConfigHolder.config = context.tradesConfig
-        plugin.listeners(ShopKeepingListener())
-        plugin.launch {
-            delay(10.seconds)
-            runCatching { context.manager.initNpc() }.onFailure { it.printStackTrace() }
+    listeners(manager)
+}.mainCommand {
+    "shops" {
+        executes.asPlayer().args("key" to Args.prefabKey().oneOf { ShopKeepers.getKeys() }) { shopKey ->
+            player.withGeary {
+                val shopKeeper = shopKey.toEntityOrNull()?.get<ShopKeeper>() ?: return@args
+                guiy(player) { ShopMainMenu(player, shopKeeper) }
+            }
         }
-        plugin.listeners(context.manager)
-
-        mainCommand {
-            "test" {
-                playerAction {
-                    context.npcconfig.npcs.values.forEach {
-                        player.sendMessage("${it.customName} - ${it.id}")
-                    }
-                }
-            }
-            "shops" {
-                val shopKey by optionArg(options = ShopKeepers.getKeys().map { it.toString() }) {
-                    parseErrorMessage = { "No such shopkeeper: $passed" }
-                }
-                playerAction {
-                    player.withGeary {
-                        val shopKeeper = PrefabKey.of(shopKey).toEntityOrNull()?.get<ShopKeeper>() ?: return@playerAction
-                        guiy(player) { ShopMainMenu(player, shopKeeper) }
-                    }
-                }
-            }
-            "npcs" {
-                "reload" {
-                    action {
-                        context.manager.initNpc()
-                    }
+    }
+    "npcs" {
+        "test" {
+            executes.asPlayer {
+                get<NpcsConfig>().npcs.values.forEach {
+                    player.sendMessage("${it.customName} - ${it.id}")
                 }
             }
         }
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("shops").filter { it.startsWith(args[0]) }
-                2 -> {
-                    when (args[0]) {
-                        "shops" -> ShopKeepers.getKeys().filter { key ->
-                            val arg = args[1].lowercase()
-                            key.key.startsWith(arg) || key.full.startsWith(arg)
-                        }.map { it.key }
-
-                        else -> null
-                    }
-                }
-
-                else -> null
+        "reload" {
+            executes {
+                get<NpcManager>().initNpc()
             }
         }
     }

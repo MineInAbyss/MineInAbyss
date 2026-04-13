@@ -47,4 +47,5 @@ class AbyssFeatureConfig(
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
+    val quests: Toggle = Toggle(),
 )

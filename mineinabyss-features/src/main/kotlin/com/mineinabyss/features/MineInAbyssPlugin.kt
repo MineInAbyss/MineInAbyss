@@ -30,11 +30,13 @@ import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.features.misc.MiscFeature
 import com.mineinabyss.features.music.MusicFeature
+import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.features.orthbanking.OrthBankingFeature
 import com.mineinabyss.features.patreons.PatreonFeature
 import com.mineinabyss.features.playerprofile.PlayerProfileFeature
 import com.mineinabyss.features.pvp.PvpFeature
+import com.mineinabyss.features.quests.QuestFeature
 import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
@@ -124,13 +126,13 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             LootCratesFeature,
             MiscFeature,
             MusicFeature,
-            // NpcFeature
+            ShopKeepingFeature,
             OkiboTravelFeature,
             OrthBankingFeature,
             PatreonFeature,
             PlayerProfileFeature,
             PvpFeature,
-            // QuestFeature,
+            QuestFeature,
             RelicsFeature,
             ToolsFeature,
             TutorialFeature,

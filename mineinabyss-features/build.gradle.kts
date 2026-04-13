@@ -65,7 +65,7 @@ kotlin {
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
             "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-Xcontext-receivers",
+            "-Xcontext-parameters",
         )
     }
 }

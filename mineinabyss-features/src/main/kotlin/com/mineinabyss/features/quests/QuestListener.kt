@@ -1,6 +1,5 @@
 package com.mineinabyss.features.quests
 
-import com.mineinabyss.features.quests.QuestManager.visitQuestProgress
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -8,14 +7,15 @@ import org.bukkit.event.player.PlayerMoveEvent
 
 class QuestListener(
     val questConfig: QuestConfig,
-): Listener {
+    val manager: QuestManager,
+) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun PlayerMoveEvent.onLocationEnter() {
         if (!hasExplicitlyChangedBlock()) return
 
-        val activeQuests = QuestManager.activeQuests(player)
-        val playerVisitedLocations = QuestManager.visitedLocations(player)
+        val activeQuests = manager.activeQuests(player)
+        val playerVisitedLocations = manager.visitedLocations(player)
 
 //        activeQuests.activeVisitQuests.forEach { visitQuest ->
 //            visitQuest.locations.forEach { location ->
@@ -32,9 +32,9 @@ class QuestListener(
             // tldr: i'll optimize it later
             quest.value.locations.forEach { location ->
                 if (location.name !in playerVisitedLocations && location.isInside(to)) {
-                    QuestManager.addVisitedLocation(player, location.name)
-                    val progress = visitQuestProgress(player, quest.key)
-                    player.sendActionBar(QuestManager.questInformation(player, quest.key))
+                    manager.addVisitedLocation(player, location.name)
+                    val progress = manager.visitQuestProgress(player, quest.key)
+                    player.sendActionBar(manager.questInformation(player, quest.key))
                 }
             }
         }

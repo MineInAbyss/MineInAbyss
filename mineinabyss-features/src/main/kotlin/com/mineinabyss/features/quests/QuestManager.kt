@@ -1,9 +1,7 @@
 package com.mineinabyss.features.quests
 
 import com.mineinabyss.features.helpers.luckPerms
-import com.mineinabyss.geary.papermc.toGeary
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.papermc.tracking.items.ItemTracking
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.error
@@ -12,9 +10,7 @@ import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.luckperms.api.node.Node
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 @Serializable
 @SerialName("mineinabyss:quest_data")
@@ -25,9 +21,9 @@ data class QuestData(
 )
 
 
-object QuestManager {
-
-
+class QuestManager(
+    val config: QuestConfig,
+) {
     // we use this to store a player visited location and look it up;
     // will probably be moved to database implementation later on
     private fun getQuestData(player: Player): QuestData {
@@ -54,7 +50,6 @@ object QuestManager {
     }
 
     fun questInformation(player: Player, questId: String): TextComponent {
-        val config = QuestConfigHolder.config!!
         val visitQuest = config.visitQuests[questId]?.displayName ?: return Component.text(questId)
         val progress = visitQuestProgress(player, questId)
         //TODO make work for other quest types
@@ -82,7 +77,6 @@ object QuestManager {
     }
 
     fun giveQuestReward(player: Player, questId: String) {
-        val config = QuestConfigHolder.config ?: error("Trying to complete quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: return
 
         visitQuest.rewards.forEach { serializable ->
@@ -97,7 +91,6 @@ object QuestManager {
     }
 
     fun unlockQuest(player: Player, questId: String) {
-        val config = QuestConfigHolder.config ?: error("Trying to unlock quest $questId but QuestConfig is not initialized")
         if (questId !in config.visitQuests.keys) {
             error("Trying to unlock quest $questId but it does not exist in the QuestConfig")
         }
@@ -112,7 +105,6 @@ object QuestManager {
     }
 
     fun visitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
-        val config = QuestConfigHolder.config ?: error("Trying to get progress of quest $questId but QuestConfig is not initialized")
         val visitQuest = config.visitQuests[questId] ?: error("Trying to get progress of quest $questId but it does not exist in the QuestConfig")
         val questData = getQuestData(player)
 
@@ -146,7 +138,6 @@ object QuestManager {
     }
 
     fun isQuestCompleted(player: Player, questId: String): Boolean {
-        val config = QuestConfigHolder.config ?: error("Trying to check completion of quest $questId but QuestConfig is not initialized")
         val questData = getQuestData(player)
         val activeQuests = questData.activeQuests
         if (questId !in activeQuests) return false

@@ -4,7 +4,10 @@ import com.mineinabyss.chatty.ChattyChannel
 import com.mineinabyss.chatty.commands.ChattyCommands
 import com.mineinabyss.chatty.components.ChannelType
 import com.mineinabyss.components.guilds.SpyOnGuildChat
+import com.mineinabyss.dependencies.get
+import com.mineinabyss.dependencies.gets
 import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.single
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
@@ -31,6 +34,10 @@ import nl.rutgerkok.blocklocker.BlockLockerAPIv2
 import org.bukkit.entity.Player
 
 const val guildChannelId: String = "Guild Chat"
+
+interface GuildsModule {
+    val config: GuildsConfig
+}
 
 @Serializable
 class GuildsConfig {
@@ -75,6 +82,11 @@ val GuildFeature = module("guilds") {
 
     // Generate the guild-list
     displayGuildList()
+    single<GuildsModule> {
+        object : GuildsModule {
+            override val config: GuildsConfig = get()
+        }
+    }
 }.mainCommand {
     "guild" {
         description = "Guild related commands"
@@ -249,4 +261,4 @@ val GuildFeature = module("guilds") {
             }
         }
     }
-}
+}.gets<GuildsModule>()
