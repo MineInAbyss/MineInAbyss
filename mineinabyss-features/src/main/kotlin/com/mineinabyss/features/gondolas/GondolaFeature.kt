@@ -1,6 +1,9 @@
 package com.mineinabyss.features.gondolas
 
 import com.mineinabyss.components.gondolas.UnlockedGondolas
+import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.new
+import com.mineinabyss.dependencies.single
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.gondolas.pass.TicketConfig
 import com.mineinabyss.features.gondolas.pass.TicketConfigHolder
@@ -10,13 +13,21 @@ import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.commands.arguments.stringArg
+import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.extensions.actions.playerAction
 import com.mineinabyss.idofront.config.config
+import com.mineinabyss.idofront.di.DI.get
 import com.mineinabyss.idofront.features.Configurable
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.features.FeatureWithContext
+import com.mineinabyss.idofront.features.listeners
+import com.mineinabyss.idofront.features.mainCommand
+import com.mineinabyss.idofront.features.singleConfig
+import com.mineinabyss.idofront.features.task
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
+import org.jetbrains.exposed.v1.core.stringParam
 
 /*
  * Gondolas system:
@@ -25,61 +36,113 @@ import com.mineinabyss.idofront.plugin.listeners
  * - The server has a "LoadedGondolas" object stores all the active gondolas, that is, the ones players are able to use. -> LoadedGondolas.loaded
  * - Players are able to use (teleport) gondolas if they have them unlocked, and they are active (loaded).
  */
-class GondolaFeature : FeatureWithContext<GondolaFeature.Context>(::Context) {
+//class GondolaFeature_ : FeatureWithContext<GondolaFeature.Context>(::Context) {
+//
+//    class Context : Configurable<GondolasConfig> {
+//        override val configManager = config("gondolas", abyss.dataPath, GondolasConfig())
+//        val ticketConfig by config("tickets", abyss.dataPath, TicketConfig())
+//        val gondolasListener = GondolasListener()
+//    }
+//
+//    override fun FeatureDSL.enable() = gearyPaper.run {
+//        //LoadedGondolas
+//        //createGondolaTracker()
+//        plugin.listeners(context.gondolasListener)
+//        context.gondolasListener.startCooldownDisplayTask()
+//        TicketConfigHolder.config = context.ticketConfig
+//        mainCommand {
+//            "gondola"(desc = "Commands for gondolas") {
+//                permission = "mineinabyss.gondola"
+//                "list"(desc = "Opens the gondola menu") {
+//                    permission = "mineinabyss.gondola.list"
+//                    playerAction {
+//                        guiy(player) { GondolaSelectionMenu(player) }
+//                    }
+//                }
+//                "unlock"(desc = "Unlocks a route for a player") {
+//                    permission = "mineinabyss.gondola.unlock"
+//                    val passID by stringArg()
+//                    playerAction {
+////                        val gondolas = player.toGeary().get<UnlockedGondolas>()
+////                            ?: return@playerAction
+////                        gondolas.keys.add(gondola)
+////                        player.success("Unlocked $gondola")
+//                        val ticket = context.ticketConfig.tickets[passID] ?: return@playerAction player.error("Ticket $passID not found")
+//                        player.unlockRoute(ticket)
+//                    }
+//                }
+//                "clear"(desc = "Removes all associated gondolas from a player") {
+//                    permission = "mineinabyss.gondola.clear"
+//                    playerAction {
+//                        val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
+//                        gondolas.keys.clear()
+//                        player.error("Cleared all gondolas")
+//                    }
+//                }
+//            }
+//        }
+//        tabCompletion {
+//            when (args.size) {
+//                1 -> listOf("gondola").filter { it.startsWith(args[0], true) }
+//                2 -> if (args[0] == "gondola") listOf("list", "unlock", "clear").filter { it.startsWith(args[1], true) } else null
+//                3 -> if (args[0] == "gondola" && args[1] == "unlock") {
+//                    context.ticketConfig.tickets.keys.filter { it.startsWith(args[2], true) }
+//                    //context.config.gondolas.keys.filter { it.startsWith(args[2], true) }
+//                } else null
+//
+//                else -> null
+//            }
+//        }
+//    }
+//}
+//
 
-    class Context : Configurable<GondolasConfig> {
-        override val configManager = config("gondolas", abyss.dataPath, GondolasConfig())
-        val ticketConfig by config("tickets", abyss.dataPath, TicketConfig())
-        val gondolasListener = GondolasListener()
-    }
 
-    override fun FeatureDSL.enable() = gearyPaper.run {
-        //LoadedGondolas
-        //createGondolaTracker()
-        plugin.listeners(context.gondolasListener)
-        context.gondolasListener.startCooldownDisplayTask()
-        TicketConfigHolder.config = context.ticketConfig
-        mainCommand {
-            "gondola"(desc = "Commands for gondolas") {
-                permission = "mineinabyss.gondola"
-                "list"(desc = "Opens the gondola menu") {
-                    permission = "mineinabyss.gondola.list"
-                    playerAction {
-                        guiy(player) { GondolaSelectionMenu(player) }
-                    }
-                }
-                "unlock"(desc = "Unlocks a route for a player") {
-                    permission = "mineinabyss.gondola.unlock"
-                    val passID by stringArg()
-                    playerAction {
-//                        val gondolas = player.toGeary().get<UnlockedGondolas>()
-//                            ?: return@playerAction
-//                        gondolas.keys.add(gondola)
-//                        player.success("Unlocked $gondola")
-                        val ticket = context.ticketConfig.tickets[passID] ?: return@playerAction player.error("Ticket $passID not found")
-                        player.unlockRoute(ticket)
-                    }
-                }
-                "clear"(desc = "Removes all associated gondolas from a player") {
-                    permission = "mineinabyss.gondola.clear"
-                    playerAction {
-                        val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
-                        gondolas.keys.clear()
-                        player.error("Cleared all gondolas")
-                    }
-                }
+
+val GondolaFeature = module("gondola") {
+
+
+    // config
+    val gondolaConfig by singleConfig<GondolasConfig>("gondolas.yml") { default = GondolasConfig() }
+    val ticketConfig by singleConfig<TicketConfig>("tickets.yml") { default = TicketConfig() }
+
+
+    // listeners
+    val gondolasListener by single { new(::GondolasListener) }
+
+
+
+
+    listeners( gondolasListener )
+    task(get<GondolasListener>().job)
+}.mainCommand {
+    "gondola"{
+        description = "Commands for gondolas"
+
+        "list" {
+            description = "Opens the gondola menu"
+            executes.asPlayer {
+                guiy(player) { GondolaSelectionMenu(player) }
             }
         }
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("gondola").filter { it.startsWith(args[0], true) }
-                2 -> if (args[0] == "gondola") listOf("list", "unlock", "clear").filter { it.startsWith(args[1], true) } else null
-                3 -> if (args[0] == "gondola" && args[1] == "unlock") {
-                    context.ticketConfig.tickets.keys.filter { it.startsWith(args[2], true) }
-                    //context.config.gondolas.keys.filter { it.startsWith(args[2], true) }
-                } else null
 
-                else -> null
+        "unlock"{
+            description = "Unlocks a route for a player"
+            permission = "mineinabyss.gondola.unlock"
+            val passID by stringArg()
+            executes.asPlayer {
+                val ticket = get<TicketConfig>().tickets[passID] ?: return@asPlayer player.error("Ticket $passID not found")
+                player.unlockRoute(ticket)
+                player.success("Successfully unlocked route $passID");
+            }
+        }
+        "clear" {
+            description = "Removes all associated gondolas from a player"
+            permission = "mineinabyss.gondola.clear"
+            executes.asPlayer {
+                val gondolas = player.toGeary().getOrSetPersisting<UnlockedGondolas> { UnlockedGondolas() }
+                gondolas.keys.clear()
+                player.success("Your gondolas have been removed")
             }
         }
     }

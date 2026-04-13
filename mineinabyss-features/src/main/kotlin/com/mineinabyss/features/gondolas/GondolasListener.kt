@@ -79,6 +79,18 @@ class GondolasListener : Listener {
         }
     }
 
+    val job = abyss.plugin.launchTickRepeating(1L) {
+        val now = System.currentTimeMillis()
+        for ((uuid, entry) in playerZoneEntry) {
+            val player = uuid.toPlayer() ?: continue
+            val gondolaData = LoadedGondolas.loaded[entry.id] ?: continue
+            val remaining = gondolaData.warpCooldown.inWholeMilliseconds - (now - entry.timestamp)
+
+            if (remaining == gondolaData.warpCooldown.inWholeMilliseconds) player.playSound(warpSound)
+            if (remaining > 0) player.sendActionBar(Component.text("Warping in ${remaining / 1000} seconds..."))
+            else handleGondola(player)
+        }
+    }
     private fun handleWarpCooldown(player: Player, data: GondolaData, now: Long, gondolaId: String? = null) {
         val entry = playerZoneEntry[player.uniqueId]
 
