@@ -3,44 +3,38 @@ package com.mineinabyss.features.lootcrates
 import com.mineinabyss.components.lootcrates.ContainsLoot
 import com.mineinabyss.components.lootcrates.LootCrateConstants
 import com.mineinabyss.components.lootcrates.LootTable
-import com.mineinabyss.features.abyss
+import com.mineinabyss.dependencies.get
+import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.new
+import com.mineinabyss.dependencies.single
+import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.geary.datatypes.family.family
-import com.mineinabyss.geary.helpers.entity
 import com.mineinabyss.geary.papermc.datastore.encode
+import com.mineinabyss.geary.papermc.gearyPaper
+import com.mineinabyss.geary.papermc.tracking.GearyArgs
 import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.commands.arguments.optionArg
-import com.mineinabyss.idofront.commands.extensions.actions.playerAction
-import com.mineinabyss.idofront.config.config
-import com.mineinabyss.idofront.features.Configurable
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
-import com.mineinabyss.idofront.plugin.listeners
-import com.mineinabyss.idofront.plugin.unregisterListeners
+import com.mineinabyss.idofront.commands.brigadier.Args
+import com.mineinabyss.idofront.commands.brigadier.ArgsMinecraft
+import com.mineinabyss.idofront.commands.brigadier.map
+import com.mineinabyss.idofront.commands.brigadier.oneOf
+import com.mineinabyss.idofront.features.get
+import com.mineinabyss.idofront.features.listeners
+import com.mineinabyss.idofront.features.mainCommand
+import com.mineinabyss.idofront.features.singleConfig
+import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.block.Chest
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Context) {
-    @Serializable
-    class Config(val messages: Messages = Messages())
-    class Context : Configurable<Config> {
-        override val configManager = config("lootTables", abyss.dataPath, Config())
-        val listeners = arrayOf(LootCratesListener(config.messages), LootCrateEditingListener(config.messages))
-        val lootTables by lazy {
-            with(abyss.gearyGlobal) {
-                queryManager.getEntitiesMatchingAsSequence(family {
-                    hasSet<LootTable>()
-                    hasSet<PrefabKey>()
-                }).map { it.toGeary() }.associate {
-                    it.get<PrefabKey>()!!.toString() to it.get<LootTable>()!!
-                }
-            }
-        }
-    }
-
+@Serializable
+class LootCratesConfig(val messages: Messages = Messages()) {
     @Serializable
     class Messages(
         val tableNotFound: String = "Could not find loot table %s. Please let an administrator know!",
@@ -51,57 +45,68 @@ class LootCratesFeature : FeatureWithContext<LootCratesFeature.Context>(::Contex
         val lootTableItemTitle: String = "<green>Loot Crate: <gold>%s<yellow>:%s",
     )
 
-    override fun FeatureDSL.enable() {
-        plugin.listeners(*context.listeners)
+}
 
-        abyss.gearyGlobal.entity {
-            set(LootTable.empty())
-            set(PrefabKey.of(LootCrateConstants.CUSTOM_LOOT_TABLE))
-        }
+interface LootCrates {
+    val lootTables: Map<PrefabKey, LootTable>
+    fun openChestWithLoot(player: Player, loot: ContainsLoot, chest: Chest)
+}
 
-        mainCommand {
-            "lootcrates" {
-                "give" {
-                    val lootTable by optionArg(context.lootTables.keys.toList())
+val LootCratesFeature = module("lootcrates") {
+    require(get<AbyssFeatureConfig>().lootCrates.enabled) { "Lootcrates feature is disabled" }
+    val config by singleConfig<LootCratesConfig>("lootTables.yml")
 
-                    playerAction {
-                        val (namespace, key) = PrefabKey.of(lootTable)
-                        player.withGeary {
-                            player.inventory.addItem(
-                                ItemStack(Material.STICK).apply {
-                                    editPersistentDataContainer {
-                                        it.encode(ContainsLoot(lootTable))
-                                    }
-                                    val itemName = context.config.messages.lootTableItemTitle.format(namespace, key).miniMsg()
-                                    setData(DataComponentTypes.ITEM_NAME, itemName)
-                                }
-                            )
-                        }
-                    }
+    val implementation = object : LootCrates {
+        override val lootTables: Map<PrefabKey, LootTable> = with(gearyPaper.worldManager.global) {
+            queryManager.getEntitiesMatchingAsSequence(family {
+                hasSet<LootTable>()
+                hasSet<PrefabKey>()
+            }).map { it.toGeary() }.associate {
+                it.get<PrefabKey>()!! to it.get<LootTable>()!!
+            }
+        } + (LootCrateConstants.CUSTOM_LOOT_TABLE to LootTable.empty()) // Tab complete custom loot table key
+
+        override fun openChestWithLoot(player: Player, loot: ContainsLoot, chest: Chest) {
+            val lootInventory = if (loot.isCustomLoot()) {
+                Bukkit.createInventory(null, 27, Component.text("Loot")).apply {
+                    contents = chest.inventory.contents
+                }
+            } else {
+                val table = lootTables[loot.table] ?: run {
+                    player.error(config.messages.tableNotFound.format(loot.table))
+                    return
+                }
+                Bukkit.createInventory(null, 27, table.itemName ?: Component.text("Loot")).apply {
+                    table.populateInventory(this)
                 }
             }
-        }
-        tabCompletion {
-            when (args.getOrNull(0)) {
-                "lootcrates" -> {
-                    when (args.getOrNull(1)) {
-                        "give" ->
-                            if (args.size == 3) context.lootTables.keys.toList()
-                                .filter { it.startsWith(args[2], ignoreCase = true) }
-                            else null
-
-                        else -> if (args.size == 2) listOf("give") else null
-                    }
-                }
-
-                else ->
-                    if (args.size == 1) listOf("lootcrates").filter { it.startsWith(args[0], ignoreCase = true) }
-                    else null
-            }
+            player.openInventory(lootInventory)
         }
     }
+    single<LootCrates> { implementation }
 
-    override fun FeatureDSL.disable() {
-        plugin.unregisterListeners(*context.listeners)
+    listeners(new(::LootCratesListener), new(::LootCrateEditingListener))
+
+}.mainCommand {
+    "lootcrates" {
+        "give" {
+            executes.asPlayer().args("item" to GearyArgs.prefabKey().oneOf { get<LootCrates>().lootTables.keys.toList() }) { lootTable ->
+                val (namespace, key) = lootTable
+                player.withGeary {
+                    player.inventory.addItem(
+                        ItemStack(Material.STICK).apply {
+                            editPersistentDataContainer {
+                                it.encode(ContainsLoot(lootTable))
+                            }
+                            val itemName = get<LootCratesConfig>().messages.lootTableItemTitle.format(namespace, key).miniMsg()
+                            setData(DataComponentTypes.ITEM_NAME, itemName)
+                        }
+                    )
+                }
+            }
+        }
     }
 }
+
+fun Args.prefabKey() = ArgsMinecraft.key()
+    .map { PrefabKey.of(it.namespace(), it.value()) }

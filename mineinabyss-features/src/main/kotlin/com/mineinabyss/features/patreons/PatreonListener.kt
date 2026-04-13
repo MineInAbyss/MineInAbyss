@@ -17,7 +17,9 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class PatreonListener(private val config: PatreonFeature.Config) : Listener {
+class PatreonListener(
+    private val config: PatreonConfig,
+) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun PlayerJoinEvent.addPatreonComponent() {

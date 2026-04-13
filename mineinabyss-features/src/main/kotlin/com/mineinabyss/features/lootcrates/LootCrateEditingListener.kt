@@ -19,7 +19,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class LootCrateEditingListener(val msg: LootCratesFeature.Messages) : Listener {
+class LootCrateEditingListener(
+    val msg: LootCratesConfig.Messages,
+    val lootCrates: LootCrates,
+) : Listener {
     @EventHandler
     fun BlockPlaceEvent.onPlaceCopiedLootChest() {
         (blockPlaced.state as? Chest)?.withGeary { chest ->
@@ -66,7 +69,7 @@ class LootCrateEditingListener(val msg: LootCratesFeature.Messages) : Listener {
             } else if (rightClicked) {
                 if (chest.persistentDataContainer.decode<ContainsLoot>()?.table == loot.table) {
                     player.success("Previewing loot for ${loot.table}")
-                    LootCratesListener.openChestWithLoot(player, loot, chest)
+                    lootCrates.openChestWithLoot(player, loot, chest)
                 } else {
                     player.success("Set loot table of chest to ${loot.table}")
                     chest.persistentDataContainer.encode(loot)

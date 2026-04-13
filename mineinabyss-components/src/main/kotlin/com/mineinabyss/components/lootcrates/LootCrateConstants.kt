@@ -1,5 +1,7 @@
 package com.mineinabyss.components.lootcrates
 
+import com.mineinabyss.geary.prefabs.PrefabKey
+
 object LootCrateConstants {
-    const val CUSTOM_LOOT_TABLE = "mineinabyss:loot_custom"
+    val CUSTOM_LOOT_TABLE = PrefabKey.of("mineinabyss:loot_custom")
 }

@@ -14,6 +14,6 @@ object Features {
     val layers: LayersContext get() = abyss.di.scope[LayersFeature]!!
     val okiboLine: OkiboTravelFeature.Context by DI.observe() //TODO update the rest
     val music: MusicContext by DI.observe()
-    val guilds: GuildFeature.Context by DI.observe()
+    val guilds get() = abyss.di.scope[GuildFeature]!!
     val lootCrates: LootCratesFeature.Context by DI.observe()
 }

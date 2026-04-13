@@ -1,10 +1,10 @@
 package com.mineinabyss.features.tutorial
 
+import com.mineinabyss.dependencies.module
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.config.config
 import com.mineinabyss.idofront.di.DI
-import com.mineinabyss.idofront.features.Feature
 import com.mineinabyss.idofront.features.FeatureDSL
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.listeners
@@ -16,7 +16,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TextDisplay
 
-class TutorialFeature : Feature() {
+val TutorialFeature = module("tutorial") {
 
     private fun spawnTutorialEntities() {
         tutorial.tutorialEntities.values.flatten().forEach(TutorialEntity::spawn)

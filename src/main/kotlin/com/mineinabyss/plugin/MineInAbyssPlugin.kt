@@ -15,7 +15,22 @@ import com.mineinabyss.features.cosmetics.CosmeticsFeature
 import com.mineinabyss.features.curse.CurseFeature
 import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
+import com.mineinabyss.features.displayLocker.DisplayLockerFeature
+import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.hubstorage.HubStorageFeature
+import com.mineinabyss.features.keepinventory.KeepInvFeature
 import com.mineinabyss.features.layers.LayersFeature
+import com.mineinabyss.features.lootcrates.LootCratesFeature
+import com.mineinabyss.features.misc.MiscFeature
+import com.mineinabyss.features.music.MusicFeature
+import com.mineinabyss.features.okibotravel.OkiboTravelFeature
+import com.mineinabyss.features.orthbanking.OrthBankingFeature
+import com.mineinabyss.features.patreons.PatreonFeature
+import com.mineinabyss.features.playerprofile.PlayerProfileFeature
+import com.mineinabyss.features.pvp.PvpFeature
+import com.mineinabyss.features.relics.RelicsFeature
+import com.mineinabyss.features.tools.ToolsFeature
+import com.mineinabyss.features.tutorial.TutorialFeature
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -25,7 +40,6 @@ import com.mineinabyss.idofront.features.singleConfig
 import com.mineinabyss.idofront.features.singlePluginLogger
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.Database
-
 
 class MineInAbyssPlugin : JavaPlugin(), DI {
     override val di = DI {
@@ -77,8 +91,25 @@ class MineInAbyssPlugin : JavaPlugin(), DI {
             CurseFeature,
             CustomHudFeature,
             DescentFeature,
-
+            DisplayLockerFeature,
+            // GondolaFeature
+            GuildFeature,
+            HubStorageFeature,
+            KeepInvFeature,
             LayersFeature,
+            LootCratesFeature,
+            MiscFeature,
+            MusicFeature,
+            // NpcFeature
+            OkiboTravelFeature,
+            OrthBankingFeature,
+            PatreonFeature,
+            PlayerProfileFeature,
+            PvpFeature,
+            // QuestFeature,
+            RelicsFeature,
+            ToolsFeature,
+            TutorialFeature,
             //TODO add remaining features
         )
     }

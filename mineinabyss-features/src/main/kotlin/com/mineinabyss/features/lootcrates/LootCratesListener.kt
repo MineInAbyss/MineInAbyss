@@ -3,7 +3,6 @@ package com.mineinabyss.features.lootcrates
 import com.mineinabyss.components.lootcrates.ContainsLoot
 import com.mineinabyss.components.lootcrates.LootLocation
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.lootcrates.constants.LootCratePermissions
 import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.features.lootcrates.database.LootedChests.locationEq
@@ -15,10 +14,7 @@ import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.idofront.entities.leftClicked
 import com.mineinabyss.idofront.entities.rightClicked
 import com.mineinabyss.idofront.messaging.error
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.block.Chest
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -33,7 +29,10 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import java.time.LocalDate
 import kotlin.uuid.toKotlinUuid
 
-class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
+class LootCratesListener(
+    val msg: LootCratesConfig.Messages,
+    val lootCrates: LootCrates,
+) : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun PlayerInteractEvent.onChestInteract() {
         (clickedBlock?.state as? Chest)?.withGeary { chest ->
@@ -78,10 +77,10 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
                         it[z] = chest.location.blockZ
                         it[world] = chest.location.world.name
                         it[dateLooted] = LocalDate.now().toString()
-                        it[lootType] = loot.table
+                        it[lootType] = loot.table.full
                     }
                 }
-                openChestWithLoot(player, loot, chest)
+                lootCrates.openChestWithLoot(player, loot, chest)
             } else {
                 player.error(msg.alreadyLooted.format(lastLootDate))
             }
@@ -101,22 +100,4 @@ class LootCratesListener(val msg: LootCratesFeature.Messages) : Listener {
         }
     }
 
-    companion object {
-        fun openChestWithLoot(player: Player, loot: ContainsLoot, chest: Chest) {
-            val lootInventory = if (loot.isCustomLoot()) {
-                Bukkit.createInventory(null, 27, Component.text("Loot")).apply {
-                    contents = chest.inventory.contents
-                }
-            } else {
-                val table = Features.lootCrates.lootTables[loot.table] ?: run {
-                    player.error(Features.lootCrates.config.messages.tableNotFound.format(loot.table))
-                    return
-                }
-                Bukkit.createInventory(null, 27, table.itemName ?: Component.text("Loot")).apply {
-                    table.populateInventory(this)
-                }
-            }
-            player.openInventory(lootInventory)
-        }
-    }
 }

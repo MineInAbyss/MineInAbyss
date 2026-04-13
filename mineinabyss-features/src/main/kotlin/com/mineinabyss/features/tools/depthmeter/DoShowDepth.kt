@@ -1,8 +1,8 @@
 package com.mineinabyss.features.tools.depthmeter
 
 import com.mineinabyss.components.tools.ShowDepthMeterHud
-import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.deeperworld.services.WorldManager
+import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
@@ -16,6 +16,10 @@ import org.bukkit.entity.Player
 
 
 object ShowDepthSystem {
+    init {
+        TODO("dont use a singleton object here")
+    }
+
     fun register(world: Geary) = world.observe<ShowDepth>().exec(world.query<Player>()) { (player) ->
         if (entity.has<ShowDepthMeterHud>()) return@exec
         player.sendDepthMessage()

@@ -1,19 +1,19 @@
 package com.mineinabyss.features.music
 
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
-import com.mineinabyss.idofront.plugin.listeners
+import com.mineinabyss.dependencies.*
+import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.idofront.features.listeners
+import com.mineinabyss.idofront.features.singleConfig
 import org.bukkit.Bukkit
-import org.bukkit.event.HandlerList
 
-class MusicFeature : FeatureWithContext<MusicContext>(::MusicContext) {
+val MusicFeature = module("music") {
+    require(get<AbyssFeatureConfig>().music.enabled) { "Music feature is disabled" }
 
-    override fun FeatureDSL.enable() {
-        plugin.listeners(context.queueMusicListener)
-    }
+    val config by singleConfig<MusicConfig>("music.yml")
+    val scheduler by single { new(::MusicScheduler) }
+    listeners(new(::QueueMusicListener))
 
-    override fun FeatureDSL.disable() {
-        HandlerList.unregisterAll(context.queueMusicListener)
-        Bukkit.getServer().onlinePlayers.forEach(MusicScheduler::stopSchedulingMusic)
+    addCloseable {
+        Bukkit.getServer().onlinePlayers.forEach(scheduler::stopSchedulingMusic)
     }
 }

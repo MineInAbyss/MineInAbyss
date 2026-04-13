@@ -1,24 +1,16 @@
 package com.mineinabyss.features.tools.grapplinghook
 
-import com.mineinabyss.components.tools.grappling.GrapplingHook
-import com.mineinabyss.components.tools.grappling.GrapplingHookEntity
-import com.mineinabyss.components.tools.grappling.GrapplingHookType
-import com.mineinabyss.components.tools.grappling.PlayerGrapple
-import com.mineinabyss.components.tools.grappling.hookMap
-import com.mineinabyss.geary.modules.Geary
+import com.mineinabyss.components.tools.grappling.*
+import com.mineinabyss.geary.modules.WorldScoped
 import com.mineinabyss.geary.modules.observeWithData
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.systems.query.query
-import org.bukkit.entity.AbstractArrow
-import org.bukkit.entity.Arrow
-import org.bukkit.entity.Bat
-import org.bukkit.entity.Entity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 
-fun Geary.createHookAction() = observeWithData<GrapplingHook>().exec(query<Player>()) { (player) ->
+fun WorldScoped.createHookAction() = observeWithData<GrapplingHook>().exec(query<Player>()) { (player) ->
     player.swingMainHand()
     if (player.uniqueId in hookMap) {
         val playerHook = hookMap[player.uniqueId]!!

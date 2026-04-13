@@ -2,13 +2,13 @@ package com.mineinabyss.features.relics
 
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.features.abyss
-import com.mineinabyss.geary.modules.Geary
+import com.mineinabyss.geary.modules.WorldScoped
 import com.mineinabyss.geary.systems.query.GearyQuery
 import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.time.ticks
 import org.bukkit.entity.Player
 
-fun Geary.trackStarCompassHudOnPlayersSystem() = system(query<ShowStarCompassHud>()).every(5.ticks).execOnAll {
+fun WorldScoped.trackStarCompassHudOnPlayersSystem() = system(query<ShowStarCompassHud>()).every(5.ticks).execOnAll {
     /*val oldPlayersWithHud = hudEnabledQuery.entities().toSet()
     val newPlayersWithHud = mutableSetOf<GearyEntity>()
 

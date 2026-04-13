@@ -3,10 +3,10 @@ package com.mineinabyss.features
 import com.charleskorn.kaml.YamlComment
 import com.mineinabyss.features.core.CoreFeatureConfig
 import com.mineinabyss.features.cosmetics.CosmeticsConfig
-import com.mineinabyss.features.keepinventory.KeepInvFeature
-import com.mineinabyss.features.orthbanking.OrthBankingFeature
-import com.mineinabyss.features.patreons.PatreonFeature
-import com.mineinabyss.features.playerprofile.PlayerProfileFeature
+import com.mineinabyss.features.keepinventory.KeepInvConfig
+import com.mineinabyss.features.orthbanking.OrthBankConfig
+import com.mineinabyss.features.patreons.PatreonConfig
+import com.mineinabyss.features.playerprofile.PlayerProfileConfig
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -28,16 +28,16 @@ class AbyssFeatureConfig(
     val gondolas: Toggle = Toggle(),
     val guilds: Toggle = Toggle(),
     val hubstorage: Toggle = Toggle(),
-    val keepInventory: KeepInvFeature.Config = KeepInvFeature.Config(),
+    val keepInventory: KeepInvConfig = KeepInvConfig(),
     val layers: Toggle = Toggle(),
     val lootCrates: Toggle = Toggle(),
     val misc: Toggle = Toggle(),
     val music: Toggle = Toggle(),
     val shopkeeping: Toggle = Toggle(),
     val okiboTravel: Toggle = Toggle(),
-    val orthBanking: OrthBankingFeature.Config = OrthBankingFeature.Config(),
-    val patreon: PatreonFeature.Config = PatreonFeature.Config(),
-    val playerProfile: PlayerProfileFeature.Config = PlayerProfileFeature.Config(),
+    val orthBanking: OrthBankConfig = OrthBankConfig(),
+    val patreon: PatreonConfig = PatreonConfig(),
+    val playerProfile: PlayerProfileConfig = PlayerProfileConfig(),
     val pvp: Toggle = Toggle(),
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),

@@ -5,7 +5,6 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.di.Features.okiboLine
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.actions.execute
 import com.mineinabyss.geary.helpers.with
@@ -24,8 +23,9 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 import kotlin.time.Duration.Companion.seconds
 
-class OkiboTravelListener : Listener {
-
+class OkiboTravelListener(
+    val config: OkiboTravelConfig,
+) : Listener {
     private val okiboMapCooldown = Cooldown(1.seconds, null, "mineinabyss:okibomap")
 
     @EventHandler
@@ -33,7 +33,7 @@ class OkiboTravelListener : Listener {
         abyss.plugin.launch {
             delay(2.ticks)
             val chunkKey = chunk.chunkKey
-            val okiboMap = okiboLine.config.okiboMaps.firstOrNull {
+            val okiboMap = config.okiboMaps.firstOrNull {
                 if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
                 it.location.chunk.chunkKey == chunkKey
             } ?: return@launch
@@ -44,7 +44,7 @@ class OkiboTravelListener : Listener {
     @EventHandler
     fun PlayerChunkUnloadEvent.onUntrack() {
         val chunkKey = chunk.chunkKey
-        val okiboMap = okiboLine.config.okiboMaps.firstOrNull {
+        val okiboMap = config.okiboMaps.firstOrNull {
             if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
             it.location.chunk.chunkKey == chunkKey
         } ?: return
@@ -57,7 +57,7 @@ class OkiboTravelListener : Listener {
         if (!Cooldowns.isComplete(gearyPlayer, okiboMapCooldown.id)) return
         okiboMapCooldown.execute(ActionGroupContext(gearyPlayer))
         val destination = getHitboxStation(entityId)?.getStation ?: return
-        val playerStation = okiboLine.config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
+        val playerStation = config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
         val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
 
         abyss.plugin.launch {
