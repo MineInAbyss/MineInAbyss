@@ -12,6 +12,7 @@ val abyss by DI.observe<AbyssContext>()
 class AbyssContext(
     val plugin: JavaPlugin,
 ) {
+    val di: com.mineinabyss.dependencies.DI get() = TODO()
     val logger by plugin.observeLogger()
     val dataPath: Path = plugin.dataFolder.toPath()
     val gearyGlobal get() = gearyPaper.worldManager.global

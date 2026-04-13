@@ -1,18 +1,39 @@
 package com.mineinabyss.features.layers
 
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.features.FeatureWithContext
-import com.mineinabyss.idofront.plugin.listeners
-import org.bukkit.event.HandlerList
+import com.charleskorn.kaml.AnchorsAndAliases
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.dependencies.get
+import com.mineinabyss.dependencies.gets
+import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.single
+import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.features.abyss
+import com.mineinabyss.geary.serialization.SerializableComponents
+import com.mineinabyss.idofront.features.listeners
+import com.mineinabyss.idofront.features.requirePlugins
+import com.mineinabyss.idofront.features.singleConfig
 
-class LayersFeature : FeatureWithContext<LayersContext>(::LayersContext) {
-    override val dependsOn = setOf("DeeperWorld")
+val LayersFeature = module("layers") {
+    require(get<AbyssFeatureConfig>().layers.enabled) { "Layers feature is disabled" }
+    requirePlugins("DeeperWorld")
 
-    override fun FeatureDSL.enable() {
-        plugin.listeners(context.layersListener)
+    val config by singleConfig<LayersConfig>("layers.yml") {
+        format = Yaml(
+            serializersModule = abyss.gearyGlobal.getAddon(SerializableComponents).formats.module,
+            configuration = YamlConfiguration(
+                extensionDefinitionPrefix = "x-",
+                anchorsAndAliases = AnchorsAndAliases.Permitted(),
+            )
+        )
     }
+    single<AbyssWorldManager> { SingleAbyssWorldManager(config.layers) }
+    listeners(LayerListener())
 
-    override fun FeatureDSL.disable() {
-        HandlerList.unregisterAll(context.layersListener)
+    single<LayersContext> {
+        object : LayersContext {
+            override val worldManager = get<AbyssWorldManager>()
+            override val layersListener = get<LayerListener>()
+        }
     }
-}
+}.gets<LayersContext>()

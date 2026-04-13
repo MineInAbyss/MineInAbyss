@@ -1,26 +1,27 @@
 package com.mineinabyss.features.custom_hud
 
-import com.mineinabyss.idofront.features.Feature
-import com.mineinabyss.idofront.features.FeatureDSL
-import com.mineinabyss.idofront.plugin.listeners
+import com.mineinabyss.dependencies.*
+import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.idofront.features.listeners
+import com.mineinabyss.idofront.features.requirePlugins
+import com.mineinabyss.packy.components.packyData
+import org.bukkit.entity.Player
 
-class CustomHudFeature(
-    val backgroundLayout: String = "backgrounds",
+val CustomHudFeature = module("custom-hud") {
+    val backgroundLayout: String = "backgrounds" //TODO move to config
     val customHudTemplate: String = "custom_hud"
-) : Feature() {
-    override val dependsOn: Set<String> get() = setOf("MythicHUD", "Packy")
-    override fun FeatureDSL.enable() {
-        plugin.listeners(CustomHudListener(this@CustomHudFeature))
-        mainCommand {
-            "custom_hud" {
-            }
-        }
+    requirePlugins("MythicHUD", "Packy")
+    require(get<AbyssFeatureConfig>().customHud.enabled) { "Custom HUD feature is disabled" }
 
-        tabCompletion {
-            when (args.size) {
-                1 -> listOf("custom_hud").filter { it.startsWith(args[0]) }
-                else -> null
-            }
+    single<CustomHudModule> {
+        object : CustomHudModule {
+            override fun customHudEnabled(player: Player): Boolean = customHudTemplate in player.packyData.enabledPackIds
         }
     }
+
+    listeners(new(::CustomHudListener))
+}.gets<CustomHudModule>()
+
+interface CustomHudModule {
+    fun customHudEnabled(player: Player): Boolean
 }

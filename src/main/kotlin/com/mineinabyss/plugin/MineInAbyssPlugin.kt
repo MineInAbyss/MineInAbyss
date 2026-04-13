@@ -11,6 +11,11 @@ import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
 import com.mineinabyss.features.core.CoreFeature
+import com.mineinabyss.features.cosmetics.CosmeticsFeature
+import com.mineinabyss.features.curse.CurseFeature
+import com.mineinabyss.features.custom_hud.CustomHudFeature
+import com.mineinabyss.features.descent.DescentFeature
+import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -68,6 +73,12 @@ class MineInAbyssPlugin : JavaPlugin(), DI {
             AntiCheeseFeature,
             ConfigPullFeature,
             CoreFeature,
+            CosmeticsFeature,
+            CurseFeature,
+            CustomHudFeature,
+            DescentFeature,
+
+            LayersFeature,
             //TODO add remaining features
         )
     }

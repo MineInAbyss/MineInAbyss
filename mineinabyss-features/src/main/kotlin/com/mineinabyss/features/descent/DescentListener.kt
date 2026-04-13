@@ -3,7 +3,7 @@ package com.mineinabyss.features.descent
 import com.mineinabyss.components.descent.DescentContext
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
-import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.features.layers.LayersConfig
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
 import com.mineinabyss.idofront.messaging.info
@@ -15,16 +15,18 @@ import java.time.Duration
 import java.time.Instant
 import kotlin.time.toKotlinDuration
 
-class DescentListener : Listener {
+class DescentListener(
+    val layers: LayersConfig,
+) : Listener {
     @EventHandler
     fun PlayerAscendEvent.onReturnToOrth() {
-        if (toSection != Features.layers.config.hubSection) return
+        if (toSection != layers.hubSection) return
         player.removeDescentContext()
     }
 
     @EventHandler
     fun PlayerDescendEvent.onDescend() {
-        if (fromSection != Features.layers.config.hubSection) return
+        if (fromSection != layers.hubSection) return
         player.toGeary().apply {
             setPersisting(DescentContext())
         }

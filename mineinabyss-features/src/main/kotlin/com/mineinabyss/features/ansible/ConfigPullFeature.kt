@@ -9,7 +9,7 @@ import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 
 val ConfigPullFeature = module("config-pull") {
-    require(get<AbyssFeatureConfig>().ansiblePull.enabled)
+    require(get<AbyssFeatureConfig>().ansiblePull.enabled) { "Config pull feature is disabled" }
 }.mainCommand {
     "config" {
         requires { sender.isOp }

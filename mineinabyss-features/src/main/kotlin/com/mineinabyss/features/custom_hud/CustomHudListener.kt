@@ -10,8 +10,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status
 
-class CustomHudListener(private val feature: CustomHudFeature) : Listener {
-
+class CustomHudListener(private val feature: CustomHudModule) : Listener {
     @EventHandler
     fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
         if (!player.isOnline) return
@@ -36,5 +35,4 @@ class CustomHudListener(private val feature: CustomHudFeature) : Listener {
             holder.send()
         }
     }
-
 }

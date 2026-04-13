@@ -6,6 +6,6 @@ import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.idofront.features.listeners
 
 val AntiCheeseFeature = module("anticheese") {
-    require(get<AbyssFeatureConfig>().antiCheese.enabled)
+    require(get<AbyssFeatureConfig>().antiCheese.enabled) { "AntiCheese feature is disabled" }
     listeners(AntiCheeseListener())
 }

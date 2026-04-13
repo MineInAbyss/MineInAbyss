@@ -2,7 +2,7 @@ package com.mineinabyss.features
 
 import com.charleskorn.kaml.YamlComment
 import com.mineinabyss.features.core.CoreFeatureConfig
-import com.mineinabyss.features.cosmetics.CosmeticsFeature
+import com.mineinabyss.features.cosmetics.CosmeticsConfig
 import com.mineinabyss.features.keepinventory.KeepInvFeature
 import com.mineinabyss.features.orthbanking.OrthBankingFeature
 import com.mineinabyss.features.patreons.PatreonFeature
@@ -20,7 +20,7 @@ class AbyssFeatureConfig(
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),
     val core: CoreFeatureConfig = CoreFeatureConfig(),
-    val cosmetics: CosmeticsFeature.Config = CosmeticsFeature.Config(),
+    val cosmetics: CosmeticsConfig = CosmeticsConfig(),
     val curse: Toggle = Toggle(),
     val customHud: Toggle = Toggle(),
     val descent: Toggle = Toggle(),
