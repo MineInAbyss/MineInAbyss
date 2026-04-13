@@ -104,7 +104,6 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
                     components()
                     subClassesOf<AscensionEffect>()
                 }
-
             }
         }
         di.scope.loadAllCatching(

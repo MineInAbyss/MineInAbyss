@@ -12,10 +12,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 class Toggle(val enabled: Boolean = false)
 
+/**
+ * Root config for MineInAbyss, defines which features are enabled (each feature checks this via a `require` block when it starts.)
+ *
+ * Some smaller features put their config directly in here, while larger ones use separate files or multiple sets of files as needed.
+ */
 @Serializable
 class AbyssFeatureConfig(
     @YamlComment("Ignore following options, enable all features")
-    val enableAll: Boolean = false,
+    val enableAll: Boolean = false, //TODO reimplement
     val ansiblePull: Toggle = Toggle(),
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),

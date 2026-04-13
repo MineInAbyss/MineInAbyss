@@ -3,7 +3,9 @@ package com.mineinabyss.features.displayLocker
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.playerDataOrNull
+import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
+import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.geary.papermc.datastore.encodeComponentsTo
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.commands.brigadier.Args
@@ -16,6 +18,8 @@ import com.mineinabyss.idofront.messaging.success
 import org.bukkit.entity.Player
 
 val DisplayLockerFeature = module("display-locker") {
+    require(get<AbyssFeatureConfig>().displayLocker.enabled) { "Display locker feature is disabled" }
+
     listeners(DisplayLockerListener(), BookshelfLocker())
 }.mainCommand {
     "lock" {

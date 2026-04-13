@@ -25,20 +25,19 @@ import kotlin.time.Duration.Companion.seconds
 
 class OkiboTravelListener(
     val config: OkiboTravelConfig,
+    val okibo: OkiboRepository,
 ) : Listener {
     private val okiboMapCooldown = Cooldown(1.seconds, null, "mineinabyss:okibomap")
 
     @EventHandler
-    fun PlayerChunkLoadEvent.onLoad() {
-        abyss.launch {
-            delay(2.ticks)
-            val chunkKey = chunk.chunkKey
-            val okiboMap = config.okiboMaps.firstOrNull {
-                if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
-                it.location.chunk.chunkKey == chunkKey
-            } ?: return@launch
-            player.sendOkiboMap(okiboMap)
-        }
+    suspend fun PlayerChunkLoadEvent.onLoad() {
+        delay(2.ticks)
+        val chunkKey = chunk.chunkKey
+        val okiboMap = config.okiboMaps.firstOrNull {
+            if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
+            it.location.chunk.chunkKey == chunkKey
+        } ?: return
+        okibo.sendMap(player, okiboMap)
     }
 
     @EventHandler
@@ -48,7 +47,7 @@ class OkiboTravelListener(
             if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
             it.location.chunk.chunkKey == chunkKey
         } ?: return
-        player.removeOkiboMap(okiboMap)
+        okibo.removeMap(player, okiboMap)
     }
 
     @EventHandler
@@ -56,10 +55,9 @@ class OkiboTravelListener(
         val gearyPlayer = player.toGeary().takeIf { hand == EquipmentSlot.HAND } ?: return
         if (!Cooldowns.isComplete(gearyPlayer, okiboMapCooldown.id)) return
         okiboMapCooldown.execute(ActionGroupContext(gearyPlayer))
-        val destination = getHitboxStation(entityId)?.getStation ?: return
+        val destination = okibo.getHitboxStation(entityId)?.let { okibo.stationFor(it) } ?: return
         val playerStation = config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
-        val cost = playerStation.costTo(destination) ?: return player.error("You cannot travel to that station!")
-
+        val cost = okibo.cost(playerStation, destination) ?: return player.error("You cannot travel to that station!")
         abyss.launch {
             delay(5.seconds)
             if (player.isOnline) gearyPlayer.remove<OkiboTraveler>()
@@ -74,12 +72,13 @@ class OkiboTravelListener(
                             playerStation == destination -> player.error("You are already at that station!")
                             else -> {
                                 if (cost > 0) orthCoinsHeld -= cost
-                                spawnOkiboCart(player, playerStation, destination)
+                                okibo.spawnCart(player, playerStation, destination)
                             }
                         }
                     }
                     return
                 }
+
                 else -> player.toGeary().remove<OkiboTraveler>()
             }
         }

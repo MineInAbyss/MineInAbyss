@@ -34,6 +34,7 @@ val LayersFeature = module("layers") {
         object : LayersContext {
             override val worldManager = get<AbyssWorldManager>()
             override val layersListener = get<LayerListener>()
+            override val config: LayersConfig = get<LayersConfig>()
         }
     }
 }.gets<LayersContext>()

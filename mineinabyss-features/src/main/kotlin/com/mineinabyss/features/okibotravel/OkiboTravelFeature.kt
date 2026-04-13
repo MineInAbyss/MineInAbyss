@@ -1,8 +1,6 @@
 package com.mineinabyss.features.okibotravel
 
-import com.mineinabyss.dependencies.get
-import com.mineinabyss.dependencies.module
-import com.mineinabyss.dependencies.new
+import com.mineinabyss.dependencies.*
 import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.oneOf
@@ -13,16 +11,16 @@ val OkiboTravelFeature = module("okibo-travel") {
     require(get<AbyssFeatureConfig>().okiboTravel.enabled) { "Okibo travel feature is disabled" }
 
     val config by singleConfig<OkiboTravelConfig>("okiboTravel.yml")
-    removeOkiboMaps()
+    val repo by single { new(::OkiboRepository) }
 
-    //TODO no singletons!!
-    mapEntities.clear()
-    hitboxEntities.clear()
-    hitboxIconEntities.clear()
-
-    spawnOkiboMaps()
+    repo.removeOkiboMaps() // remove any old maps
+    repo.spawnOkiboMaps()
 
     listeners(new(::OkiboTravelListener))
+
+    addCloseable {
+        repo.removeOkiboMaps()
+    }
 }.mainCommand {
     "okibo" {
         "spawn" {
@@ -37,7 +35,7 @@ val OkiboTravelFeature = module("okibo-travel") {
                 } else {
                     destination
                 }
-                spawnOkiboCart(
+                get<OkiboRepository>().spawnCart(
                     player,
                     config.allStations.find { it.id == station } ?: fail("Invalid station!"),
                     config.allStations.find { it.id == destination } ?: fail("Invalid destination!")
