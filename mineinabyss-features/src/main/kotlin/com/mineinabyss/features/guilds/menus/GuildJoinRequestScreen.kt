@@ -18,6 +18,7 @@ import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
 import me.dvyy.compose.mini.layout.modifiers.size
 import me.dvyy.compose.mini.modifier.Modifier
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -36,7 +37,8 @@ fun GuildUIScope.GuildJoinRequestScreen(
 
 @Composable
 fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
-    Item(TitleItem.head(newMember, "<yellow><i>${newMember.name}".miniMsg(), isFlat = true, isCenterOfInv = true, isLarge = true))
+    val profile = ResolvableProfile.resolvableProfile().uuid(newMember.uniqueId).build()
+    Item(TitleItem.head(profile, "<yellow><i>${profile.name()}".miniMsg(), isFlat = true, isCenterOfInv = true, isLarge = true))
 }
 
 @Composable

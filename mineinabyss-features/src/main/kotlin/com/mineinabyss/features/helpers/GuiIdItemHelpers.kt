@@ -15,6 +15,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
+import java.util.UUID
 
 object TitleItem {
     val hideTooltip = TooltipDisplay.tooltipDisplay().hideTooltip(true)
@@ -37,7 +38,19 @@ object TitleItem {
     }
 
     fun head(
-        player: OfflinePlayer,
+        playerId: UUID,
+        title: Component,
+        vararg lore: Component,
+        isFlat: Boolean = false,
+        isLarge: Boolean = false,
+        isCenterOfInv: Boolean = false,
+    ): ItemStack {
+        val profile = ResolvableProfile.resolvableProfile().uuid(playerId).build()
+        return head(profile, title, lore = lore, isFlat, isLarge, isCenterOfInv)
+    }
+
+    fun head(
+        profile: ResolvableProfile,
         title: Component,
         vararg lore: Component,
         isFlat: Boolean = false,
@@ -48,7 +61,7 @@ object TitleItem {
         item.setData(DataComponentTypes.ITEM_NAME, title)
         item.setData(DataComponentTypes.LORE, ItemLore.lore(lore.toList()))
         item.setData(DataComponentTypes.ITEM_MODEL, headItemModel)
-        item.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile().uuid(player.uniqueId).build())
+        item.setData(DataComponentTypes.PROFILE, profile)
         item.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().addHiddenComponents(DataComponentTypes.PROFILE).build())
         item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFlags(listOf(isFlat, isLarge, isCenterOfInv)).build())
 

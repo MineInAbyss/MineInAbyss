@@ -27,6 +27,7 @@ import me.dvyy.compose.mini.layout.jetpack.Column
 import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
 import me.dvyy.compose.mini.modifier.Modifier
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -123,9 +124,10 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
 
 @Composable
 fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
+    val profile = ResolvableProfile.resolvableProfile().uuid(player.uniqueId).build()
     Item(
         TitleItem.head(
-            player, "<light_purple><b>${player.name}".miniMsg(),
+            profile, "<light_purple><b>${profile.name()}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
@@ -134,7 +136,7 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
     )
     Item(
         TitleItem.of(
-            "<light_purple><b>${player.name}".miniMsg(),
+            "<light_purple><b>${profile.name()}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
@@ -142,7 +144,7 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
     )
     Item(
         TitleItem.of(
-            "<light_purple><b>${player.name}".miniMsg(),
+            "<light_purple><b>${profile.name()}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
@@ -150,7 +152,7 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
     )
     Item(
         TitleItem.of(
-            "<light_purple><b>${player.name}".miniMsg(),
+            "<light_purple><b>${profile.name()}".miniMsg(),
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()

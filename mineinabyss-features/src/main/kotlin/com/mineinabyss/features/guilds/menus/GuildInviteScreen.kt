@@ -16,6 +16,7 @@ import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
 import me.dvyy.compose.mini.layout.modifiers.size
 import me.dvyy.compose.mini.modifier.Modifier
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import org.bukkit.OfflinePlayer
 
 @Composable
@@ -32,11 +33,12 @@ fun GuildUIScope.GuildInviteScreen(
 
 @Composable
 fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
+    val profile = ResolvableProfile.resolvableProfile().uuid(owner.uniqueId).build()
     Item(
         TitleItem.head(
-            owner, "<gold><b>Current Guild Info</b>".miniMsg(),
+            profile, "<gold><b>Current Guild Info</b>".miniMsg(),
             "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <i>${owner.name}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <i>${profile.name()}".miniMsg(),
             "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
             "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
             isFlat = true,

@@ -19,6 +19,7 @@ import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
 import me.dvyy.compose.mini.layout.modifiers.size
 import me.dvyy.compose.mini.modifier.Modifier
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -58,9 +59,10 @@ fun GuildUIScope.GuildJoinRequestButton(
                 if (!player.hasGuildRequests()) owner.exit()
                 else onNavigateToJoinRequest(newMember)
             }) {
+                val profile = ResolvableProfile.resolvableProfile().uuid(newMember.uniqueId).build()
                 Item(
                     TitleItem.head(
-                        newMember, "<yellow><i>${newMember.name}".miniMsg(),
+                        profile, "<yellow><i>${profile.name()}".miniMsg(),
                         "<blue>Click this to accept or deny the join-request.".miniMsg(),
                         isFlat = true
                     )

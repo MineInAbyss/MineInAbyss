@@ -22,6 +22,7 @@ import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
 import me.dvyy.compose.mini.layout.modifiers.size
 import me.dvyy.compose.mini.modifier.Modifier
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import org.bukkit.OfflinePlayer
 
 @Composable
@@ -36,9 +37,10 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
         VerticalGrid(Modifier.offset(2.dp, 1.dp).size(5.dp, minOf(guildLevel + 1, 4).dp)) {
             members.forEach { (rank, member) ->
                 Button {
+                    val profile = ResolvableProfile.resolvableProfile().uuid(member.uniqueId).build()
                     Item(
                         TitleItem.head(
-                            member, "<gold><i>${member.name}".miniMsg(),
+                            profile, "<gold><i>${profile.name()}".miniMsg(),
                             "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                             isFlat = true
                         )
@@ -55,9 +57,10 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
 
 @Composable
 fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
+    val profile = ResolvableProfile.resolvableProfile().uuid(owner.uniqueId).build()
     Item(
         TitleItem.head(
-            owner, "<gold><i>${owner.name}".miniMsg(),
+            profile, "<gold><i>${profile.name()}".miniMsg(),
             "<yellow><b>Guild Rank: <yellow><i>${owner.getGuildRank()}".miniMsg(),
             isFlat = true, isCenterOfInv = true, isLarge = true
         ), modifier = modifier

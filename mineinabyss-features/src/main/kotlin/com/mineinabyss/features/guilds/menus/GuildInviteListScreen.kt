@@ -52,7 +52,7 @@ fun GuildUIScope.GuildInvites(modifier: Modifier = Modifier, onNavigateToInviteS
             Button(onClick = { onNavigateToInviteScreen(owner) }) {
                 Item(
                     TitleItem.head(
-                        player, "<gold><b>Guildname: <yellow><i>${owner.getGuildName()}".miniMsg(),
+                        player.uniqueId, "<gold><b>Guildname: <yellow><i>${owner.getGuildName()}".miniMsg(),
                         "<blue>Click this to accept or deny invite.".miniMsg(),
                         "<blue>Info about the guild can also be found in here.".miniMsg(),
                         isFlat = true

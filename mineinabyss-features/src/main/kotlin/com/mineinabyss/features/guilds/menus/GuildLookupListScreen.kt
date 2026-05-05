@@ -15,6 +15,7 @@ import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.components.lists.rememberScrollableState
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import io.papermc.paper.registry.data.dialog.input.DialogInput
 import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
@@ -44,10 +45,11 @@ fun GuildUIScope.GuildLookupListScreen(
                             onNavigateToLookupMembers(guildName)
 
                     }) {
+                    val profile = ResolvableProfile.resolvableProfile().uuid(owner.uniqueId).build()
                     Item(
                         TitleItem.head(
-                            owner, "<gold><i>$guildName".miniMsg(),
-                            "<yellow><b>Guild Owner:</b> <yellow><i>${owner.name}".miniMsg(),
+                            profile, "<gold><i>$guildName".miniMsg(),
+                            "<yellow><b>Guild Owner:</b> <yellow><i>${profile.name()}".miniMsg(),
                             "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
                             "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
                             "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}".miniMsg(),

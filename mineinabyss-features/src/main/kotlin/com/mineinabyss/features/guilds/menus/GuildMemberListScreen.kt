@@ -21,6 +21,7 @@ import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import io.papermc.paper.registry.data.dialog.input.DialogInput
 import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
@@ -45,9 +46,10 @@ fun GuildUIScope.GuildMemberListScreen(
                     if (member != player && player.isCaptainOrAbove())
                         onNavigateToMemberOptions(member)
                 }) {
+                    val profile = ResolvableProfile.resolvableProfile().uuid(member.uniqueId).build()
                     Item(
                         TitleItem.head(
-                            member, "<gold><i>${member.name}".miniMsg(),
+                            profile, "<gold><i>${profile.name()}".miniMsg(),
                             "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                             isFlat = true
                         )
