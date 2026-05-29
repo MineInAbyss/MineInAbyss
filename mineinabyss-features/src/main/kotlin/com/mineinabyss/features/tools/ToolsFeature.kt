@@ -4,7 +4,6 @@ import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
 import com.mineinabyss.features.AbyssFeatureConfig
-import com.mineinabyss.features.abyss
 import com.mineinabyss.features.tools.depthmeter.ShowDepthSystem
 import com.mineinabyss.features.tools.depthmeter.createDepthHudSystem
 import com.mineinabyss.features.tools.depthmeter.createToggleDepthHudAction
@@ -12,6 +11,7 @@ import com.mineinabyss.features.tools.grapplinghook.GrapplingHookListener
 import com.mineinabyss.features.tools.sickle.SickleListener
 import com.mineinabyss.features.tools.sickle.createHarvestAction
 import com.mineinabyss.geary.papermc.gearyWorld
+import com.mineinabyss.idofront.features.get
 import com.mineinabyss.idofront.features.listeners
 import com.mineinabyss.idofront.features.mainCommand
 import com.mineinabyss.idofront.features.requirePlugins
@@ -28,7 +28,7 @@ val ToolsFeature = module("tools") {
     )
 
     gearyWorld {
-        ShowDepthSystem.register(abyss.gearyGlobal)
+        ShowDepthSystem(this)
         createToggleDepthHudAction()
         createHarvestAction()
         createDepthHudSystem()
@@ -54,7 +54,7 @@ val ToolsFeature = module("tools") {
     }
     "depth" {
         executes.asPlayer {
-            ShowDepthSystem.run {
+            get<ShowDepthSystem>().run {
                 player.sendDepthMessage()
             }
         }

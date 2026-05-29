@@ -6,7 +6,7 @@ import com.mineinabyss.deeperworld.world.section.section
 import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.geary.modules.Geary
+import com.mineinabyss.geary.modules.WorldScoped
 import com.mineinabyss.geary.modules.observe
 import com.mineinabyss.geary.systems.query.query
 import com.mineinabyss.idofront.messaging.info
@@ -15,12 +15,10 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 
-object ShowDepthSystem {
-    init {
-        TODO("dont use a singleton object here")
-    }
-
-    fun register(world: Geary) = world.observe<ShowDepth>().exec(world.query<Player>()) { (player) ->
+class ShowDepthSystem(
+    val world: WorldScoped,
+) {
+    val query = world.observe<ShowDepth>().exec(world.query<Player>()) { (player) ->
         if (entity.has<ShowDepthMeterHud>()) return@exec
         player.sendDepthMessage()
     }
