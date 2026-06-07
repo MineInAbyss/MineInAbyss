@@ -15,6 +15,7 @@ import com.mineinabyss.features.descent.DescentFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
 import com.mineinabyss.features.gondolas.GondolaFeature
 import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.guilds.GuildsModule
 import com.mineinabyss.features.guilds.database.GuildJoinQueue
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.Guilds
@@ -22,6 +23,7 @@ import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.helpers.Placeholders
 import com.mineinabyss.features.hubstorage.HubStorageFeature
 import com.mineinabyss.features.keepinventory.KeepInvFeature
+import com.mineinabyss.features.layers.LayersContext
 import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.lootcrates.database.LootedChests
@@ -91,6 +93,11 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
     override val logger: ComponentLogger by getLazy()
     override val config: AbyssFeatureConfig by getLazy()
     override val db: Database by getLazy()
+    override val layers: LayersContext
+        get() = scope[LayersFeature]
+    override val guilds: GuildsModule
+        get() = scope[GuildFeature]
+
 
     override fun onLoad() {
         AbyssContext.instance = this

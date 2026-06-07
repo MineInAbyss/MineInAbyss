@@ -4,7 +4,7 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.music.NowPlaying
 import com.mineinabyss.components.music.RecentlyPlayed
 import com.mineinabyss.components.music.ScheduledMusicJob
-import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.deeperworld.sections.section
 import com.mineinabyss.extracommands.commands.isAfk
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.layer

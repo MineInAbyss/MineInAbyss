@@ -1,14 +1,15 @@
 package com.mineinabyss.features.layers
 
 import com.mineinabyss.components.layer.Layer
+import com.mineinabyss.components.layer.LayerConfig
 import com.mineinabyss.components.layer.LayerKey
-import com.mineinabyss.deeperworld.world.section.Section
+import com.mineinabyss.deeperworld.sections.SectionKey
 import org.bukkit.World
 
 /**
  * Manages layers and sections
  *
- * @property layers [Layer]s associated by their [LayerKey]
+ * @property layers [LayerConfig]s associated by their [LayerKey]
 
  */
 interface AbyssWorldManager {
@@ -20,7 +21,7 @@ interface AbyssWorldManager {
      */
     fun isAbyssWorld(world: World): Boolean
 
-    fun getLayerForSection(section: Section): Layer?
+    fun getLayerForSection(key: SectionKey): Layer?
 
     fun getLayerFor(key: LayerKey): Layer?
 }

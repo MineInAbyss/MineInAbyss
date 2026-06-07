@@ -1,9 +1,9 @@
 package com.mineinabyss.features.tools.depthmeter
 
 import com.mineinabyss.components.tools.ShowDepthMeterHud
-import com.mineinabyss.deeperworld.services.WorldManager
-import com.mineinabyss.deeperworld.world.section.section
-import com.mineinabyss.features.helpers.di.Features
+import com.mineinabyss.deeperworld.deeperWorld
+import com.mineinabyss.deeperworld.sections.section
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.modules.WorldScoped
@@ -51,7 +51,7 @@ class ShowDepthSystem(
  * @return The abyss depth of the given location in blocks, or null if location is not in a managed section
  */
 fun Location.getAbyssDepth(): Int? {
-    return WorldManager.getDepthFor(this)?.let { depth ->
-        depth - (world.maxHeight - Features.layers.config.hubSection.region.min.y - 1 /* Always start at depth 1 */)
+    return deeperWorld.sections.getDepth(this)?.let { depth ->
+        depth - (world.maxHeight - abyss.layers.config.hubSection.region.min.y - 1 /* Always start at depth 1 */)
     }
 }

@@ -3,6 +3,7 @@ package com.mineinabyss.features.layers
 import com.charleskorn.kaml.AnchorsAndAliases
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import com.mineinabyss.deeperworld.deeperWorld
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.gets
 import com.mineinabyss.dependencies.module
@@ -18,6 +19,7 @@ val LayersFeature = module("layers") {
     require(get<AbyssFeatureConfig>().layers.enabled) { "Layers feature is disabled" }
     requirePlugins("DeeperWorld")
 
+    val sections = deeperWorld.sections
     val config by singleConfig<LayersConfig>("layers.yml") {
         format = Yaml(
             serializersModule = abyss.gearyGlobal.getAddon(SerializableComponents).formats.module,
@@ -27,7 +29,7 @@ val LayersFeature = module("layers") {
             )
         )
     }
-    single<AbyssWorldManager> { SingleAbyssWorldManager(config.layers) }
+    single<AbyssWorldManager> { SingleAbyssWorldManager(config.layers, sections) }
     listeners(LayerListener())
 
     single<LayersContext> {

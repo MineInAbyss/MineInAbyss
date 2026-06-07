@@ -1,15 +1,14 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.*
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.Paginated
 import com.mineinabyss.guiy.modifiers.Modifier
@@ -19,7 +18,6 @@ import com.mineinabyss.guiy.modifiers.placement.offset.offset
 import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.registry.data.dialog.input.DialogInput
-import net.minecraft.world.level.storage.loot.functions.SetAttributesFunction.modifier
 
 @Composable
 fun GuildUIScope.GuildLookupListScreen(
@@ -90,7 +88,7 @@ fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Uni
     Button(
         modifier = modifier.at(7, 5),
         onClick = {
-            val maxGuildLength = Features.guilds.config.guildNameMaxLength
+            val maxGuildLength = abyss.guilds.config.guildNameMaxLength
             val dialog = GuildDialogs(
                 ":space_-28::guild_search_menu:", "<gold>Search for Guild...", listOf(
                     DialogInput.text("guild_dialog", "<gold>Search for guilds with name...".miniMsg())
