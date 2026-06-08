@@ -22,7 +22,7 @@ class NpcManager(
     val npcMap: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 
     fun initNpc() {
-        // load npc config
+        npcMap.clear()
         for (npc in npcsConfig.npcs.values) {
             val npcEntity = NpcEntity(npc, world, dialogsConfig)
 

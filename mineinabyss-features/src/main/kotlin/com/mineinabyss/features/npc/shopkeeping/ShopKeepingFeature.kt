@@ -18,6 +18,7 @@ import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.*
 import kotlinx.coroutines.delay
+import org.bukkit.Bukkit
 import org.bukkit.Bukkit.getWorld
 import kotlin.time.Duration.Companion.seconds
 
@@ -32,10 +33,12 @@ val ShopKeepingFeature = module("shopkeeping") {
 
     TradeConfigHolder.config = trades
     listeners(ShopKeepingListener())
-    plugin.launch {
-        delay(10.seconds)
+    task(plugin.launch {
+        if (Bukkit.getCurrentTick() == 0) {
+            delay(10.seconds)
+        }
         runCatching { manager.initNpc() }.onFailure { it.printStackTrace() }
-    }
+    })
     listeners(manager)
 }.mainCommand {
     "shops" {
