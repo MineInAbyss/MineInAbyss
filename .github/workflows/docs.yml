@@ -20,21 +20,9 @@ jobs:
     name: Build docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: MineInAbyss/publish-action@v3
-        with:
-          publish-github-release: false
-          build-tasks: 'docsGenerate'
-
-      - name: Update HTML links for GitHub Pages subdomain
-        run: |
-          find out -name "*.html" -exec sed -i 's#href="/#href="/MineInAbyss/#g; s#src="/#src="/MineInAbyss/#g' {} \;
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: out
+      - uses: MineInAbyss/publish-action/docs@v3
 
   deploy:
     environment:
