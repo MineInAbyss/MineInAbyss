@@ -1,6 +1,7 @@
 package com.mineinabyss.features.playerprofile
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.components.PlayerData
 import com.mineinabyss.components.playerprofile.PlayerProfile
 import com.mineinabyss.components.players.Patreon
@@ -15,17 +16,17 @@ import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
+import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.canvas.guiy
-import com.mineinabyss.guiy.layout.Column
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
 import com.mineinabyss.idofront.nms.nbt.editOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.getOfflinePDC
 import com.mineinabyss.idofront.nms.nbt.saveOfflinePDC
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import me.dvyy.compose.mini.layout.jetpack.Column
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.modifier.Modifier
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -87,22 +88,22 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
 
     Chest(
         Component.textOfChildren(titleComponent, background, titleName, rankComponent),
-        Modifier.height(4)
+        Modifier.height(4.dp)
     ) {
-        PlayerHead(player, Modifier.at(0, 1))
+        PlayerHead(player, Modifier.offset(0.dp, 1.dp))
         if (player == viewer) ToggleArmorVisibility(onClick = {
             if (player == viewer) {
                 playerProfile = playerProfile.copy(displayProfileArmor = !hideArmorIcons)
                 player.setComponent(playerProfile)
             }
         })
-        Column(Modifier.at(5, 0)) {
+        Column(Modifier.offset(5.dp, 0.dp)) {
             OrthCoinBalance(player)
             if (isPatreon) MittyTokenBalance(player)
             GuildButton(player, viewer)
             DiscordButton(player)
         }
-        Column(Modifier.at(7, 0)) {
+        Column(Modifier.offset(7.dp, 0.dp)) {
             CosmeticHat(player)
             CosmeticBackpack(player)
         }
@@ -111,7 +112,7 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
         val chestPlate = player.player?.equipment?.chestplate.takeUnless { hideArmorIcons }
         val leggings = player.player?.equipment?.leggings.takeUnless { hideArmorIcons }
         val boots = player.player?.equipment?.boots.takeUnless { hideArmorIcons }
-        Column(Modifier.at(8, 0)) {
+        Column(Modifier.offset(8.dp, 0.dp)) {
             Item(helmet)
             Item(chestPlate)
             Item(leggings)
@@ -137,7 +138,7 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg(),
-        ), modifier = modifier.at(1, 1)
+        ), modifier = modifier.offset(1.dp, 1.dp)
     )
     Item(
         TitleItem.of(
@@ -145,7 +146,7 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
-        ), modifier = modifier.at(0, 2)
+        ), modifier = modifier.offset(0.dp, 2.dp)
     )
     Item(
         TitleItem.of(
@@ -153,14 +154,14 @@ fun PlayerHead(player: OfflinePlayer, modifier: Modifier) {
             "<light_purple>Deaths: <aqua>${player.getStatistic(Statistic.DEATHS)}".miniMsg(),
             "<light_purple>Time played: <aqua>${player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20 / 3600}h".miniMsg(),
             "<light_purple>Time since last death: <aqua>${player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20 / 3600}h".miniMsg()
-        ), modifier = modifier.at(1, 2)
+        ), modifier = modifier.offset(1.dp, 2.dp)
     )
 }
 
 
 @Composable
 fun ToggleArmorVisibility(onClick: () -> Unit) {
-    Button(onClick = onClick, modifier = Modifier.at(7, 3)) {
+    Button(onClick = onClick, modifier = Modifier.offset(7.dp, 3.dp)) {
         Text(
             "<b><dark_purple>Toggle armor visibility".miniMsg(),
             "<light_purple>Hides your armor from other".miniMsg(),

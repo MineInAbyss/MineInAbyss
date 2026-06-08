@@ -1,6 +1,7 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.DecideMenus.decideInfoMenu
@@ -8,14 +9,15 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.layout.Column
-import com.mineinabyss.guiy.layout.Row
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.registry.data.dialog.input.DialogInput
+import me.dvyy.compose.mini.layout.jetpack.Column
+import me.dvyy.compose.mini.layout.jetpack.Row
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.layout.modifiers.width
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.entity.Player
 
 @Composable
@@ -23,29 +25,29 @@ fun GuildUIScope.GuildInfoScreen(
     onNavigateToMemberList: () -> Unit,
     onNavigateToDisband: () -> Unit,
     onNavigateToLeave: () -> Unit,
-) = Chest(":space_-8:${decideInfoMenu(player.isGuildOwner())}", Modifier.height(6)) {
+) = Chest(":space_-8:${decideInfoMenu(player.isGuildOwner())}", Modifier.height(6.dp)) {
     val isOwner = player.isGuildOwner()
-    Column(Modifier.at(2, 0)) {
+    Column(Modifier.offset(2.dp, 0.dp)) {
         Row {
             GuildMemberManagement(onClick = onNavigateToMemberList)
-            Spacer(width = 1)
+            Spacer(Modifier.height(1.dp))
             if (isOwner) GuildRenameButton()
             else CurrentGuildInfoButton()
         }
-        Spacer(height = 1)
+        Spacer(Modifier.height(1.dp))
         Row {
             GuildHouseButton()
-            Spacer(width = 1)
+            Spacer(Modifier.width(1.dp))
             GuildRelationshipButton()
         }
     }
 
     if (isOwner) {
-        GuildLevelUpButton(Modifier.at(8, 0))
-        GuildDisbandButton(Modifier.at(8, 5), onNavigateToDisband)
-    } else GuildLeaveButton(player, Modifier.at(8, 5), onNavigateToLeave)
+        GuildLevelUpButton(Modifier.offset(8.dp, 0.dp))
+        GuildDisbandButton(Modifier.offset(8.dp, 5.dp), onNavigateToDisband)
+    } else GuildLeaveButton(player, Modifier.offset(8.dp, 5.dp), onNavigateToLeave)
 
-    BackButton(Modifier.at(0, 5))
+    BackButton(Modifier.offset(0.dp, 5.dp))
 }
 
 @Composable
@@ -57,7 +59,7 @@ fun GuildUIScope.CurrentGuildInfoButton(modifier: Modifier = Modifier) {
             "<yellow><b>Guild Owner:</b> <yellow><i>${guildOwner?.name}".miniMsg(),
             "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
             "<yellow><b>Guild Members:</b> <yellow><i>${memberCount}".miniMsg(),
-            modifier = Modifier.size(2, 2)
+            modifier = Modifier.size(2.dp, 2.dp)
         )
     }
 }
@@ -68,7 +70,7 @@ fun GuildMemberManagement(modifier: Modifier = Modifier, onClick: () -> Unit) {
         modifier = modifier,
         onClick = onClick
     ) {
-        Text("<green><b>Guild Member List".miniMsg(), modifier = Modifier.size(2, 2))
+        Text("<green><b>Guild Member List".miniMsg(), modifier = Modifier.size(2.dp, 2.dp))
     }
 }
 
@@ -100,7 +102,7 @@ fun GuildUIScope.GuildRenameButton(modifier: Modifier = Modifier) {
             "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
             "<yellow><b>Guild Members:</b> <yellow><i>${memberCount}".miniMsg(),
             "<yellow><b>Guild Balance:</b> <yellow><i>${guildBalance}".miniMsg(),
-            modifier = Modifier.size(2, 2)
+            modifier = Modifier.size(2.dp, 2.dp)
         )
     }
 }
@@ -141,7 +143,7 @@ fun GuildUIScope.GuildLevelUpButton(modifier: Modifier = Modifier) {
 fun GuildHouseButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "<gold><b><st>Guild Housing".miniMsg(), modifier = Modifier.size(2, 2),
+            "<gold><b><st>Guild Housing".miniMsg(), modifier = Modifier.size(2.dp, 2.dp),
             lore = arrayOf("<red>This feature is not yet implemented.".miniMsg())
         )
     }
@@ -151,7 +153,7 @@ fun GuildHouseButton(modifier: Modifier = Modifier) {
 fun GuildRelationshipButton(modifier: Modifier = Modifier) {
     Button(modifier = modifier) {
         Text(
-            "<dark_red><b><st>Guild Wars".miniMsg(), modifier = Modifier.size(2, 2),
+            "<dark_red><b><st>Guild Wars".miniMsg(), modifier = Modifier.size(2.dp, 2.dp),
             lore = arrayOf("<red>This feature is not yet implemented.".miniMsg())
         )
     }

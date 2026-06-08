@@ -2,7 +2,6 @@ package com.mineinabyss.features.helpers
 
 import androidx.compose.runtime.Composable
 import com.mineinabyss.guiy.components.Item
-import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.idofront.resourcepacks.ResourcePacks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
@@ -10,9 +9,9 @@ import io.papermc.paper.datacomponent.item.CustomModelData
 import io.papermc.paper.datacomponent.item.ItemLore
 import io.papermc.paper.datacomponent.item.ResolvableProfile
 import io.papermc.paper.datacomponent.item.TooltipDisplay
+import me.dvyy.compose.mini.modifier.Modifier
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack

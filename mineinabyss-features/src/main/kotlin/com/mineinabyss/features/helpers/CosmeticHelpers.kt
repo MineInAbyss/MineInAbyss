@@ -6,12 +6,12 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.cosmetics.EmptyBackpackCosmetic
 import com.mineinabyss.idofront.util.mapFast
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
-import me.lojosho.hibiscuscommons.util.packets.PacketManager
 import net.kyori.adventure.key.Key
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -37,10 +37,10 @@ fun CosmeticUser.equipWhistleCosmetic() {
     val id = userBackpackManager?.firstArmorStandId ?: return
     val (item, itemFp) = whistleItems[player.layerIndex]
 
-    PacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, item, player.trackedBy.toMutableList())
+    HMCCPacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, item, player.trackedBy.toMutableList())
 
     if (backpack.isFirstPersonCompadible) {
-        PacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, itemFp, mutableListOf(player))
+        HMCCPacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, itemFp, mutableListOf(player))
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.extensions.*
@@ -17,12 +18,6 @@ import com.mineinabyss.guiy.canvas.GuiyOwner
 import com.mineinabyss.guiy.canvas.LocalGuiyOwner
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.layout.Column
-import com.mineinabyss.guiy.layout.Row
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.guiy.navigation.LocalBackGestureDispatcher
 import com.mineinabyss.guiy.navigation.NavHost
 import com.mineinabyss.guiy.navigation.composable
@@ -31,6 +26,13 @@ import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.registry.data.dialog.input.DialogInput
+import me.dvyy.compose.mini.layout.jetpack.Column
+import me.dvyy.compose.mini.layout.jetpack.Row
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.layout.modifiers.width
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
@@ -144,23 +146,23 @@ fun GuildUIScope.HomeScreen(
     onNavigateToInviteList: () -> Unit,
     onNavigateToDefault: () -> Unit,
     onBack: () -> Unit,
-) = Chest(":space_-8:${decideMainMenu(player)}", Modifier.height(4)) {
+) = Chest(":space_-8:${decideMainMenu(player)}", Modifier.height(4.dp)) {
     val guildOwner by remember { mutableStateOf(player.isGuildOwner()) }
-    Row(Modifier.at(2, 1)) {
+    Row(Modifier.offset(2.dp, 1.dp)) {
         if (player.hasGuild()) CurrentGuildButton(onClick = onNavigateToInfo)
         else CreateGuildButton(
             openedFromHQ = openedFromHQ, onNavigateToDefault, onBack
         )
 
-        Spacer(1)
+        Spacer(Modifier.width(1.dp))
         GuildLookupListButton(onNavigateToGuildList)
     }
 
-    Column(Modifier.at(8, 0)) {
+    Column(Modifier.offset(8.dp, 0.dp)) {
         GuildInvitesButton(onNavigateToInviteList)
     }
 
-    CloseButton(Modifier.at(0, 3))
+    CloseButton(Modifier.offset(0.dp, 3.dp))
 }
 
 @Composable
@@ -186,11 +188,11 @@ fun GuildUIScope.CurrentGuildButton(onClick: () -> Unit) {
     ) { enabled ->
         if (enabled) Text(
             "<gold><b>Current Guild Info".miniMsg(),
-            modifier = Modifier.size(2, 2)
+            modifier = Modifier.size(2.dp, 2.dp)
         ) else Text(
             "<gold><b><st>View Guild Information".miniMsg(),
             "<red>You are not a member of any guild.".miniMsg(),
-            modifier = Modifier.size(2, 2)
+            modifier = Modifier.size(2.dp, 2.dp)
         )
     }
 }
@@ -237,12 +239,12 @@ fun GuildUIScope.CreateGuildButton(
             }
         }
     ) { enabled ->
-        if (enabled) Text("<gold><b>Create a Guild".miniMsg(), modifier = Modifier.size(2, 2))
+        if (enabled) Text("<gold><b>Create a Guild".miniMsg(), modifier = Modifier.size(2.dp, 2.dp))
         else Text(
             "<gold><i><st>Create a Guild".miniMsg(),
             "<red>You have to leave your current".miniMsg(),
             "<red>Guild before you can create one.".miniMsg(),
-            modifier = Modifier.size(2, 2)
+            modifier = Modifier.size(2.dp, 2.dp)
         )
     }
 }
@@ -272,11 +274,11 @@ fun GuildUIScope.GuildLookupListButton(
         onClick = onNavigateToGuildList,
     ) { enabled ->
         if (enabled) {
-            Text("<gold><b>Browse all Guilds".miniMsg(), modifier = Modifier.size(2, 2))
+            Text("<gold><b>Browse all Guilds".miniMsg(), modifier = Modifier.size(2.dp, 2.dp))
         } else Text(
             "<gold><b><st>Browse all Guilds".miniMsg(),
             "<yellow>There are currently no Guilds registered.".miniMsg(),
-            modifier = Modifier.size(2, 2)
+            modifier = Modifier.size(2.dp, 2.dp)
         )
     }
 }

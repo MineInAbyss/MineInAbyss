@@ -8,8 +8,8 @@ plugins {
 
 
 dependencies {
-    compileOnly(libs.geary.papermc)
     compileOnly(libs.deeperworld)
+    compileOnly(miaLibs.geary.papermc)
     compileOnly(miaLibs.bundles.idofront.core)
     compileOnly(miaLibs.idofront.nms)
     compileOnly(miaLibs.kotlinx.serialization.json)

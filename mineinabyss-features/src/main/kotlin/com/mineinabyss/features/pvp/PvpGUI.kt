@@ -1,6 +1,7 @@
 package com.mineinabyss.features.pvp
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.TitleItem
@@ -10,17 +11,17 @@ import com.mineinabyss.features.pvp.ToggleIcon.enabled
 import com.mineinabyss.guiy.canvas.LocalGuiyOwner
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.click.clickable
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
 import io.papermc.paper.datacomponent.item.ItemLore
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.modifier.Modifier
 import net.kyori.adventure.key.Key
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -29,10 +30,10 @@ import org.bukkit.inventory.ItemStack
 
 @Composable
 fun PvpPrompt(player: Player) {
-    Chest(":space_-8::pvp_menu_toggle:", Modifier.height(4), onClose = {}) {
-        EnablePvp(player, Modifier.at(1, 1))
-        DisablePvp(player, Modifier.at(5, 1))
-        TogglePvpPrompt(player, Modifier.at(8, 3))
+    Chest(":space_-8::pvp_menu_toggle:", Modifier.height(4.dp), onClose = {}) {
+        EnablePvp(player, Modifier.offset(1.dp, 1.dp))
+        DisablePvp(player, Modifier.offset(5.dp, 1.dp))
+        TogglePvpPrompt(player, Modifier.offset(8.dp, 3.dp))
     }
 }
 
@@ -45,7 +46,7 @@ fun EnablePvp(player: Player, modifier: Modifier) {
             "<green>Enables pvp interactions with".miniMsg(),
             "<green>other players in the Abyss.".miniMsg()
         ),
-        modifier.size(3, 2).clickable {
+        modifier.size(3.dp, 2.dp).clickable {
             player.editPlayerData {
                 pvpStatus = true
                 pvpUndecided = false
@@ -66,7 +67,7 @@ fun DisablePvp(player: Player, modifier: Modifier) {
             "<red>Disables pvp interactions with".miniMsg(),
             "<red>other players in the Abyss.".miniMsg()
         ),
-        modifier.size(3, 2).clickable {
+        modifier.size(3.dp, 2.dp).clickable {
             player.editPlayerData {
                 pvpStatus = false
                 pvpUndecided = false

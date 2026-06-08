@@ -1,6 +1,7 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
@@ -10,31 +11,29 @@ import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
 import com.mineinabyss.guiy.components.lists.NavbarPosition
-import com.mineinabyss.guiy.components.lists.Paginated
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.placement.offset.offset
-import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.components.lists.ScrollDirection
+import com.mineinabyss.guiy.components.lists.Scrollable
+import com.mineinabyss.guiy.components.lists.rememberScrollableState
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.registry.data.dialog.input.DialogInput
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.modifier.Modifier
 
 @Composable
 fun GuildUIScope.GuildLookupListScreen(
     onNavigateToMemberList: () -> Unit,
     onNavigateToLookupMembers: (guildName: String) -> Unit,
-) = Chest(":space_-8::guild_list_menu:", Modifier.height(6)) {
-    var pageNum by remember { mutableStateOf(0) }
+) = Chest(":space_-8::guild_list_menu:", Modifier.height(6.dp)) {
     var guildPageList by remember { mutableStateOf(displayGuildList()) }
-
-    Paginated(
-        guildPageList, pageNum,
-        onPageChange = { pageNum = it },
-        nextButton = { modifier -> NextPageButton(modifier.offset(-1, 0)) },
-        previousButton = { modifier -> PreviousPageButton(modifier.offset(1, 0)) },
-        NavbarPosition.BOTTOM, null
+    val scrollState = rememberScrollableState(ScrollDirection.PAGINATED)
+    Scrollable(
+        guildPageList,
+        scrollState,
+        NavbarPosition.BOTTOM
     ) { pageItems ->
-        HorizontalGrid(Modifier.at(1, 0).size(7, 5)) {
+        HorizontalGrid(Modifier.offset(1.dp, 0.dp).size(7.dp, 5.dp)) {
             pageItems.forEach { (guildName, joinType, guildLevel) ->
                 val owner = guildName.getOwnerFromGuildName()
                 Button(
@@ -60,11 +59,11 @@ fun GuildUIScope.GuildLookupListScreen(
         }
     }
 
-    LookForGuildButton(Modifier.at(7, 5)) { text ->
-        pageNum = 0
+    LookForGuildButton(Modifier.offset(7.dp, 5.dp)) { text ->
+        scrollState.setPage(0)
         guildPageList = displayGuildList(text)
     }
-    BackButton(Modifier.at(0, 5))
+    BackButton(Modifier.offset(0.dp, 5.dp))
 }
 
 @Composable
@@ -86,7 +85,7 @@ fun NextPageButton(
 @Composable
 fun GuildUIScope.LookForGuildButton(modifier: Modifier, onClick: (String) -> Unit) {
     Button(
-        modifier = modifier.at(7, 5),
+        modifier = modifier.offset(7.dp, 5.dp),
         onClick = {
             val maxGuildLength = abyss.guilds.config.guildNameMaxLength
             val dialog = GuildDialogs(

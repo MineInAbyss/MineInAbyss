@@ -19,7 +19,7 @@ dependencies {
     compileOnly(miaLibs.idofront.nms)
 
     // Geary platform
-    compileOnly(libs.geary.papermc)
+    compileOnly(miaLibs.geary.papermc)
 
     // MineInAbyss platform
     implementation(miaLibs.exposed.core) { isTransitive = false }
@@ -37,26 +37,25 @@ dependencies {
     compileOnly(miaLibs.sqlite.jdbc)
 
     // Plugin libs
-    compileOnly(miaLibs.minecraft.plugin.modelengine)
-
-    compileOnly(libs.guiy)
-    compileOnly(libs.chatty)
     compileOnly(libs.deeperworld)
-    compileOnly(libs.packy)
-    compileOnly(libs.extracommands)
 
-    compileOnly(libs.minecraft.plugin.blocklocker)
-    compileOnly(libs.minecraft.plugin.hmccosmetics)
-    compileOnly(libs.minecraft.plugin.hibiscuscommons)
-    compileOnly(libs.minecraft.plugin.discordsrv)
-    compileOnly(libs.minecraft.plugin.luckperms)
-    compileOnly(libs.minecraft.plugin.placeholderapi)
-    compileOnly(libs.minecraft.plugin.bkcommonlib)
-    compileOnly(libs.minecraft.plugin.traincarts)
-    compileOnly(libs.minecraft.plugin.tccoasters)
-    compileOnly(libs.minecraft.plugin.mythichud)
-    compileOnly(libs.minecraft.plugin.shopkeepers)
-    compileOnly(libs.minecraft.plugin.luxdialogs)
+    compileOnly(miaLibs.minecraft.plugin.modelengine)
+    compileOnly(miaLibs.guiy)
+    compileOnly(miaLibs.chatty)
+    compileOnly(miaLibs.packy)
+    compileOnly(miaLibs.extracommands)
+    compileOnly(miaLibs.minecraft.plugin.blocklocker)
+    compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
+    compileOnly(miaLibs.minecraft.plugin.hibiscuscommons)
+    compileOnly(miaLibs.minecraft.plugin.discordsrv)
+    compileOnly(miaLibs.minecraft.plugin.luckperms)
+    compileOnly(miaLibs.minecraft.plugin.placeholderapi)
+    compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
+    compileOnly(miaLibs.minecraft.plugin.traincarts)
+    compileOnly(miaLibs.minecraft.plugin.tccoasters)
+    compileOnly(miaLibs.minecraft.plugin.mythichud)
+    compileOnly(miaLibs.minecraft.plugin.shopkeepers)
+    compileOnly(miaLibs.minecraft.plugin.luxdialogs)
 
 }
 

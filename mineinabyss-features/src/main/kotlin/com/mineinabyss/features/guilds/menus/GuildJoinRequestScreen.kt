@@ -1,6 +1,7 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
@@ -10,13 +11,13 @@ import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.OfflinePlayer
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -26,11 +27,11 @@ import kotlin.uuid.toKotlinUuid
 fun GuildUIScope.GuildJoinRequestScreen(
     from: OfflinePlayer,
     onBack: () -> Unit,
-) = Chest(":space_-8::guild_inbox_handle_menu:", Modifier.height(5)) {
-    PlayerLabel(Modifier.at(4, 0), from)
-    AcceptGuildRequestButton(Modifier.at(1, 1), from, onBack)
-    DeclineGuildRequestButton(Modifier.at(5, 1), from, onBack)
-    BackButton(Modifier.at(4, 4))
+) = Chest(":space_-8::guild_inbox_handle_menu:", Modifier.height(5.dp)) {
+    PlayerLabel(Modifier.offset(4.dp, 0.dp), from)
+    AcceptGuildRequestButton(Modifier.offset(1.dp, 1.dp), from, onBack)
+    DeclineGuildRequestButton(Modifier.offset(5.dp, 1.dp), from, onBack)
+    BackButton(Modifier.offset(4.dp, 4.dp))
 }
 
 @Composable
@@ -59,7 +60,7 @@ fun GuildUIScope.AcceptGuildRequestButton(
     },
     modifier = modifier
 ) {
-    Text("<green>Accept GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<green>Accept GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3.dp, 3.dp))
 }
 
 @Composable
@@ -87,7 +88,7 @@ fun GuildUIScope.DeclineGuildRequestButton(
             onBack()
     }
 ) {
-    Text("<red>Decline GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3, 3))
+    Text("<red>Decline GuildJoin-REQUEST".miniMsg(), modifier = Modifier.size(3.dp, 3.dp))
 }
 
 @Composable

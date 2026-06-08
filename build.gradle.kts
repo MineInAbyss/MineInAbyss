@@ -17,6 +17,7 @@ allprojects {
         maven("https://repo.mineinabyss.com/snapshots")
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
+        google()
         mavenLocal()
     }
 }

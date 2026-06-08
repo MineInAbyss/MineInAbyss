@@ -1,19 +1,9 @@
 package com.mineinabyss.features.guilds.menus
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.guilds.database.GuildJoinType
-import com.mineinabyss.features.guilds.extensions.GuildDialogs
-import com.mineinabyss.features.guilds.extensions.changeGuildJoinType
-import com.mineinabyss.features.guilds.extensions.getGuildJoinType
-import com.mineinabyss.features.guilds.extensions.getGuildMembers
-import com.mineinabyss.features.guilds.extensions.getNumberOfGuildRequests
-import com.mineinabyss.features.guilds.extensions.hasGuildRequest
-import com.mineinabyss.features.guilds.extensions.invitePlayerToGuild
-import com.mineinabyss.features.guilds.extensions.isCaptainOrAbove
+import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.TitleItem
 import com.mineinabyss.features.helpers.ui.composables.Button
@@ -24,11 +14,7 @@ import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.placement.offset.offset
-import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.components.lists.rememberScrollableState
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.nms.entities.title
 import com.mineinabyss.idofront.resourcepacks.ResourcePacks
@@ -36,8 +22,10 @@ import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.ItemLore
 import io.papermc.paper.registry.data.dialog.input.DialogInput
-import net.kyori.adventure.key.Key
-import net.minecraft.world.level.storage.loot.functions.SetAttributesFunction.modifier
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
@@ -46,20 +34,12 @@ import org.bukkit.inventory.ItemStack
 fun GuildUIScope.GuildMemberListScreen(
     onNavigateToMemberOptions: (member: OfflinePlayer) -> Unit,
     onNavigateToJoinRequests: () -> Unit,
-) = Chest(":space_-8:${DecideMenus.decideMemberMenu(player, player.getGuildJoinType())}", Modifier.height((guildLevel + 2).coerceAtMost(MAX_CHEST_HEIGHT))) {
-    var line by remember { mutableStateOf(0) }
+) = Chest(":space_-8:${DecideMenus.decideMemberMenu(player, player.getGuildJoinType())}", Modifier.height((guildLevel + 2).coerceAtMost(MAX_CHEST_HEIGHT).dp)) {
     val guildMembers = remember { player.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }) }
 
-    Scrollable(
-        guildMembers, line,
-        onLineChange = { line = it },
-        nextButton = { modifier -> ScrollDownButton(modifier.at(0, 4)) },
-        previousButton = { modifier -> ScrollUpButton(modifier.at(0, 1)) },
-        scrollDirection = ScrollDirection.VERTICAL,
-        navbarPosition = NavbarPosition.END,
-        navbarBackground = null
-    ) { members ->
-        VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {
+    val scrollState = rememberScrollableState(ScrollDirection.VERTICAL)
+    Scrollable(guildMembers, scrollState, navbarPosition = NavbarPosition.END) { members ->
+        VerticalGrid(Modifier.offset(2.dp, 1.dp).size(5.dp, minOf(guildLevel + 1, 4).dp)) {
             members.forEach { (rank, member) ->
                 Button(onClick = {
                     if (member != player && player.isCaptainOrAbove())
@@ -77,11 +57,11 @@ fun GuildUIScope.GuildMemberListScreen(
         }
     }
 
-    BackButton(Modifier.at(0, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)))
+    BackButton(Modifier.offset(0.dp, minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1).dp))
 
-    InviteToGuildButton(Modifier.at(7, 0))
-    ManageGuildJoinRequestsButton(Modifier.at(8, 0), onNavigateToJoinRequests)
-    ToggleGuildJoinTypeButton(Modifier.at(0, 0))
+    InviteToGuildButton(Modifier.offset(7.dp, 0.dp))
+    ManageGuildJoinRequestsButton(Modifier.offset(8.dp, 0.dp), onNavigateToJoinRequests)
+    ToggleGuildJoinTypeButton(Modifier.offset(0.dp, 0.dp))
 }
 
 @Composable

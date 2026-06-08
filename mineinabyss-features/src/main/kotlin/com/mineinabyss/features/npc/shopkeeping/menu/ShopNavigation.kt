@@ -7,9 +7,12 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.canvas.GuiyOwner
 import com.mineinabyss.guiy.canvas.LocalGuiyOwner
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.navigation.*
+import com.mineinabyss.guiy.navigation.LocalBackGestureDispatcher
+import com.mineinabyss.guiy.navigation.NavHost
+import com.mineinabyss.guiy.navigation.composable
+import com.mineinabyss.guiy.navigation.rememberNavController
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.entity.Player
 
 sealed class ShopScreen() {

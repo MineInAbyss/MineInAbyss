@@ -1,6 +1,8 @@
 package com.mineinabyss.features.guilds.menus
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.guilds.database.GuildJoinType
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
@@ -14,30 +16,24 @@ import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.size
+import com.mineinabyss.guiy.components.lists.rememberScrollableState
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.OfflinePlayer
 
 @Composable
-fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", Modifier.height((guildName.getGuildLevel() + 3).coerceAtMost(MAX_CHEST_HEIGHT))) {
+fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:${":guild_lookup_members${minOf(guildName.getGuildLevel(), 3)}"}:", Modifier.height((guildName.getGuildLevel() + 3).coerceAtMost(MAX_CHEST_HEIGHT).dp)) {
     val owner = guildName.getOwnerFromGuildName()
     val guildLevel = owner.getGuildLevel()
     val height = minOf(guildLevel.plus(2), MAX_CHEST_HEIGHT - 1)
-    var line by remember { mutableStateOf(0) }
     val guildMembers = remember { guildName.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER } }
 
-    Scrollable(
-        guildMembers, line,
-        onLineChange = { line = it },
-        ScrollDirection.VERTICAL,
-        nextButton = { ScrollDownButton() },
-        previousButton = { ScrollUpButton() },
-        NavbarPosition.END, null
-    ) { members ->
-        VerticalGrid(Modifier.at(2, 1).size(5, minOf(guildLevel + 1, 4))) {
+    val scrollState = rememberScrollableState(ScrollDirection.VERTICAL)
+    Scrollable(guildMembers, scrollState, NavbarPosition.END) { members ->
+        VerticalGrid(Modifier.offset(2.dp, 1.dp).size(5.dp, minOf(guildLevel + 1, 4).dp)) {
             members.forEach { (rank, member) ->
                 Button {
                     Item(
@@ -52,9 +48,9 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
         }
     }
 
-    GuildLabel(Modifier.at(4, 0), owner)
-    BackButton(Modifier.at(0, height))
-    RequestToJoinButton(Modifier.at(4, height), owner, guildName)
+    GuildLabel(Modifier.offset(4.dp, 0.dp), owner)
+    BackButton(Modifier.offset(0.dp, height.dp))
+    RequestToJoinButton(Modifier.offset(4.dp, height.dp), owner, guildName)
 }
 
 @Composable
