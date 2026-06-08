@@ -51,6 +51,7 @@ class NpcManager(
         val dialogData = gearyEntity.get<DialogData>()
         val questDialogData = gearyEntity.get<QuestDialogData>()
         when {
+            npcData.type == NPCType.TRADER -> npcData.traderInteraction(player)
             npcData.dialogId == null -> return
             npcData.type == NPCType.QUEST && questDialogData != null -> {
                 npcData.questGiverInteraction(player, questDialogData, dialogData)
