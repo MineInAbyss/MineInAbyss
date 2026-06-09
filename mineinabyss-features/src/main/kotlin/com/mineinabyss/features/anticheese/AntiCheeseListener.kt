@@ -3,12 +3,14 @@ package com.mineinabyss.features.anticheese
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
+import com.mineinabyss.features.layers.LayersConfig
 import com.mineinabyss.idofront.messaging.error
 import org.bukkit.Material
 import org.bukkit.Tag
 import org.bukkit.block.Dispenser
 import org.bukkit.block.data.Directional
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.Fish
 import org.bukkit.entity.Player
 import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.event.EventHandler
@@ -22,7 +24,7 @@ import org.bukkit.event.entity.EntityPotionEffectEvent.Cause
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.potion.PotionEffectType
 
-class AntiCheeseListener : Listener {
+class AntiCheeseListener(private val config: AntiCheeseConfig) : Listener {
     @EventHandler
     fun BlockSpreadEvent.onSculkSpread() {
         if (block.type == Material.SCULK || block.type == Material.SCULK_VEIN) isCancelled = true
@@ -84,7 +86,8 @@ class AntiCheeseListener : Listener {
     // Cancels moving entities with fishing rods in Orth
     @EventHandler
     fun PlayerFishEvent.cancelBlockGrief() {
-        if (caught?.type != EntityType.PLAYER && player.isInHub()) isCancelled = true
+        if (!config.allowAllHubFishing && player.isInHub() && caught !is Player && caught !is Fish) isCancelled = true
+        if (caught?.type == EntityType.VILLAGER && caught!!.isInHub()) isCancelled = true
     }
 }
 
