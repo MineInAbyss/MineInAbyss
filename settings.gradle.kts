@@ -32,4 +32,4 @@ include(
     "mineinabyss-features"
 )
 
-//includeBuild("../DeeperWorld")
+includeBuild("../Idofront")

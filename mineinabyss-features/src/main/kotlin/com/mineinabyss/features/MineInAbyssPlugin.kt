@@ -5,6 +5,7 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.dependencies.*
+import com.mineinabyss.features.achievements.AchievementsFeature
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
 import com.mineinabyss.features.core.CoreFeature
@@ -126,8 +127,10 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
                 }
             }
         }
+        // Attempt to load all features, each will manually check if it's enabled in the config and print an error message if not
         di.scope.loadAllCatching(
             AntiCheeseFeature,
+            AchievementsFeature,
             ConfigPullFeature,
             CoreFeature,
             CosmeticsFeature,

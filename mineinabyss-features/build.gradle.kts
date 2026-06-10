@@ -35,6 +35,7 @@ dependencies {
     compileOnly(miaLibs.minecraft.mccoroutine)
     compileOnly(miaLibs.reflections)
     compileOnly(miaLibs.sqlite.jdbc)
+    compileOnly(miaLibs.sqlite.kt)
 
     // Plugin libs
     compileOnly(libs.deeperworld)
