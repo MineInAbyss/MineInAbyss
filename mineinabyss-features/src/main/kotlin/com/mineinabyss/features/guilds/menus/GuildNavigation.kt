@@ -221,11 +221,11 @@ fun GuildUIScope.CreateGuildButton(
                 }
 
                 else -> {
-                    val maxGuildLength = abyss.guilds.config.guildNameMaxLength
+                    val maxGuildLength = maxOf(abyss.guilds.config.guildNameMaxLength, 8)
                     val dialog = GuildDialogs(
                         ":space_-28::guild_search_menu:", "<gold>Create Guild...", listOf(
                             DialogInput.text("guild_dialog", "<gold>Create Guild with name...".miniMsg())
-                                .initial("${player.name}'s Guild").width(maxGuildLength * 10)
+                                .initial("${player.name.take(maxOf(maxGuildLength - 8,0))}'s Guild").width(maxGuildLength * 10)
                                 .maxLength(maxGuildLength)
                                 .build()
                         )
