@@ -1,5 +1,7 @@
 package com.mineinabyss.features
 
+import com.mineinabyss.features.guilds.GuildsModule
+import com.mineinabyss.features.layers.LayersContext
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.idofront.messaging.ComponentLogger
 import org.bukkit.plugin.Plugin
@@ -14,6 +16,8 @@ interface AbyssContext : Plugin, com.mineinabyss.dependencies.DI {
     val logger: ComponentLogger
     val config: AbyssFeatureConfig
     val db: Database
+    val layers: LayersContext
+    val guilds: GuildsModule
 
     @Deprecated("Use gearyPaper", ReplaceWith("gearyPaper.worldManager.global"))
     val gearyGlobal get() = gearyPaper.worldManager.global

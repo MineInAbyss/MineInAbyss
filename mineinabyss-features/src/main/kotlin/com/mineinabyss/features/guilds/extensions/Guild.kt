@@ -11,7 +11,6 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.features.helpers.CoinFactory
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.papermc.tracking.items.inventory.toGeary
 import com.mineinabyss.geary.papermc.withGeary
@@ -37,7 +36,7 @@ import kotlin.uuid.toKotlinUuid
 typealias GuildName = String
 
 fun OfflinePlayer.createGuild(guildName: String) {
-    val config = Features.guilds.config
+    val config = abyss.guilds.config
     val newGuildName = guildName.replace("\\s".toRegex(), "") // replace space to avoid: exam ple
 
     if (newGuildName.length > config.guildNameMaxLength) {
@@ -460,7 +459,7 @@ fun Player.guildChat(): ChattyChannel? {
     }
 }
 
-private fun GuildName.createChattyChannel() = Features.guilds.config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
+private fun GuildName.createChattyChannel() = abyss.guilds.config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
 
 fun GuildName.guildChatId() = "$this $guildChannelId"
 fun Player.guildChatId() = "${getGuildName()} $guildChannelId"

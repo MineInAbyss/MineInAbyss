@@ -2,7 +2,7 @@ package com.mineinabyss.features.tutorial
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.ticks
-import com.mineinabyss.deeperworld.world.Region
+import com.mineinabyss.deeperworld.datastructures.Region
 import com.mineinabyss.features.abyss
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.geary.serialization.setPersisting

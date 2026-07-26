@@ -1,12 +1,14 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription.RelativeLoadOrder.BEFORE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(idofrontLibs.plugins.kotlin.jvm)
-    alias(idofrontLibs.plugins.mia.papermc)
-    alias(idofrontLibs.plugins.mia.nms)
-    alias(idofrontLibs.plugins.mia.copyjar)
-    alias(idofrontLibs.plugins.compose.compiler)
-    alias(idofrontLibs.plugins.mia.publication)
+    alias(miaLibs.plugins.kotlin.jvm)
+    alias(miaLibs.plugins.mia.papermc)
+    alias(miaLibs.plugins.mia.nms)
+    alias(miaLibs.plugins.mia.copyjar)
+    alias(miaLibs.plugins.compose.compiler)
+    alias(miaLibs.plugins.mia.publication)
     kotlin("plugin.serialization")
 }
 
@@ -14,48 +16,50 @@ dependencies {
     api(project(":mineinabyss-components"))
 
     // Shaded
-    compileOnly(idofrontLibs.idofront.features)
-    compileOnly(idofrontLibs.idofront.nms)
+    compileOnly(miaLibs.idofront.nms)
 
     // Geary platform
-    compileOnly(libs.geary.papermc)
+    compileOnly(miaLibs.geary.papermc)
 
     // MineInAbyss platform
-    implementation(idofrontLibs.exposed.core) { isTransitive = false }
-    implementation(idofrontLibs.exposed.dao) { isTransitive = false }
-    implementation(idofrontLibs.exposed.jdbc) { isTransitive = false }
-    implementation(idofrontLibs.exposed.javatime) { isTransitive = false }
+    implementation(miaLibs.exposed.core) { isTransitive = false }
+    implementation(miaLibs.exposed.dao) { isTransitive = false }
+    implementation(miaLibs.exposed.jdbc) { isTransitive = false }
+    implementation(miaLibs.exposed.javatime) { isTransitive = false }
 
-    compileOnly(idofrontLibs.bundles.idofront.core)
-    compileOnly(idofrontLibs.kotlin.stdlib)
-    compileOnly(idofrontLibs.kotlinx.serialization.json)
-    compileOnly(idofrontLibs.kotlinx.serialization.kaml)
-    compileOnly(idofrontLibs.kotlinx.coroutines)
-    compileOnly(idofrontLibs.minecraft.mccoroutine)
-    compileOnly(idofrontLibs.reflections)
-    compileOnly(idofrontLibs.sqlite.jdbc)
+    compileOnly(miaLibs.bundles.idofront.core)
+    compileOnly(miaLibs.kotlin.stdlib)
+    compileOnly(miaLibs.kotlinx.serialization.json)
+    compileOnly(miaLibs.kotlinx.serialization.kaml)
+    compileOnly(miaLibs.kotlinx.coroutines)
+    compileOnly(miaLibs.minecraft.mccoroutine)
+    compileOnly(miaLibs.reflections)
+    compileOnly(miaLibs.sqlite.jdbc)
+    compileOnly(miaLibs.sqlite.kt)
+    compileOnly("com.mineinabyss:idofront-datastore:${miaLibs.versions.idofront.get()}")
 
     // Plugin libs
-    compileOnly(idofrontLibs.minecraft.plugin.modelengine)
-
-    compileOnly(libs.guiy)
-    compileOnly(libs.chatty)
     compileOnly(libs.deeperworld)
-    compileOnly(libs.packy)
-    compileOnly(libs.extracommands)
 
-    compileOnly(libs.minecraft.plugin.blocklocker)
-    compileOnly(libs.minecraft.plugin.hmccosmetics)
-    compileOnly(libs.minecraft.plugin.hibiscuscommons)
-    compileOnly(libs.minecraft.plugin.discordsrv)
-    compileOnly(libs.minecraft.plugin.luckperms)
-    compileOnly(libs.minecraft.plugin.placeholderapi)
-    compileOnly(libs.minecraft.plugin.bkcommonlib)
-    compileOnly(libs.minecraft.plugin.traincarts)
-    compileOnly(libs.minecraft.plugin.tccoasters)
-    compileOnly(libs.minecraft.plugin.mythichud)
-    compileOnly(libs.minecraft.plugin.shopkeepers)
-    compileOnly(libs.minecraft.plugin.luxdialogs)
+    compileOnly(miaLibs.minecraft.plugin.modelengine)
+    compileOnly(miaLibs.guiy)
+    compileOnly(miaLibs.chatty)
+    compileOnly(miaLibs.packy)
+    compileOnly(miaLibs.extracommands)
+    compileOnly(miaLibs.minecraft.plugin.blocklocker)
+    compileOnly(miaLibs.minecraft.plugin.hmccosmetics)
+    compileOnly(miaLibs.minecraft.plugin.hibiscuscommons)
+    compileOnly(miaLibs.minecraft.plugin.discordsrv)
+    compileOnly(miaLibs.minecraft.plugin.luckperms)
+    compileOnly(miaLibs.minecraft.plugin.placeholderapi)
+    compileOnly(miaLibs.minecraft.plugin.bkcommonlib)
+    compileOnly(miaLibs.minecraft.plugin.traincarts)
+    compileOnly(miaLibs.minecraft.plugin.tccoasters)
+    compileOnly(miaLibs.minecraft.plugin.mythichud)
+    compileOnly(miaLibs.minecraft.plugin.shopkeepers)
+    compileOnly(miaLibs.minecraft.plugin.luxdialogs)
+    compileOnly(miaLibs.minecraft.plugin.mythic.dist)
+    compileOnly("com.mineinabyss:stamina-climb:0.25")
 
 }
 
@@ -65,8 +69,143 @@ kotlin {
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
             "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-Xcontext-parameters",
         )
     }
 }
 val compileKotlin: KotlinCompile by tasks
+copyJar {
+    jarName = "mineinabyss-${version}.jar"
+}
+paper {
+    name = "MineInAbyss"
+    main = "com.mineinabyss.features.MineInAbyssPlugin"
+    authors = listOf("Derongan", "Offz", "Boy0000")
+    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+    prefix = "MiA"
+    description = "The core plugin for Mine in Abyss features"
+
+    permissions {
+        register("mineinabyss.stopdescent") {
+            description = "Allows players to leave a run"
+        }
+        register("mineinabyss.start") {
+            description = "Allows players to start a run"
+        }
+        register("mineinabyss.stats") {
+            description = "Allows players to see their stats"
+        }
+    }
+
+    serverDependencies {
+        register("Idofront") {
+            required = true
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Geary") {
+            required = true
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Guiy") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("DeeperWorld") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("ExtraCommands") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("LuxDialogues") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("StaminaClimb") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Vault") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Multiverse-Core") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("HMCCosmetics") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("DiscordSRV") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Chatty") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("ModelEngine") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Train_Carts") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("TCCoasters") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("LuckPerms") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("MythicMobs") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("MythicHUD") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("BlockLocker") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Packy") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("PlaceholderAPI") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Shopkeepers") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+    }
+}

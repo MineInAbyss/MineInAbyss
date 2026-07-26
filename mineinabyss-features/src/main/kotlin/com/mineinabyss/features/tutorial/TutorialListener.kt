@@ -1,6 +1,6 @@
 package com.mineinabyss.features.tutorial
 
-import com.mineinabyss.deeperworld.world.CubePoint
+import com.mineinabyss.deeperworld.datastructures.CubePoint
 import com.mineinabyss.features.hubstorage.isInHub
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

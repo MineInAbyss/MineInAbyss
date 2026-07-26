@@ -8,16 +8,19 @@ import com.mineinabyss.dependencies.module
 import com.mineinabyss.dependencies.new
 import com.mineinabyss.dependencies.single
 import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.features.lootcrates.database.LootCratesDataStore
 import com.mineinabyss.geary.datatypes.family.family
 import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.tracking.GearyArgs
 import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.idofront.Idofront
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.ArgsMinecraft
 import com.mineinabyss.idofront.commands.brigadier.map
 import com.mineinabyss.idofront.commands.brigadier.oneOf
+import com.mineinabyss.idofront.datastore.setupDataStore
 import com.mineinabyss.idofront.features.get
 import com.mineinabyss.idofront.features.listeners
 import com.mineinabyss.idofront.features.mainCommand
@@ -38,7 +41,7 @@ class LootCratesConfig(val messages: Messages = Messages()) {
     @Serializable
     class Messages(
         val tableNotFound: String = "Could not find loot table %s. Please let an administrator know!",
-        val alreadyLooted: String = "You already looted this chest on %s",
+        val alreadyLooted: String = "You already looted this chest %s ago",
         val noPermissionToEdit: String = "You don't have permission to edit loot crates",
         val noPermissionToOpen: String = "You don't have permission to open loot crates",
         val noPermissionToBreak: String = "You don't have permission to break loot crates, ask a member of staff if you need one removed.",
@@ -56,6 +59,7 @@ val LootCratesFeature = module("lootcrates") {
     require(get<AbyssFeatureConfig>().lootCrates.enabled) { "Lootcrates feature is disabled" }
     val config by singleConfig<LootCratesConfig>("lootTables.yml")
     single { config.messages }
+    Idofront.setupDataStore(LootCratesDataStore)
 
     val implementation = object : LootCrates {
         override val lootTables: Map<PrefabKey, LootTable> = with(gearyPaper.worldManager.global) {
@@ -93,13 +97,14 @@ val LootCratesFeature = module("lootcrates") {
         "give" {
             executes.asPlayer().args("item" to GearyArgs.prefabKey().oneOf { get<LootCrates>().lootTables.keys.toList() }) { lootTable ->
                 val (namespace, key) = lootTable
+                val messages = get<LootCratesConfig>().messages
                 player.withGeary {
                     player.inventory.addItem(
                         ItemStack(Material.STICK).apply {
                             editPersistentDataContainer {
                                 it.encode(ContainsLoot(lootTable))
                             }
-                            val itemName = get<LootCratesConfig>().messages.lootTableItemTitle.format(namespace, key).miniMsg()
+                            val itemName = messages.lootTableItemTitle.format(namespace, key).miniMsg()
                             setData(DataComponentTypes.ITEM_NAME, itemName)
                         }
                     )

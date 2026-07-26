@@ -1,17 +1,20 @@
 plugins {
-    alias(idofrontLibs.plugins.kotlin.jvm)
-    alias(idofrontLibs.plugins.mia.papermc)
-    alias(idofrontLibs.plugins.mia.nms)
-    alias(idofrontLibs.plugins.mia.publication)
+    alias(miaLibs.plugins.kotlin.jvm)
+    alias(miaLibs.plugins.mia.papermc)
+    alias(miaLibs.plugins.mia.nms)
+    alias(miaLibs.plugins.mia.publication)
     kotlin("plugin.serialization")
 }
 
 
 dependencies {
-    compileOnly(libs.geary.papermc)
     compileOnly(libs.deeperworld)
-    compileOnly(idofrontLibs.bundles.idofront.core)
-    compileOnly(idofrontLibs.idofront.nms)
-    compileOnly(idofrontLibs.kotlinx.serialization.json)
-    compileOnly(idofrontLibs.kotlinx.serialization.kaml)
+    compileOnly(miaLibs.geary.papermc)
+    compileOnly(miaLibs.bundles.idofront.core)
+    compileOnly(miaLibs.sqlite.kt)
+    compileOnly(miaLibs.idofront.nms)
+    compileOnly("com.mineinabyss:idofront-datastore:${miaLibs.versions.idofront.get()}")
+    compileOnly(miaLibs.minecraft.mccoroutine)
+    compileOnly(miaLibs.kotlinx.serialization.json)
+    compileOnly(miaLibs.kotlinx.serialization.kaml)
 }

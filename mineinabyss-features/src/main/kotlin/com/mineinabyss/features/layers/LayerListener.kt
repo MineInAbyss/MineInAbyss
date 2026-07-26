@@ -2,13 +2,12 @@ package com.mineinabyss.features.layers
 
 //import com.mineinabyss.eternalfortune.api.events.PlayerCreateGraveEvent
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent
+import com.mineinabyss.deeperworld.datastructures.Section
+import com.mineinabyss.deeperworld.deeperWorld
 import com.mineinabyss.deeperworld.event.PlayerAscendEvent
 import com.mineinabyss.deeperworld.event.PlayerChangeSectionEvent
 import com.mineinabyss.deeperworld.event.PlayerDescendEvent
-import com.mineinabyss.deeperworld.services.PlayerManager
-import com.mineinabyss.deeperworld.world.section.Section
-import com.mineinabyss.deeperworld.world.section.centerLocation
-import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.deeperworld.sections.section
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
 import com.mineinabyss.geary.actions.ActionGroupContext
@@ -47,14 +46,14 @@ class LayerListener : Listener {
     fun PlayerDescendEvent.onPlayerDescend() { sendTitleOnLayerChange() }
 
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
-        if (!PlayerManager.playerCanTeleport(player)) return
+        if (!deeperWorld.players.canTeleport(player)) return
         val gearyPlayer = player.toGearyOrNull() ?: return
         if (!Cooldowns.isComplete(gearyPlayer, "mineinabyss:layer_title")) return
         val fromLayer = fromSection.layer ?: return
         val toLayer = toSection.layer.takeUnless { it == fromLayer } ?: return
         val times = Title.Times.times(2.5.seconds.toJavaDuration(), 0.5.seconds.toJavaDuration(), 1.seconds.toJavaDuration())
 
-        player.showTitle(Title.title(toLayer.name.miniMsg(), toLayer.sub.miniMsg(), times))
+        player.showTitle(Title.title(toLayer.name.miniMsg(), toLayer.subtitle, times))
         titleCooldown.execute(ActionGroupContext(gearyPlayer))
     }
 
@@ -72,7 +71,7 @@ class LayerListener : Listener {
 
     private fun Player.sendWorldBorderPackets(section: Section) {
         val settings = WorldBorder()
-        settings.setCenter(section.centerLocation.x, section.centerLocation.z)
+        settings.setCenter(section.center.x, section.center.z)
         settings.size = (section.region.max.x - section.region.min.x).toDouble() + 2.0
 
         val connection = (player as CraftPlayer).handle.connection

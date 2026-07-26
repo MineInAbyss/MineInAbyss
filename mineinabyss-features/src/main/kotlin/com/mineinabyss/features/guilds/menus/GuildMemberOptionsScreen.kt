@@ -1,6 +1,7 @@
 package com.mineinabyss.features.guilds.menus
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.isCaptainOrAbove
 import com.mineinabyss.features.guilds.extensions.kickPlayerFromGuild
@@ -9,29 +10,30 @@ import com.mineinabyss.features.helpers.Text
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.guiy.components.Spacer
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.layout.Row
-import com.mineinabyss.guiy.modifiers.Modifier
-import com.mineinabyss.guiy.modifiers.height
-import com.mineinabyss.guiy.modifiers.placement.absolute.at
-import com.mineinabyss.guiy.modifiers.size
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import me.dvyy.compose.mini.layout.jetpack.Row
+import me.dvyy.compose.mini.layout.modifiers.height
+import me.dvyy.compose.mini.layout.modifiers.offset
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.layout.modifiers.width
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.OfflinePlayer
 
 @Composable
 fun GuildUIScope.GuildMemberOptionsScreen(
     member: OfflinePlayer,
     onBack: () -> Unit,
-) = Chest(":space_-8::guild_member_action_menu:", Modifier.height(5)) {
-    Row(modifier = Modifier.at(0, 1)) {
-        ChangeMemberRankButton(member, GuildRank.STEWARD, Modifier.size(2, 2), onBack)
-        Spacer(1)
-        ChangeMemberRankButton(member, GuildRank.CAPTAIN, Modifier.size(3, 2), onBack)
-        Spacer(1)
-        ChangeMemberRankButton(member, GuildRank.MEMBER, Modifier.size(2, 2), onBack)
+) = Chest(":space_-8::guild_member_action_menu:", Modifier.height(5.dp)) {
+    Row(modifier = Modifier.offset(0.dp, 1.dp)) {
+        ChangeMemberRankButton(member, GuildRank.STEWARD, Modifier.size(2.dp, 2.dp), onBack)
+        Spacer(Modifier.width(1.dp))
+        ChangeMemberRankButton(member, GuildRank.CAPTAIN, Modifier.size(3.dp, 2.dp), onBack)
+        Spacer(Modifier.width(1.dp))
+        ChangeMemberRankButton(member, GuildRank.MEMBER, Modifier.size(2.dp, 2.dp), onBack)
     }
 
-    KickGuildMemberButton(member, Modifier.at(4, 4), onBack)
-    BackButton(Modifier.at(0, 4))
+    KickGuildMemberButton(member, Modifier.offset(4.dp, 4.dp), onBack)
+    BackButton(Modifier.offset(0.dp, 4.dp))
 }
 
 @Composable
@@ -59,5 +61,3 @@ fun GuildUIScope.KickGuildMemberButton(
         Text("<red><i>Kick Member".miniMsg())
     }
 }
-
-

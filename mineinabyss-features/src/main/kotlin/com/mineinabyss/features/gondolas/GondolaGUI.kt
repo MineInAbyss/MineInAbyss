@@ -1,20 +1,20 @@
 package com.mineinabyss.features.gondolas
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.mineinabyss.components.gondolas.Gondola
 import com.mineinabyss.components.gondolas.UnlockedGondolas
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.guiy.canvas.LocalGuiyOwner
 import com.mineinabyss.geary.serialization.getOrSetPersisting
+import com.mineinabyss.guiy.canvas.LocalGuiyOwner
 import com.mineinabyss.guiy.components.HorizontalGrid
 import com.mineinabyss.guiy.components.Item
 import com.mineinabyss.guiy.components.canvases.Chest
-import com.mineinabyss.guiy.modifiers.Modifier
 import com.mineinabyss.guiy.modifiers.click.clickable
-import com.mineinabyss.guiy.modifiers.size
-import com.mineinabyss.idofront.items.editItemMeta
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import io.papermc.paper.datacomponent.DataComponentTypes
+import me.dvyy.compose.mini.layout.modifiers.size
+import me.dvyy.compose.mini.modifier.Modifier
 import org.bukkit.entity.Player
 
 @Composable
@@ -25,7 +25,7 @@ fun GondolaSelectionMenu(player: Player) {
     Chest(
         title = "Choose Spawn Location",
         onClose = { owner.exit() }) {
-        HorizontalGrid(Modifier.size(9, 6)) {
+        HorizontalGrid(Modifier.size(9.dp, 6.dp)) {
             gondolas.keys.forEach {
                 GondolaSpawn(player,LoadedGondolas.loaded[it] ?: return@forEach)
             }

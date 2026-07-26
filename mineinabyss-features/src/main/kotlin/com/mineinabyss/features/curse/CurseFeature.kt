@@ -3,7 +3,9 @@ package com.mineinabyss.features.curse
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
+import com.mineinabyss.dependencies.singleModule
 import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.features.listeners
 import com.mineinabyss.idofront.features.mainCommand
@@ -13,6 +15,7 @@ import com.mineinabyss.idofront.messaging.success
 val CurseFeature = module("curse") {
     require(get<AbyssFeatureConfig>().curse.enabled) { "Curse feature is disabled" }
     requirePlugins("DeeperWorld")
+    singleModule(LayersFeature)
 
     listeners(CurseAscensionListener(), CurseEffectsListener())
 }.mainCommand {

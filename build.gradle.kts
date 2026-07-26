@@ -1,29 +1,34 @@
 plugins {
-    alias(idofrontLibs.plugins.kotlin.jvm) apply false
-    alias(idofrontLibs.plugins.kotlinx.serialization) apply false
-    alias(idofrontLibs.plugins.mia.papermc) apply false
-    alias(idofrontLibs.plugins.mia.nms) apply false
-    alias(idofrontLibs.plugins.mia.copyjar) apply false
-    alias(idofrontLibs.plugins.compose.compiler) apply false
-    alias(idofrontLibs.plugins.mia.publication) apply false
-    alias(idofrontLibs.plugins.mia.autoversion)
-    alias(idofrontLibs.plugins.mia.docs)
+    alias(miaLibs.plugins.kotlin.jvm) apply false
+    alias(miaLibs.plugins.kotlinx.serialization) apply false
+    alias(miaLibs.plugins.mia.papermc) apply false
+    alias(miaLibs.plugins.mia.nms) apply false
+    alias(miaLibs.plugins.mia.copyjar) apply false
+    alias(miaLibs.plugins.compose.compiler) apply false
+    alias(miaLibs.plugins.mia.publication) apply false
+    alias(miaLibs.plugins.mia.autoversion)
+    alias(miaLibs.plugins.mia.docs)
 }
-//
+
 allprojects {
     repositories {
+        mavenLocal {
+            content { includeModule("com.mineinabyss", "geary-papermc-spawning") }
+            content { includeModule("com.mineinabyss", "stamina-climb") }
+        }
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
+        google()
         mavenLocal()
-
-        // LuxDialogues
-        maven("https://repo.aselstudios.com/releases")
     }
 }
 
-idofront {
-    docsVersion = "0.0.8"
+tasks {
+    updateDaemonJvm {
+        languageVersion = JavaLanguageVersion.of(25)
+        vendor = JvmVendorSpec.JETBRAINS
+    }
 }

@@ -4,8 +4,7 @@ import com.mineinabyss.components.custom_hud.customHudData
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.components.tools.ShowDepthMeterHud
-import com.mineinabyss.deeperworld.world.section.centerLocation
-import com.mineinabyss.deeperworld.world.section.section
+import com.mineinabyss.deeperworld.sections.section
 import com.mineinabyss.features.tools.depthmeter.getAbyssDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
@@ -49,7 +48,7 @@ class Placeholders : PlaceholderExpansion() {
     private class CompassAngle(val unicode: String, val angle: String? = null)
 
     private fun Player.getCompassAngle(): CompassAngle {
-        val loc = location.section?.centerLocation ?: return CompassAngle("\uEBBF")
+        val loc = location.section?.center ?: return CompassAngle("\uEBBF")
         if (world != loc.world) return CompassAngle("\uEBBF")
 
         val dir = loc.subtract(location).toVector()

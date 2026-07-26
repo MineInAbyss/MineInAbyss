@@ -5,6 +5,7 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.dependencies.*
+import com.mineinabyss.features.achievements.AchievementsFeature
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
 import com.mineinabyss.features.core.CoreFeature
@@ -13,8 +14,10 @@ import com.mineinabyss.features.curse.CurseFeature
 import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
+import com.mineinabyss.features.goals.GoalFeature
 import com.mineinabyss.features.gondolas.GondolaFeature
 import com.mineinabyss.features.guilds.GuildFeature
+import com.mineinabyss.features.guilds.GuildsModule
 import com.mineinabyss.features.guilds.database.GuildJoinQueue
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.Guilds
@@ -22,9 +25,9 @@ import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.helpers.Placeholders
 import com.mineinabyss.features.hubstorage.HubStorageFeature
 import com.mineinabyss.features.keepinventory.KeepInvFeature
+import com.mineinabyss.features.layers.LayersContext
 import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.features.lootcrates.LootCratesFeature
-import com.mineinabyss.features.lootcrates.database.LootedChests
 import com.mineinabyss.features.misc.MiscFeature
 import com.mineinabyss.features.music.MusicFeature
 import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
@@ -91,13 +94,18 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
     override val logger: ComponentLogger by getLazy()
     override val config: AbyssFeatureConfig by getLazy()
     override val db: Database by getLazy()
+    override val layers: LayersContext
+        get() = scope[LayersFeature]
+    override val guilds: GuildsModule
+        get() = scope[GuildFeature]
+
 
     override fun onLoad() {
         AbyssContext.instance = this
         PrefabNamespaceMigrations.migrations += listOf("looty" to "mineinabyss", "mobzy" to "mineinabyss")
         transaction(db) {
             //addLogger(StdOutSqlLogger)
-            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue, LootedChests)
+            SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue)
         }
 
         if (isPlaceholderApiLoaded) Placeholders().register()
@@ -119,8 +127,10 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
                 }
             }
         }
+        // Attempt to load all features, each will manually check if it's enabled in the config and print an error message if not
         di.scope.loadAllCatching(
             AntiCheeseFeature,
+            AchievementsFeature,
             ConfigPullFeature,
             CoreFeature,
             CosmeticsFeature,
@@ -146,6 +156,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             RelicsFeature,
             ToolsFeature,
             TutorialFeature,
+            GoalFeature,
         )
         di.scope.load(MainCommandFeature)
     }

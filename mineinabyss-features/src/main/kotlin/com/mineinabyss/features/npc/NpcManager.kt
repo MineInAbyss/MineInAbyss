@@ -22,7 +22,7 @@ class NpcManager(
     val npcMap: MutableMap<Long, List<NpcEntity>> = mutableMapOf()
 
     fun initNpc() {
-        // load npc config
+        npcMap.clear()
         for (npc in npcsConfig.npcs.values) {
             val npcEntity = NpcEntity(npc, world, dialogsConfig)
 
@@ -51,6 +51,7 @@ class NpcManager(
         val dialogData = gearyEntity.get<DialogData>()
         val questDialogData = gearyEntity.get<QuestDialogData>()
         when {
+            npcData.type == NPCType.TRADER -> npcData.traderInteraction(player)
             npcData.dialogId == null -> return
             npcData.type == NPCType.QUEST && questDialogData != null -> {
                 npcData.questGiverInteraction(player, questDialogData, dialogData)

@@ -6,12 +6,12 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager
+import com.mineinabyss.features.abyss
 import com.mineinabyss.features.cosmetics.EmptyBackpackCosmetic
-import com.mineinabyss.features.helpers.di.Features
 import com.mineinabyss.idofront.util.mapFast
 import io.papermc.paper.datacomponent.DataComponentTypes
 import io.papermc.paper.datacomponent.item.CustomModelData
-import me.lojosho.hibiscuscommons.util.packets.PacketManager
 import net.kyori.adventure.key.Key
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -37,29 +37,30 @@ fun CosmeticUser.equipWhistleCosmetic() {
     val id = userBackpackManager?.firstArmorStandId ?: return
     val (item, itemFp) = whistleItems[player.layerIndex]
 
-    PacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, item, player.trackedBy.toMutableList())
+    HMCCPacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, item, player.trackedBy.toMutableList())
 
     if (backpack.isFirstPersonCompadible) {
-        PacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, itemFp, mutableListOf(player))
+        HMCCPacketManager.equipmentSlotUpdate(id, EquipmentSlot.HAND, itemFp, mutableListOf(player))
     }
 }
 
-private val Player.layerIndex get() = when (location.layer?.id) {
-    "orth" -> 0
-    "layerone" -> 1
-    "layertwo" -> 2
-    "layerthree" -> 3
-    "layerfour" -> 4
-    "layerfive" -> 5
-    else -> 6
-}
+private val Player.layerIndex
+    get() = when (location.layer?.id) {
+        "orth" -> 0
+        "layerone" -> 1
+        "layertwo" -> 2
+        "layerthree" -> 3
+        "layerfour" -> 4
+        "layerfive" -> 5
+        else -> 6
+    }
 
 private val whistleItems by lazy {
     val whistleItem = ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_MODEL, Key.key("cosmetics", "whistle"))
     }
 
-    (0 until Features.layers.worldManager.layers.size).mapFast {
+    (0 until abyss.layers.worldManager.layers.size).mapFast {
         whistleItem.clone().apply {
             setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFloat(it.toFloat()).addFlag(false))
         } to whistleItem.clone().apply {

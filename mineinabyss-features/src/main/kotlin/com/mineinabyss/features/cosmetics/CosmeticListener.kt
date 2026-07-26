@@ -28,7 +28,7 @@ class CosmeticListener(private val equipWhistleCosmetic: Boolean) : Listener {
 
     @EventHandler
     fun PlayerDescendEvent.onDescend() {
-        if (fromSection.layer?.key == toSection.layer?.key) return
+        if (fromSection.layer == toSection.layer) return
         val user = player.cosmeticUser?.takeUnless { it.isHidden } ?: return
         if (equipWhistleCosmetic) user.equipWhistleCosmetic()
     }

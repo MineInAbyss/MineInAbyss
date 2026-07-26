@@ -11,8 +11,12 @@ pluginManagement {
     }
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
-    val idofrontVersion: String by settings
+    val miaLibs: String by settings
 
     repositories {
         maven("https://repo.mineinabyss.com/releases")
@@ -21,8 +25,10 @@ dependencyResolutionManagement {
     }
 
     versionCatalogs {
-        create("idofrontLibs"){
-            from("com.mineinabyss:catalog:$idofrontVersion")
+        create("miaLibs") {
+            from("com.mineinabyss:catalog:$miaLibs")
+            version("idofront", "2.0-SNAPSHOT")
+            version("sqlite-kt", "0.1.4-dev.1")
         }
     }
 }
