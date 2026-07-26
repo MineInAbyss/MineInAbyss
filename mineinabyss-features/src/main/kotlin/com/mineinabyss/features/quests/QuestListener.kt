@@ -1,54 +1,42 @@
 package com.mineinabyss.features.quests
 
-import com.mineinabyss.features.goals.FactKind
-import com.mineinabyss.features.goals.goalListener.itemFactIds
-import com.mineinabyss.features.goals.goalListener.killFactIds
-import com.mineinabyss.geary.papermc.spawning.locations.PlayerEnterRegionEvent
-import com.mineinabyss.geary.papermc.spawning.locations.RegionService
-import com.mineinabyss.idofront.plugin.Services
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityDeathEvent
-import org.bukkit.event.entity.EntityPickupItemEvent
-import org.bukkit.event.inventory.CraftItemEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerMoveEvent
 
 class QuestListener(
-    private val manager: QuestManager,
+    val questConfig: QuestConfig,
+    val manager: QuestManager,
 ) : Listener {
-    private val repository get() = manager.repository
 
-    @EventHandler
-    suspend fun PlayerJoinEvent.onJoin() {
-        repository.loadPlayer(player)
-        val regions = Services.getOrNull<RegionService>()?.regionsAt(player.location) ?: return
-        repository.seedRegions(player, regions)
-    }
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun PlayerMoveEvent.onLocationEnter() {
+        if (!hasExplicitlyChangedBlock()) return
 
-    @EventHandler
-    fun PlayerQuitEvent.onQuit() = repository.unloadPlayer(player)
+        val activeQuests = manager.activeQuests(player)
+        val playerVisitedLocations = manager.visitedLocations(player)
 
-    @EventHandler
-    fun PlayerEnterRegionEvent.onRegionEntered() =
-        repository.recordFact(player, FactKind.REGION_ENTER, regionId)
-
-    @EventHandler
-    fun CraftItemEvent.onCraft() {
-        val player = whoClicked as? Player ?: return
-        recipe.result.itemFactIds(player.world).forEach { repository.recordFact(player, FactKind.CRAFT, it) }
-    }
-
-    @EventHandler
-    fun EntityDeathEvent.onKill() {
-        val killer = entity.killer ?: return
-        entity.killFactIds().forEach { repository.recordFact(killer, FactKind.KILL, it) }
-    }
-
-    @EventHandler
-    fun EntityPickupItemEvent.onPickup() {
-        val player = entity as? Player ?: return
-        item.itemStack.itemFactIds(player.world).forEach { repository.recordFact(player, FactKind.PICKUP, it, item.itemStack.amount) }
+//        activeQuests.activeVisitQuests.forEach { visitQuest ->
+//            visitQuest.locations.forEach { location ->
+//                if (!location.visited && location.isInside(to)) {
+//                    location.visited = true
+//                }
+//            }
+//        }
+        questConfig.visitQuests.forEach { quest ->
+            if (!activeQuests.contains(quest.key)) return@forEach
+            // there are probably some spacial partitioning tricks to do here at some point
+            // but for now we have at most 40 players with a quest containing at most 15 locations
+            // so it's only ever 600 checks per move event which is at most 3600 integer comparisons if all 40 players manage to move at 1 block per tick
+            // tldr: i'll optimize it later
+            quest.value.locations.forEach { location ->
+                if (location.name !in playerVisitedLocations && location.isInside(to)) {
+                    manager.addVisitedLocation(player, location.name)
+                    val progress = manager.visitQuestProgress(player, quest.key)
+                    player.sendActionBar(manager.questInformation(player, quest.key))
+                }
+            }
+        }
     }
 }

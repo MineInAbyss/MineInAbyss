@@ -22,7 +22,6 @@ class AbyssFeatureConfig(
     @YamlComment("Ignore following options, enable all features")
     val enableAll: Boolean = false, //TODO reimplement
     val ansiblePull: Toggle = Toggle(),
-    val achievements: Toggle = Toggle(),
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),
     val core: CoreFeatureConfig = CoreFeatureConfig(),
@@ -49,5 +48,4 @@ class AbyssFeatureConfig(
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),
     val quests: Toggle = Toggle(),
-    val goals: Toggle = Toggle(),
 )
