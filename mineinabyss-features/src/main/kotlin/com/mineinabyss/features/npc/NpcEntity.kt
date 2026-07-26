@@ -58,7 +58,7 @@ class NpcEntity(
         }
 
         if (dialogData != null) gearyEntity.set<DialogData>(this@NpcEntity.dialogData)
-        else abyss.logger.w("Could not set dialog data for npc ${config.id}")
+        else if (config.dialogId != null ) abyss.logger.w("Could not set dialog data for npc ${config.id}")
 
         if (questDialog != null) gearyEntity.set<QuestDialogData>(QuestDialogData(questDialog))
     }
