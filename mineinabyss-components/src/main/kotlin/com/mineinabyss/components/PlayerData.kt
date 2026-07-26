@@ -13,7 +13,7 @@ import java.util.*
 
 @Serializable
 @SerialName("mineinabyss:player_data")
-class PlayerData(
+data class PlayerData(
     var isAffectedByCurse: Boolean = true,
     var curseAccrued: Double = 0.0,
     var exp: Double = 0.0,

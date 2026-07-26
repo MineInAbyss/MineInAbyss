@@ -1,25 +1,27 @@
 package com.mineinabyss.features.lootcrates.database
 
+import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.idofront.datastore.KeyedMinecraftDataStore
+import com.mineinabyss.idofront.serialization.InstantAsEpochSecondsSerializer
+import com.mineinabyss.idofront.serialization.LocationSerializer
+import kotlinx.serialization.Serializable
+import me.dvyy.sqlite.WriteTransaction
+import me.dvyy.sqlite.datastore.keyedJsonTable
 import org.bukkit.Location
-import org.jetbrains.exposed.v1.core.Op
-import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.core.and
-import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
+import kotlin.time.Instant
 
-object LootedChests : IntIdTable() {
-    val playerUUID = uuid("playerUUID")
-    val dateLooted = varchar("dateLooted", 10)
-    val x = integer("x")
-    val y = integer("y")
-    val z = integer("z")
-    val world = varchar("world", 50)
-    val lootType = varchar("lootType", 50)
+@Serializable
+data class LootCrate(
+    val dateLooted: @Serializable(with = InstantAsEpochSecondsSerializer::class) Instant,
+    val lootType: PrefabKey,
+)
 
-    fun locationEq(location: Location): Op<Boolean> {
-        val currX = location.blockX
-        val currY = location.blockY
-        val currZ = location.blockZ
-        val currWorld = location.world
-        return (x eq currX) and (y eq currY) and (z eq currZ) and (world eq currWorld.name)
+object LootCratesDataStore : KeyedMinecraftDataStore<Location, LootCrate>(keyedJsonTable("loot_crates") {
+    index("location", "key")
+}, LocationSerializer, LootCrate.serializer()) {
+    context(tx: WriteTransaction)
+    fun deleteAtLocation(location: Location) {
+        val encoded = encodeKey(location)
+        tx.exec("DELETE FROM $table WHERE key = jsonb(?)", encoded)
     }
 }

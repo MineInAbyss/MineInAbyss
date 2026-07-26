@@ -13,6 +13,7 @@ import com.mineinabyss.features.npc.action.QuestDialogData
 import com.mineinabyss.features.npc.shopkeeping.TradeConfigHolder
 import com.mineinabyss.features.quests.QuestFeature
 import com.mineinabyss.features.quests.QuestManager
+import com.mineinabyss.idofront.Idofront
 import com.mineinabyss.idofront.messaging.*
 import com.mineinabyss.idofront.serialization.LocationAltSerializer
 import com.mineinabyss.idofront.serialization.VectorAltSerializer
@@ -146,9 +147,9 @@ data class Npc(
 
     fun gondolaUnlockerInteraction(player: Player) {
         // instead of printing messages in chat, we should open an error dialog instead
-        ticketId ?: return idofrontLogger.e { "Ticket id is null for gondola unlocker NPC $id" }
+        ticketId ?: return Idofront.logger.e { "Ticket id is null for gondola unlocker NPC $id" }
         val ticket: Ticket = TicketConfigHolder.config?.tickets?.get(ticketId)
-            ?: return idofrontLogger.e("Ticket with id $ticketId not found")
+            ?: return Idofront.logger.e("Ticket with id $ticketId not found")
 
         player.editPlayerData {
             when {

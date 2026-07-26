@@ -1,169 +1,105 @@
 package com.mineinabyss.features.quests
 
+import com.mineinabyss.features.goals.ConditionProgress
+import com.mineinabyss.features.goals.repository.GoalRepository
 import com.mineinabyss.features.helpers.luckPerms
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.geary.serialization.getOrSetPersisting
-import com.mineinabyss.geary.serialization.setPersisting
+import com.mineinabyss.geary.papermc.spawning.locations.RegionService
 import com.mineinabyss.idofront.messaging.error
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.idofront.plugin.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.luckperms.api.node.Node
 import org.bukkit.entity.Player
 
-@Serializable
-@SerialName("mineinabyss:quest_data")
-data class QuestData(
-    val visitedLocations: Set<String> = emptySet(),
-    val completedQuests: Set<String> = emptySet(),
-    val activeQuests: Set<String> = emptySet()
-)
-
-
 class QuestManager(
     val config: QuestConfig,
+    val repository: GoalRepository,
 ) {
-    // we use this to store a player visited location and look it up;
-    // will probably be moved to database implementation later on
-    private fun getQuestData(player: Player): QuestData {
-        return player.toGeary().getOrSetPersisting<QuestData> { QuestData() }
+    fun activeQuests(player: Player): Set<String> =
+        repository.allProgress(player).filterValues { !it.rewardClaimed }.keys
+
+    fun completedQuests(player: Player): Set<String> =
+        repository.allProgress(player).filterValues { it.rewardClaimed }.keys
+
+    fun playerHasUnlockedQuest(player: Player, questId: String): Boolean {
+        val progress = repository.progress(player, questId) ?: return false
+        return !progress.rewardClaimed
     }
 
+    fun playerHasCompletedQuest(player: Player, questId: String): Boolean =
+        repository.progress(player, questId)?.rewardClaimed == true
 
-    private fun update(player: Player, update: (QuestData) -> QuestData) {
-        val data = getQuestData(player)
-        val newData = update(data)
-        player.toGeary().setPersisting(newData)
+    fun isQuestCompleted(player: Player, questId: String): Boolean =
+        repository.progress(player, questId)?.completed == true
+
+    fun unlockQuest(player: Player, questId: String) {
+        val quest = config.byId(questId) ?: return player.error("Quest $questId not found")
+        val progress = repository.progress(player, questId)
+        when {
+            progress?.rewardClaimed == true -> player.error("You have already completed this quest")
+            progress != null -> player.error("You already have this quest active")
+            else -> {
+                repository.startGoal(player, quest.toGoal())
+                // seed regions the player is already inside, enter events only fire on transitions
+                Services.getOrNull<RegionService>()?.let {
+                    repository.seedRegions(player, it.regionsAt(player.location))
+                }
+            }
+        }
     }
 
-    fun activeQuests(player: Player): Set<String> {
-        return getQuestData(player).activeQuests
-    }
-
-    fun completedQuests(player: Player): Set<String> {
-        return getQuestData(player).completedQuests
-    }
-
-    fun visitedLocations(player: Player): Set<String> {
-        return getQuestData(player).visitedLocations
-    }
-
-    fun questInformation(player: Player, questId: String): TextComponent {
-        val visitQuest = config.visitQuests[questId]?.displayName ?: return Component.text(questId)
-        val progress = visitQuestProgress(player, questId)
-        //TODO make work for other quest types
-        return Component.text(""""$visitQuest" - ${progress.first}/${progress.second} locations visited.""")
-    }
-
-    fun addVisitedLocation(player: Player, locationName: String) {
-        update(player) { data -> data.copy(visitedLocations = data.visitedLocations + locationName) }
-    }
-    // hopefully this auto save the changes on the player
-    fun addQuest(player: Player, questId: String) {
-        update(player) { data -> data.copy(activeQuests = data.activeQuests + questId) }
+    fun checkAndCompleteQuest(player: Player, questId: String) {
+        val progress = repository.progress(player, questId)
+        when {
+            progress?.completed != true -> player.error("You haven't completed this quest yet!")
+            progress.rewardClaimed -> player.error("You have already claimed this quest's reward")
+            else -> claimReward(player, questId)
+        }
     }
 
     fun completeQuest(player: Player, questId: String) {
-        update(player) { data ->
-            data.copy(
-                activeQuests = data.activeQuests - questId,
-                completedQuests = data.completedQuests + questId
-            )
-        }
-
-        // give quest reward to player
-        giveQuestReward(player, questId)
+        val quest = config.byId(questId) ?: return player.error("Quest $questId not found")
+        repository.forceComplete(player, quest.toGoal())
+        claimReward(player, questId)
     }
 
-    fun giveQuestReward(player: Player, questId: String) {
-        val visitQuest = config.visitQuests[questId] ?: return
-
-        visitQuest.rewards.forEach { serializable ->
-            val item = serializable.toItemStackOrNull() ?: error("Failed to complete quest $questId: Reward not found")
+    fun claimReward(player: Player, questId: String) {
+        val quest = config.byId(questId) ?: return
+        quest.rewards.forEach { serializable ->
+            val item = serializable.toItemStackOrNull()
+                ?: return player.error("Failed to complete quest $questId: Reward not found")
             player.inventory.addItem(item)
         }
-
-        val nodes = visitQuest.perms.map { Node.builder(it).value(true).build() }
+        val nodes = quest.perms.map { Node.builder(it).value(true).build() }
         if (nodes.isNotEmpty()) luckPerms.userManager.modifyUser(player.uniqueId) { lpUser ->
             nodes.forEach { lpUser.data().add(it) }
         }
+        repository.markRewardClaimed(player, quest.toGoal())
+        player.success("Quest completed: ${quest.name}")
     }
 
-    fun unlockQuest(player: Player, questId: String) {
-        if (questId !in config.visitQuests.keys) {
-            error("Trying to unlock quest $questId but it does not exist in the QuestConfig")
+    fun questInformation(player: Player, questId: String): TextComponent {
+        val quest = config.byId(questId) ?: return Component.text(questId)
+        val progress = repository.progress(player, questId)
+            ?: return Component.text(""""${quest.name}" - not started.""")
+        val conditions = quest.conditions.mapIndexed { i, condition ->
+            condition.describe(progress.conditions[i] ?: ConditionProgress())
         }
-        val questData = getQuestData(player)
-        if (questId in questData.activeQuests) {
-            error("Trying to unlock quest $questId but player already has it active")
-        }
-        if (questId in questData.completedQuests) {
-            error("Trying to unlock quest $questId but player has already completed it")
-        }
-        addQuest(player, questId)
+        return Component.text(""""${quest.name}" - ${conditions.joinToString("; ")}""")
     }
 
-    fun visitQuestProgress(player: Player, questId: String): Pair<Int, Int> {
-        val visitQuest = config.visitQuests[questId] ?: error("Trying to get progress of quest $questId but it does not exist in the QuestConfig")
-        val questData = getQuestData(player)
-
-        val totalLocations = visitQuest.locations.size
-        if (totalLocations == 0) return 0 to 0
-
-        val visitedLocations = visitQuest.locations.count { locationData ->
-            locationData.name in questData.visitedLocations
-        }
-
-        return visitedLocations to totalLocations
+    fun removeQuest(player: Player, questId: String) {
+        val quest = config.byId(questId) ?: return player.error("Quest $questId not found")
+        repository.removeGoal(player, quest.toGoal())
     }
 
-
-    fun isVisitQuestCompleted(questId: String, config: QuestConfig, questData: QuestData): Boolean {
-        val visitQuest = config.visitQuests[questId] ?: return false
-
-        return visitQuest.locations.all { locationData ->
-            locationData.name in questData.visitedLocations
-        }
+    fun resetQuest(player: Player, questId: String) {
+        val quest = config.byId(questId) ?: return player.error("Quest $questId not found")
+        repository.resetGoal(player, quest.toGoal())
     }
 
-    fun isKillQuestCompleted(questId: String, config: QuestConfig, questData: QuestData): Boolean {
-        // Placeholder implementation
-        return false
-    }
-
-    fun isFetchQuestCompleted(questId: String, config: QuestConfig, questData: QuestData): Boolean {
-        // Placeholder implementation
-        return false
-    }
-
-    fun isQuestCompleted(player: Player, questId: String): Boolean {
-        val questData = getQuestData(player)
-        val activeQuests = questData.activeQuests
-        if (questId !in activeQuests) return false
-        return isVisitQuestCompleted(questId, config, questData) || isKillQuestCompleted(questId, config, questData) || isFetchQuestCompleted(questId, config, questData)
-    }
-
-
-    fun checkAndCompleteQuest(player: Player, questId: String) {
-        if (isQuestCompleted(player, questId)) {
-            completeQuest(player, questId)
-        } else {
-            player.error("You haven't completed this quest yet!")
-        }
-    }
-
-    fun playerHasUnlockedQuest(player: Player, questId: String): Boolean {
-        val questData = getQuestData(player)
-        return questId in questData.activeQuests
-    }
-
-    fun playerHasCompletedQuest(player: Player, questId: String): Boolean {
-        val questData = getQuestData(player)
-        return questId in questData.completedQuests
-    }
-
-    fun resetQuests(player: Player) {
-        player.toGeary().setPersisting(QuestData())
+    fun clearQuests(player: Player) {
+        config.quests.forEach { repository.removeGoal(player, it.toGoal()) }
     }
 }

@@ -35,6 +35,8 @@ dependencies {
     compileOnly(miaLibs.minecraft.mccoroutine)
     compileOnly(miaLibs.reflections)
     compileOnly(miaLibs.sqlite.jdbc)
+    compileOnly(miaLibs.sqlite.kt)
+    compileOnly("com.mineinabyss:idofront-datastore:${miaLibs.versions.idofront.get()}")
 
     // Plugin libs
     compileOnly(libs.deeperworld)
@@ -56,6 +58,8 @@ dependencies {
     compileOnly(miaLibs.minecraft.plugin.mythichud)
     compileOnly(miaLibs.minecraft.plugin.shopkeepers)
     compileOnly(miaLibs.minecraft.plugin.luxdialogs)
+    compileOnly(miaLibs.minecraft.plugin.mythic.dist)
+    compileOnly("com.mineinabyss:stamina-climb:0.25")
 
 }
 
@@ -65,13 +69,13 @@ kotlin {
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
             "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-Xcontext-parameters",
         )
     }
 }
 val compileKotlin: KotlinCompile by tasks
-
-
+copyJar {
+    jarName = "mineinabyss-${version}.jar"
+}
 paper {
     name = "MineInAbyss"
     main = "com.mineinabyss.features.MineInAbyssPlugin"
@@ -123,6 +127,11 @@ paper {
             load = BEFORE
             joinClasspath = true
         }
+        register("StaminaClimb") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
         register("Vault") {
             required = false
             load = BEFORE
@@ -169,6 +178,11 @@ paper {
             joinClasspath = true
         }
         register("MythicHUD") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("MythicMobs") {
             required = false
             load = BEFORE
             joinClasspath = true

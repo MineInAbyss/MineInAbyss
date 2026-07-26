@@ -12,6 +12,10 @@ plugins {
 
 allprojects {
     repositories {
+        mavenLocal {
+            content { includeModule("com.mineinabyss", "geary-papermc-spawning") }
+            content { includeModule("com.mineinabyss", "stamina-climb") }
+        }
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")

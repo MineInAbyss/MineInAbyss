@@ -1,11 +1,10 @@
-package com.mineinabyss.features.quests
+package com.mineinabyss.features.goals.goalListener
 
 import com.mineinabyss.features.goals.FactKind
-import com.mineinabyss.features.goals.goalListener.itemFactIds
-import com.mineinabyss.features.goals.goalListener.killFactIds
+import com.mineinabyss.features.goals.repository.GoalRepository
+import com.mineinabyss.idofront.plugin.Services
 import com.mineinabyss.geary.papermc.spawning.locations.PlayerEnterRegionEvent
 import com.mineinabyss.geary.papermc.spawning.locations.RegionService
-import com.mineinabyss.idofront.plugin.Services
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,11 +14,9 @@ import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
-class QuestListener(
-    private val manager: QuestManager,
+class GoalListener(
+    private val repository: GoalRepository,
 ) : Listener {
-    private val repository get() = manager.repository
-
     @EventHandler
     suspend fun PlayerJoinEvent.onJoin() {
         repository.loadPlayer(player)
@@ -34,7 +31,7 @@ class QuestListener(
     fun PlayerEnterRegionEvent.onRegionEntered() =
         repository.recordFact(player, FactKind.REGION_ENTER, regionId)
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     fun CraftItemEvent.onCraft() {
         val player = whoClicked as? Player ?: return
         recipe.result.itemFactIds(player.world).forEach { repository.recordFact(player, FactKind.CRAFT, it) }
