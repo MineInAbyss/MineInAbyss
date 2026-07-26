@@ -58,6 +58,8 @@ dependencies {
     compileOnly(miaLibs.minecraft.plugin.mythichud)
     compileOnly(miaLibs.minecraft.plugin.shopkeepers)
     compileOnly(miaLibs.minecraft.plugin.luxdialogs)
+    compileOnly(miaLibs.minecraft.plugin.mythic.dist)
+    compileOnly("com.mineinabyss:stamina-climb:0.25")
 
 }
 
@@ -125,6 +127,11 @@ paper {
             load = BEFORE
             joinClasspath = true
         }
+        register("StaminaClimb") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
         register("Vault") {
             required = false
             load = BEFORE
@@ -166,6 +173,11 @@ paper {
             joinClasspath = true
         }
         register("LuckPerms") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("MythicMobs") {
             required = false
             load = BEFORE
             joinClasspath = true

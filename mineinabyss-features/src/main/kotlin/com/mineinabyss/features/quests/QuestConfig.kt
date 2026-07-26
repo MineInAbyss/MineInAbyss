@@ -1,35 +1,25 @@
 package com.mineinabyss.features.quests
 
-import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.serialization.KeySerializer
+import com.mineinabyss.features.goals.Goal
+import com.mineinabyss.features.goals.GoalCondition
 import com.mineinabyss.idofront.serialization.SerializableItemStack
-import com.mineinabyss.idofront.serialization.SingleOrListSerializer
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.key.Key
-import kotlin.jvm.java
 
 @Serializable
-data class VisitQuest(
-    val questId: String,
-    val displayName: String,
-    val locations: List<LocationData>,
+data class Quest(
+    val id: String,
+    val name: String,
+    val description: String = "",
+    val conditions: List<GoalCondition> = emptyList(),
     val rewards: List<SerializableItemStack> = emptyList(),
     val perms: List<String> = emptyList(),
-)
-
-@Serializable
-class FetchQuest {
-}
-
-@Serializable
-class KillQuest {
-}
-
-@Serializable
-class QuestConfig(
-    val visitQuests: Map<String, VisitQuest> = emptyMap(), // <QuestID, VisitQuest>
-    val fetchQuests: Map<String, FetchQuest> = emptyMap(),
-    val killQuests: Map<String,KillQuest> = emptyMap(),
 ) {
+    fun toGoal() = Goal(id, name, description, conditions)
+}
 
+@Serializable
+data class QuestConfig(
+    val quests: List<Quest> = emptyList(),
+) {
+    fun byId(id: String): Quest? = quests.find { it.id == id }
 }
