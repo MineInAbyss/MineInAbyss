@@ -7,6 +7,7 @@ import com.mineinabyss.components.curse.AscensionEffect
 import com.mineinabyss.dependencies.*
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
+import com.mineinabyss.features.commands.CommandsFeature
 import com.mineinabyss.features.core.CoreFeature
 import com.mineinabyss.features.cosmetics.CosmeticsFeature
 import com.mineinabyss.features.curse.CurseFeature
@@ -128,6 +129,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
         }
         di.scope.loadAllCatching(
             AntiCheeseFeature,
+            CommandsFeature,
             ConfigPullFeature,
             CoreFeature,
             CosmeticsFeature,

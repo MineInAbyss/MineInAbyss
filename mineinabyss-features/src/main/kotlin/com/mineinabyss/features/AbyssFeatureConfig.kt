@@ -24,6 +24,7 @@ class AbyssFeatureConfig(
     val ansiblePull: Toggle = Toggle(),
     @YamlComment("Choose which features to enable with true/false")
     val antiCheese: Toggle = Toggle(),
+    val commands: Toggle = Toggle(),
     val core: CoreFeatureConfig = CoreFeatureConfig(),
     val cosmetics: CosmeticsConfig = CosmeticsConfig(),
     val curse: Toggle = Toggle(),
