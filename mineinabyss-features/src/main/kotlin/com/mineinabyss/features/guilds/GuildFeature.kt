@@ -65,7 +65,12 @@ val GuildFeature = module("guilds") {
     requirePlugins("Chatty")
 
     // Dependencies
-    singleConfig<GuildsConfig>("guilds.yml")
+    val config by singleConfig<GuildsConfig>("guilds.yml")
+    single<GuildsModule> {
+        object : GuildsModule {
+            override val config: GuildsConfig = get()
+        }
+    }
 
     // Enable logic
     listeners(GuildListener())
@@ -77,16 +82,11 @@ val GuildFeature = module("guilds") {
 
     if (abyss.isChattyLoaded) {
         listeners(ChattyGuildListener())
-        refreshGuildChats()
+        refreshGuildChats(config)
     }
 
     // Generate the guild-list
     displayGuildList()
-    single<GuildsModule> {
-        object : GuildsModule {
-            override val config: GuildsConfig = get()
-        }
-    }
 }.mainCommand {
     "guild" {
         description = "Guild related commands"

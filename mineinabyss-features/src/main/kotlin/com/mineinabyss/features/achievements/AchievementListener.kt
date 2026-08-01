@@ -4,6 +4,9 @@ import com.mineinabyss.features.goals.FactKind
 import com.mineinabyss.features.goals.goalListener.itemFactIds
 import com.mineinabyss.features.goals.goalListener.killFactIds
 import com.mineinabyss.geary.papermc.spawning.locations.PlayerEnterRegionEvent
+import com.mineinabyss.idofront.messaging.success
+import com.mineinabyss.staminaclimb.Events.PlayerClimbEvent
+import com.mineinabyss.staminaclimb.Events.PlayerStopClimbEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.EventHandler
@@ -46,4 +49,15 @@ class AchievementListener(
         val player = entity as? Player ?: return
         item.itemStack.itemFactIds(player.world).forEach { manager.repository.recordFact(player, FactKind.PICKUP, it, item.itemStack.amount) }
     }
+
+    @EventHandler
+    fun PlayerClimbEvent.onClimb() {
+        // on climb logic
+    }
+
+    @EventHandler
+    fun PlayerStopClimbEvent.onStopClimb() {
+        // on stop climb logic, can access climbedBlocks  as well as dist up and down
+    }
+
 }

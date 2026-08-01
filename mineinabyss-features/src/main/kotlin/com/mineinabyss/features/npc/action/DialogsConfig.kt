@@ -2,6 +2,8 @@ package com.mineinabyss.features.npc.action
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.npc.Npc
+import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.messaging.warn
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.EncodeDefault.Mode
 import kotlinx.serialization.Serializable
@@ -100,6 +102,7 @@ class DialogData(
     }
 
     fun startDialogue(player: Player, id: String, npc: Npc) {
+        if (pages.isEmpty()) return run { player.error("This NPC is missing a dialogue page, open a bug report!") }
         val dialog = build(id, npc)
         LuxDialoguesAPI.getProvider().sendDialogue(player, dialog, dialog.pages.keys.first())
     }

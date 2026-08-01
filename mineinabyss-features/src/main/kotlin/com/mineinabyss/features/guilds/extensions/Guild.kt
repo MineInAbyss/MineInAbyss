@@ -8,6 +8,7 @@ import com.mineinabyss.chatty.helpers.defaultChannel
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.npc.orthbanking.OrthCoin
 import com.mineinabyss.features.abyss
+import com.mineinabyss.features.guilds.GuildsConfig
 import com.mineinabyss.features.guilds.database.*
 import com.mineinabyss.features.guilds.guildChannelId
 import com.mineinabyss.features.helpers.CoinFactory
@@ -423,9 +424,9 @@ private fun GuildName.updateGuildBalance(amount: Int) {
     }
 }
 
-fun refreshGuildChats() {
+fun refreshGuildChats(config: GuildsConfig) {
     getAllGuildNames().forEach { guildName ->
-        chatty.config.channels[guildName.guildChatId()] = guildName.createChattyChannel()
+        chatty.config.channels[guildName.guildChatId()] = guildName.createChattyChannel(config)
     }
 }
 
@@ -459,7 +460,7 @@ fun Player.guildChat(): ChattyChannel? {
     }
 }
 
-private fun GuildName.createChattyChannel() = abyss.guilds.config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
+private fun GuildName.createChattyChannel(config: GuildsConfig = abyss.guilds.config) = config.guildChannelTemplate.copy(permission = "mineinabyss.guilds.chat.$this")
 
 fun GuildName.guildChatId() = "$this $guildChannelId"
 fun Player.guildChatId() = "${getGuildName()} $guildChannelId"
