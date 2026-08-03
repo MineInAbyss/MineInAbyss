@@ -38,6 +38,7 @@ import com.mineinabyss.features.playerprofile.PlayerProfileFeature
 import com.mineinabyss.features.pvp.PvpFeature
 import com.mineinabyss.features.quests.QuestFeature
 import com.mineinabyss.features.relics.RelicsFeature
+import com.mineinabyss.features.respawn.RespawnFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
 import com.mineinabyss.geary.autoscan.autoscan
@@ -157,6 +158,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             ToolsFeature,
             TutorialFeature,
             GoalFeature,
+            RespawnFeature,
         )
         di.scope.load(MainCommandFeature)
     }

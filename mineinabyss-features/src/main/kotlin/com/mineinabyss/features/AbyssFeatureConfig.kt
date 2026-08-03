@@ -10,7 +10,7 @@ import com.mineinabyss.features.playerprofile.PlayerProfileConfig
 import kotlinx.serialization.Serializable
 
 @Serializable
-class Toggle(val enabled: Boolean = false)
+class Toggle(var enabled: Boolean = false)
 
 /**
  * Root config for MineInAbyss, defines which features are enabled (each feature checks this via a `require` block when it starts.)
@@ -50,4 +50,6 @@ class AbyssFeatureConfig(
     val tutorial: Toggle = Toggle(),
     val quests: Toggle = Toggle(),
     val goals: Toggle = Toggle(),
-)
+    val respawn: Toggle = Toggle(),
+) {
+}
