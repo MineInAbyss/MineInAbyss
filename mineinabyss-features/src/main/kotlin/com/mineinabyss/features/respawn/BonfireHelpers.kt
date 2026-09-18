@@ -1,28 +1,25 @@
 package com.mineinabyss.features.respawn
-import com.mineinabyss.geary.papermc.tracking.entities.toGeary
-import com.mineinabyss.idofront.serialization.LocationSerializer
-import com.mineinabyss.idofront.serialization.UUIDSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import org.bukkit.Location
+
+import com.mineinabyss.geary.datatypes.ComponentId
+import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
+import com.mineinabyss.geary.serialization.helpers.componentId
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.UUID
 
-// Little hack i'm trying to avoid depending on the bonfire plugin, unsure if it works properly
-//TODO: test
-@kotlinx.serialization.Serializable
-@SerialName("bonfire:bonfire_respawn")
-data class BonfireRespawn(
-    val bonfireUuid: @Serializable(UUIDSerializer::class) UUID,
-    val bonfireLocation: @kotlinx.serialization.Serializable(LocationSerializer::class) Location,
-)
+// Resolved by serial name instead of by class so Bonfire stays an optional plugin rather than a classpath requirement
+private const val BONFIRE_RESPAWN = "bonfire:bonfire_respawn"
 
-fun Player.hasBonfireActive() : Boolean {
-    player?.toGeary()?.get<BonfireRespawn>() ?: return false
-    return true
-}
+private val bonfireLoaded by lazy { Bukkit.getPluginManager().isPluginEnabled("Bonfire") }
 
-fun Player.getBonfireLocation() : String {
-    val respawn = player?.toGeary()?.get<BonfireRespawn>() ?: return "None"
-    return respawn.bonfireLocation.toString()
+// Geary runs a single global engine, so an id resolved once stays valid for every world
+private var bonfireRespawnId: ComponentId? = null
+
+/** Whether the player picked a bonfire to respawn at, always false while Bonfire is not installed */
+fun Player.hasBonfireRespawn(): Boolean {
+    if (!bonfireLoaded) return false
+    val geary = toGearyOrNull() ?: return false
+    val id = bonfireRespawnId
+        ?: runCatching { geary.world.componentId(BONFIRE_RESPAWN) }.getOrNull()?.also { bonfireRespawnId = it }
+        ?: return false
+    return geary.has(id)
 }

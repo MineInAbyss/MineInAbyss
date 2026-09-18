@@ -14,7 +14,7 @@ import kotlin.math.abs
 class RespawnListener(private val config :RespawnConfig): Listener {
     @EventHandler
     fun PlayerMoveEvent.onMove() {
-        if (!hasExplicitlyChangedBlock() || player.hasBonfireActive())
+        if (!hasExplicitlyChangedBlock() || player.hasBonfireRespawn())
             return
         val depth = to.getAbyssDepth() ?: return
         val where = config.respawns

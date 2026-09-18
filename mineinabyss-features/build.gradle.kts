@@ -202,6 +202,11 @@ paper {
             load = BEFORE
             joinClasspath = true
         }
+        register("Bonfire") {
+            required = false
+            load = BEFORE
+            joinClasspath = false
+        }
         register("PlaceholderAPI") {
             required = false
             load = BEFORE
