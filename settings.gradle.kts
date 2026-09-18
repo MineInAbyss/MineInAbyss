@@ -27,11 +27,16 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("miaLibs") {
             from("com.mineinabyss:catalog:$miaLibs")
-            version("minecraft-server", "26.2.build.123-stable")
+            version("minecraft-server", "26.3.build.18-alpha")
             version("java", "25")
-            version("creative", "1.14.3")
+            version("kotlin", "2.4.20")
+            version("creative", "1.15.1")
             version("idofront", "2.0")
             version("gearyPaper", "0.34")
+            version("chatty", "0.10")
+            version("extracommands", "0.14")
+            version("minecraft-plugin-modelengine", "R4.1.1")
+            version("minecraft-plugin-mythic-dist", "5.13.1-SNAPSHOT")
             version("sqlite-kt", "0.1.4-dev.1")
         }
     }

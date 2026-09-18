@@ -1,5 +1,5 @@
 [versions]
-deeperworld = "0.14.0-dev.2"
+deeperworld = "0.14"
 
 
 [libraries]

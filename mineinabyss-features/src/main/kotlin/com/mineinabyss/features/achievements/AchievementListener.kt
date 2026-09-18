@@ -5,8 +5,8 @@ import com.mineinabyss.features.goals.goalListener.itemFactIds
 import com.mineinabyss.features.goals.goalListener.killFactIds
 import com.mineinabyss.geary.papermc.spawning.locations.PlayerEnterRegionEvent
 import com.mineinabyss.idofront.messaging.success
-import com.mineinabyss.staminaclimb.Events.PlayerClimbEvent
-import com.mineinabyss.staminaclimb.Events.PlayerStopClimbEvent
+import com.mineinabyss.staminaclimb.events.PlayerStartClimbEvent
+import com.mineinabyss.staminaclimb.events.PlayerStopClimbEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.EventHandler
@@ -51,7 +51,7 @@ class AchievementListener(
     }
 
     @EventHandler
-    fun PlayerClimbEvent.onClimb() {
+    fun PlayerStartClimbEvent.onClimb() {
         // on climb logic
     }
 
