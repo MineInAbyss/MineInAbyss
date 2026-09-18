@@ -197,7 +197,7 @@ paper {
             load = BEFORE
             joinClasspath = true
         }
-        register("Blocky") {
+        register("Nexo") {
             required = false
             load = BEFORE
             joinClasspath = true

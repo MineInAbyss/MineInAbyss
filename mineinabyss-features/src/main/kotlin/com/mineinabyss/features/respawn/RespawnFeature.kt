@@ -10,7 +10,6 @@ import com.mineinabyss.idofront.features.singleConfig
 import com.mineinabyss.idofront.messaging.success
 
 val RespawnFeature = module("respawn") {
-    //TODO: test with blocky/Nexo
     require(get<AbyssFeatureConfig>().respawn.enabled) { "Respawn feature is disabled" }
 
     singleConfig<RespawnConfig>("respawn.yml")
