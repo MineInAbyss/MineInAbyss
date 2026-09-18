@@ -17,8 +17,8 @@ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.entity.EntityTypeIds
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Color
@@ -28,6 +28,9 @@ import org.bukkit.util.Vector
 import org.joml.Vector3f
 import java.util.*
 import kotlin.math.roundToInt
+
+private val textDisplayType = BuiltInRegistries.ENTITY_TYPE.getValue(EntityTypeIds.TEXT_DISPLAY)!!
+private val interactionType = BuiltInRegistries.ENTITY_TYPE.getValue(EntityTypeIds.INTERACTION)!!
 
 class OkiboRepository(
     val config: OkiboTravelConfig,
@@ -86,7 +89,9 @@ class OkiboRepository(
     fun stationFor(map: OkiboMap) = config.okiboStations.firstOrNull { it.id == map.station }
 
     fun sendMap(player: Player, okiboMap: OkiboMap) {
-        val connection = (player as CraftPlayer).handle.connection
+        val serverPlayer = (player as CraftPlayer).handle
+        val connection = serverPlayer.connection
+        val level = serverPlayer.level()
 
         // Remove existing entities
         connection.send(
@@ -100,10 +105,10 @@ class OkiboRepository(
 
         // Map text entity
         val textLoc = okiboMap.location
-        val entityId = mapEntities.computeIfAbsent(okiboMap.station) { Entity.nextEntityId() }
+        val entityId = mapEntities.computeIfAbsent(okiboMap.station) { level.nextEntityId }
         val textEntityPacket = ClientboundAddEntityPacket(
             entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw - 90f,
-            EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
+            textDisplayType, 0, Vec3.ZERO, 0.0
         )
         val textMetaPacket = ClientboundSetEntityDataPacket(
             entityId, listOf(
@@ -126,11 +131,11 @@ class OkiboRepository(
             val hitboxLoc = textLoc.clone().add(hitboxOffset)
 
             val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
-                .computeIfAbsent(mapHitbox.destStation) { Entity.nextEntityId() }
+                .computeIfAbsent(mapHitbox.destStation) { level.nextEntityId }
             val hitboxPacket = ClientboundAddEntityPacket(
                 hitboxEntityId, UUID.randomUUID(),
                 hitboxLoc.x, hitboxLoc.y, hitboxLoc.z, 0f, 0f,
-                EntityType.INTERACTION, 0, Vec3.ZERO, 0.0
+                interactionType, 0, Vec3.ZERO, 0.0
             )
             val hitboxMetaPacket = ClientboundSetEntityDataPacket(
                 hitboxEntityId, listOf(
@@ -143,12 +148,12 @@ class OkiboRepository(
             // Icon logic with translation offset from hitbox
             okiboMap.icon?.also { icon ->
                 val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
-                    .computeIfAbsent(mapHitbox.destStation) { Entity.nextEntityId() }
+                    .computeIfAbsent(mapHitbox.destStation) { level.nextEntityId }
 
                 // Spawn icon at hitboxLoc
                 val iconPacket = ClientboundAddEntityPacket(
                     iconEntityId, UUID.randomUUID(), hitboxLoc.x, hitboxLoc.y, hitboxLoc.z, textLoc.pitch, textLoc.yaw - 90,
-                    EntityType.TEXT_DISPLAY, 0, Vec3.ZERO, 0.0
+                    textDisplayType, 0, Vec3.ZERO, 0.0
                 )
 
                 // Calculate icon translation (offset from hitbox, rotated by yaw)
