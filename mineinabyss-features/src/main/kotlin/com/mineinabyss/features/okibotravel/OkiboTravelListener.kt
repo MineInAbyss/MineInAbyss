@@ -54,10 +54,11 @@ class OkiboTravelListener(
             return player.error("You are not near a station!")
         if (origin == destination) return player.error("You are already at that station!")
 
-        val cost = okibo.cost(origin, destination) ?: return when {
-            okibo.isRoutingPending() -> player.error("The okiboline is still warming up, try again in a moment!")
-            else -> player.error("You cannot travel to that station!")
+        val railDistance = okibo.railDistance(origin, destination) ?: run {
+            okibo.requestReroute(origin)
+            return player.error("The okiboline is still warming up, try again in a moment!")
         }
+        val cost = okibo.cost(railDistance)
 
         val selected = gearyPlayer.get<OkiboTraveler>()?.takeIf { it.isValid(config.confirmTimeout) }
         if (selected?.destinationId != destination.id) {

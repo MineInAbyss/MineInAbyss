@@ -209,16 +209,24 @@ class OkiboRepository(
         return true
     }
 
-    /** Coin cost of a ride, null when the two stations cannot be connected by rail at all */
-    fun cost(from: OkiboLineStation, to: OkiboLineStation): Int? {
-        if (from.location.world != to.location.world) return null
-        val distance = railDistance(from, to) ?: from.location.distance(to.location).also {
-            logger.w("TrainCarts knows no route from ${from.id} to ${to.id}, charging by straight-line distance")
-        }
-        return (distance * config.costPerKM / 1000).roundToInt()
+    fun cost(railDistance: Double) = (railDistance * config.costPerKM / 1000).roundToInt()
+
+    /** Rail distance in blocks, null while TrainCarts has no route between the two stations */
+    fun railDistance(from: OkiboLineStation, to: OkiboLineStation): Double? {
+        val start = pathNode(from) ?: return null
+        val destination = pathNode(to) ?: return null
+        return start.findConnection(destination)?.distance
     }
 
-    fun isRoutingPending() = pathProvider.isProcessing
+    /** Asks TrainCarts to rediscover routes from [station] after a player found one missing */
+    fun requestReroute(station: OkiboLineStation) {
+        if (pathProvider.isProcessing) return
+        logger.w("Rediscovering okibo routes from ${station.id}, TrainCarts had none")
+        when (val node = pathNode(station)) {
+            null -> pathProvider.discoverFromRail(BlockLocation(station.location.block))
+            else -> pathProvider.discoverFromNode(node)
+        }
+    }
 
     /**
      * TrainCarts only discovers path nodes from rails in loaded chunks, so after a cold start the okibo stations
@@ -265,13 +273,6 @@ class OkiboRepository(
 
     private fun signedNodeAt(world: CoasterWorld, station: OkiboLineStation) =
         world.rails.findAtBlock(station.location.block).values().find { it.node().signs.isNotEmpty() }?.node()
-
-    /** Rail distance in blocks, null while TrainCarts has no route between the two stations */
-    private fun railDistance(from: OkiboLineStation, to: OkiboLineStation): Double? {
-        val start = pathNode(from) ?: return null
-        val destination = pathNode(to) ?: return null
-        return start.findConnection(destination)?.distance
-    }
 
     private fun pathNode(station: OkiboLineStation) =
         pathWorld(station)?.let { it.getNodeByName(station.id) ?: it.getNodeAtRail(station.location.block) }
