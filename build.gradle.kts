@@ -1,5 +1,5 @@
 plugins {
-    alias(miaLibs.plugins.kotlin.jvm) apply false
+    alias(miaLibs.plugins.mia.kotlin.jvm) apply false
     alias(miaLibs.plugins.kotlinx.serialization) apply false
     alias(miaLibs.plugins.mia.papermc) apply false
     alias(miaLibs.plugins.mia.nms) apply false
@@ -12,23 +12,11 @@ plugins {
 
 allprojects {
     repositories {
-        mavenLocal {
-            content { includeModule("com.mineinabyss", "geary-papermc-spawning") }
-            content { includeModule("com.mineinabyss", "stamina-climb") }
-        }
         mavenCentral()
         maven("https://repo.mineinabyss.com/releases")
         maven("https://repo.mineinabyss.com/snapshots")
         maven("https://repo.mineinabyss.com/mirror")
         maven("https://repo.papermc.io/repository/maven-public/")
         google()
-        mavenLocal()
-    }
-}
-
-tasks {
-    updateDaemonJvm {
-        languageVersion = JavaLanguageVersion.of(25)
-        vendor = JvmVendorSpec.JETBRAINS
     }
 }

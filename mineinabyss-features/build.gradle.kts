@@ -3,13 +3,13 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription.RelativeLoadOrder.BE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(miaLibs.plugins.kotlin.jvm)
+    alias(miaLibs.plugins.mia.kotlin.jvm)
     alias(miaLibs.plugins.mia.papermc)
     alias(miaLibs.plugins.mia.nms)
     alias(miaLibs.plugins.mia.copyjar)
     alias(miaLibs.plugins.compose.compiler)
     alias(miaLibs.plugins.mia.publication)
-    kotlin("plugin.serialization")
+    alias(miaLibs.plugins.kotlinx.serialization)
 }
 
 dependencies {
@@ -59,7 +59,7 @@ dependencies {
     compileOnly(miaLibs.minecraft.plugin.shopkeepers)
     compileOnly(miaLibs.minecraft.plugin.luxdialogs)
     compileOnly(miaLibs.minecraft.plugin.mythic.dist)
-    compileOnly("com.mineinabyss:stamina-climb:0.25")
+    compileOnly("com.mineinabyss:stamina-climb:0.25.1-dev.2")
 
 }
 

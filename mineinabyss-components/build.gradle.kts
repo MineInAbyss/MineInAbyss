@@ -1,9 +1,9 @@
 plugins {
-    alias(miaLibs.plugins.kotlin.jvm)
+    alias(miaLibs.plugins.mia.kotlin.jvm)
     alias(miaLibs.plugins.mia.papermc)
     alias(miaLibs.plugins.mia.nms)
     alias(miaLibs.plugins.mia.publication)
-    kotlin("plugin.serialization")
+    alias(miaLibs.plugins.kotlinx.serialization)
 }
 
 
