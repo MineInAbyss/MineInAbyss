@@ -1,15 +1,20 @@
 package com.mineinabyss.features.core
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
 import com.mineinabyss.dependencies.new
 import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.idofront.features.listeners
+import com.mineinabyss.idofront.features.plugin
+import com.mineinabyss.idofront.features.task
 import com.mineinabyss.idofront.plugin.Plugins
+import com.mineinabyss.idofront.time.ticks
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.nisovin.shopkeepers.api.ShopkeepersAPI
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Transient
 import org.bukkit.Bukkit
 import java.net.URI
@@ -21,7 +26,11 @@ val CoreFeature = module("core") {
     listeners(new(::CoreListener), new(::PreventSignEditListener))
     if (Plugins.isEnabled("Shopkeepers")) {
         listeners(new(::ShopkeepersHookListener))
-        ShopkeepersAPI.updateItems()
+        // Geary loads prefabs one tick after enabling, so refreshing shop items earlier finds no prefabs
+        task(plugin.launch {
+            delay(2.ticks)
+            ShopkeepersAPI.updateItems()
+        })
     }
 
     config.serverLinks.forEach {
