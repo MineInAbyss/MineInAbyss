@@ -39,7 +39,7 @@ dependencies {
     compileOnly("com.mineinabyss:idofront-datastore:${miaLibs.versions.idofront.get()}")
 
     // Plugin libs
-    compileOnly(libs.deeperworld)
+    compileOnly(miaLibs.deeperworld)
 
     compileOnly(miaLibs.minecraft.plugin.modelengine)
     compileOnly(miaLibs.guiy)

@@ -8,7 +8,7 @@ plugins {
 
 
 dependencies {
-    compileOnly(libs.deeperworld)
+    compileOnly(miaLibs.deeperworld)
     compileOnly(miaLibs.geary.papermc)
     compileOnly(miaLibs.bundles.idofront.core)
     compileOnly(miaLibs.sqlite.kt)

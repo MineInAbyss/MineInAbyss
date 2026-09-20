@@ -10,6 +10,7 @@ import com.bergerkiller.bukkit.tc.pathfinding.PathWorld
 import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboMap
+import com.mineinabyss.features.abyss
 import com.mineinabyss.idofront.messaging.ComponentLogger
 import com.mineinabyss.idofront.time.ticks
 import io.papermc.paper.adventure.PaperAdventure
@@ -240,23 +241,41 @@ class OkiboRepository(
         val stations = config.okiboStations
         if (stations.isEmpty()) return
 
-        val missingNodes = stations.filter { pathNode(it) == null }
-        if (missingNodes.isNotEmpty()) {
-            logger.w("TrainCarts has no path nodes for ${missingNodes.map(OkiboLineStation::id)}, rediscovering them")
-            missingNodes.forEach { pathProvider.discoverFromRail(BlockLocation(it.location.block)) }
-            awaitRouting()
-        }
+        holdingStationChunks(stations) {
+            val missingNodes = stations.filter { pathNode(it) == null }
+            if (missingNodes.isNotEmpty()) {
+                logger.w("TrainCarts has no path nodes for ${missingNodes.map(OkiboLineStation::id)}, rediscovering them")
+                missingNodes.forEach { pathProvider.discoverFromRail(BlockLocation(it.location.block)) }
+                awaitRouting()
+            }
 
-        val unreachable = stations.filter { from -> stations.any { it != from && railDistance(from, it) == null } }
-        if (unreachable.isNotEmpty()) {
-            unreachable.forEach { station -> pathNode(station)?.let(pathProvider::discoverFromNode) }
-            awaitRouting()
-        }
+            val unreachable = stations.filter { from -> stations.any { it != from && railDistance(from, it) == null } }
+            if (unreachable.isNotEmpty()) {
+                unreachable.forEach { station -> pathNode(station)?.let(pathProvider::discoverFromNode) }
+                awaitRouting()
+            }
 
-        val broken = stations.filter { from -> stations.any { it != from && railDistance(from, it) == null } }
-        when {
-            broken.isEmpty() -> logger.s("Okibo line routes are ready")
-            else -> logger.e("TrainCarts cannot route between all okibo stations, check ${broken.map(OkiboLineStation::id)}")
+            val broken = stations.filter { from -> stations.any { it != from && railDistance(from, it) == null } }
+            when {
+                broken.isEmpty() -> logger.s("Okibo line routes are ready")
+                else -> logger.e("TrainCarts cannot route between all okibo stations, check ${broken.map(OkiboLineStation::id)}")
+            }
+        }
+    }
+
+    /**
+     * PathProvider.addNewlyDiscovered drops a queued rail whose block reads as air, so a station in an unloaded
+     * chunk is skipped without any error. Tickets keep the rails readable for the whole discovery pass.
+     */
+    private suspend fun <T> holdingStationChunks(stations: List<OkiboLineStation>, block: suspend () -> T): T {
+        val plugin = abyss
+        val chunks = stations.mapNotNull { station ->
+            station.location.takeIf { it.isWorldLoaded }?.chunk?.also { it.addPluginChunkTicket(plugin) }
+        }
+        return try {
+            block()
+        } finally {
+            chunks.forEach { it.removePluginChunkTicket(plugin) }
         }
     }
 
