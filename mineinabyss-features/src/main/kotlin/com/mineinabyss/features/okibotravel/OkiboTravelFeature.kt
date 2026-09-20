@@ -13,10 +13,12 @@ val OkiboTravelFeature = module("okibo-travel") {
     val config by singleConfig<OkiboTravelConfig>("okiboTravel.yml")
     val repo by single { new(::OkiboRepository) }
 
-    repo.removeOkiboMaps() // remove any old maps
-    repo.spawnOkiboMaps()
-
     listeners(new(::OkiboTravelListener))
+
+    launch {
+        repo.spawnOkiboMaps() // players are already online when reloading
+        repo.warmUpRoutes()
+    }
 
     addCloseable {
         repo.removeOkiboMaps()
@@ -25,21 +27,18 @@ val OkiboTravelFeature = module("okibo-travel") {
     "okibo" {
         "spawn" {
             executes.asPlayer().args(
-                "destination" to Args.string().oneOf { get<OkiboTravelConfig>().allStations.map { it.id } },
-                "station" to Args.string().oneOf { get<OkiboTravelConfig>().allStations.map { it.id } }
+                "destination" to Args.string().oneOf { get<OkiboTravelConfig>().okiboStations.map { it.id } },
+                "station" to Args.string().oneOf { get<OkiboTravelConfig>().okiboStations.map { it.id } }
                     .default { get<OkiboTravelConfig>().okiboStations.first().id },
             ) { destination, station ->
                 val config = get<OkiboTravelConfig>()
-                val destination = if (station == destination) {
-                    config.okiboStations.firstOrNull { it.id != station }?.id ?: station
-                } else {
-                    destination
-                }
-                get<OkiboRepository>().spawnCart(
+                if (station == destination) fail("A train cannot travel to the station it departs from!")
+                val spawned = get<OkiboRepository>().spawnCart(
                     player,
-                    config.allStations.find { it.id == station } ?: fail("Invalid station!"),
-                    config.allStations.find { it.id == destination } ?: fail("Invalid destination!")
+                    config.station(station) ?: fail("Invalid station!"),
+                    config.station(destination) ?: fail("Invalid destination!")
                 )
+                if (!spawned) fail("Could not spawn a train, see the console for details!")
             }
         }
     }

@@ -1,15 +1,12 @@
 package com.mineinabyss.features.okibotravel
 
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent
-import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.okibotravel.OkiboTraveler
-import com.mineinabyss.features.abyss
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.helpers.with
 import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldown
-import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldowns
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -23,6 +20,9 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 import kotlin.time.Duration.Companion.seconds
 
+/** How far a player may be from a board and still click its dots */
+private const val MAX_BOARD_DISTANCE = 8.0
+
 class OkiboTravelListener(
     val config: OkiboTravelConfig,
     val okibo: OkiboRepository,
@@ -32,61 +32,47 @@ class OkiboTravelListener(
     @EventHandler
     suspend fun PlayerChunkLoadEvent.onLoad() {
         delay(2.ticks)
-        val chunkKey = chunk.chunkKey
-        val okiboMap = config.okiboMaps.firstOrNull {
-            if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
-            it.location.chunk.chunkKey == chunkKey
-        } ?: return
-        okibo.sendMap(player, okiboMap)
+        val okiboMap = okibo.mapAt(chunk) ?: return
+        if (player.isOnline) okibo.sendMap(player, okiboMap)
     }
 
     @EventHandler
     fun PlayerChunkUnloadEvent.onUntrack() {
-        val chunkKey = chunk.chunkKey
-        val okiboMap = config.okiboMaps.firstOrNull {
-            if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@firstOrNull false
-            it.location.chunk.chunkKey == chunkKey
-        } ?: return
+        val okiboMap = okibo.mapAt(chunk) ?: return
         okibo.removeMap(player, okiboMap)
     }
 
     @EventHandler
     fun PlayerUseUnknownEntityEvent.onInteractMap() {
-        val gearyPlayer = player.toGeary().takeIf { hand == EquipmentSlot.HAND } ?: return
-        if (!Cooldowns.isComplete(gearyPlayer, okiboMapCooldown.id)) return
-        okiboMapCooldown.execute(ActionGroupContext(gearyPlayer))
-        val destination = okibo.getHitboxStation(entityId)?.let { okibo.stationFor(it) } ?: return
-        val playerStation = config.allStations.filter { it != destination }.minByOrNull { it.location.distanceSquared(player.location) } ?: return player.error("You are not near a station!")
-        val cost = okibo.cost(playerStation, destination) ?: return player.error("You cannot travel to that station!")
-        abyss.launch {
-            delay(5.seconds)
-            if (player.isOnline) gearyPlayer.remove<OkiboTraveler>()
+        if (hand != EquipmentSlot.HAND) return
+        val (map, origin, destination) = okibo.target(entityId) ?: return
+
+        val gearyPlayer = player.toGeary()
+        if (!okiboMapCooldown.execute(ActionGroupContext(gearyPlayer))) return
+
+        if (map.location.world != player.world || map.location.distance(player.location) > MAX_BOARD_DISTANCE)
+            return player.error("You are not near a station!")
+        if (origin == destination) return player.error("You are already at that station!")
+
+        val cost = okibo.cost(origin, destination) ?: return when {
+            okibo.isRoutingPending() -> player.error("The okiboline is still warming up, try again in a moment!")
+            else -> player.error("You cannot travel to that station!")
         }
 
-        gearyPlayer.with { traveler: OkiboTraveler ->
-            when (traveler.selectedDestination) {
-                destination -> {
-                    player.editPlayerData {
-                        when {
-                            cost > orthCoinsHeld -> player.error("You do not have enough coins to travel to that station!")
-                            playerStation == destination -> player.error("You are already at that station!")
-                            else -> {
-                                if (cost > 0) orthCoinsHeld -= cost
-                                okibo.spawnCart(player, playerStation, destination)
-                            }
-                        }
-                    }
-                    return
-                }
-
-                else -> player.toGeary().remove<OkiboTraveler>()
-            }
+        val selected = gearyPlayer.get<OkiboTraveler>()?.takeIf { it.isValid(config.confirmTimeout) }
+        if (selected?.destinationId != destination.id) {
+            gearyPlayer.set(OkiboTraveler(destination.id))
+            player.info("<gold>Do you want a ride to <i>${destination.displayName}</i>?")
+            if (cost > 0) player.info("<gold>It will cost you <i>$cost</i> orth coins")
+            return player.info("<gold>Click again to confirm!")
         }
 
-        // Only confirm when there is a cost
-        player.info("<gold>Do you want a ride to <i>${destination.displayName}</i>?")
-        player.info("<gold>Click again to confirm!")
-        gearyPlayer.set(OkiboTraveler(destination))
+        gearyPlayer.remove<OkiboTraveler>()
+        if (cost > (player.playerDataOrNull?.orthCoinsHeld ?: 0))
+            return player.error("You do not have enough coins to travel to that station!")
+        if (!okibo.spawnCart(player, origin, destination))
+            return player.error("Your ride could not be summoned, please let staff know!")
+        if (cost > 0) player.editPlayerData { orthCoinsHeld -= cost }
     }
 
     @EventHandler

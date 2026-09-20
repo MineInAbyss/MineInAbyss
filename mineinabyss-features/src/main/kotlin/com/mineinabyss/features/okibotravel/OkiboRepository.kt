@@ -2,208 +2,290 @@ package com.mineinabyss.features.okibotravel
 
 import com.bergerkiller.bukkit.coasters.TCCoasters
 import com.bergerkiller.bukkit.coasters.tracks.TrackNodeSearchPath
+import com.bergerkiller.bukkit.coasters.world.CoasterWorld
+import com.bergerkiller.bukkit.common.BlockLocation
 import com.bergerkiller.bukkit.tc.TrainCarts
 import com.bergerkiller.bukkit.tc.controller.spawnable.SpawnableGroup
+import com.bergerkiller.bukkit.tc.pathfinding.PathWorld
 import com.bergerkiller.bukkit.tc.properties.standard.type.CollisionOptions
 import com.mineinabyss.components.okibotravel.OkiboLineStation
 import com.mineinabyss.components.okibotravel.OkiboMap
 import com.mineinabyss.idofront.messaging.ComponentLogger
-import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.idofront.time.ticks
 import io.papermc.paper.adventure.PaperAdventure
-import net.minecraft.network.chat.Component
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundBundlePacket
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket
 import net.minecraft.network.syncher.EntityDataSerializers
-import net.minecraft.network.syncher.SynchedEntityData
-import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.syncher.SynchedEntityData.DataValue
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EntityTypeIds
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
-import org.bukkit.Color
+import org.bukkit.Chunk
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import org.joml.Vector3f
 import java.util.*
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 private val textDisplayType = BuiltInRegistries.ENTITY_TYPE.getValue(EntityTypeIds.TEXT_DISPLAY)!!
 private val interactionType = BuiltInRegistries.ENTITY_TYPE.getValue(EntityTypeIds.INTERACTION)!!
+
+// Metadata indices, see net.minecraft.world.entity.Display and net.minecraft.world.entity.Interaction
+private const val DISPLAY_TRANSLATION = 11
+private const val DISPLAY_SCALE = 12
+private const val DISPLAY_BRIGHTNESS = 16
+private const val TEXT_DISPLAY_TEXT = 23
+private const val TEXT_DISPLAY_BACKGROUND = 25
+private const val INTERACTION_WIDTH = 8
+private const val INTERACTION_HEIGHT = 9
+
+/** Packed sky and block light, both maxed out */
+private const val FULL_BRIGHT = (15 shl 4) or (15 shl 20)
+private const val TRANSPARENT = 0
+
+private const val TRAIN_NAME = "OkiboCartPaid"
 
 class OkiboRepository(
     val config: OkiboTravelConfig,
     val logger: ComponentLogger,
 ) {
-    val mapEntities = mutableMapOf<String, Int>()
-    val hitboxEntities = mutableMapOf<String, MutableMap<String, Int>>()
-    val hitboxIconEntities = mutableMapOf<String, MutableMap<String, Int>>()
+    private val spawnedMaps = mutableMapOf<String, SpawnedMap>()
 
     private val tccoasters by lazy { Bukkit.getPluginManager().getPlugin("TCCoasters") as TCCoasters }
+    private val pathProvider get() = TrainCarts.plugin.pathProvider
 
-    fun spawnCart(player: Player, station: OkiboLineStation, destination: OkiboLineStation) {
-        val direction = direction(station, destination)
-        val spawnGroup = SpawnableGroup.parse(TrainCarts.plugin, "OkiboCartPaid")
-        val spawnLocations = spawnGroup.findSpawnLocations(station.location, direction, SpawnableGroup.SpawnMode.DEFAULT)
-        val train = spawnGroup.spawn(spawnLocations)
+    /** Entity ids of one map board, shared by every player that gets sent it */
+    private class SpawnedMap(val map: OkiboMap, val textId: Int, val dots: List<Dot>) {
+        class Dot(val destination: OkiboLineStation, val hitboxId: Int, val iconId: Int?)
 
-        train.head().addPassengerForced(player)
-
-        train.properties.destination = destination.id
-        train.properties.addTags("paid") // Ticket adds this so that train only launches when player mounts it
-        train.properties.setOwner(player.name, true)
-        train.properties.speedLimit = 1.0
-        train.properties.isSlowingDown = false
-        train.properties.collision = CollisionOptions.CANCEL
-        train.properties.isPlayerTakeable = false
-        train.properties.canOnlyOwnersEnter = true
-        train.properties.isManualMovementAllowed = true
-
-        logger.i("A train has been spawned at ${station.id} and is heading to ${destination.id}!")
+        val entityIds = (listOf(textId) + dots.flatMap { listOfNotNull(it.hitboxId, it.iconId) }).toIntArray()
     }
 
-    //TODO When substations become a thing, if index is -1 check all substations of every station for the current one etc
-    fun cost(station: OkiboLineStation, destination: OkiboLineStation): Int? {
-        val trainWorld = TrainCarts.plugin.pathProvider.getWorld(station.location.world)
-        val startNode = trainWorld.getNodeByName(station.id) ?: trainWorld.getNodeAtRail(station.location.block) ?: return null
-        val destNode = trainWorld.getNodeByName(destination.id) ?: trainWorld.getNodeAtRail(destination.location.block) ?: return null
-        return (startNode.findConnection(destNode)?.distance?.times(config.costPerKM)?.div(1000))?.roundToInt()
+    data class Target(val map: OkiboMap, val origin: OkiboLineStation, val destination: OkiboLineStation)
+
+    fun mapAt(chunk: Chunk) = config.okiboMaps.firstOrNull {
+        it.location.world == chunk.world && Chunk.getChunkKey(it.location) == chunk.chunkKey
     }
 
-    fun direction(station: OkiboLineStation, destination: OkiboLineStation): Vector {
-        val tccWorld = tccoasters.getCoasterWorld(station.location.world)
-        val startNode = tccWorld.rails.findAtBlock(station.location.block).values().find { it.node().signs.isNotEmpty() }?.node()!!
-        val destNode = tccWorld.rails.findAtBlock(destination.location.block).values().find { it.node().signs.isNotEmpty() }?.node()!!
-        val nextNode = TrackNodeSearchPath.findShortest(startNode, mutableSetOf(destNode)).pathConnections.first()
-
-        return nextNode.getDirection(startNode)
+    /** The board and station a clicked dot belongs to, null when [entityId] is not one of ours */
+    fun target(entityId: Int): Target? = spawnedMaps.values.firstNotNullOfOrNull { spawned ->
+        val destination = spawned.dots.firstOrNull { it.hitboxId == entityId }?.destination ?: return@firstNotNullOfOrNull null
+        val origin = config.station(spawned.map.station) ?: return@firstNotNullOfOrNull null
+        Target(spawned.map, origin, destination)
     }
 
-    fun getHitboxStation(entityId: Int): OkiboMap? = hitboxEntities.values
-        .flatMap { it.toList() }
-        .firstOrNull { it.second == entityId }
-        ?.first
-        ?.let { config.okiboMaps.firstOrNull { o -> it.startsWith(o.station) } }
+    fun sendMap(player: Player, map: OkiboMap) {
+        val connection = (player as CraftPlayer).handle.connection
+        val spawned = spawnedMaps.getOrPut(map.station) { allocate(map, player.handle.level()) }
+        val board = map.location
+        val boardRotation = Math.toRadians(-board.yaw.toDouble()).toFloat()
 
-    fun stationFor(map: OkiboMap) = config.okiboStations.firstOrNull { it.id == map.station }
+        connection.send(ClientboundRemoveEntitiesPacket(*spawned.entityIds))
 
-    fun sendMap(player: Player, okiboMap: OkiboMap) {
-        val serverPlayer = (player as CraftPlayer).handle
-        val connection = serverPlayer.connection
-        val level = serverPlayer.level()
-
-        // Remove existing entities
-        connection.send(
-            ClientboundRemoveEntitiesPacket(
-                *mutableListOf(mapEntities[okiboMap.station] ?: -1)
-                    .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
-                    .plus(hitboxIconEntities[okiboMap.station]?.values ?: listOf())
-                    .toIntArray()
-            )
-        )
-
-        // Map text entity
-        val textLoc = okiboMap.location
-        val entityId = mapEntities.computeIfAbsent(okiboMap.station) { level.nextEntityId }
-        val textEntityPacket = ClientboundAddEntityPacket(
-            entityId, UUID.randomUUID(), textLoc.x, textLoc.y, textLoc.z, textLoc.pitch, textLoc.yaw - 90f,
+        val packets = mutableListOf<Packet<in ClientGamePacketListener>>()
+        packets += ClientboundAddEntityPacket(
+            spawned.textId, UUID.randomUUID(), board.x, board.y, board.z, board.pitch, board.yaw - 90f,
             textDisplayType, 0, Vec3.ZERO, 0.0
         )
-        val textMetaPacket = ClientboundSetEntityDataPacket(
-            entityId, listOf(
-                SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, okiboMap.offset),
-                SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, okiboMap.scale),
-                SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
-                SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(okiboMap.text)),
-                SynchedEntityData.DataValue(25, EntityDataSerializers.INT, OkiboMap.background),
+        packets += ClientboundSetEntityDataPacket(
+            spawned.textId, listOf(
+                DataValue(DISPLAY_TRANSLATION, EntityDataSerializers.VECTOR3, map.offset),
+                DataValue(DISPLAY_SCALE, EntityDataSerializers.VECTOR3, map.scale),
+                DataValue(DISPLAY_BRIGHTNESS, EntityDataSerializers.INT, FULL_BRIGHT),
+                DataValue(TEXT_DISPLAY_TEXT, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(map.text)),
+                DataValue(TEXT_DISPLAY_BACKGROUND, EntityDataSerializers.INT, TRANSPARENT),
             )
         )
-        val textBundle = ClientboundBundlePacket(listOf(textEntityPacket, textMetaPacket))
-        connection.send(textBundle)
 
-        // Process hitboxes and icons
-        val hitboxBundles = okiboMap.hitboxes.flatMap { mapHitbox ->
-            val packets = mutableListOf<ClientboundBundlePacket>()
+        spawned.dots.forEach { dot ->
+            val dotLoc = board.clone().add(dot.destination.iconHitboxOffset.rotatedBy(boardRotation))
+            val size = config.hitboxSize.toFloat()
 
-            // Calculate hitbox position (offset from textLoc, rotated by yaw)
-            val hitboxOffset = mapHitbox.offset.clone().rotateAroundY(Math.toRadians(-textLoc.yaw.toDouble()))
-            val hitboxLoc = textLoc.clone().add(hitboxOffset)
-
-            val hitboxEntityId = hitboxEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
-                .computeIfAbsent(mapHitbox.destStation) { level.nextEntityId }
-            val hitboxPacket = ClientboundAddEntityPacket(
-                hitboxEntityId, UUID.randomUUID(),
-                hitboxLoc.x, hitboxLoc.y, hitboxLoc.z, 0f, 0f,
+            // An interaction box grows upwards from its position, so drop it to center it on the dot
+            packets += ClientboundAddEntityPacket(
+                dot.hitboxId, UUID.randomUUID(), dotLoc.x, dotLoc.y - size / 2, dotLoc.z, 0f, 0f,
                 interactionType, 0, Vec3.ZERO, 0.0
             )
-            val hitboxMetaPacket = ClientboundSetEntityDataPacket(
-                hitboxEntityId, listOf(
-                    SynchedEntityData.DataValue(8, EntityDataSerializers.FLOAT, mapHitbox.hitbox.width.toFloat()),
-                    SynchedEntityData.DataValue(9, EntityDataSerializers.FLOAT, mapHitbox.hitbox.height.toFloat()),
+            packets += ClientboundSetEntityDataPacket(
+                dot.hitboxId, listOf(
+                    DataValue(INTERACTION_WIDTH, EntityDataSerializers.FLOAT, size),
+                    DataValue(INTERACTION_HEIGHT, EntityDataSerializers.FLOAT, size),
                 )
             )
-            packets += ClientboundBundlePacket(listOf(hitboxPacket, hitboxMetaPacket))
 
-            // Icon logic with translation offset from hitbox
-            okiboMap.icon?.also { icon ->
-                val iconEntityId = hitboxIconEntities.computeIfAbsent(okiboMap.station) { mutableMapOf() }
-                    .computeIfAbsent(mapHitbox.destStation) { level.nextEntityId }
-
-                // Spawn icon at hitboxLoc
-                val iconPacket = ClientboundAddEntityPacket(
-                    iconEntityId, UUID.randomUUID(), hitboxLoc.x, hitboxLoc.y, hitboxLoc.z, textLoc.pitch, textLoc.yaw - 90,
-                    textDisplayType, 0, Vec3.ZERO, 0.0
+            val icon = map.icon ?: return@forEach
+            val iconId = dot.iconId ?: return@forEach
+            val iconLoc = board.clone()
+                .add(Vector3f(dot.destination.iconHitboxOffset).add(icon.offset).rotatedBy(boardRotation))
+            packets += ClientboundAddEntityPacket(
+                iconId, UUID.randomUUID(), iconLoc.x, iconLoc.y, iconLoc.z, board.pitch, board.yaw - 90f,
+                textDisplayType, 0, Vec3.ZERO, 0.0
+            )
+            packets += ClientboundSetEntityDataPacket(
+                iconId, listOf(
+                    DataValue(DISPLAY_SCALE, EntityDataSerializers.VECTOR3, icon.scale),
+                    DataValue(DISPLAY_BRIGHTNESS, EntityDataSerializers.INT, FULL_BRIGHT),
+                    DataValue(TEXT_DISPLAY_TEXT, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(icon.text)),
+                    DataValue(TEXT_DISPLAY_BACKGROUND, EntityDataSerializers.INT, TRANSPARENT),
                 )
-
-                // Calculate icon translation (offset from hitbox, rotated by yaw)
-                val iconTranslation = icon.offset.rotateY(Math.toRadians(-textLoc.yaw.toDouble()).toFloat(), Vector3f()) // Create a copy
-
-                // Set translation metadata (ID 11) with Vector3 serializer
-                val iconMetaPacket = ClientboundSetEntityDataPacket(
-                    iconEntityId, listOf(
-                        SynchedEntityData.DataValue(11, EntityDataSerializers.VECTOR3, iconTranslation), // Translation offset from hitbox
-                        SynchedEntityData.DataValue(12, EntityDataSerializers.VECTOR3, icon.scale), // Translation offset from hitbox
-                        SynchedEntityData.DataValue(16, EntityDataSerializers.INT, (15 shl 4) or (15 shl 20)),
-                        SynchedEntityData.DataValue(23, EntityDataSerializers.COMPONENT, PaperAdventure.asVanilla(icon.text.miniMsg()) ?: Component.empty()),
-                        SynchedEntityData.DataValue(25, EntityDataSerializers.INT, Color.fromARGB(0, 0, 0, 0).asARGB()),
-                    )
-                )
-
-                packets += ClientboundBundlePacket(listOf(iconPacket, iconMetaPacket))
-            }
-            packets
+            )
         }
 
-        hitboxBundles.forEach(connection::send)
+        connection.send(ClientboundBundlePacket(packets))
     }
 
-    fun removeMap(player: Player, okiboMap: OkiboMap) {
-        (player as CraftPlayer).handle.connection.send(
-            ClientboundRemoveEntitiesPacket(
-                *listOf(mapEntities[okiboMap.station] ?: -1)
-                    .plus(hitboxEntities[okiboMap.station]?.values ?: listOf())
-                    .plus(hitboxIconEntities[okiboMap.station]?.values ?: listOf())
-                    .toIntArray()
-            )
-        )
+    fun removeMap(player: Player, map: OkiboMap) {
+        val spawned = spawnedMaps[map.station] ?: return
+        (player as CraftPlayer).handle.connection.send(ClientboundRemoveEntitiesPacket(*spawned.entityIds))
     }
 
     fun spawnOkiboMaps() {
-        config.okiboMaps.forEach {
-            if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@forEach
-            it.location.chunk.playersSeeingChunk.forEach { player ->
-                sendMap(player, it)
-            }
+        config.okiboMaps.forEach { map ->
+            val loc = map.location
+            if (!loc.isWorldLoaded || !loc.isChunkLoaded) return@forEach
+            loc.chunk.playersSeeingChunk.forEach { sendMap(it, map) }
         }
     }
 
+    /** Removes every map we sent out, also from players whose boards are no longer in a loaded chunk */
     fun removeOkiboMaps() {
-        config.okiboMaps.forEach {
-            if (!it.location.isWorldLoaded || !it.location.isChunkLoaded) return@forEach
-            it.location.chunk.playersSeeingChunk.forEach { player ->
-                removeMap(player, it)
-            }
+        if (spawnedMaps.isEmpty()) return
+        val packet = ClientboundRemoveEntitiesPacket(*spawnedMaps.values.flatMap { it.entityIds.asList() }.toIntArray())
+        Bukkit.getOnlinePlayers().forEach { (it as CraftPlayer).handle.connection.send(packet) }
+    }
+
+    fun spawnCart(player: Player, from: OkiboLineStation, to: OkiboLineStation): Boolean {
+        val direction = direction(from, to) ?: run {
+            logger.e("No okibo track leads from ${from.id} to ${to.id}")
+            return false
+        }
+        val spawnGroup = SpawnableGroup.parse(TrainCarts.plugin, TRAIN_NAME)
+        if (spawnGroup.members.isEmpty()) {
+            logger.e("TrainCarts has no saved train named $TRAIN_NAME")
+            return false
+        }
+
+        val spawnLocations = spawnGroup.findSpawnLocations(from.location, direction, SpawnableGroup.SpawnMode.DEFAULT)
+        if (spawnLocations.locations.size < spawnGroup.members.size) {
+            logger.e("Not enough track at ${from.id} to spawn a train")
+            return false
+        }
+        spawnLocations.loadChunks()
+        if (spawnLocations.occupiedLocations.isNotEmpty()) {
+            logger.w("A train is already parked at ${from.id}")
+            return false
+        }
+
+        val train = spawnGroup.spawn(spawnLocations)
+        if (train == null || train.isEmpty()) {
+            logger.e("TrainCarts failed to spawn a train at ${from.id}")
+            return false
+        }
+
+        train.properties.apply {
+            destination = to.id
+            addTags("paid") // The ticket sign only launches trains tagged as paid
+            setOwner(player.name, true)
+            speedLimit = 1.0
+            isSlowingDown = false
+            collision = CollisionOptions.CANCEL
+            isPlayerTakeable = false
+            canOnlyOwnersEnter = true
+            isManualMovementAllowed = true
+        }
+        train.head().addPassengerForced(player)
+
+        logger.i("A train has been spawned at ${from.id} and is heading to ${to.id}!")
+        return true
+    }
+
+    /** Coin cost of a ride, null when the two stations cannot be connected by rail at all */
+    fun cost(from: OkiboLineStation, to: OkiboLineStation): Int? {
+        if (from.location.world != to.location.world) return null
+        val distance = railDistance(from, to) ?: from.location.distance(to.location).also {
+            logger.w("TrainCarts knows no route from ${from.id} to ${to.id}, charging by straight-line distance")
+        }
+        return (distance * config.costPerKM / 1000).roundToInt()
+    }
+
+    fun isRoutingPending() = pathProvider.isProcessing
+
+    /**
+     * TrainCarts only discovers path nodes from rails in loaded chunks, so after a cold start the okibo stations
+     * have no routing info until someone stands there and the tracks are rerouted.
+     */
+    suspend fun warmUpRoutes() {
+        val stations = config.okiboStations
+        if (stations.isEmpty()) return
+
+        val missingNodes = stations.filter { pathNode(it) == null }
+        if (missingNodes.isNotEmpty()) {
+            logger.w("TrainCarts has no path nodes for ${missingNodes.map(OkiboLineStation::id)}, rediscovering them")
+            missingNodes.forEach { pathProvider.discoverFromRail(BlockLocation(it.location.block)) }
+            awaitRouting()
+        }
+
+        val unreachable = stations.filter { from -> stations.any { it != from && railDistance(from, it) == null } }
+        if (unreachable.isNotEmpty()) {
+            unreachable.forEach { station -> pathNode(station)?.let(pathProvider::discoverFromNode) }
+            awaitRouting()
+        }
+
+        val broken = stations.filter { from -> stations.any { it != from && railDistance(from, it) == null } }
+        when {
+            broken.isEmpty() -> logger.s("Okibo line routes are ready")
+            else -> logger.e("TrainCarts cannot route between all okibo stations, check ${broken.map(OkiboLineStation::id)}")
         }
     }
+
+    private suspend fun awaitRouting() {
+        withTimeoutOrNull(60.seconds) {
+            while (pathProvider.isProcessing) delay(20.ticks)
+        }
+    }
+
+    /** Direction a train has to face at [from] to start driving towards [to] */
+    private fun direction(from: OkiboLineStation, to: OkiboLineStation): Vector? {
+        val coasterWorld = tccoasters.getCoasterWorld(from.location.world) ?: return null
+        val startNode = signedNodeAt(coasterWorld, from) ?: return null
+        val destNode = signedNodeAt(coasterWorld, to) ?: return null
+        val path = TrackNodeSearchPath.findShortest(startNode, mutableSetOf(destNode)) ?: return null
+        return path.pathConnections.firstOrNull()?.getDirection(startNode)
+    }
+
+    private fun signedNodeAt(world: CoasterWorld, station: OkiboLineStation) =
+        world.rails.findAtBlock(station.location.block).values().find { it.node().signs.isNotEmpty() }?.node()
+
+    /** Rail distance in blocks, null while TrainCarts has no route between the two stations */
+    private fun railDistance(from: OkiboLineStation, to: OkiboLineStation): Double? {
+        val start = pathNode(from) ?: return null
+        val destination = pathNode(to) ?: return null
+        return start.findConnection(destination)?.distance
+    }
+
+    private fun pathNode(station: OkiboLineStation) =
+        pathWorld(station)?.let { it.getNodeByName(station.id) ?: it.getNodeAtRail(station.location.block) }
+
+    private fun pathWorld(station: OkiboLineStation): PathWorld? =
+        station.location.takeIf { it.isWorldLoaded }?.let { pathProvider.getWorld(it.world) }
+
+    private fun allocate(map: OkiboMap, level: ServerLevel) = SpawnedMap(
+        map = map,
+        textId = level.nextEntityId,
+        dots = config.destinationsOn(map).map {
+            SpawnedMap.Dot(it, level.nextEntityId, if (map.icon != null) level.nextEntityId else null)
+        }
+    )
 }
+
+private fun Vector3f.rotatedBy(yawRadians: Float) = Vector3f(this).rotateY(yawRadians).let { Vector(it.x, it.y, it.z) }
