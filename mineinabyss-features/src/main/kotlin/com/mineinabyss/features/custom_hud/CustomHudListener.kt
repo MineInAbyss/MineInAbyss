@@ -15,7 +15,7 @@ class CustomHudListener(private val feature: CustomHudModule) : Listener {
     fun PlayerResourcePackStatusEvent.onResourcepackLoad() {
         if (!player.isOnline) return
         if (status == Status.ACCEPTED || status == Status.DOWNLOADED) return
-        packy.plugin.launch {
+        packy.launch {
             do {
                 delay(1.ticks)
                 if (player.isOnline) handleStatusEvent()
