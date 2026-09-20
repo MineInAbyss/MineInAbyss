@@ -14,14 +14,24 @@ import com.mineinabyss.idofront.time.ticks
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent
 import io.papermc.paper.event.packet.PlayerChunkUnloadEvent
 import kotlinx.coroutines.delay
+import org.bukkit.Location
+import org.bukkit.attribute.Attribute
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.EquipmentSlot
 import kotlin.time.Duration.Companion.seconds
 
-/** How far a player may be from a board and still click its dots */
-private const val MAX_BOARD_DISTANCE = 8.0
+/** Leeway on top of the interaction range, the client range checks against a moving position before we see the click */
+private const val REACH_LEEWAY = 1.0
+
+/** Clients cannot click past their interaction range, so this only rejects spoofed entity ids */
+private fun Player.canReach(target: Location): Boolean {
+    if (target.world != world) return false
+    val range = (getAttribute(Attribute.ENTITY_INTERACTION_RANGE)?.value ?: return false) + REACH_LEEWAY
+    return target.distanceSquared(eyeLocation) <= range * range
+}
 
 class OkiboTravelListener(
     val config: OkiboTravelConfig,
@@ -45,13 +55,12 @@ class OkiboTravelListener(
     @EventHandler
     fun PlayerUseUnknownEntityEvent.onInteractMap() {
         if (hand != EquipmentSlot.HAND) return
-        val (map, origin, destination) = okibo.target(entityId) ?: return
+        val (origin, destination, dot) = okibo.target(entityId) ?: return
 
         val gearyPlayer = player.toGeary()
         if (!okiboMapCooldown.execute(ActionGroupContext(gearyPlayer))) return
 
-        if (map.location.world != player.world || map.location.distance(player.location) > MAX_BOARD_DISTANCE)
-            return player.error("You are not near a station!")
+        if (!player.canReach(dot)) return player.error("You are not near a station!")
         if (origin == destination) return player.error("You are already at that station!")
 
         val railDistance = okibo.railDistance(origin, destination) ?: run {

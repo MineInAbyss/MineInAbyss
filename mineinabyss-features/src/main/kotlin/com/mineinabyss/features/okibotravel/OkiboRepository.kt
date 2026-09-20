@@ -29,6 +29,7 @@ import net.minecraft.world.entity.EntityTypeIds
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
+import org.bukkit.Location
 import org.bukkit.craftbukkit.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
@@ -64,31 +65,36 @@ class OkiboRepository(
     private val tccoasters by lazy { Bukkit.getPluginManager().getPlugin("TCCoasters") as TCCoasters }
     private val pathProvider get() = TrainCarts.plugin.pathProvider
 
-    /** Entity ids of one map board, shared by every player that gets sent it */
+    /** Entity ids and world positions of one map board, shared by every player that gets sent it */
     private class SpawnedMap(val map: OkiboMap, val textId: Int, val dots: List<Dot>) {
-        class Dot(val destination: OkiboLineStation, val hitboxId: Int, val iconId: Int?)
+        class Dot(
+            val destination: OkiboLineStation,
+            val hitboxId: Int,
+            val iconId: Int?,
+            val location: Location,
+            val iconLocation: Location?,
+        )
 
         val entityIds = (listOf(textId) + dots.flatMap { listOfNotNull(it.hitboxId, it.iconId) }).toIntArray()
     }
 
-    data class Target(val map: OkiboMap, val origin: OkiboLineStation, val destination: OkiboLineStation)
+    data class Target(val origin: OkiboLineStation, val destination: OkiboLineStation, val dot: Location)
 
     fun mapAt(chunk: Chunk) = config.okiboMaps.firstOrNull {
         it.location.world == chunk.world && Chunk.getChunkKey(it.location) == chunk.chunkKey
     }
 
-    /** The board and station a clicked dot belongs to, null when [entityId] is not one of ours */
+    /** The stations a clicked dot travels between, null when [entityId] is not one of ours */
     fun target(entityId: Int): Target? = spawnedMaps.values.firstNotNullOfOrNull { spawned ->
-        val destination = spawned.dots.firstOrNull { it.hitboxId == entityId }?.destination ?: return@firstNotNullOfOrNull null
+        val dot = spawned.dots.firstOrNull { it.hitboxId == entityId } ?: return@firstNotNullOfOrNull null
         val origin = config.station(spawned.map.station) ?: return@firstNotNullOfOrNull null
-        Target(spawned.map, origin, destination)
+        Target(origin, dot.destination, dot.location)
     }
 
     fun sendMap(player: Player, map: OkiboMap) {
         val connection = (player as CraftPlayer).handle.connection
         val spawned = spawnedMaps.getOrPut(map.station) { allocate(map, player.handle.level()) }
         val board = map.location
-        val boardRotation = Math.toRadians(-board.yaw.toDouble()).toFloat()
 
         connection.send(ClientboundRemoveEntitiesPacket(*spawned.entityIds))
 
@@ -108,12 +114,11 @@ class OkiboRepository(
         )
 
         spawned.dots.forEach { dot ->
-            val dotLoc = board.clone().add(dot.destination.iconHitboxOffset.rotatedBy(boardRotation))
             val size = config.hitboxSize.toFloat()
 
             // An interaction box grows upwards from its position, so drop it to center it on the dot
             packets += ClientboundAddEntityPacket(
-                dot.hitboxId, UUID.randomUUID(), dotLoc.x, dotLoc.y - size / 2, dotLoc.z, 0f, 0f,
+                dot.hitboxId, UUID.randomUUID(), dot.location.x, dot.location.y - size / 2, dot.location.z, 0f, 0f,
                 interactionType, 0, Vec3.ZERO, 0.0
             )
             packets += ClientboundSetEntityDataPacket(
@@ -125,8 +130,7 @@ class OkiboRepository(
 
             val icon = map.icon ?: return@forEach
             val iconId = dot.iconId ?: return@forEach
-            val iconLoc = board.clone()
-                .add(Vector3f(dot.destination.iconHitboxOffset).add(icon.offset).rotatedBy(boardRotation))
+            val iconLoc = dot.iconLocation ?: return@forEach
             packets += ClientboundAddEntityPacket(
                 iconId, UUID.randomUUID(), iconLoc.x, iconLoc.y, iconLoc.z, board.pitch, board.yaw - 90f,
                 textDisplayType, 0, Vec3.ZERO, 0.0
@@ -280,13 +284,25 @@ class OkiboRepository(
     private fun pathWorld(station: OkiboLineStation): PathWorld? =
         station.location.takeIf { it.isWorldLoaded }?.let { pathProvider.getWorld(it.world) }
 
-    private fun allocate(map: OkiboMap, level: ServerLevel) = SpawnedMap(
-        map = map,
-        textId = level.nextEntityId,
-        dots = config.destinationsOn(map).map {
-            SpawnedMap.Dot(it, level.nextEntityId, if (map.icon != null) level.nextEntityId else null)
-        }
-    )
+    private fun allocate(map: OkiboMap, level: ServerLevel): SpawnedMap {
+        val board = map.location
+        val boardRotation = Math.toRadians(-board.yaw.toDouble()).toFloat()
+        return SpawnedMap(
+            map = map,
+            textId = level.nextEntityId,
+            dots = config.destinationsOn(map).map { station ->
+                SpawnedMap.Dot(
+                    destination = station,
+                    hitboxId = level.nextEntityId,
+                    iconId = if (map.icon != null) level.nextEntityId else null,
+                    location = board.clone().add(station.iconHitboxOffset.rotatedBy(boardRotation)),
+                    iconLocation = map.icon?.let {
+                        board.clone().add(Vector3f(station.iconHitboxOffset).add(it.offset).rotatedBy(boardRotation))
+                    },
+                )
+            }
+        )
+    }
 }
 
 private fun Vector3f.rotatedBy(yawRadians: Float) = Vector3f(this).rotateY(yawRadians).let { Vector(it.x, it.y, it.z) }
