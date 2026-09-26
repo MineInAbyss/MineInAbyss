@@ -3,34 +3,44 @@ package com.mineinabyss.features.respawn
 import com.mineinabyss.features.tools.depthmeter.getAbyssDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.setPersisting
+import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
-import kotlin.collections.filter
-import kotlin.math.abs
+import org.bukkit.event.player.PlayerRespawnEvent
+import org.bukkit.event.player.PlayerTeleportEvent
 
-
-/* Everytime we cross a new respawn area, we set it as our new "default" respawn point */
-class RespawnListener(private val config :RespawnConfig): Listener {
-    @EventHandler
+class RespawnListener(private val config: RespawnConfig) : Listener {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun PlayerMoveEvent.onMove() {
-        if (!hasExplicitlyChangedBlock() || player.hasBonfireRespawn())
-            return
-        val depth = to.getAbyssDepth() ?: return
-        val where = config.respawns
-            .asSequence()
-            .filter { it.depth <= depth }
-            .maxByOrNull { it.depth } ?: return // we get the deepest spawn we're allowed to respawn at
+        if (from.blockY == to.blockY && from.world == to.world) return
+        player.checkCrossing(from, to)
+    }
 
-        // we need to check that were within range of a certain spawnpoint depth
-        // note: it only works downwards (since were filtering for max depth earlier on)
-        val verticalTolerance = 10
-        if (abs(depth - where.depth) > verticalTolerance)
-            return
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun PlayerTeleportEvent.onTeleport() {
+        player.checkCrossing(from, to)
+    }
 
-        // we are within range of a new respawn location, we can update it
-        player.respawnLocation = where.location
-        player.toGeary().setPersisting(RespawnData(where.depth.toString()))
+    // Bonfire teleports players with a valid bonfire away from here afterward, so this also covers destroyed bonfires
+    @EventHandler
+    fun PlayerRespawnEvent.onRespawn() {
+        if (respawnReason != PlayerRespawnEvent.RespawnReason.DEATH || isBedSpawn || isAnchorSpawn) return
+        val checkpoint = player.toGeary().get<RespawnCheckpoint>() ?: return
+        respawnLocation = config.byId[checkpoint.id]?.location ?: return
+    }
+
+    private fun Player.checkCrossing(from: Location, to: Location) {
+        val (fromDepth, toDepth) = (from.getAbyssDepth() ?: return) to (to.getAbyssDepth() ?: return)
+        if (fromDepth == toDepth) return
+
+        val crossed = config.respawns.filter { (fromDepth < it.depth) != (toDepth < it.depth) }
+        val entry = (if (toDepth > fromDepth) crossed.maxByOrNull { it.depth } else crossed.minByOrNull { it.depth }) ?: return
+
+        val gearyPlayer = toGeary()
+        if (gearyPlayer.get<RespawnCheckpoint>()?.id == entry.id) return
+        gearyPlayer.setPersisting(RespawnCheckpoint(entry.id))
     }
 }
-
