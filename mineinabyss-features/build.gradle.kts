@@ -20,6 +20,7 @@ dependencies {
 
     // Geary platform
     compileOnly(miaLibs.geary.papermc)
+    compileOnly(miaLibs.geary.nexo)
 
     // MineInAbyss platform
     implementation(miaLibs.exposed.core) { isTransitive = false }
@@ -42,6 +43,7 @@ dependencies {
     compileOnly(miaLibs.deeperworld)
 
     compileOnly(miaLibs.minecraft.plugin.modelengine)
+    compileOnly(miaLibs.minecraft.plugin.nexo)
     compileOnly(miaLibs.guiy)
     compileOnly(miaLibs.chatty)
     compileOnly(miaLibs.packy)

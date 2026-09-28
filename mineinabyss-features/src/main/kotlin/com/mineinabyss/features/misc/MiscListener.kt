@@ -1,13 +1,20 @@
 package com.mineinabyss.features.misc
 
-import com.destroystokyo.paper.MaterialSetTag
 import com.mineinabyss.components.displaylocker.LockDisplayItem
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
+import com.mineinabyss.geary.papermc.nexo.NexoCustomBlock
+import com.mineinabyss.geary.papermc.withGeary
+import com.mineinabyss.geary.prefabs.PrefabKey
+import com.mineinabyss.geary.prefabs.entityOfOrNull
 import com.mineinabyss.idofront.entities.rightClicked
+import com.mineinabyss.idofront.plugin.Plugins
+import com.nexomc.nexo.api.NexoBlocks
 import nl.rutgerkok.blocklocker.BlockLockerAPIv2
+import org.bukkit.Bukkit
 import org.bukkit.Effect
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Lectern
 import org.bukkit.block.data.Bisected
@@ -29,7 +36,7 @@ import org.bukkit.event.player.PlayerTakeLecternBookEvent
 import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
-class MiscListener : Listener {
+class MiscListener(private val config: MiscConfig) : Listener {
     @EventHandler
     fun ProjectileHitEvent.onDouseItemFrame() {
         val entity = entity as? ThrownPotion ?: return
@@ -69,25 +76,42 @@ class MiscListener : Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun BlockFertilizeEvent.onGrowGrass() {
+        val bonemeal = config.grassBonemeal
         if (block.type != Material.GRASS_BLOCK) return
 
-        val blockedFlowers = setOf(Material.MANGROVE_PROPAGULE)
-        val allowedFlowers = MaterialSetTag.FLOWERS.values.filter { it !in blockedFlowers }
-        val rareFlowers = setOf(Material.SPORE_BLOSSOM, Material.WITHER_ROSE)
-
-        blocks.removeIf { (it.blockData as? Bisected)?.half == Bisected.Half.TOP }
-        blocks.forEach { state ->
-            val newPlant = allowedFlowers.filter { if (state.blockData is Bisected) it.createBlockData() is Bisected else it.createBlockData() !is Bisected }.random().createBlockData()
-            if ((Random.nextDouble() > (if (newPlant.material in rareFlowers) 0.05 else 0.7))) return@forEach
-
-            (newPlant as? Bisected)?.also { it.half = Bisected.Half.BOTTOM }?.let {
-                state.block.getRelative(BlockFace.UP).state.blockData = it.apply { it.half = Bisected.Half.TOP }
-            }
-            state.blockData = newPlant
-            state.update(true, true)
+        val tops = blocks.filter { (it.blockData as? Bisected)?.half == Bisected.Half.TOP }.associateBy { it.location }
+        blocks.filter { it.location !in tops && Random.nextDouble() < bonemeal.replaceChance }.forEach { state ->
+            val id = bonemeal.randomBlock() ?: return
+            val top = tops[state.location.add(0.0, 1.0, 0.0)]
+            if (!state.block.placeBonemealBlock(id)) return@forEach
+            blocks.remove(state)
+            top?.let(blocks::remove)
         }
+    }
+
+    private fun Block.placeBonemealBlock(block: Any): Boolean = when (block) {
+        is PrefabKey -> {
+            if (!Plugins.isEnabled("Nexo")) return false
+            val mechanic = withGeary { entityOfOrNull(block)?.get<NexoCustomBlock>()?.mechanic(block) } ?: return false
+            NexoBlocks.place(mechanic.itemID, location)
+            true
+        }
+        is String -> {
+            val data = runCatching { Bukkit.createBlockData(block) }.getOrNull() ?: return false
+            if (data !is Bisected) {
+                blockData = data
+                return true
+            }
+
+            val above = getRelative(BlockFace.UP)
+            if (!above.type.isAir) return false
+            setBlockData(data.apply { half = Bisected.Half.BOTTOM }, false)
+            above.setBlockData((data.clone() as Bisected).apply { half = Bisected.Half.TOP }, false)
+            true
+        }
+        else -> false
     }
 
     @EventHandler
