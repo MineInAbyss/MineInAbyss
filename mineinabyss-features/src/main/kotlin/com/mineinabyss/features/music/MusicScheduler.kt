@@ -28,7 +28,7 @@ class MusicScheduler(
     fun scheduleMusicPlaying(player: Player) {
         val musicPlayingJob = abyss.launch {
             val waitOnLogin = conf.waitTimeOnLogin.randomOrMin()
-            abyss.logger.i("Starting music scheduler for ${player.name}, waiting $waitOnLogin before playing.")
+            abyss.logger.v("Starting music scheduler for ${player.name}, waiting $waitOnLogin before playing.")
             delay(waitOnLogin)
             while (player.isConnected) {
                 val playable = getPlayableSongsAtLocation(player.location)
@@ -36,13 +36,13 @@ class MusicScheduler(
                 else {
                     val recentlyPlayed = player.toGeary().getOrSet<RecentlyPlayed> { RecentlyPlayed(setOf()) }
                     val notRecentlyPlayed = playable.filter { it !in recentlyPlayed.songs }
-                    abyss.logger.i("Recently played: $recentlyPlayed")
-                    abyss.logger.i("Playable: $playable")
+                    abyss.logger.v("Recently played: $recentlyPlayed")
+                    abyss.logger.v("Playable: $playable")
                     val chooseFrom = notRecentlyPlayed.takeIf { notRecentlyPlayed.isEmpty() }?.apply {
                         player.toGeary().set(RecentlyPlayed(setOf()))
                     } ?: playable
                     val song = chooseFrom.randomOrNull()
-                    abyss.logger.i("Playing $song")
+                    abyss.logger.v("Playing $song")
 
                     delay(song?.let {
                         if (player.isAfk) return@let conf.songWaitTime.randomOrMin()
@@ -50,10 +50,10 @@ class MusicScheduler(
 
                         // Choose a random wait time as defined in config
                         conf.songWaitTime.randomOrMin().also {
-                            abyss.logger.i("Finished playing $song, waiting $it before playing another.")
+                            abyss.logger.v("Finished playing $song, waiting $it before playing another.")
                         }
                     } ?: conf.songWaitTime.endInclusive.also {
-                        abyss.logger.i("No songs to play, waiting $it before trying again.")
+                        abyss.logger.v("No songs to play, waiting $it before trying again.")
                     })
                 }
             }
