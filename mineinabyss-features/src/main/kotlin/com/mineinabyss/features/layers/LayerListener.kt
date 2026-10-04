@@ -10,12 +10,9 @@ import com.mineinabyss.deeperworld.event.PlayerDescendEvent
 import com.mineinabyss.deeperworld.sections.section
 import com.mineinabyss.features.helpers.layer
 import com.mineinabyss.features.hubstorage.isInHub
-import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldown
-import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldowns
-import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import com.mineinabyss.idofront.time.inWholeTicks
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket
@@ -37,7 +34,7 @@ import kotlin.time.toJavaDuration
 
 class LayerListener : Listener {
 
-    private val titleCooldown = Cooldown(2.seconds, null, "mineinabyss:layer_title")
+    private val titleCooldown = Key.key("mineinabyss", "layer_title")
 
     @EventHandler
     fun PlayerAscendEvent.onPlayerAscend() { sendTitleOnLayerChange() }
@@ -47,14 +44,13 @@ class LayerListener : Listener {
 
     private fun PlayerChangeSectionEvent.sendTitleOnLayerChange() {
         if (!deeperWorld.players.canTeleport(player)) return
-        val gearyPlayer = player.toGearyOrNull() ?: return
-        if (!Cooldowns.isComplete(gearyPlayer, "mineinabyss:layer_title")) return
+        if (player.getCooldown(titleCooldown) > 0) return
         val fromLayer = fromSection.layer ?: return
         val toLayer = toSection.layer.takeUnless { it == fromLayer } ?: return
         val times = Title.Times.times(2.5.seconds.toJavaDuration(), 0.5.seconds.toJavaDuration(), 1.seconds.toJavaDuration())
 
         player.showTitle(Title.title(toLayer.name.miniMsg(), toLayer.subtitle, times))
-        titleCooldown.execute(ActionGroupContext(gearyPlayer))
+        player.setCooldown(titleCooldown, 2.seconds.inWholeTicks.toInt())
     }
 
     @EventHandler

@@ -35,15 +35,13 @@ class GrassBonemealConfig(
         var sum = 0.0
         return entries.firstOrNull { sum += it.value; roll < sum }?.key
     }
-
-    private companion object {
-        private val rareFlowers = setOf(Material.SPORE_BLOSSOM, Material.WITHER_ROSE)
-
-        fun defaultFlowers() = MaterialSetTag.FLOWERS.values
-            .filter { it != Material.MANGROVE_PROPAGULE }
-            .associate { it.key.asString() to if (it in rareFlowers) 0.07 else 1.0 }
-    }
 }
+
+private val rareFlowers = setOf(Material.SPORE_BLOSSOM, Material.WITHER_ROSE)
+
+private fun defaultFlowers() = MaterialSetTag.FLOWERS.values
+    .filter { it != Material.MANGROVE_PROPAGULE }
+    .associate { it.key.asString() to if (it in rareFlowers) 0.07 else 1.0 }
 
 val MiscFeature = module("miscellaneous") {
     val config = get<AbyssFeatureConfig>().misc

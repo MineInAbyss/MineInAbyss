@@ -4,16 +4,15 @@ import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.okibotravel.OkiboTraveler
 import com.mineinabyss.components.playerDataOrNull
-import com.mineinabyss.geary.actions.ActionGroupContext
-import com.mineinabyss.geary.actions.execute
-import com.mineinabyss.geary.papermc.features.common.cooldowns.Cooldown
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
+import com.mineinabyss.idofront.time.inWholeTicks
 import com.mineinabyss.idofront.time.ticks
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent
 import io.papermc.paper.event.packet.PlayerChunkUnloadEvent
 import kotlinx.coroutines.delay
+import net.kyori.adventure.key.Key
 import org.bukkit.Location
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
@@ -37,7 +36,7 @@ class OkiboTravelListener(
     val config: OkiboTravelConfig,
     val okibo: OkiboRepository,
 ) : Listener {
-    private val okiboMapCooldown = Cooldown(1.seconds, null, "mineinabyss:okibomap")
+    private val okiboMapCooldown = Key.key("mineinabyss", "okibomap")
 
     @EventHandler
     suspend fun PlayerChunkLoadEvent.onLoad() {
@@ -57,8 +56,9 @@ class OkiboTravelListener(
         if (hand != EquipmentSlot.HAND) return
         val (origin, destination, dot) = okibo.target(entityId) ?: return
 
+        if (player.getCooldown(okiboMapCooldown) > 0) return
+        player.setCooldown(okiboMapCooldown, 1.seconds.inWholeTicks.toInt())
         val gearyPlayer = player.toGeary()
-        if (!okiboMapCooldown.execute(ActionGroupContext(gearyPlayer))) return
 
         if (!player.canReach(dot)) return player.error("You are not near a station!")
         if (origin == destination) return player.error("You are already at that station!")

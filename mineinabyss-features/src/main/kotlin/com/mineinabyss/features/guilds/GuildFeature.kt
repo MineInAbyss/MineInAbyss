@@ -8,6 +8,7 @@ import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.gets
 import com.mineinabyss.dependencies.module
 import com.mineinabyss.dependencies.single
+import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildRank
 import com.mineinabyss.features.guilds.extensions.*
@@ -62,6 +63,7 @@ class GuildsConfig {
 }
 
 val GuildFeature = module("guilds") {
+    require(get<AbyssFeatureConfig>().guilds.enabled) { "Guilds feature is disabled" }
     requirePlugins("Chatty")
 
     // Dependencies
