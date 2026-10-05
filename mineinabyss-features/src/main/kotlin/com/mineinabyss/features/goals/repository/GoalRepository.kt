@@ -53,7 +53,18 @@ class GoalRepository(
         val progress = (current ?: GoalProgress())
             .copy(completed = true, completionTime = Clock.System.now())
         persist(player, goal.id, progress)
+        complete(player, goal)
+    }
+
+    private fun complete(player: Player, goal: Goal) {
         onComplete(player, goal)
+        recordFact(player, FactKind.COMPLETE, goal.id)
+    }
+
+    fun seedCompleted(player: Player) {
+        allProgress(player).filterValues { it.completed }.keys.forEach {
+            recordFact(player, FactKind.COMPLETE, it)
+        }
     }
 
 
@@ -77,6 +88,23 @@ class GoalRepository(
 
     fun recordFact(player: Player, kind: FactKind, value: String = "true", amount: Int = 1) { // true default value for one-off facts
         goals.forEach { goal -> applyFact(player, goal, kind, value, amount) }
+    }
+
+    fun recordFactAny(player: Player, kind: FactKind, values: Collection<String>, amount: Int = 1) {
+        if (values.isEmpty()) return
+        goals.forEach { goal -> applyFactAny(player, goal, kind, values, amount) }
+    }
+
+    private fun applyFactAny(player: Player, goal: Goal, kind: FactKind, values: Collection<String>, amount: Int) {
+        if (values.none { goal.tracksAny(kind, it) }) return
+        updateProgress(player, goal) { progress ->
+            val updated = progress.conditions.toMutableMap()
+            goal.conditions.forEachIndexed { i, condition ->
+                val matched = values.firstOrNull { condition.tracks(kind, it) } ?: return@forEachIndexed
+                updated[i] = condition.advance(updated[i] ?: ConditionProgress(), matched, amount)
+            }
+            progress.copy(conditions = updated)
+        }
     }
 
     // Seeds regions the player is already standing in, since enter events only fire on transitions
@@ -107,7 +135,7 @@ class GoalRepository(
         }
         persist(player, goal.id, updated)
         if (nowCompleted)  {
-            onComplete(player, goal)
+            complete(player, goal)
         }
     }
 
