@@ -1,33 +1,13 @@
 # location: x,y,z yaw,pitch world
-# iconHitboxOffset and icon offsets are relative to a map board, with x pointing out of it
+# map: x,y on the okibo map image, both from 0 to 1 starting at the top left
 costPerKM: 0.0
-hitboxSize: 0.15
-confirmTimeout: 5s
+noticeboards:
+  - mineinabyss_noticeboard_okibo
+boardRange: 16.0
 okiboStations:
   - id: GuildHQ
     displayName: Guild HQ
     location: -149,135,-534
-    iconHitboxOffset: 0.01,0.25,-0.25
   - id: TowerDistrict
     displayName: Tower District
     location: 490,126,-180
-    iconHitboxOffset: 0.01,0.03,-0.35
-okiboMaps:
-  - station: GuildHQ
-    location: -152.5,137.0,-536.5 90,0
-    scale: 1.3,1.3,1.3
-    offset: 0,-1,0
-    hitboxes:
-      - TowerDistrict
-    icon:
-      text: ':okibo_icon:'
-      offset: 0.01,-0.08,0.0
-  - station: TowerDistrict
-    location: 488.5,127.5,-176.0 -45.0,0
-    scale: 1.3,1.3,1.3
-    offset: 0,-1,0
-    hitboxes:
-      - GuildHQ
-    icon:
-      text: ':okibo_icon:'
-      offset: 0.01,-0.08,0.0

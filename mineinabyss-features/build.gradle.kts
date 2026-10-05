@@ -62,6 +62,7 @@ dependencies {
     compileOnly(miaLibs.minecraft.plugin.luxdialogs)
     compileOnly(miaLibs.minecraft.plugin.mythic.dist)
     compileOnly("com.mineinabyss:stamina-climb:0.25.1-dev.2")
+    compileOnly(miaLibs.emojy)
 
 }
 
@@ -195,6 +196,11 @@ paper {
             joinClasspath = true
         }
         register("Packy") {
+            required = false
+            load = BEFORE
+            joinClasspath = true
+        }
+        register("Emojy") {
             required = false
             load = BEFORE
             joinClasspath = true

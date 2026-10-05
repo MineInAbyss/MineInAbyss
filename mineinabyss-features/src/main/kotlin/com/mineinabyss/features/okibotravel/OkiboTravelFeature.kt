@@ -2,26 +2,26 @@ package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.dependencies.*
 import com.mineinabyss.features.AbyssFeatureConfig
+import com.mineinabyss.features.okibotravel.menu.OkiboMapMenu
+import com.mineinabyss.features.overlay.OverlayListener
+import com.mineinabyss.features.overlay.Overlays
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.*
 
 val OkiboTravelFeature = module("okibo-travel") {
-    requirePlugins("BKCommonLib", "Train_Carts", "TCCoasters")
+    requirePlugins("BKCommonLib", "Train_Carts", "TCCoasters", "Nexo", "Emojy")
     require(get<AbyssFeatureConfig>().okiboTravel.enabled) { "Okibo travel feature is disabled" }
 
     val config by singleConfig<OkiboTravelConfig>("okiboTravel.yml")
     val repo by single { new(::OkiboRepository) }
+    single { new(::OkiboMapMenu) }
 
-    listeners(new(::OkiboTravelListener))
+    listeners(new(::OkiboTravelListener), OverlayListener)
+    addCloseable { Overlays.closeAll() }
 
     launch {
-        repo.spawnOkiboMaps() // players are already online when reloading
         repo.warmUpRoutes()
-    }
-
-    addCloseable {
-        repo.removeOkiboMaps()
     }
 }.mainCommand {
     "okibo" {
