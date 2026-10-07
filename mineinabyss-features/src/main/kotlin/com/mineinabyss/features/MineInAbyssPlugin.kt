@@ -108,8 +108,6 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             //addLogger(StdOutSqlLogger)
             SchemaUtils.createMissingTablesAndColumns(Guilds, Players, GuildJoinQueue, GuildMessageQueue)
         }
-
-        if (isPlaceholderApiLoaded) Placeholders().register()
     }
 
     override fun onEnable() {
@@ -161,6 +159,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             RespawnFeature,
         )
         di.scope.load(MainCommandFeature)
+        if (isPlaceholderApiLoaded) Placeholders().register()
     }
 
     override fun onDisable() {
