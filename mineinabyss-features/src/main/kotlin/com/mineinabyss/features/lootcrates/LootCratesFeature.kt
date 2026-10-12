@@ -29,9 +29,7 @@ import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.Idofront
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.ArgsMinecraft
 import com.mineinabyss.idofront.commands.brigadier.context.IdoCommandContext
-import com.mineinabyss.idofront.commands.brigadier.map
 import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.datastore.launchWrite
 import com.mineinabyss.idofront.datastore.readBlocking
@@ -415,6 +413,3 @@ val LootCratesFeature = module("lootcrates") {
         }
     }
 }
-
-fun Args.prefabKey() = ArgsMinecraft.key()
-    .map { PrefabKey.of(it.namespace(), it.value()) }

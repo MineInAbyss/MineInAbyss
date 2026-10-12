@@ -6,7 +6,9 @@ import com.mineinabyss.components.npc.shopkeeping.*
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.CoinFactory
+import com.mineinabyss.features.helpers.adjustItemStackAmountFromCost
 import com.mineinabyss.features.helpers.luckPerms
+import com.mineinabyss.features.helpers.similarItemAmount
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.datatypes.EntityType
 import com.mineinabyss.geary.modules.Geary
@@ -55,29 +57,6 @@ fun Player.shopTradeCost(currencyType: ShopCurrency, currencyStack: ItemStack?):
         ShopCurrency.MITTY_TOKEN -> playerDataOrNull?.mittyTokensHeld ?: 0
         ShopCurrency.ITEM -> similarItemAmount(currencyStack)
     }
-}
-
-fun Player.firstSimilarItem(item: ItemStack?) = inventory.contents.firstOrNull { i -> i?.isSimilar(item) ?: false }
-fun Player.similarItems(item: ItemStack?) = inventory.contents.filter { i -> i != null && i.isSimilar(item) }
-fun Player.similarItemAmount(item: ItemStack?) = similarItems(item).sumOf { it?.amount ?: 0 }
-fun Player.adjustItemStackAmountFromCost(item: ItemStack?, c: Int): ItemStack? {
-    var cost = c
-    if (item == null || similarItemAmount(item) < c) return null
-    this.similarItems(item).forEach { stack ->
-        if (stack == null) return@forEach
-
-        val amount = stack.amount
-        if (amount > cost) {
-            stack.subtract(cost)
-            return stack
-        } else {
-            cost -= amount
-            stack.subtract(amount)
-        }
-    }
-    //This should never be reached as we verify
-    //the player has the [cost] amount of items in their inventory
-    return null
 }
 
 @Composable
@@ -135,12 +114,6 @@ fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrade
                             player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
                         }
                     }
-                }
-
-                when (currencyType) {
-                    ShopCurrency.ORTH_COIN -> data.orthCoinsHeld -= cost
-                    ShopCurrency.MITTY_TOKEN -> data.mittyTokensHeld -= cost
-                    ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost) ?: return@Button
                 }
             },
         ) {

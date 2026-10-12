@@ -12,6 +12,7 @@ import com.mineinabyss.features.goals.ConditionProgress
 import com.mineinabyss.features.goals.goalListener.ClimbFactListener
 import com.mineinabyss.features.goals.repository.GoalCache
 import com.mineinabyss.features.goals.repository.GoalRepository
+import com.mineinabyss.features.helpers.loaded
 import com.mineinabyss.idofront.Idofront
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.suggests
@@ -24,6 +25,7 @@ import com.mineinabyss.idofront.messaging.info
 import com.mineinabyss.idofront.messaging.success
 import org.bukkit.Bukkit
 
+val questManager: QuestManager? get() = loaded(QuestFeature)
 
 val QuestFeature = module("quests") {
     require(get<AbyssFeatureConfig>().quests.enabled) { "Quest feature is disabled" }

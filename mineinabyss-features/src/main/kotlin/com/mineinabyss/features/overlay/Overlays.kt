@@ -3,21 +3,24 @@ package com.mineinabyss.features.overlay
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.emojy.config.Emote
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.TitleItem
+import com.mineinabyss.features.helpers.freezeWalkSpeed
+import com.mineinabyss.features.helpers.lockCameraDistance
+import com.mineinabyss.features.helpers.releaseCameraDistance
+import com.mineinabyss.features.helpers.removePostEffects
+import com.mineinabyss.features.helpers.restoreWalkSpeed
+import com.mineinabyss.features.helpers.sendTransparentSlots
+import com.mineinabyss.features.helpers.zeroCameraDistance
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.nms.aliases.toNMS
+import com.mineinabyss.idofront.spawning.spawn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.time.ticks
 import kotlinx.coroutines.delay
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.sound.Sound
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket
 import net.minecraft.network.protocol.game.ClientboundSetCameraPacket
 import org.bukkit.*
-import org.bukkit.attribute.Attribute
-import org.bukkit.attribute.AttributeModifier
-import org.bukkit.craftbukkit.inventory.CraftItemStack
 import org.bukkit.entity.*
 import org.joml.Vector3f
 import java.util.*
@@ -33,7 +36,7 @@ private const val CURSOR = "overlay_cursor"
 private const val CURSOR_SCALE = 0.5f
 // Attack, interact and arm swing all arrive for one click
 private const val CLICK_DEBOUNCE_MS = 150L
-private const val STALE_EFFECT_PREFIX = "overlay/"
+private val STALE_EFFECT_PREFIXES = listOf("overlay/")
 
 class OverlaySounds(
     val open: String? = "minecraft:item.book.page_turn",
@@ -60,7 +63,6 @@ object Overlays {
         val view: PlaneView,
         val mirrorView: PlaneView,
         val origin: Location,
-        val walkSpeed: Float,
     ) {
         var elements: List<PlaneElement> = emptyList()
         // F5 cannot be canceled, so the front view gets its own copy of the page behind the player
@@ -169,14 +171,15 @@ object Overlays {
             stand.isPersistent = false
             stand.isVisibleByDefault = false
             stand.setRotation(yaw, pitch)
-            // At zero distance both F5 views render from the eye
-            stand.getAttribute(Attribute.CAMERA_DISTANCE)?.baseValue = 0.0
+            stand.zeroCameraDistance()
         }
+
         // A stand's eyes sit higher than a player's, which puts the view inside a low ceiling
         camera.teleport(camera.location.subtract(0.0, camera.eyeHeight - (if (fixedEye != null) 0.0 else player.eyeHeight), 0.0))
         val eye = camera.eyeLocation.clone().apply { this.pitch = pitch }
         val view = if (fixedEye != null) PlaneView(eye, 1.0) else fit(player, eye)
         val mirrorView = fit(player, eye.clone().apply { this.yaw += 180f; this.pitch = -this.pitch })
+
         fun cursorAt(view: PlaneView) = player.world.spawn(view.at(0.5, 0.5, PlaneLayout.NEAR_DISTANCE), TextDisplay::class.java) { display ->
             display.text(Emotes.component(cursorEmote))
             display.isSeeThrough = false
@@ -190,18 +193,19 @@ object Overlays {
             display.isVisibleByDefault = false
             display.transformation = display.transformation.apply { scale.set(Vector3f(view.scale(CURSOR_SCALE))) }
         }
-        val cursor = cursorAt(view)
-        val mirrorCursor = cursorAt(mirrorView)
+
+        val (cursor, mirrorCursor) = cursorAt(view) to cursorAt(mirrorView)
         listOf(camera, cursor, mirrorCursor).forEach { player.showEntity(abyss, it) }
-        // A leaked session may have left the speed at zero, never snapshot that
-        val session = Session(player, screen, camera, cursorEmote, cursor, mirrorCursor, view, mirrorView, origin, player.walkSpeed.takeIf { it > 0f } ?: 0.2f)
+        val session = Session(player, screen, camera, cursorEmote, cursor, mirrorCursor, view, mirrorView, origin)
             .apply { lastYaw = yaw; lastPitch = pitch }
+
         // The client only reports rotation while riding its camera entity
         camera.addPassenger(player)
         sessions[player.uniqueId] = session
-        player.walkSpeed = 0f
-        pullCameraIn(player)
+        player.freezeWalkSpeed()
+        player.lockCameraDistance(cameraKey)
         OverlayPacketHandler.install(player)
+
         // The stand reaches the client on the next tracker tick, the camera packet must follow it
         abyss.launch {
             delay(2.ticks)
@@ -209,26 +213,21 @@ object Overlays {
             player.toNMS().connection.send(ClientboundSetCameraPacket(camera.toNMS()))
             hideHands(player)
         }
+
         return session.also(::moveCursor)
     }
-
-    private fun pullCameraIn(player: Player) = player.getAttribute(Attribute.CAMERA_DISTANCE)?.run {
-        removeModifier(cameraKey)
-        addTransientModifier(AttributeModifier(cameraKey, -1.0, AttributeModifier.Operation.MULTIPLY_SCALAR_1))
-    }
-
-    private fun releaseCamera(player: Player) = player.getAttribute(Attribute.CAMERA_DISTANCE)?.removeModifier(cameraKey)
 
     fun close(player: Player) {
         val session = sessions.remove(player.uniqueId) ?: return
         OverlayPacketHandler.uninstall(player)
         player.toNMS().run { connection.send(ClientboundSetCameraPacket(this)) }
         restore(player, session)
-        releaseCamera(player)
+        player.releaseCameraDistance(cameraKey)
         (session.elements + session.mirror).forEach(PlaneElement::remove)
         listOf(session.camera, session.cursor, session.mirrorCursor).forEach(Entity::remove)
-        player.walkSpeed = session.walkSpeed
+        player.restoreWalkSpeed()
         player.updateInventory()
+
         // The swallowed hotbar packets left the client on another slot
         player.inventory.heldItemSlot = player.inventory.heldItemSlot
         player.postEffects().clear()
@@ -262,9 +261,8 @@ object Overlays {
     // Post effects and walk speed are saved with the player, so an overlay left open on a crash must be undone on join
     fun clearIfStale(player: Player) {
         if (player.uniqueId in sessions) return
-        player.postEffects().takeIf { effects -> effects.values().any { it.namespace() == "mineinabyss" && it.value().startsWith(STALE_EFFECT_PREFIX) } }
-            ?.clear()
-        if (player.walkSpeed == 0f) player.walkSpeed = 0.2f
+        player.removePostEffects(STALE_EFFECT_PREFIXES)
+        player.restoreWalkSpeed()
     }
 
     fun click(player: Player) {
@@ -287,11 +285,7 @@ object Overlays {
     }
 
     // The first person hand still renders with a foreign camera and covers the cursor
-    fun hideHands(player: Player) = player.toNMS().run {
-        val empty = CraftItemStack.asNMSCopy(TitleItem.transparentItem)
-        val stateId = inventoryMenu.incrementStateId()
-        (36..45).forEach { connection.send(ClientboundContainerSetSlotPacket(inventoryMenu.containerId, stateId, it, empty)) }
-    }
+    fun hideHands(player: Player) = player.sendTransparentSlots(36..45)
 
     private fun wrap(degrees: Float) = ((degrees + 180f) % 360f + 360f) % 360f - 180f
 }

@@ -8,14 +8,15 @@ import com.mineinabyss.dependencies.*
 import com.mineinabyss.features.achievements.AchievementsFeature
 import com.mineinabyss.features.ansible.ConfigPullFeature
 import com.mineinabyss.features.anticheese.AntiCheeseFeature
+import com.mineinabyss.features.cinematics.CinematicsFeature
 import com.mineinabyss.features.core.CoreFeature
 import com.mineinabyss.features.cosmetics.CosmeticsFeature
 import com.mineinabyss.features.curse.CurseFeature
 import com.mineinabyss.features.custom_hud.CustomHudFeature
 import com.mineinabyss.features.descent.DescentFeature
+import com.mineinabyss.features.dialogs.DialogFeature
 import com.mineinabyss.features.displayLocker.DisplayLockerFeature
 import com.mineinabyss.features.goals.GoalFeature
-import com.mineinabyss.features.gondolas.GondolaFeature
 import com.mineinabyss.features.guilds.GuildFeature
 import com.mineinabyss.features.guilds.GuildsModule
 import com.mineinabyss.features.guilds.database.GuildJoinQueue
@@ -30,6 +31,7 @@ import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.misc.MiscFeature
 import com.mineinabyss.features.music.MusicFeature
+import com.mineinabyss.features.npc.NpcFeature
 import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
 import com.mineinabyss.features.okibotravel.OkiboTravelFeature
 import com.mineinabyss.features.orthbanking.OrthBankingFeature
@@ -42,6 +44,7 @@ import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.respawn.RespawnFeature
 import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
+import com.mineinabyss.features.warps.WarpFeature
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -131,14 +134,15 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
         di.scope.loadAllCatching(
             AntiCheeseFeature,
             AchievementsFeature,
+            CinematicsFeature,
             ConfigPullFeature,
             CoreFeature,
             CosmeticsFeature,
             CurseFeature,
             CustomHudFeature,
             DescentFeature,
+            DialogFeature,
             DisplayLockerFeature,
-            GondolaFeature,
             GuildFeature,
             HubStorageFeature,
             KeepInvFeature,
@@ -146,6 +150,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             LootCratesFeature,
             MiscFeature,
             MusicFeature,
+            NpcFeature,
             ShopKeepingFeature,
             OkiboTravelFeature,
             OrthBankingFeature,
@@ -157,6 +162,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             RelicsFeature,
             ToolsFeature,
             TutorialFeature,
+            WarpFeature,
             GoalFeature,
             RespawnFeature,
         )
