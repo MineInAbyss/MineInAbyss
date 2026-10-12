@@ -10,4 +10,4 @@ import org.bukkit.entity.Player
 fun Player.openHubStorage() = openInventory(enderChest)
 fun Entity.isInHub() = location.isInHub()
 fun Block.isinHub() = location.isInHub()
-fun Location.isInHub() = abyss.layers.config.hubSection == deeperWorld.sections[this]
+fun Location.isInHub() = abyss.layers.config.hubSection == deeperWorld.sections[this]?.section
