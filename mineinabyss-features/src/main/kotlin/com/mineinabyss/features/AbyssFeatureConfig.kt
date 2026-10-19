@@ -46,6 +46,7 @@ class AbyssFeatureConfig(
     val patreon: PatreonConfig = PatreonConfig(),
     val playerProfile: PlayerProfileConfig = PlayerProfileConfig(),
     val pvp: Toggle = Toggle(),
+    val regionContexts: Toggle = Toggle(),
     val relics: Toggle = Toggle(),
     val tools: Toggle = Toggle(),
     val tutorial: Toggle = Toggle(),

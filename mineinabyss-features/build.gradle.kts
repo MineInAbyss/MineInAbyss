@@ -12,6 +12,16 @@ plugins {
     alias(miaLibs.plugins.kotlinx.serialization)
 }
 
+idofront {
+    paperDependency = "com.mineinabyss.cartridge:cartridge-api:26.3-R0.1-SNAPSHOT"
+}
+
+configurations.configureEach {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("io.papermc.paper:paper-api")).using(module(idofront.paperDependency.get()))
+    }
+}
+
 dependencies {
     api(project(":mineinabyss-components"))
 

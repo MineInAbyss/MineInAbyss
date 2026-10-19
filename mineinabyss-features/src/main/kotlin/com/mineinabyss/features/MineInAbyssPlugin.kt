@@ -37,6 +37,7 @@ import com.mineinabyss.features.patreons.PatreonFeature
 import com.mineinabyss.features.playerprofile.PlayerProfileFeature
 import com.mineinabyss.features.pvp.PvpFeature
 import com.mineinabyss.features.quests.QuestFeature
+import com.mineinabyss.features.regioncontexts.RegionContextsFeature
 import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.respawn.RespawnFeature
 import com.mineinabyss.features.tools.ToolsFeature
@@ -152,6 +153,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             PlayerProfileFeature,
             PvpFeature,
             QuestFeature,
+            RegionContextsFeature,
             RelicsFeature,
             ToolsFeature,
             TutorialFeature,
