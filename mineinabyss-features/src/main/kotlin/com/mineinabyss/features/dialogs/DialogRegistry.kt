@@ -1,11 +1,11 @@
 package com.mineinabyss.features.dialogs
 
 import com.charleskorn.kaml.*
-import com.mineinabyss.features.dialogs.loading.DialogInheritance
-import com.mineinabyss.features.dialogs.loading.DialogVariables
 import com.mineinabyss.features.dialogs.model.DialogNode
-import com.mineinabyss.features.dialogs.model.DialogRef
+import com.mineinabyss.features.helpers.KeyOrInline
 import com.mineinabyss.features.helpers.loading.KeyedYamlLoader
+import com.mineinabyss.features.helpers.loading.YamlInheritance
+import com.mineinabyss.features.helpers.loading.YamlVariables
 import com.mineinabyss.geary.prefabs.PrefabKey
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
@@ -21,19 +21,10 @@ class DialogRegistry private constructor(
 
     val keys get() = dialogs.keys
 
-    fun copyOf(base: PrefabKey, variables: Map<String, YamlNode>): DialogNode {
-        val path = YamlPath.root
-        val entries = mapOf(
-            YamlScalar(DialogInheritance.INHERIT, path) to YamlScalar(base.full, path),
-            YamlScalar(DialogVariables.VARIABLES, path) to YamlMap(variables.mapKeys { YamlScalar(it.key, path) }, path),
-        )
-        return decode(yaml, DialogInheritance.resolveLoaded(YamlMap(entries, path), resolved::get))
-    }
-
     private val inlineCache = ConcurrentHashMap<YamlNode, DialogNode>()
 
     fun inline(node: YamlNode): DialogNode = inlineCache.getOrPut(node) {
-        decode(yaml, DialogInheritance.resolveLoaded(node, resolved::get))
+        decode(yaml, YamlVariables.substitute(YamlInheritance.resolveLoaded(node, resolved::get)))
     }
 
     fun danglingReferences(): List<String> = dialogs.flatMap { (key, node) ->
@@ -42,8 +33,8 @@ class DialogRegistry private constructor(
 
     private fun references(node: DialogNode): List<PrefabKey> = node.children().flatMap { ref ->
         when (ref) {
-            is DialogRef.Reference -> listOf(ref.key)
-            is DialogRef.Inline -> references(ref.node)
+            is KeyOrInline.Reference -> listOf(ref.key)
+            is KeyOrInline.Inline -> references(ref.value)
         }
     }
 
@@ -55,14 +46,12 @@ class DialogRegistry private constructor(
 
         fun load(root: Path, yaml: Yaml): DialogRegistry {
             val files = KeyedYamlLoader.load(root)
-            val resolved = DialogInheritance.resolveAll(files.files.mapValues { it.value.node })
-            resolved.errors.forEach { (key, error) -> files.errors += "Could not load dialog $key (${files.where(key)}): $error" }
-            val dialogs = files.decodeAll("dialog", resolved.nodes) { decode(yaml, it) }
-            return DialogRegistry(yaml, resolved.nodes, dialogs, files.errors)
+            val resolved = files.resolveInheritance("dialog")
+            val dialogs = files.decodeInherited("dialog", resolved) { decode(yaml, it) }
+            return DialogRegistry(yaml, resolved, dialogs, files.logErrors(dialogs.size, "dialogs"))
         }
 
-        private fun decode(yaml: Yaml, node: YamlNode): DialogNode =
-            yaml.decodeFromYamlNode(DialogNode.serializer(), normalize(DialogVariables.substitute(node)))
+        private fun decode(yaml: Yaml, node: YamlNode): DialogNode = yaml.decodeFromYamlNode(DialogNode.serializer(), normalize(node))
 
         // Lets single-line pages write `line:` instead of `lines:`
         private fun normalize(node: YamlNode): YamlNode = when (node) {

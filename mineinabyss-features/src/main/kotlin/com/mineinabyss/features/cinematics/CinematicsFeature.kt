@@ -4,14 +4,17 @@ import com.mineinabyss.dependencies.addCloseable
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
 import com.mineinabyss.dependencies.single
+import com.mineinabyss.dependencies.singleModule
 import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.features.helpers.loaded
-import com.mineinabyss.features.helpers.prefabKey
+import com.mineinabyss.features.helpers.loading.KeyedRegistry
+import com.mineinabyss.features.helpers.prefabKeyIn
 import com.mineinabyss.features.helpers.reportReload
+import com.mineinabyss.features.locations.LocationPoints
+import com.mineinabyss.features.locations.LocationPointsFeature
 import com.mineinabyss.features.npc.npcSpawner
 import com.mineinabyss.geary.papermc.PrefabLoading
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.*
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -22,7 +25,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import kotlin.io.path.div
 
-/** Anchors set with `/mia cinematics anchor`, used by `play` and `pos` */
 internal class CinematicEditor {
     private val anchors = mutableMapOf<UUID, CinematicAnchor>()
 
@@ -32,15 +34,16 @@ internal class CinematicEditor {
     }
 }
 
-val cinematics: Cinematics? get() = loaded(CinematicsFeature)
+internal typealias CinematicRegistry = KeyedRegistry<CinematicScene>
 
-fun Player.isInCinematic() = cinematics?.isPlaying(this) == true
+val cinematics: Cinematics? get() = loaded(CinematicsFeature)
 
 val CinematicsFeature = module("cinematics") {
     require(get<AbyssFeatureConfig>().cinematics.enabled) { "Cinematics feature is disabled" }
+    val points = singleModule(LocationPointsFeature).get<LocationPoints>()
 
     val cinematicsPath = plugin.dataPath / "cinematics"
-    val registry by single { CinematicRegistry(cinematicsPath) }
+    val registry by single<CinematicRegistry> { KeyedRegistry(cinematicsPath, "cinematic", "cinematics", CinematicScene.serializer()) }
     val cinematics by single { Cinematics(registry) }
     single { CinematicEditor() }
 
@@ -49,6 +52,7 @@ val CinematicsFeature = module("cinematics") {
 
     launch {
         PrefabLoading.awaitLoaded().await()
+        points.loaded.await()
         registry.reload()
     }
 }.mainCommand {
@@ -58,17 +62,17 @@ val CinematicsFeature = module("cinematics") {
         "reload" {
             executes {
                 val errors = get<CinematicRegistry>().reload()
-                sender.reportReload("cinematics", get<CinematicRegistry>().scenes.size, errors.size)
+                sender.reportReload("cinematics", get<CinematicRegistry>().entries.size, errors.size)
             }
         }
         "list" {
             executes {
-                get<CinematicRegistry>().scenes.forEach { (key, scene) -> sender.info("$key <gray>${scene.steps.size} steps") }
+                get<CinematicRegistry>().entries.forEach { (key, scene) -> sender.info("$key <gray>${scene.steps.size} steps") }
             }
         }
         "play" {
             description = "Plays a scene from your anchor, or from where you stand if none is set"
-            executes.asPlayer().args("scene" to Args.prefabKey().oneOf { get<CinematicRegistry>().scenes.keys.toList() }) { key ->
+            executes.asPlayer().args("scene" to Args.prefabKeyIn { get<CinematicRegistry>().entries.keys }) { key ->
                 val anchor = get<CinematicEditor>()[player] ?: CinematicAnchor(player.location)
                 if (!get<Cinematics>().play(player, key, anchor)) player.error("Could not play $key")
             }

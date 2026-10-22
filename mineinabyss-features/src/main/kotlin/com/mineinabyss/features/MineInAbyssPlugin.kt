@@ -28,6 +28,7 @@ import com.mineinabyss.features.hubstorage.HubStorageFeature
 import com.mineinabyss.features.keepinventory.KeepInvFeature
 import com.mineinabyss.features.layers.LayersContext
 import com.mineinabyss.features.layers.LayersFeature
+import com.mineinabyss.features.locations.LocationPointsFeature
 import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.misc.MiscFeature
 import com.mineinabyss.features.music.MusicFeature
@@ -43,8 +44,9 @@ import com.mineinabyss.features.regioncontexts.RegionContextsFeature
 import com.mineinabyss.features.relics.RelicsFeature
 import com.mineinabyss.features.respawn.RespawnFeature
 import com.mineinabyss.features.tools.ToolsFeature
+import com.mineinabyss.features.transitions.TransitionFeature
+import com.mineinabyss.features.triggerpoints.TriggerPointsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
-import com.mineinabyss.features.warps.WarpFeature
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -132,6 +134,8 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
         }
         // Attempt to load all features, each will manually check if it's enabled in the config and print an error message if not
         di.scope.loadAllCatching(
+            LocationPointsFeature,
+            TransitionFeature,
             AntiCheeseFeature,
             AchievementsFeature,
             CinematicsFeature,
@@ -161,8 +165,8 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             RegionContextsFeature,
             RelicsFeature,
             ToolsFeature,
+            TriggerPointsFeature,
             TutorialFeature,
-            WarpFeature,
             GoalFeature,
             RespawnFeature,
         )

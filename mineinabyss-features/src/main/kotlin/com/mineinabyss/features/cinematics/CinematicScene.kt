@@ -4,13 +4,8 @@ import com.mineinabyss.geary.actions.Tasks
 import com.mineinabyss.geary.autoscan.ExcludeAutoScan
 import com.mineinabyss.idofront.serialization.DurationSerializer
 import com.mineinabyss.idofront.serialization.KeySerializer
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import net.kyori.adventure.key.Key
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -39,38 +34,6 @@ class SkipFade(
     val fadeOut: @Serializable(DurationSerializer::class) Duration = 800.milliseconds,
 )
 
-/**
- * Written as `[x, y, z]` or `[x, y, z, yaw, pitch]` relative to the scene's anchor.
- * The offset turns with the anchor's yaw, so +z is in front of the anchor
- */
-@Serializable(with = ScenePosition.Serializer::class)
-data class ScenePosition(val x: Double, val y: Double, val z: Double, val yaw: Float? = null, val pitch: Float? = null) {
-    object Serializer : KSerializer<ScenePosition> {
-        private val list = ListSerializer(Double.serializer())
-        override val descriptor = list.descriptor
-
-        override fun deserialize(decoder: Decoder): ScenePosition {
-            val values = list.deserialize(decoder)
-            require(values.size == 3 || values.size == 5) { "A position needs [x, y, z] or [x, y, z, yaw, pitch], got $values" }
-            return ScenePosition(values[0], values[1], values[2], values.getOrNull(3)?.toFloat(), values.getOrNull(4)?.toFloat())
-        }
-
-        override fun serialize(encoder: Encoder, value: ScenePosition) =
-            list.serialize(encoder, listOfNotNull(value.x, value.y, value.z, value.yaw?.toDouble(), value.pitch?.toDouble()))
-    }
-}
-
-enum class Ease {
-    LINEAR, IN, OUT, IN_OUT;
-
-    fun apply(t: Double): Double = when (this) {
-        LINEAR -> t
-        IN -> t * t
-        OUT -> 1 - (1 - t) * (1 - t)
-        IN_OUT -> t * t * (3 - 2 * t)
-    }
-}
-
 @Serializable
 @ExcludeAutoScan
 sealed interface CinematicStep {
@@ -95,7 +58,7 @@ class BarsStep(
     override val parallel: Boolean = false,
 ) : CinematicStep
 
-/** Fades to or from black through the steps of a post effect, see `WarpTransition.postEffectSteps` */
+/** Fades to or from black through the steps of a post effect, see `Transition.postEffectSteps` */
 @Serializable
 @ExcludeAutoScan
 @SerialName("FADE")
@@ -183,7 +146,7 @@ class GondolaStep(
     val speed: Double = 20.0,
     /** Blocks per second gained each second while falling */
     val acceleration: Double = 6.0,
-    val landSound: String? = "minecraft:block.wood.fall",
+    val landSound: @Serializable(KeySerializer::class) Key? = Key.key("minecraft", "block.wood.fall"),
     /**
      * Puts the player themselves in the middle of the floor and views through their own eyes, so they can look around.
      * The mannequin being viewed through is removed once the view is back on the player, and the player stays where the ride ends
@@ -209,7 +172,7 @@ class RemoveStep(
 @ExcludeAutoScan
 @SerialName("SOUND")
 class SoundStep(
-    val sound: String,
+    val sound: @Serializable(KeySerializer::class) Key,
     val volume: Float = 1f,
     val pitch: Float = 1f,
     override val parallel: Boolean = false,

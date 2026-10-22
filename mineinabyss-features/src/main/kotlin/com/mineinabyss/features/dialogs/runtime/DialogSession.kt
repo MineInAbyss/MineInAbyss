@@ -3,19 +3,27 @@ package com.mineinabyss.features.dialogs.runtime
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.dialogs.conditions.allPass
 import com.mineinabyss.features.dialogs.model.*
+import com.mineinabyss.features.helpers.KeyOrInline
+import com.mineinabyss.features.helpers.actionContext
+import com.mineinabyss.features.helpers.freeze
+import com.mineinabyss.features.helpers.nextTick
+import com.mineinabyss.features.helpers.runIn
+import com.mineinabyss.features.helpers.unfreeze
+import com.mineinabyss.features.npc.npcSpawner
 import com.mineinabyss.geary.actions.Tasks
+import com.mineinabyss.geary.prefabs.PrefabKey
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import org.aselstudios.luxdialoguesapi.Builders.Answer as LuxAnswer
 import org.aselstudios.luxdialoguesapi.Builders.Dialogue
 import org.aselstudios.luxdialoguesapi.Builders.Page
-import org.aselstudios.luxdialoguesapi.DialogueProvider
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
-import org.bukkit.entity.Entity
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
-import java.lang.reflect.Method
 import java.util.Collections
 import java.util.IdentityHashMap
+
+private val FREEZE_KEY = NamespacedKey("mineinabyss", "dialog/freeze")
 
 /**
  * Walks a dialog tree for one player and feeds it to LuxDialogues one segment at a time.
@@ -24,7 +32,7 @@ import java.util.IdentityHashMap
  * CONDITIONALs are evaluated while the segment is built, and the segment stops at a REPLY.
  * ACTION nodes run while the segment is built, or when the player clicks past the page before them.
  * Answers call back into the session, which builds the next segment.
- * Speaker and style are read when a segment starts, so a change only shows after the next answer
+ * Speaker, style and focus are read when a segment starts, so a change only shows after the next answer
  */
 class DialogSession(
     val player: Player,
@@ -33,10 +41,10 @@ class DialogSession(
     private var speaker: String,
     private var style: String?,
     environment: Map<String, Any?>,
-    private val focus: Entity?,
 ) {
-    val context = dialogContext(player, environment + (SESSION_KEY to this))
+    val context = actionContext(player, environment + (SESSION_KEY to this))
     private val config get() = sessions.config
+    private var focus: PrefabKey? = environment[FOCUS_KEY] as? PrefabKey
     private var closed = false
     private var generation = 0
     private val isDetached get() = closed || !sessions.isCurrentOrIdle(this)
@@ -46,8 +54,11 @@ class DialogSession(
 
     fun show(node: DialogNode, runActions: Boolean = true) {
         if (closed) return
-        node.speaker?.let { speaker = it }
-        node.style?.let { style = it }
+        speaker = node.speaker ?: speaker
+        style = node.style ?: style
+        val previousFocus = focus
+        focus = node.focus ?: focus
+        if (previousFocus != null && previousFocus != focus) npcSpawner?.faceHome(previousFocus)
 
         val segment = Segment(runActions, ++generation).apply { build(node) }
         // An ACTION node may have opened another dialog while the segment was built
@@ -55,17 +66,21 @@ class DialogSession(
         val first = segment.pages.firstOrNull() ?: return close()
 
         val dialogue = config.style(style).builder(luxId(), speaker)
-            .setExternallyDriven()
+            .setExternallyDriven(true)
             .apply { segment.pages.forEach { addPage(it.build()) } }
             .build()
         this.dialogue = dialogue
 
         sessions.register(this)
+        player.freeze(FREEZE_KEY)
         val provider = LuxDialoguesAPI.getProvider()
-        if (provider.isInDialogue(player) == true) provider.redirectDialogue(player, dialogue, first.id)
+        if (sessions.isInDialog(player)) provider.redirectDialogue(player, dialogue, first.id)
         else provider.sendDialogue(player, dialogue, first.id)
         // Lux drops any focus whenever it sends a dialogue, so it is applied again for every segment
-        focus?.let { provider.focusEntity(player, it) }
+        focus?.let { key ->
+            npcSpawner?.entity(key)?.let { provider.focusEntity(player, it) }
+            npcSpawner?.face(key, player)
+        }
     }
 
     /** @param clearBox false when another session takes over the open box */
@@ -73,19 +88,15 @@ class DialogSession(
         if (closed) return
         closed = true
         sessions.unregister(this)
-        val provider = LuxDialoguesAPI.getProvider()
-        if (clearBox && provider.isInDialogue(player) == true) provider.clearDialogue(player)
-    }
-
-    // Without the fork Lux stops the box on every answer click, before the answer callback has run
-    internal fun onLuxStopped() {
-        if (externallyDrivenSetter == null) sessions.unregister(this) else close(clearBox = false)
+        if (clearBox && sessions.isInDialog(player)) LuxDialoguesAPI.getProvider().clearDialogue(player)
+        focus?.let { npcSpawner?.faceHome(it) }
+        player.unfreeze(FREEZE_KEY)
     }
 
     private fun resolve(ref: DialogRef?): DialogNode? = when (ref) {
         null -> null
-        is DialogRef.Inline -> ref.node
-        is DialogRef.Reference -> sessions.registry[ref.key].also {
+        is KeyOrInline.Inline -> ref.value
+        is KeyOrInline.Reference -> sessions.registry[ref.key].also {
             if (it == null) abyss.logger.w("Dialog $id points at missing dialog ${ref.key}")
         }
     }
@@ -103,14 +114,17 @@ class DialogSession(
         answer.actions?.runIn(context)
         // Actions may have closed this dialog or opened another one
         if (isDetached) return@onMainThread
-        resolve(answer.next)?.let { show(it) } ?: close()
+        showOrClose(answer.next)
     }
 
     private fun continueAfter(node: ActionNode) {
-        if (isDetached) return
         node.actions?.runIn(context)
         if (isDetached) return
-        resolve(node.next)?.let { show(it) } ?: close()
+        showOrClose(node.next)
+    }
+
+    private fun showOrClose(ref: DialogRef?) {
+        resolve(ref)?.let { show(it) } ?: close()
     }
 
     private fun luxId() = "mineinabyss_" + id.replace(':', '_')
@@ -184,14 +198,14 @@ class DialogSession(
 
         // Lux only advances a page on the player's click when it has a page to go to, so a blank one is added and runs the action as it opens
         private fun continueOnDismiss(page: PageDraft, node: ActionNode) {
-            val dismissed = PageDraft("p${pages.size}", listOf(" ")).also(pages::add)
+            val dismissed = newPage(listOf(" "))
             page.goTo = dismissed.id
             dismissed.preAction = whileActive { continueAfter(node) }
         }
 
         private fun addPages(node: DialogNode, lines: List<String>, actions: Tasks?): PageDraft {
             val chunks = lines.ifEmpty { listOf(" ") }.chunked(config.linesPerPage.coerceAtLeast(1))
-            val drafts = chunks.map { PageDraft("p${pages.size}", it).also(pages::add) }
+            val drafts = chunks.map(::newPage)
             val first = drafts.first()
             pageIds[node] = first.id
             previous?.goTo = first.id
@@ -200,6 +214,8 @@ class DialogSession(
             previous = drafts.last()
             return drafts.last()
         }
+
+        private fun newPage(lines: List<String>) = PageDraft("p${pages.size}", lines).also(pages::add)
 
         private fun whileActive(action: () -> Unit): () -> Unit = { if (isActive(generation)) action() }
 
@@ -213,7 +229,7 @@ class DialogSession(
                 .setAnswerID("a$index")
                 .setAnswerText(text)
                 .apply { answer.info?.let { setInfoLine(it) } }
-                .apply { if (!unlocked && disableLocked) disable() }
+                .apply { if (!unlocked && disableLocked) setDisabled(true) }
                 .addCallback { onAnswer(reply, answer, generation) }
                 .build()
         }
@@ -231,43 +247,4 @@ class DialogSession(
     }
 
     private class ShownAnswer(val index: Int, val answer: Answer, val unlocked: Boolean)
-
-    private companion object {
-        fun forkMethod(lookup: () -> Method): Method? = runCatching(lookup).getOrElse {
-            abyss.logger.w("LuxDialogues is missing ${it.message}, dialogs need the 4.1.4-MIA fork to work fully")
-            null
-        }
-
-        // Older LuxDialogues closes the box between segments, cannot focus entities and always selects the first answer.
-        // It also keeps the page's info line, and leaves locked answers selectable so onAnswer turns the click away
-        val externallyDrivenSetter = forkMethod { Dialogue.Builder::class.java.getMethod("setExternallyDriven", Boolean::class.javaObjectType) }
-
-        fun Dialogue.Builder.setExternallyDriven() = apply {
-            externallyDrivenSetter?.invoke(this, true)
-        }
-
-        val focusEntityMethod = forkMethod { DialogueProvider::class.java.getMethod("focusEntity", Player::class.java, Entity::class.java) }
-
-        fun DialogueProvider.focusEntity(player: Player, entity: Entity) {
-            focusEntityMethod?.invoke(this, player, entity)
-        }
-
-        val defaultAnswerSetter = forkMethod { Page.Builder::class.java.getMethod("setDefaultAnswer", Int::class.javaObjectType) }
-
-        fun Page.Builder.setDefaultAnswer(answer: Int) = apply {
-            defaultAnswerSetter?.invoke(this, answer)
-        }
-
-        val infoLineSetter = forkMethod { LuxAnswer.Builder::class.java.getMethod("setInfoLine", String::class.java) }
-
-        fun LuxAnswer.Builder.setInfoLine(line: String) = apply {
-            infoLineSetter?.invoke(this, line)
-        }
-
-        val disabledSetter = forkMethod { LuxAnswer.Builder::class.java.getMethod("setDisabled", Boolean::class.javaPrimitiveType) }
-
-        fun LuxAnswer.Builder.disable() = apply {
-            disabledSetter?.invoke(this, true)
-        }
-    }
 }

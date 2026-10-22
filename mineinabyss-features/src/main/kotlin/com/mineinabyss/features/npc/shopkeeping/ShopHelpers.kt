@@ -6,8 +6,8 @@ import com.mineinabyss.components.npc.shopkeeping.*
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.helpers.CoinFactory
-import com.mineinabyss.features.helpers.adjustItemStackAmountFromCost
 import com.mineinabyss.features.helpers.luckPerms
+import com.mineinabyss.features.helpers.removeSimilar
 import com.mineinabyss.features.helpers.similarItemAmount
 import com.mineinabyss.features.helpers.ui.composables.Button
 import com.mineinabyss.geary.datatypes.EntityType
@@ -78,7 +78,7 @@ fun List<@Serializable(with = ShopTradeSerializer::class) ShopTrade>.handleTrade
                 when (currencyType) {
                     ShopCurrency.ORTH_COIN -> data.orthCoinsHeld -= cost
                     ShopCurrency.MITTY_TOKEN -> data.mittyTokensHeld -= cost
-                    ShopCurrency.ITEM -> player.adjustItemStackAmountFromCost(currencyStack, cost)
+                    ShopCurrency.ITEM -> player.removeSimilar(currencyStack, cost)
                 }
 
                 when (tradeAction.action) {

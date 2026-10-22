@@ -2,12 +2,11 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.editPlayerData
 import com.mineinabyss.components.playerDataOrNull
+import com.mineinabyss.idofront.textcomponents.toPlainText
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-/** Orth coins come from the bank, items from the player's inventory */
 @Serializable
 class Cost(
     val orthCoins: Int = 0,
@@ -25,34 +24,30 @@ class Cost(
         if (!canAfford(player)) return false
         if (orthCoins > 0) player.editPlayerData { orthCoinsHeld -= orthCoins }
 
-        itemStacks()?.forEach { player.adjustItemStackAmountFromCost(it, it.amount) }
+        itemStacks()?.forEach { player.removeSimilar(it, it.amount) }
         return true
     }
 
-    fun refund(player: Player) {
-        if (orthCoins > 0) player.editPlayerData { orthCoinsHeld += orthCoins }
-        itemStacks()?.forEach { stack ->
-            player.inventory.addItem(stack).values.forEach { player.world.dropItem(player.location, it) }
-        }
-    }
-
-    /** Amounts of the same item are added together, an item without an amount counts as one */
-    operator fun plus(other: Cost): Cost {
-        val merged = (items + other.items)
-            .groupBy { it.copy(amount = null) }
-            .map { (item, stacks) -> item.copy(amount = stacks.sumOf { it.amount ?: 1 }) }
-
-        return Cost(orthCoins + other.orthCoins, merged)
-    }
-
     fun describe(): String {
-        val parts = (itemStacks() ?: return "unavailable").map { "${it.amount}x ${PlainTextComponentSerializer.plainText().serialize(it.effectiveName())}" }
+        val parts = (itemStacks() ?: return "unavailable").map { "${it.amount}x ${it.effectiveName().toPlainText()}" }
         val coins = if (orthCoins > 0) listOf("$orthCoins Orth Coins") else emptyList()
 
         return (parts + coins).joinToString(", ").ifEmpty { "free" }
     }
+}
 
-    companion object {
-        val FREE = Cost()
+private fun Player.similarItems(item: ItemStack?): List<ItemStack> = inventory.contents.filterNotNull().filter { it.isSimilar(item) }
+
+fun Player.similarItemAmount(item: ItemStack?) = similarItems(item).sumOf { it.amount }
+
+/** Does nothing unless the player holds at least [amount] items similar to [item] */
+fun Player.removeSimilar(item: ItemStack?, amount: Int) {
+    if (item == null || similarItemAmount(item) < amount) return
+    var remaining = amount
+    for (stack in similarItems(item)) {
+        val taken = minOf(stack.amount, remaining)
+        stack.subtract(taken)
+        remaining -= taken
+        if (remaining == 0) return
     }
 }

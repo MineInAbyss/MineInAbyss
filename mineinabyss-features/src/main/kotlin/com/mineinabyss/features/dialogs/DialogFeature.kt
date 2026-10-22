@@ -4,17 +4,18 @@ import com.mineinabyss.dependencies.addCloseable
 import com.mineinabyss.dependencies.get
 import com.mineinabyss.dependencies.module
 import com.mineinabyss.dependencies.single
+import com.mineinabyss.dependencies.singleModule
 import com.mineinabyss.features.AbyssFeatureConfig
 import com.mineinabyss.features.dialogs.runtime.DialogSessions
-import com.mineinabyss.features.dialogs.runtime.GondolaUnlockMigration
 import com.mineinabyss.features.dialogs.runtime.clearUnlocks
 import com.mineinabyss.features.dialogs.runtime.unlocks
 import com.mineinabyss.features.helpers.loaded
-import com.mineinabyss.features.helpers.prefabKey
+import com.mineinabyss.features.helpers.prefabKeyIn
 import com.mineinabyss.features.helpers.reportReload
+import com.mineinabyss.features.locations.LocationPoints
+import com.mineinabyss.features.locations.LocationPointsFeature
 import com.mineinabyss.geary.papermc.PrefabLoading
 import com.mineinabyss.idofront.commands.brigadier.Args
-import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.*
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.info
@@ -26,17 +27,20 @@ val dialogSessions: DialogSessions? get() = loaded(DialogFeature)
 
 val DialogFeature = module("dialogs") {
     require(get<AbyssFeatureConfig>().dialogs.enabled) { "Dialogs feature is disabled" }
+    val points = singleModule(LocationPointsFeature).get<LocationPoints>()
     requirePlugins("LuxDialogues")
 
     val dataPath = plugin.dataPath
     val config by singleConfig<DialogsConfig>("dialogs/config.yml") { default = DialogsConfig() }
     val sessions by single { DialogSessions(dataPath / "dialogs", config) }
 
-    listeners(sessions, GondolaUnlockMigration)
+    listeners(sessions)
     addCloseable { sessions.closeAll() }
-    // Dialogs decode Geary actions and conditions, whose serializers are only complete once Geary has loaded its prefabs
+    // Dialogs decode Geary actions and conditions, whose serializers are only complete once Geary has loaded its prefabs.
+    // Actions like warp_to also need the location points they reference
     launch {
         PrefabLoading.awaitLoaded().await()
+        points.loaded.await()
         sessions.reload()
     }
 }.mainCommand {
@@ -58,7 +62,7 @@ val DialogFeature = module("dialogs") {
             }
         }
         "open" {
-            executes.asPlayer().args("dialog" to Args.prefabKey().oneOf { get<DialogSessions>().registry.keys.toList() }) { key ->
+            executes.asPlayer().args("dialog" to Args.prefabKeyIn { get<DialogSessions>().registry.keys }) { key ->
                 if (!get<DialogSessions>().start(player, key)) player.error("Dialog $key not found")
             }
         }

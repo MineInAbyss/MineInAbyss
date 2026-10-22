@@ -2,7 +2,7 @@ package com.mineinabyss.features.cinematics
 
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.dialogs.runtime.SESSION_KEY
-import com.mineinabyss.features.dialogs.runtime.player
+import com.mineinabyss.features.helpers.player
 import com.mineinabyss.features.npc.NPC_KEY
 import com.mineinabyss.features.npc.NpcDefinition
 import com.mineinabyss.geary.actions.Action

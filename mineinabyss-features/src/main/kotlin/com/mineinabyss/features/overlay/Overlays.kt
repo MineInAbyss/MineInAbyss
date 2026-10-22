@@ -3,23 +3,23 @@ package com.mineinabyss.features.overlay
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.mineinabyss.emojy.config.Emote
 import com.mineinabyss.features.abyss
-import com.mineinabyss.features.helpers.freezeWalkSpeed
+import com.mineinabyss.features.helpers.freeze
+import com.mineinabyss.features.helpers.hideHands
 import com.mineinabyss.features.helpers.lockCameraDistance
 import com.mineinabyss.features.helpers.releaseCameraDistance
 import com.mineinabyss.features.helpers.removePostEffects
-import com.mineinabyss.features.helpers.restoreWalkSpeed
-import com.mineinabyss.features.helpers.sendTransparentSlots
+import com.mineinabyss.features.helpers.resetCamera
+import com.mineinabyss.features.helpers.spawnStand
+import com.mineinabyss.features.helpers.unfreeze
+import com.mineinabyss.features.helpers.viewThrough
 import com.mineinabyss.features.helpers.zeroCameraDistance
 import com.mineinabyss.idofront.messaging.error
-import com.mineinabyss.idofront.nms.aliases.toNMS
-import com.mineinabyss.idofront.spawning.spawn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.time.ticks
 import kotlinx.coroutines.delay
 import net.kyori.adventure.key.Key
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.sound.Sound
-import net.minecraft.network.protocol.game.ClientboundSetCameraPacket
+import net.kyori.adventure.text.Component
 import org.bukkit.*
 import org.bukkit.entity.*
 import org.joml.Vector3f
@@ -97,7 +97,7 @@ object Overlays {
             mirror = mirrored
             applyEffect()
             // Inventory syncs during the session bring the real hotbar back
-            hideHands(player)
+            player.hideHands()
             hoverOver(target())
             hint()
         }
@@ -134,6 +134,7 @@ object Overlays {
 
     private val sessions = mutableMapOf<UUID, Session>()
     private val cameraKey = NamespacedKey("mineinabyss", "overlay/camera")
+    private val freezeKey = NamespacedKey("mineinabyss", "overlay/freeze")
 
     fun session(player: Player) = sessions[player.uniqueId]
 
@@ -164,12 +165,7 @@ object Overlays {
         val yaw = fixedEye?.yaw ?: player.yaw
         val pitch = fixedEye?.pitch ?: player.pitch.coerceIn(-MAX_PITCH, MAX_PITCH)
         player.setRotation(yaw, pitch)
-        val camera = player.world.spawn(fixedEye ?: player.location, ArmorStand::class.java) { stand ->
-            stand.isVisible = false
-            stand.setGravity(false)
-            stand.isInvulnerable = true
-            stand.isPersistent = false
-            stand.isVisibleByDefault = false
+        val camera = spawnStand(player, fixedEye ?: player.location) { stand ->
             stand.setRotation(yaw, pitch)
             stand.zeroCameraDistance()
         }
@@ -194,15 +190,16 @@ object Overlays {
             display.transformation = display.transformation.apply { scale.set(Vector3f(view.scale(CURSOR_SCALE))) }
         }
 
-        val (cursor, mirrorCursor) = cursorAt(view) to cursorAt(mirrorView)
-        listOf(camera, cursor, mirrorCursor).forEach { player.showEntity(abyss, it) }
+        val cursor = cursorAt(view)
+        val mirrorCursor = cursorAt(mirrorView)
+        listOf(cursor, mirrorCursor).forEach { player.showEntity(abyss, it) }
         val session = Session(player, screen, camera, cursorEmote, cursor, mirrorCursor, view, mirrorView, origin)
             .apply { lastYaw = yaw; lastPitch = pitch }
 
         // The client only reports rotation while riding its camera entity
         camera.addPassenger(player)
         sessions[player.uniqueId] = session
-        player.freezeWalkSpeed()
+        player.freeze(freezeKey)
         player.lockCameraDistance(cameraKey)
         OverlayPacketHandler.install(player)
 
@@ -210,8 +207,7 @@ object Overlays {
         abyss.launch {
             delay(2.ticks)
             if (sessions[player.uniqueId] !== session) return@launch
-            player.toNMS().connection.send(ClientboundSetCameraPacket(camera.toNMS()))
-            hideHands(player)
+            player.viewThrough(camera)
         }
 
         return session.also(::moveCursor)
@@ -220,12 +216,12 @@ object Overlays {
     fun close(player: Player) {
         val session = sessions.remove(player.uniqueId) ?: return
         OverlayPacketHandler.uninstall(player)
-        player.toNMS().run { connection.send(ClientboundSetCameraPacket(this)) }
+        player.resetCamera()
         restore(player, session)
         player.releaseCameraDistance(cameraKey)
         (session.elements + session.mirror).forEach(PlaneElement::remove)
         listOf(session.camera, session.cursor, session.mirrorCursor).forEach(Entity::remove)
-        player.restoreWalkSpeed()
+        player.unfreeze(freezeKey)
         player.updateInventory()
 
         // The swallowed hotbar packets left the client on another slot
@@ -258,11 +254,10 @@ object Overlays {
         hoverOver(target())
     }
 
-    // Post effects and walk speed are saved with the player, so an overlay left open on a crash must be undone on join
+    // Post effects are saved with the player, so an overlay left open on a crash must be undone on join
     fun clearIfStale(player: Player) {
         if (player.uniqueId in sessions) return
         player.removePostEffects(STALE_EFFECT_PREFIXES)
-        player.restoreWalkSpeed()
     }
 
     fun click(player: Player) {
@@ -283,9 +278,6 @@ object Overlays {
         session.cursor.teleport(session.view.at(x, y, PlaneLayout.NEAR_DISTANCE))
         session.mirrorCursor.teleport(session.mirrorView.at(x, y, PlaneLayout.NEAR_DISTANCE))
     }
-
-    // The first person hand still renders with a foreign camera and covers the cursor
-    fun hideHands(player: Player) = player.sendTransparentSlots(36..45)
 
     private fun wrap(degrees: Float) = ((degrees + 180f) % 360f + 360f) % 360f - 180f
 }

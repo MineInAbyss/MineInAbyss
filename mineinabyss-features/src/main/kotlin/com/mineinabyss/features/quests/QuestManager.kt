@@ -1,37 +1,31 @@
 package com.mineinabyss.features.quests
 
-import com.mineinabyss.features.goals.ConditionProgress
 import com.mineinabyss.features.goals.repository.GoalRepository
 import com.mineinabyss.features.helpers.luckPerms
 import com.mineinabyss.geary.papermc.spawning.locations.RegionService
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.messaging.success
 import com.mineinabyss.idofront.plugin.Services
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
 import net.luckperms.api.node.Node
 import org.bukkit.entity.Player
+
+/** [COMPLETED] means the objective is done but the reward is not claimed yet */
+enum class QuestState {
+    NOT_STARTED, ACTIVE, COMPLETED, CLAIMED
+}
 
 class QuestManager(
     val config: QuestConfig,
     val repository: GoalRepository,
 ) {
-    fun activeQuests(player: Player): Set<String> =
-        repository.allProgress(player).filterValues { !it.rewardClaimed }.keys
-
-    fun completedQuests(player: Player): Set<String> =
-        repository.allProgress(player).filterValues { it.rewardClaimed }.keys
-
-    fun playerHasUnlockedQuest(player: Player, questId: String): Boolean {
-        val progress = repository.progress(player, questId) ?: return false
-        return !progress.rewardClaimed
+    fun state(player: Player, questId: String): QuestState {
+        val progress = repository.progress(player, questId) ?: return QuestState.NOT_STARTED
+        return when {
+            progress.rewardClaimed -> QuestState.CLAIMED
+            progress.completed -> QuestState.COMPLETED
+            else -> QuestState.ACTIVE
+        }
     }
-
-    fun playerHasCompletedQuest(player: Player, questId: String): Boolean =
-        repository.progress(player, questId)?.rewardClaimed == true
-
-    fun isQuestCompleted(player: Player, questId: String): Boolean =
-        repository.progress(player, questId)?.completed == true
 
     fun unlockQuest(player: Player, questId: String) {
         val quest = config.byId(questId) ?: return player.error("Quest $questId not found")
@@ -77,16 +71,6 @@ class QuestManager(
         }
         repository.markRewardClaimed(player, quest.toGoal())
         player.success("Quest completed: ${quest.name}")
-    }
-
-    fun questInformation(player: Player, questId: String): TextComponent {
-        val quest = config.byId(questId) ?: return Component.text(questId)
-        val progress = repository.progress(player, questId)
-            ?: return Component.text(""""${quest.name}" - not started.""")
-        val conditions = quest.conditions.mapIndexed { i, condition ->
-            condition.describe(progress.conditions[i] ?: ConditionProgress())
-        }
-        return Component.text(""""${quest.name}" - ${conditions.joinToString("; ")}""")
     }
 
     fun removeQuest(player: Player, questId: String) {

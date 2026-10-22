@@ -69,7 +69,7 @@ dependencies {
     compileOnly(miaLibs.minecraft.plugin.tccoasters)
     compileOnly(miaLibs.minecraft.plugin.mythichud)
     compileOnly(miaLibs.minecraft.plugin.shopkeepers)
-    compileOnly(miaLibs.minecraft.plugin.luxdialogs)
+    compileOnly("org.aselstudios:LuxDialoguesAPI:4.1.4-MIA")
     compileOnly(miaLibs.minecraft.plugin.mythic.dist)
     compileOnly("com.mineinabyss:stamina-climb:0.25.1-dev.2")
     compileOnly(miaLibs.emojy)

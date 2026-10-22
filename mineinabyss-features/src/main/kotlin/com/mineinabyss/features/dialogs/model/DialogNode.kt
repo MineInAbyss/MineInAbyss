@@ -1,28 +1,23 @@
 package com.mineinabyss.features.dialogs.model
 
-import com.charleskorn.kaml.YamlInput
-import com.charleskorn.kaml.YamlScalar
 import com.mineinabyss.features.dialogs.conditions.DialogCondition
+import com.mineinabyss.features.dialogs.conditions.DialogConditionsSerializer
+import com.mineinabyss.features.helpers.KeyOrInline
+import com.mineinabyss.features.helpers.KeyOrInlineSerializer
 import com.mineinabyss.geary.actions.Tasks
 import com.mineinabyss.geary.autoscan.ExcludeAutoScan
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.serialization.SingleOrListSerializer
 import com.mineinabyss.idofront.serialization.StringsSerializer
-import kotlinx.serialization.ContextualSerializer
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 
-/** [speaker] and [style] apply to this node and everything after it until overridden */
+/** [speaker], [style] and [focus] apply to this node and everything after it until overridden, [focus] is an npc key the player is kept facing */
 @Serializable
 @ExcludeAutoScan
 sealed interface DialogNode {
     val speaker: String?
     val style: String?
+    val focus: PrefabKey?
 
     fun children(): List<DialogRef>
 }
@@ -36,6 +31,7 @@ class PageNode(
     val next: DialogRef? = null,
     override val speaker: String? = null,
     override val style: String? = null,
+    override val focus: PrefabKey? = null,
 ) : DialogNode {
     override fun children() = listOfNotNull(next)
 }
@@ -49,6 +45,7 @@ class ConditionalNode(
     val onFalse: DialogRef? = null,
     override val speaker: String? = null,
     override val style: String? = null,
+    override val focus: PrefabKey? = null,
 ) : DialogNode {
     override fun children() = listOfNotNull(onTrue, onFalse)
 }
@@ -61,6 +58,7 @@ class ActionNode(
     val next: DialogRef? = null,
     override val speaker: String? = null,
     override val style: String? = null,
+    override val focus: PrefabKey? = null,
 ) : DialogNode {
     override fun children() = listOfNotNull(next)
 }
@@ -74,6 +72,7 @@ class ReplyNode(
     val actions: Tasks? = null,
     override val speaker: String? = null,
     override val style: String? = null,
+    override val focus: PrefabKey? = null,
 ) : DialogNode {
     override fun children() = answers.mapNotNull { it.next }
 }
@@ -96,31 +95,10 @@ class Answer(
 
 enum class LockedAnswer { SHOW, HIDE }
 
-object DialogConditionsSerializer : SingleOrListSerializer<DialogCondition>(DialogCondition.serializer())
-
 /**
- * A scalar is a [Reference] to another dialog, looked up when reached so dialogs may loop back.
- * A map is an [Inline] dialog. Template copies were already expanded into inline maps before decoding
+ * A scalar is a reference to another dialog, looked up when reached so dialogs may loop back.
+ * A map is an inline dialog. Template copies were already expanded into inline maps before decoding
  */
-@Serializable(with = DialogRef.Serializer::class)
-@ExcludeAutoScan
-sealed interface DialogRef {
-    data class Reference(val key: PrefabKey) : DialogRef
-    data class Inline(val node: DialogNode) : DialogRef
+typealias DialogRef = @Serializable(DialogRefSerializer::class) KeyOrInline<DialogNode>
 
-    object Serializer : KSerializer<DialogRef> {
-        override val descriptor: SerialDescriptor = ContextualSerializer(Any::class).descriptor
-
-        override fun deserialize(decoder: Decoder): DialogRef {
-            val input = decoder as? YamlInput ?: throw SerializationException("Dialogs can only be read from yaml")
-            if (input.node is YamlScalar) {
-                val key = decoder.decodeString()
-                return Reference(PrefabKey.ofOrNull(key) ?: throw SerializationException("Invalid dialog key '$key'"))
-            }
-            return Inline(DialogNode.serializer().deserialize(decoder))
-        }
-
-        override fun serialize(encoder: Encoder, value: DialogRef) =
-            throw SerializationException("Dialogs cannot be written back")
-    }
-}
+object DialogRefSerializer : KeyOrInlineSerializer<DialogNode>(DialogNode::serializer)

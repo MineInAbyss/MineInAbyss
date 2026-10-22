@@ -52,6 +52,8 @@ internal class CinematicGondola private constructor(
             ?: pivot?.position?.get()?.y?.let { it - dummy.location.y }?.also { measuredMountHeight = it }
             ?: 0.0
 
+    fun floorAt(floor: Double): Location = location.add(0.0, floor, 0.0)
+
     /** Where the carrier sits for the model to show at [location], riders mounted on it start here too */
     val riderBase: Location get() = location.add(0.0, mountHeight - PIVOT_DROP, 0.0)
 

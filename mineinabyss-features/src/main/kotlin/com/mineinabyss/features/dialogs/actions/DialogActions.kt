@@ -6,19 +6,21 @@ import com.charleskorn.kaml.YamlScalar
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.dialogs.DialogRegistry
 import com.mineinabyss.features.dialogs.dialogSessions
-import com.mineinabyss.features.dialogs.loading.DialogInheritance
 import com.mineinabyss.features.dialogs.model.DialogNode
 import com.mineinabyss.features.dialogs.runtime.SPEAKER_KEY
 import com.mineinabyss.features.dialogs.runtime.STYLE_KEY
 import com.mineinabyss.features.dialogs.runtime.lock
-import com.mineinabyss.features.dialogs.runtime.player
 import com.mineinabyss.features.dialogs.runtime.unlock
 import com.mineinabyss.features.helpers.Cost
+import com.mineinabyss.features.helpers.actionsOf
+import com.mineinabyss.features.helpers.loading.YamlInheritance
+import com.mineinabyss.features.helpers.player
 import com.mineinabyss.features.quests.QuestManager
 import com.mineinabyss.features.quests.questManager
 import com.mineinabyss.geary.actions.Action
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.actions.ActionsCancelledException
+import com.mineinabyss.geary.actions.Tasks
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.error
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -36,7 +38,7 @@ value class OpenDialogAction(val dialog: YamlNode) : Action {
             val key = PrefabKey.ofOrNull(dialog.content) ?: throw IllegalArgumentException("Invalid dialog key '${dialog.content}'")
             return key.full to (registry[key] ?: throw IllegalArgumentException("Dialog $key does not exist"))
         }
-        val id = (dialog as? YamlMap)?.getScalar(DialogInheritance.INHERIT)?.content ?: "inline"
+        val id = (dialog as? YamlMap)?.getScalar(YamlInheritance.INHERIT)?.content ?: "inline"
         return id to registry.inline(dialog)
     }
 
@@ -49,6 +51,12 @@ value class OpenDialogAction(val dialog: YamlNode) : Action {
         }
         sessions.start(player, node, id, environment[SPEAKER_KEY] as? String, environment[STYLE_KEY] as? String, environment.toMap())
     }
+}
+
+// Dialogs written in place are only decoded when opened, so callers check them on load to report problems early
+fun Tasks?.brokenDialogs(): List<String> {
+    val registry = dialogSessions?.registry ?: return emptyList()
+    return actionsOf<OpenDialogAction>().mapNotNull { action -> runCatching { action.resolve(registry) }.exceptionOrNull()?.message }
 }
 
 @Serializable

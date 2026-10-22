@@ -24,7 +24,6 @@ import com.mineinabyss.geary.papermc.datastore.encode
 import com.mineinabyss.geary.papermc.gearyPaper
 import com.mineinabyss.geary.papermc.toEntityOrNull
 import com.mineinabyss.geary.papermc.tracking.GearyArgs
-import com.mineinabyss.geary.papermc.withGeary
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.guiy.canvas.guiy
 import com.mineinabyss.idofront.Idofront
