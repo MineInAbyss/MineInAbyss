@@ -25,6 +25,7 @@ class AchievementManager(
         }
         if (startedAny)  {
             seedCurrentRegions(player)
+            repository.seedCompleted(player)
         }
     }
 
@@ -37,7 +38,10 @@ class AchievementManager(
             .forEach { gated ->
                 if (repository.startGoal(player, gated.toGoal())) startedAny = true
             }
-        if (startedAny) seedCurrentRegions(player)
+        if (startedAny) {
+            seedCurrentRegions(player)
+            repository.seedCompleted(player)
+        }
         // miav is an arbitrary name I picked for the achievement namespace (short for mineInAchievement), less annoying to write than "mineinabyss:" everytime
         val key = NamespacedKey("miav", goal.id)
         val achievement = Bukkit.getAdvancement(key) ?: run { player.error("Couldn't get achievement with key: $key"); return@onComplete }

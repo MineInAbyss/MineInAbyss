@@ -15,6 +15,7 @@ import com.mineinabyss.features.goals.ConditionProgress
 import com.mineinabyss.features.goals.goalListener.ClimbFactListener
 import com.mineinabyss.features.goals.repository.GoalCache
 import com.mineinabyss.features.goals.repository.GoalRepository
+import com.mineinabyss.features.whistle.whistleFeature
 import com.mineinabyss.idofront.Idofront
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.suggests
@@ -29,6 +30,7 @@ import org.bukkit.Bukkit
 
 val AchievementsFeature = module("achievements") {
     require(get<AbyssFeatureConfig>().achievements.enabled) { "Achievements feature is disabled" }
+    require(get<AbyssFeatureConfig>().whistle.enabled) { "Whistle feature is disabled" }
     singleConfig<AchievementsConfig>("achievements.yml") {
         default = AchievementsConfig()
         format = Yaml(configuration = YamlConfiguration(strictMode = false, polymorphismStyle = PolymorphismStyle.Property))
@@ -64,6 +66,17 @@ val AchievementsFeature = module("achievements") {
                 manager.repository.resetGoal(player, achievement.toGoal())
                 manager.onReset(player, achievement.toGoal())
                 sender.success("Reset progress for achievement ${achievement.name}")
+            }
+        }
+        "resetAll" {
+            executes.asPlayer  {
+                val ach = get<AchievementsConfig>().achievements
+                val manager = get<AchievementManager>()
+                ach.forEach {
+                    manager.repository.resetGoal(player, it.toGoal())
+                    manager.onReset(player, it.toGoal())
+                }
+                sender.success("Reset ${ach.size} achievements")
             }
         }
         "status" {

@@ -53,5 +53,6 @@ class AbyssFeatureConfig(
     val quests: Toggle = Toggle(),
     val goals: Toggle = Toggle(),
     val respawn: Toggle = Toggle(),
+    val whistle: Toggle = Toggle(),
 ) {
 }
