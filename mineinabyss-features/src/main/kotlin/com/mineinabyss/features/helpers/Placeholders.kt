@@ -4,7 +4,9 @@ import com.mineinabyss.components.custom_hud.customHudData
 import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.components.relics.ShowStarCompassHud
 import com.mineinabyss.components.tools.ShowDepthMeterHud
+import com.mineinabyss.features.abyss
 import com.mineinabyss.deeperworld.sections.section
+import com.mineinabyss.features.patreons.patreonEmotePrefix
 import com.mineinabyss.features.tools.depthmeter.getAbyssDepth
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
@@ -42,6 +44,8 @@ class Placeholders : PlaceholderExpansion() {
 
             "compass" -> player.getCompassAngle().unicode
             "compass_angle" -> player.getCompassAngle().angle
+
+            "patreon_emote" -> if (abyss.config.patreon.enabled) player.patreonEmotePrefix else ""
             else -> null
         }.toString()
 

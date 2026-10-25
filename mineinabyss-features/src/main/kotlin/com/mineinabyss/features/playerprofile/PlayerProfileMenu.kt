@@ -4,15 +4,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import com.mineinabyss.components.PlayerData
 import com.mineinabyss.components.playerprofile.PlayerProfile
-import com.mineinabyss.components.players.Patreon
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.extensions.*
 import com.mineinabyss.features.guilds.menus.GuildScreen
 import com.mineinabyss.features.helpers.*
 import com.mineinabyss.features.helpers.ui.composables.Button
+import com.mineinabyss.features.patreons.patreonTier
 import com.mineinabyss.geary.papermc.datastore.decode
 import com.mineinabyss.geary.papermc.datastore.encode
-import com.mineinabyss.geary.papermc.datastore.has
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import com.mineinabyss.geary.serialization.getOrSetPersisting
 import com.mineinabyss.geary.serialization.setPersisting
@@ -36,11 +35,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Statistic
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-
-private inline fun <reified T : Any> OfflinePlayer.hasComponent(): Boolean {
-    return if (isOnline) player!!.toGeary().has<T>()
-    else with(abyss.gearyGlobal) { getOfflinePDC()?.has<T>() == true }
-}
 
 private inline fun <reified T : Any> OfflinePlayer.getComponent(): T? {
     return if (isOnline) player!!.toGeary().get<T>()
@@ -73,7 +67,7 @@ fun PlayerProfile(viewer: Player, player: OfflinePlayer) {
         )
     }
     val hideArmorIcons = playerProfile.displayProfileArmor
-    val isPatreon by remember { mutableStateOf(player.hasComponent<Patreon>()) }
+    val isPatreon by remember { mutableStateOf(player.patreonTier > 0) }
     val backgroundId = playerProfile.background
 
     val titleComponent = Component.text(buildString {
