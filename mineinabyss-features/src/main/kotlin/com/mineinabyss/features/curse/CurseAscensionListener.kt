@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.ENDER_PEARL
+import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.vehicle.VehicleMoveEvent
 
 class CurseAscensionListener : Listener {
@@ -30,6 +31,12 @@ class CurseAscensionListener : Listener {
         vehicle.passengers.filterIsInstance<Player>().forEach { passenger ->
             handleCurse(passenger, from, to)
         }
+    }
+
+    @EventHandler
+    fun VehicleEnterEvent.handleCurseOnVehicleEnter() {
+        val player = entered as? Player ?: return
+        handleCurse(player, player.location, vehicle.location)
     }
 
     @EventHandler
