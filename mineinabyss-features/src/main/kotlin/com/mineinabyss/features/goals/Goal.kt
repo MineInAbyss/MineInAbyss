@@ -24,6 +24,7 @@ data class Goal(
 @Serializable
 data class GoalsConfig(
     val goals: List<Goal> = emptyList(),
+    val itemCategories: List<ItemCategory> = emptyList(),
 ) {
     fun byId(id: String): Goal? { return goals.find { it.id == id } }
 }

@@ -2,6 +2,7 @@ package com.mineinabyss.features.achievements
 
 import com.mineinabyss.features.goals.Goal
 import com.mineinabyss.features.goals.GoalCondition
+import com.mineinabyss.features.goals.ItemCategory
 import kotlinx.serialization.Serializable
 
 
@@ -21,6 +22,7 @@ data class Achievement(
 @Serializable
 data class AchievementsConfig(
     val achievements: List<Achievement> = emptyList(),
+    val itemCategories: List<ItemCategory> = emptyList(),
 ) {
     fun byId(id: String): Achievement? { return achievements.find { it.id == id } }
 }

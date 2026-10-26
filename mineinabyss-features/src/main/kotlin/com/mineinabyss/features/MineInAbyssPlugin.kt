@@ -47,6 +47,7 @@ import com.mineinabyss.features.tools.ToolsFeature
 import com.mineinabyss.features.transitions.TransitionFeature
 import com.mineinabyss.features.triggerpoints.TriggerPointsFeature
 import com.mineinabyss.features.tutorial.TutorialFeature
+import com.mineinabyss.features.whistle.whistleFeature
 import com.mineinabyss.geary.autoscan.autoscan
 import com.mineinabyss.geary.papermc.datastore.PrefabNamespaceMigrations
 import com.mineinabyss.geary.papermc.gearyPaper
@@ -169,6 +170,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             TutorialFeature,
             GoalFeature,
             RespawnFeature,
+            whistleFeature,
         )
         di.scope.load(MainCommandFeature)
         if (isPlaceholderApiLoaded) Placeholders().register()
