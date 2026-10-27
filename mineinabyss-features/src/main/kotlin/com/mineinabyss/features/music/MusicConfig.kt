@@ -37,7 +37,8 @@ class MusicConfig(
             1f, 1f,
             listOf("layerfive")
         )
-    )
+    ),
+    val debug: Boolean = false
 ) {
     @Transient
     val songsByKey = songs.associateBy { it.key }
