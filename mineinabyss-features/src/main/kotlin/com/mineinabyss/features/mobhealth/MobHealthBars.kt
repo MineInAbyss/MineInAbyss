@@ -15,17 +15,18 @@ import org.bukkit.event.entity.EntityDamageEvent
 import java.util.*
 
 class MobHealthBars(private val config: MobHealthConfig) : Listener {
-    private val glyphs = BarGlyphs(config)
+    private val styles = config.styles.mapValues { BarGlyphs(it.value) }
+    private val defaultStyle = styles[config.defaultStyle] ?: error("Default mob health style ${config.defaultStyle} is not defined")
     private val bars = Object2ObjectOpenHashMap<UUID, HealthBar>()
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityDamageEvent.onDamage() {
         val mob = entity as? LivingEntity ?: return
         val player = damageSource.causingEntity as? Player ?: return
-        if (mob.toGearyOrNull()?.has<ShowHealthBar>() != true) return
+        val style = mob.toGearyOrNull()?.get<ShowHealthBar>()?.style ?: return
 
         val maxHealth = mob.getAttribute(Attribute.MAX_HEALTH)?.value ?: mob.health
-        bars.getOrPut(mob.uniqueId) { track(mob) }.hit(player, (mob.health - finalDamage) / maxHealth)
+        bars.getOrPut(mob.uniqueId) { track(mob, styles[style] ?: defaultStyle) }.hit(player, (mob.health - finalDamage) / maxHealth)
     }
 
     fun clear() {
@@ -33,7 +34,7 @@ class MobHealthBars(private val config: MobHealthConfig) : Listener {
         bars.clear()
     }
 
-    private fun track(mob: LivingEntity): HealthBar {
+    private fun track(mob: LivingEntity, glyphs: BarGlyphs): HealthBar {
         val bar = HealthBar(abyss, glyphs, config.visibleDuration.inWholeTicks.toInt(), mob)
         val untrack = {
             bar.remove()

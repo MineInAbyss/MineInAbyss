@@ -9,6 +9,15 @@ import kotlin.time.Duration
 @Serializable
 class MobHealthConfig(
     val enabled: Boolean = false,
+    @YamlComment("Style for mobs whose mineinabyss:show_health_bar names a style that is not defined below")
+    val defaultStyle: String = "default",
+    val styles: Map<String, HealthBarStyle> = mapOf("default" to HealthBarStyle()),
+    @YamlComment("How long a player keeps seeing the bar after their last hit")
+    @Serializable(DurationSerializer::class) val visibleDuration: Duration = 120.ticks,
+)
+
+@Serializable
+class HealthBarStyle(
     @YamlComment("Emojy emotes the bar is drawn with", "Fill and trail are sheets with one row per pixel of health, from empty to full")
     val frameEmote: String = "mob_health_frame",
     val fillEmote: String = "mob_health_fill",
@@ -16,6 +25,4 @@ class MobHealthConfig(
     @YamlComment("Pixels between the left edge of the frame and the fill, and between the fill and the right edge")
     val fillInset: Int = 19,
     val fillPadding: Int = 6,
-    @YamlComment("How long a player keeps seeing the bar after their last hit")
-    @Serializable(DurationSerializer::class) val visibleDuration: Duration = 120.ticks,
 )

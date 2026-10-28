@@ -5,17 +5,17 @@ import com.mineinabyss.emojy.spaceComponent
 import com.mineinabyss.features.overlay.Emotes
 import net.kyori.adventure.text.Component
 
-class BarGlyphs(config: MobHealthConfig) {
-    private val fillEmote = Emotes.get(config.fillEmote)
-    private val trailEmote = Emotes.get(config.trailEmote)
-    private val inset = spaceComponent(config.fillInset)
-    private val padding = spaceComponent(config.fillPadding)
+class BarGlyphs(style: HealthBarStyle) {
+    private val fillEmote = Emotes.get(style.fillEmote)
+    private val trailEmote = Emotes.get(style.trailEmote)
+    private val inset = spaceComponent(style.fillInset)
+    private val padding = spaceComponent(style.fillPadding)
 
-    val frame = Emotes.component(Emotes.get(config.frameEmote))
+    val frame = Emotes.component(Emotes.get(style.frameEmote))
     val steps = fillEmote.unicodes.size - 1
 
     // Every sheet row is padded to the full bar width, so a fill glyph advances one pixel past its last step
-    val linePixels = config.fillInset + steps + 1 + config.fillPadding
+    val linePixels = style.fillInset + steps + 1 + style.fillPadding
 
     fun fill(step: Int) = row(fillEmote, step)
 
