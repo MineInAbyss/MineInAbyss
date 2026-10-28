@@ -5,6 +5,7 @@ import com.mineinabyss.features.core.CoreFeatureConfig
 import com.mineinabyss.features.cosmetics.CosmeticsConfig
 import com.mineinabyss.features.keepinventory.KeepInvConfig
 import com.mineinabyss.features.misc.MiscConfig
+import com.mineinabyss.features.mobhealth.MobHealthConfig
 import com.mineinabyss.features.orthbanking.OrthBankConfig
 import com.mineinabyss.features.patreons.PatreonConfig
 import com.mineinabyss.features.playerprofile.PlayerProfileConfig
@@ -40,6 +41,7 @@ class AbyssFeatureConfig(
     val layers: Toggle = Toggle(),
     val locationPoints: Toggle = Toggle(),
     val lootCrates: Toggle = Toggle(),
+    val mobHealth: MobHealthConfig = MobHealthConfig(),
     val misc: MiscConfig = MiscConfig(),
     val music: Toggle = Toggle(),
     val npcs: Toggle = Toggle(),

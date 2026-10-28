@@ -31,6 +31,7 @@ import com.mineinabyss.features.layers.LayersFeature
 import com.mineinabyss.features.locations.LocationPointsFeature
 import com.mineinabyss.features.lootcrates.LootCratesFeature
 import com.mineinabyss.features.misc.MiscFeature
+import com.mineinabyss.features.mobhealth.MobHealthFeature
 import com.mineinabyss.features.music.MusicFeature
 import com.mineinabyss.features.npc.NpcFeature
 import com.mineinabyss.features.npc.shopkeeping.ShopKeepingFeature
@@ -153,6 +154,7 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
             LayersFeature,
             LootCratesFeature,
             MiscFeature,
+            MobHealthFeature,
             MusicFeature,
             NpcFeature,
             ShopKeepingFeature,
