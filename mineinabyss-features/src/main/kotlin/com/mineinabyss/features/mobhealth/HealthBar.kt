@@ -5,6 +5,7 @@ import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.bone.BoneBehaviorTypes
 import com.ticxo.modelengine.api.model.bone.ModelBone
+import com.ticxo.modelengine.api.utils.OffsetMode
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.entity.Display
@@ -22,12 +23,10 @@ class HealthBar(
     private val glyphs: BarGlyphs,
     private val visibleTicks: Int,
     private val mob: LivingEntity,
+    anchorBone: String,
 ) {
-    private val head = mob.headBone()
     private val aboveModel = mob.visualHeight() + MARGIN
-
-    // Bone locations are pivots, usually the neck, so the bar is lifted to clear the model top as measured at spawn and then follows the head
-    private val headLift = head?.let { (mob.location.y + aboveModel - it.location.y).coerceAtLeast(MIN_HEAD_LIFT) }
+    private val bone = mob.bone(anchorBone)?.let { it to 0f } ?: mob.headBone()?.let { it to headLift(it) }
 
     private val scale = ((mob.visualWidth() * WIDTH_SHARE).coerceIn(WIDTH_RANGE) / (glyphs.linePixels * BLOCKS_PER_PIXEL)).toFloat()
     private val frame = spawnLayer(0)
@@ -83,7 +82,14 @@ class HealthBar(
         fillLayer.text(glyphs.fill(fill))
     }
 
-    private fun anchor(): Location = head?.location?.add(0.0, headLift ?: 0.0, 0.0)
+    // Bone locations are pivots, usually the neck, so the head is lifted in its own space to clear the model top and turn with it
+    private fun headLift(head: ModelBone): Float {
+        val scale = head.activeModel.scale.y()
+        val rest = head.blueprintBone.rotatedGlobalPosition.y * scale
+        return ((aboveModel - rest).coerceAtLeast(MIN_HEAD_LIFT) / scale).toFloat()
+    }
+
+    private fun anchor(): Location = bone?.let { (bone, lift) -> bone.getLocation(OffsetMode.LOCAL, Vector3f(0f, lift, 0f), true) }
         ?: mob.location.add(0.0, aboveModel, 0.0)
 
     private fun spawnLayer(index: Int) = mob.world.spawn(anchor(), TextDisplay::class.java) {
@@ -92,7 +98,7 @@ class HealthBar(
         it.brightness = Display.Brightness(15, 15)
         it.isPersistent = false
         it.isVisibleByDefault = false
-        it.teleportDuration = 2
+        it.teleportDuration = 1
         it.transformation = Transformation(Vector3f(0f, 0f, index * LAYER_GAP), Quaternionf(), Vector3f(scale), Quaternionf())
     }
 
@@ -112,6 +118,8 @@ class HealthBar(
 
 private fun LivingEntity.models(): Collection<ActiveModel> =
     if (abyss.isModelEngineEnabled) ModelEngineAPI.getModeledEntity(this)?.models?.values.orEmpty() else emptyList()
+
+private fun LivingEntity.bone(id: String): ModelBone? = models().firstNotNullOfOrNull { it.getBone(id).orElse(null) }
 
 // Head bones pass their behaviour on to child bones, so the outermost one is the head itself
 private fun LivingEntity.headBone(): ModelBone? = models().flatMap { it.bones.values }.firstOrNull {

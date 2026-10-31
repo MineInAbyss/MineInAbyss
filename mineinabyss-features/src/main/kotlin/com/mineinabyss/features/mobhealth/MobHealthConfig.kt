@@ -14,6 +14,8 @@ class MobHealthConfig(
     val styles: Map<String, HealthBarStyle> = mapOf("default" to HealthBarStyle()),
     @YamlComment("How long a player keeps seeing the bar after their last hit")
     @Serializable(DurationSerializer::class) val visibleDuration: Duration = 120.ticks,
+    @YamlComment("ModelEngine bone the bar sits on, falling back to above the head bone for models without one")
+    val anchorBone: String = "healthbar",
 )
 
 @Serializable

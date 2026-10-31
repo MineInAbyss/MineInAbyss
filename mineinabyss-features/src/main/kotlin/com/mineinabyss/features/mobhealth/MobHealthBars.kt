@@ -35,7 +35,7 @@ class MobHealthBars(private val config: MobHealthConfig) : Listener {
     }
 
     private fun track(mob: LivingEntity, glyphs: BarGlyphs): HealthBar {
-        val bar = HealthBar(abyss, glyphs, config.visibleDuration.inWholeTicks.toInt(), mob)
+        val bar = HealthBar(abyss, glyphs, config.visibleDuration.inWholeTicks.toInt(), mob, config.anchorBone)
         val untrack = {
             bar.remove()
             bars.remove(mob.uniqueId, bar)
