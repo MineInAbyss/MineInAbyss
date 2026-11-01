@@ -16,13 +16,16 @@ import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
+import com.mineinabyss.guiy.components.lists.ScrollbarTrack
 import com.mineinabyss.guiy.components.lists.rememberScrollableState
+import com.mineinabyss.guiy.modifiers.scroll.scrollableWhenEmpty
 import com.mineinabyss.idofront.textcomponents.miniMsg
+import io.papermc.paper.datacomponent.item.ResolvableProfile
+import me.dvyy.compose.mini.layout.jetpack.Box
 import me.dvyy.compose.mini.layout.modifiers.height
 import me.dvyy.compose.mini.layout.modifiers.offset
 import me.dvyy.compose.mini.layout.modifiers.size
 import me.dvyy.compose.mini.modifier.Modifier
-import io.papermc.paper.datacomponent.item.ResolvableProfile
 import org.bukkit.OfflinePlayer
 
 @Composable
@@ -33,23 +36,27 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
     val guildMembers = remember { guildName.getGuildMembers().sortedWith(compareBy { it.player.isConnected; it.player.name; it.rank.ordinal }).filter { it.rank != GuildRank.OWNER } }
 
     val scrollState = rememberScrollableState(ScrollDirection.VERTICAL)
-    Scrollable(guildMembers, scrollState, NavbarPosition.END) { members ->
-        VerticalGrid(Modifier.offset(2.dp, 1.dp).size(5.dp, minOf(guildLevel + 1, 4).dp)) {
-            members.forEach { (rank, member, name) ->
-                Button {
-                    val profile = ResolvableProfile.resolvableProfile().uuid(member.uniqueId).build()
-                    Item(
-                        TitleItem.head(
-                            profile, "<gold><i>$name".miniMsg(),
-                            "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
-                            isFlat = true
-                        )
-                    )
+    val gridHeight = minOf(guildLevel + 1, 4)
+    Box(Modifier.offset(2.dp, 1.dp).size(5.dp, gridHeight.dp)) {
+        Scrollable(
+            guildMembers,
+            scrollState,
+            NavbarPosition.END,
+            scrollbar = {},
+        ) { members ->
+            VerticalGrid(Modifier.size(5.dp, gridHeight.dp).scrollableWhenEmpty()) {
+                members.forEach { (rank, member, name) ->
+                    Button {
+                        val profile = ResolvableProfile.resolvableProfile().uuid(member.uniqueId).build()
+                        val rank = "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg()
+                        Item(TitleItem.head(profile, "<gold><i>$name".miniMsg(), rank, isFlat = true))
+                    }
                 }
             }
         }
     }
 
+    ScrollbarTrack(scrollState, height + 1, TitleItem.scrollbarModel, Modifier.offset(8.dp, 0.dp))
     GuildLabel(Modifier.offset(4.dp, 0.dp), owner)
     BackButton(Modifier.offset(0.dp, height.dp))
     RequestToJoinButton(Modifier.offset(4.dp, height.dp), owner, guildName)

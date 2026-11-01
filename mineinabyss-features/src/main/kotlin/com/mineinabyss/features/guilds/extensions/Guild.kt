@@ -301,9 +301,9 @@ fun displayGuildList(queryName: String? = null): List<GuildListEntry> = transact
             val owner = members.firstOrNull { it[Players.guildRank] == GuildRank.OWNER } ?: members.firstOrNull()
             val ownerId = owner?.get(Players.playerUUID)?.toJavaUuid()
             val ownerName = owner?.get(Players.playerName) ?: ownerId?.let { Bukkit.getOfflinePlayer(it).name } ?: "Unknown"
-            GuildListEntry(guild[Guilds.name], guild[Guilds.joinType], guild[Guilds.level], ownerId, ownerName, members.size)
+            GuildListEntry(guild[Guilds.id], guild[Guilds.name], guild[Guilds.joinType], guild[Guilds.level], ownerId, ownerName, members.size)
         }
-}.sortedWith(compareByDescending<GuildListEntry> { it.guildLevel }.thenByDescending { it.memberCount }.thenBy { it.guildName.lowercase() })
+}
 
 fun GuildName.getOwnerFromGuildName(): OfflinePlayer {
     return transaction(abyss.db) {
@@ -472,7 +472,9 @@ fun GuildName.guildChatId() = "$this $guildChannelId"
 fun Player.guildChatId() = "${getGuildName()} $guildChannelId"
 
 data class GuildJoin(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int)
-data class GuildListEntry(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int, val owner: UUID?, val ownerName: String, val memberCount: Int)
+
+/** [id] is auto-incremented, so it orders guilds by when they were created */
+data class GuildListEntry(val id: Int, val guildName: String, val joinType: GuildJoinType, val guildLevel: Int, val owner: UUID?, val ownerName: String, val memberCount: Int)
 data class GuildMember(val rank: GuildRank, val player: OfflinePlayer, val name: String)
 
 private fun ResultRow.toGuildMember(): GuildMember {

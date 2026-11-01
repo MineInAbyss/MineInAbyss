@@ -19,6 +19,7 @@ import java.util.UUID
 object TitleItem {
     val hideTooltip = TooltipDisplay.tooltipDisplay().hideTooltip(true)
     val headItemModel = Key.key("mineinabyss:ui/head")
+    val scrollbarModel = Key.key("mineinabyss:ui/scrollbar")
 
     fun of(name: String, vararg lore: String) = ItemStack.of(Material.PAPER).apply {
         setData(DataComponentTypes.ITEM_NAME, name.miniMsg())
