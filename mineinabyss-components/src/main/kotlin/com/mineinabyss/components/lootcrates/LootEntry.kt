@@ -1,5 +1,6 @@
 package com.mineinabyss.components.lootcrates
 
+import com.mineinabyss.geary.autoscan.ExcludeAutoScan
 import com.mineinabyss.idofront.serialization.SerializableItemStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,6 +15,7 @@ sealed class LootEntry(
     override val conditions: List<LootCondition> = emptyList()
 ): Selecting, Conditioned {
     @Serializable
+    @ExcludeAutoScan
     @SerialName("minecraft:item")
     data class Item(
         val name: String,
@@ -22,6 +24,7 @@ sealed class LootEntry(
     }
 
     @Serializable
+    @ExcludeAutoScan
     @SerialName("mineinabyss:item")
     data class IdofrontItem(
         val item: SerializableItemStack,
@@ -30,6 +33,7 @@ sealed class LootEntry(
     }
 
     @Serializable
+    @ExcludeAutoScan
     @SerialName("minecraft:group")
     data class Group(
         val children: List<LootEntry>,

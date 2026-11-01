@@ -1,5 +1,6 @@
 package com.mineinabyss.components.lootcrates
 
+import com.mineinabyss.geary.autoscan.ExcludeAutoScan
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,6 +9,7 @@ sealed class Roll {
     abstract fun roll(): Int
 
     @Serializable
+    @ExcludeAutoScan
     @SerialName("minecraft:uniform")
     data class Uniform(val min: Int, val max: Int) : Roll() {
         override fun roll(): Int {
@@ -16,12 +18,14 @@ sealed class Roll {
     }
 
     @Serializable
+    @ExcludeAutoScan
     @SerialName("minecraft:constant")
     data class Constant(val value: Int) : Roll() {
         override fun roll() = value
     }
 
     @Serializable
+    @ExcludeAutoScan
     @SerialName("minecraft:binomial")
     data class Binomial(val n: Int, val p: Double) : Roll() {
         override fun roll(): Int {

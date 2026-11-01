@@ -1,0 +1,26 @@
+name: Schemas
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - docs
+      - '**.md'
+  workflow_dispatch:
+
+concurrency:
+  group: schemas-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  schemas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: MineInAbyss/publish-action/schemas@v3
+        with:
+          gradle-task: ':mineinabyss-features:generateSchemas'
+          token: ${{ secrets.SCHEMA_PUSH_TOKEN }}
