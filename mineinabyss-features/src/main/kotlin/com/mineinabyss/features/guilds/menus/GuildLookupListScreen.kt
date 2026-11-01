@@ -15,7 +15,7 @@ import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
 import com.mineinabyss.guiy.components.lists.ScrollableState
-import com.mineinabyss.guiy.components.lists.ScrollbarTrack
+import com.mineinabyss.guiy.components.lists.VerticalScrollbarTrack
 import com.mineinabyss.guiy.modifiers.scroll.onScroll
 import com.mineinabyss.guiy.modifiers.scroll.scrollableWhenEmpty
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -63,7 +63,7 @@ fun GuildUIScope.GuildLookupListScreen(
                 }
             }
         }
-        ScrollbarTrack(state, CHEST_HEIGHT, TitleItem.scrollbarModel, Modifier.offset(GRID_WIDTH.dp, 0.dp))
+        VerticalScrollbarTrack(state, CHEST_HEIGHT, TitleItem.scrollbarModel, Modifier.offset(GRID_WIDTH.dp, 0.dp))
         BackButton(Modifier.offset(0.dp, GRID_HEIGHT.dp))
         LookForGuildButton(Modifier.offset((GRID_WIDTH / 2).dp, GRID_HEIGHT.dp)) { guilds = displayGuildList(it) }
         Button(Modifier.offset((GRID_WIDTH - 1).dp, GRID_HEIGHT.dp), onClick = { sort = GuildSort.entries[(sort.ordinal + 1) % GuildSort.entries.size] }) {

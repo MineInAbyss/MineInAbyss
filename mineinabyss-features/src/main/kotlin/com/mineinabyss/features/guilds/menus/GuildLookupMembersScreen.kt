@@ -16,7 +16,7 @@ import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
-import com.mineinabyss.guiy.components.lists.ScrollbarTrack
+import com.mineinabyss.guiy.components.lists.VerticalScrollbarTrack
 import com.mineinabyss.guiy.components.lists.rememberScrollableState
 import com.mineinabyss.guiy.modifiers.scroll.scrollableWhenEmpty
 import com.mineinabyss.idofront.textcomponents.miniMsg
@@ -56,7 +56,7 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
         }
     }
 
-    ScrollbarTrack(scrollState, height + 1, TitleItem.scrollbarModel, Modifier.offset(8.dp, 0.dp))
+    VerticalScrollbarTrack(scrollState, height + 1, TitleItem.scrollbarModel, Modifier.offset(8.dp, 0.dp))
     GuildLabel(Modifier.offset(4.dp, 0.dp), owner)
     BackButton(Modifier.offset(0.dp, height.dp))
     RequestToJoinButton(Modifier.offset(4.dp, height.dp), owner, guildName)

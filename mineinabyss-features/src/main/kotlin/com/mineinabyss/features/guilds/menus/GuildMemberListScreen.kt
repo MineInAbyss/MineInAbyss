@@ -14,7 +14,7 @@ import com.mineinabyss.guiy.components.canvases.MAX_CHEST_HEIGHT
 import com.mineinabyss.guiy.components.lists.NavbarPosition
 import com.mineinabyss.guiy.components.lists.ScrollDirection
 import com.mineinabyss.guiy.components.lists.Scrollable
-import com.mineinabyss.guiy.components.lists.ScrollbarTrack
+import com.mineinabyss.guiy.components.lists.VerticalScrollbarTrack
 import com.mineinabyss.guiy.components.lists.rememberScrollableState
 import com.mineinabyss.guiy.modifiers.scroll.scrollableWhenEmpty
 import com.mineinabyss.idofront.messaging.error
@@ -73,7 +73,7 @@ fun GuildUIScope.GuildMemberListScreen(
 
     val lastRow = minOf(guildLevel + 1, MAX_CHEST_HEIGHT - 1)
     // Row 0 of the right column holds the join requests button
-    ScrollbarTrack(scrollState, lastRow, TitleItem.scrollbarModel, Modifier.offset(8.dp, 1.dp))
+    VerticalScrollbarTrack(scrollState, lastRow, TitleItem.scrollbarModel, Modifier.offset(8.dp, 1.dp))
     BackButton(Modifier.offset(0.dp, lastRow.dp))
 
     InviteToGuildButton(Modifier.offset(7.dp, 0.dp))
