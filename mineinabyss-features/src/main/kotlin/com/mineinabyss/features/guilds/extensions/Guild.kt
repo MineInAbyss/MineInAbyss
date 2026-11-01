@@ -31,6 +31,7 @@ import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.update
+import java.util.UUID
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 
@@ -288,16 +289,18 @@ fun GuildName.clearGuildInvites() {
     }
 }
 
-private val displayComparator = compareBy<GuildJoin> {
-    it.joinType; it.guildName; it.guildName.getGuildMembers().size; it.guildLevel
-}
-fun displayGuildList(queryName: String? = null): List<GuildJoin> {
-    val guilds = getAllGuilds()
-    return when (queryName) {
-        null -> guilds
-        else -> guilds.filter { it.guildName.startsWith(queryName, true) }
-    }.sortedWith(displayComparator).sortedByDescending { it.guildName.getGuildMembers().size; it.guildLevel }
-}
+fun displayGuildList(queryName: String? = null): List<GuildListEntry> = transaction(abyss.db) {
+    val membersByGuild = Players.selectAll().toList().groupBy { it[Players.guildId] }
+    Guilds.selectAll().toList()
+        .filter { queryName == null || it[Guilds.name].startsWith(queryName, true) }
+        .map { guild ->
+            val members = membersByGuild[guild[Guilds.id]].orEmpty()
+            val owner = members.firstOrNull { it[Players.guildRank] == GuildRank.OWNER } ?: members.firstOrNull()
+            val ownerId = owner?.get(Players.playerUUID)?.toJavaUuid()
+            val ownerName = ownerId?.let { Bukkit.getOfflinePlayer(it).name } ?: "Unknown"
+            GuildListEntry(guild[Guilds.name], guild[Guilds.joinType], guild[Guilds.level], ownerId, ownerName, members.size)
+        }
+}.sortedWith(compareByDescending<GuildListEntry> { it.guildLevel }.thenByDescending { it.memberCount }.thenBy { it.guildName.lowercase() })
 
 fun GuildName.getOwnerFromGuildName(): OfflinePlayer {
     return transaction(abyss.db) {
@@ -466,4 +469,5 @@ fun GuildName.guildChatId() = "$this $guildChannelId"
 fun Player.guildChatId() = "${getGuildName()} $guildChannelId"
 
 data class GuildJoin(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int)
+data class GuildListEntry(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int, val owner: UUID?, val ownerName: String, val memberCount: Int)
 data class GuildMember(val rank: GuildRank, val player: OfflinePlayer)

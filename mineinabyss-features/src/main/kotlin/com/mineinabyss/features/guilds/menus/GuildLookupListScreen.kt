@@ -35,24 +35,23 @@ fun GuildUIScope.GuildLookupListScreen(
         NavbarPosition.BOTTOM
     ) { pageItems ->
         HorizontalGrid(Modifier.offset(1.dp, 0.dp).size(7.dp, 5.dp)) {
-            pageItems.forEach { (guildName, joinType, guildLevel) ->
-                val owner = guildName.getOwnerFromGuildName()
+            pageItems.forEach { guild ->
                 Button(
                     onClick = {
-                        if (player.hasGuild() && player.getGuildName().equals(guildName, true))
+                        if (player.hasGuild() && player.getGuildName().equals(guild.guildName, true))
                             onNavigateToMemberList()
                         else
-                            onNavigateToLookupMembers(guildName)
+                            onNavigateToLookupMembers(guild.guildName)
 
                     }) {
-                    val profile = ResolvableProfile.resolvableProfile().uuid(owner.uniqueId).build()
+                    val profile = ResolvableProfile.resolvableProfile().uuid(guild.owner).build()
                     Item(
                         TitleItem.head(
-                            profile, "<gold><i>$guildName".miniMsg(),
-                            "<yellow><b>Guild Owner:</b> <yellow><i>${profile.name()}".miniMsg(),
-                            "<yellow><b>Guild Level:</b> <yellow><i>${guildLevel}".miniMsg(),
-                            "<yellow><b>Guild Jointype:</b> <yellow><i>${joinType}".miniMsg(),
-                            "<yellow><b>Guild Membercount:</b> <yellow><i>${owner.getGuildMemberCount()} / ${guildLevel * 5}".miniMsg(),
+                            profile, "<gold><i>${guild.guildName}".miniMsg(),
+                            "<yellow><b>Guild Owner:</b> <yellow><i>${guild.ownerName}".miniMsg(),
+                            "<yellow><b>Guild Level:</b> <yellow><i>${guild.guildLevel}".miniMsg(),
+                            "<yellow><b>Guild Jointype:</b> <yellow><i>${guild.joinType}".miniMsg(),
+                            "<yellow><b>Guild Membercount:</b> <yellow><i>${guild.memberCount} / ${guild.guildLevel * 5}".miniMsg(),
                             isFlat = true
                         )
                     )

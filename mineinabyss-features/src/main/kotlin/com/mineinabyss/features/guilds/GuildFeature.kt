@@ -86,9 +86,6 @@ val GuildFeature = module("guilds") {
         listeners(ChattyGuildListener())
         refreshGuildChats(config)
     }
-
-    // Generate the guild-list
-    displayGuildList()
 }.mainCommand {
     "guild" {
         description = "Guild related commands"
