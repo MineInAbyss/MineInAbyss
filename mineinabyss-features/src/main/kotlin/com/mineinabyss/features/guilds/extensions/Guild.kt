@@ -22,12 +22,14 @@ import com.mineinabyss.idofront.messaging.success
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.lowerCase
 import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.update
@@ -78,6 +80,7 @@ fun OfflinePlayer.createGuild(guildName: String) {
             it[playerUUID] = uniqueId.toKotlinUuid()
             it[guildId] = rowID
             it[guildRank] = GuildRank.OWNER
+            it[playerName] = name
         }
     }
 }
@@ -227,7 +230,7 @@ fun Player.getGuildMembers(): List<GuildMember> {
         val guildId = playerRow[Players.guildId]
 
         Players.selectAll().where { (Players.guildId eq guildId) }.map { row ->
-            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID].toJavaUuid()))
+            row.toGuildMember()
         }
     }
 }
@@ -239,7 +242,7 @@ fun String.getGuildMembers(): List<GuildMember> {
                 ?: return@transaction emptyList()
 
         Players.selectAll().where { (Players.guildId eq guild) }.map { row ->
-            GuildMember(row[Players.guildRank], Bukkit.getOfflinePlayer(row[Players.playerUUID].toJavaUuid()))
+            row.toGuildMember()
         }
     }
 }
@@ -297,7 +300,7 @@ fun displayGuildList(queryName: String? = null): List<GuildListEntry> = transact
             val members = membersByGuild[guild[Guilds.id]].orEmpty()
             val owner = members.firstOrNull { it[Players.guildRank] == GuildRank.OWNER } ?: members.firstOrNull()
             val ownerId = owner?.get(Players.playerUUID)?.toJavaUuid()
-            val ownerName = ownerId?.let { Bukkit.getOfflinePlayer(it).name } ?: "Unknown"
+            val ownerName = owner?.get(Players.playerName) ?: ownerId?.let { Bukkit.getOfflinePlayer(it).name } ?: "Unknown"
             GuildListEntry(guild[Guilds.name], guild[Guilds.joinType], guild[Guilds.level], ownerId, ownerName, members.size)
         }
 }.sortedWith(compareByDescending<GuildListEntry> { it.guildLevel }.thenByDescending { it.memberCount }.thenBy { it.guildName.lowercase() })
@@ -470,4 +473,14 @@ fun Player.guildChatId() = "${getGuildName()} $guildChannelId"
 
 data class GuildJoin(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int)
 data class GuildListEntry(val guildName: String, val joinType: GuildJoinType, val guildLevel: Int, val owner: UUID?, val ownerName: String, val memberCount: Int)
-data class GuildMember(val rank: GuildRank, val player: OfflinePlayer)
+data class GuildMember(val rank: GuildRank, val player: OfflinePlayer, val name: String)
+
+private fun ResultRow.toGuildMember(): GuildMember {
+    val player = Bukkit.getOfflinePlayer(this[Players.playerUUID].toJavaUuid())
+    return GuildMember(this[Players.guildRank], player, this[Players.playerName] ?: player.name ?: "Unknown")
+}
+
+/** The name stored with the guild, falling back to the server's player cache for players outside any guild */
+fun OfflinePlayer.guildDisplayName(): String = transaction(abyss.db) {
+    Players.select(Players.playerName).where { Players.playerUUID eq uniqueId.toKotlinUuid() }.singleOrNull()?.get(Players.playerName)
+} ?: name ?: "Unknown"

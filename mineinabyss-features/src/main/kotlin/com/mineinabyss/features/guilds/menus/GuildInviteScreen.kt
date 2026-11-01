@@ -38,7 +38,7 @@ fun GuildLabel(owner: OfflinePlayer, modifier: Modifier) = Button {
         TitleItem.head(
             profile, "<gold><b>Current Guild Info</b>".miniMsg(),
             "<yellow><b>Guild Name:</b> <i>${owner.getGuildName()}".miniMsg(),
-            "<yellow><b>Guild Owner:</b> <i>${profile.name()}".miniMsg(),
+            "<yellow><b>Guild Owner:</b> <i>${owner.guildDisplayName()}".miniMsg(),
             "<yellow><b>Guild Level:</b> <i>${owner.getGuildLevel()}".miniMsg(),
             "<yellow><b>Guild Members:</b> <i>${owner.getGuildMemberCount()}".miniMsg(),
             isFlat = true,

@@ -62,7 +62,7 @@ fun GuildUIScope.GuildJoinRequestButton(
                 val profile = ResolvableProfile.resolvableProfile().uuid(newMember.uniqueId).build()
                 Item(
                     TitleItem.head(
-                        profile, "<yellow><i>${profile.name()}".miniMsg(),
+                        profile, "<yellow><i>${newMember.name ?: "Unknown"}".miniMsg(),
                         "<blue>Click this to accept or deny the join-request.".miniMsg(),
                         isFlat = true
                     )

@@ -41,7 +41,7 @@ fun GuildUIScope.GuildMemberListScreen(
     val scrollState = rememberScrollableState(ScrollDirection.VERTICAL)
     Scrollable(guildMembers, scrollState, navbarPosition = NavbarPosition.END) { members ->
         VerticalGrid(Modifier.offset(2.dp, 1.dp).size(5.dp, minOf(guildLevel + 1, 4).dp)) {
-            members.forEach { (rank, member) ->
+            members.forEach { (rank, member, name) ->
                 Button(onClick = {
                     if (member != player && player.isCaptainOrAbove())
                         onNavigateToMemberOptions(member)
@@ -49,7 +49,7 @@ fun GuildUIScope.GuildMemberListScreen(
                     val profile = ResolvableProfile.resolvableProfile().uuid(member.uniqueId).build()
                     Item(
                         TitleItem.head(
-                            profile, "<gold><i>${profile.name()}".miniMsg(),
+                            profile, "<gold><i>$name".miniMsg(),
                             "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                             isFlat = true
                         )

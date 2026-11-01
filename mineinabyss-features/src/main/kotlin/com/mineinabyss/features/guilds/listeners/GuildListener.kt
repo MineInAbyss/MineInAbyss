@@ -4,6 +4,7 @@ import com.mineinabyss.components.guilds.GuildMaster
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.guilds.database.GuildMessageQueue
 import com.mineinabyss.features.guilds.database.GuildMessageQueue.content
+import com.mineinabyss.features.guilds.database.Players
 import com.mineinabyss.features.guilds.menus.GuildMainMenu
 import com.mineinabyss.geary.papermc.tracking.entities.toGearyOrNull
 import com.mineinabyss.guiy.canvas.guiy
@@ -20,6 +21,7 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.update
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.toKotlinUuid
 
@@ -37,6 +39,7 @@ class GuildListener : Listener {
         delay(1.seconds)
         withContext(databaseDispatcher) {
             transaction(abyss.db) {
+                Players.update({ Players.playerUUID eq player.uniqueId.toKotlinUuid() }) { it[playerName] = player.name }
                 GuildMessageQueue.selectAll().where { GuildMessageQueue.playerUUID eq player.uniqueId.toKotlinUuid() }.forEach {
                     player.info(it[content].miniMsg())
                 }

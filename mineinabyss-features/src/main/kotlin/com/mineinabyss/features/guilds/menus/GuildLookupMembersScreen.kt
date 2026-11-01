@@ -35,12 +35,12 @@ fun GuildUIScope.GuildLookupMembersScreen(guildName: String) = Chest(":space_-8:
     val scrollState = rememberScrollableState(ScrollDirection.VERTICAL)
     Scrollable(guildMembers, scrollState, NavbarPosition.END) { members ->
         VerticalGrid(Modifier.offset(2.dp, 1.dp).size(5.dp, minOf(guildLevel + 1, 4).dp)) {
-            members.forEach { (rank, member) ->
+            members.forEach { (rank, member, name) ->
                 Button {
                     val profile = ResolvableProfile.resolvableProfile().uuid(member.uniqueId).build()
                     Item(
                         TitleItem.head(
-                            profile, "<gold><i>${profile.name()}".miniMsg(),
+                            profile, "<gold><i>$name".miniMsg(),
                             "<yellow><b>Guild Rank: <yellow><i>$rank".miniMsg(),
                             isFlat = true
                         )
@@ -60,7 +60,7 @@ fun GuildLabel(modifier: Modifier, owner: OfflinePlayer) {
     val profile = ResolvableProfile.resolvableProfile().uuid(owner.uniqueId).build()
     Item(
         TitleItem.head(
-            profile, "<gold><i>${profile.name()}".miniMsg(),
+            profile, "<gold><i>${owner.guildDisplayName()}".miniMsg(),
             "<yellow><b>Guild Rank: <yellow><i>${owner.getGuildRank()}".miniMsg(),
             isFlat = true, isCenterOfInv = true, isLarge = true
         ), modifier = modifier

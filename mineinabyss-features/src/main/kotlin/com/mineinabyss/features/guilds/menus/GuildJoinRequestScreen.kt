@@ -38,7 +38,7 @@ fun GuildUIScope.GuildJoinRequestScreen(
 @Composable
 fun PlayerLabel(modifier: Modifier, newMember: OfflinePlayer) = Button(modifier = modifier) {
     val profile = ResolvableProfile.resolvableProfile().uuid(newMember.uniqueId).build()
-    Item(TitleItem.head(profile, "<yellow><i>${profile.name()}".miniMsg(), isFlat = true, isCenterOfInv = true, isLarge = true))
+    Item(TitleItem.head(profile, "<yellow><i>${newMember.guildDisplayName()}".miniMsg(), isFlat = true, isCenterOfInv = true, isLarge = true))
 }
 
 @Composable

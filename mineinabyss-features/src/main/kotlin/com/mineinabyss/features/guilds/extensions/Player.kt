@@ -72,6 +72,7 @@ fun OfflinePlayer.addMemberToGuild(member: OfflinePlayer): Boolean {
             it[playerUUID] = member.uniqueId.toKotlinUuid()
             it[guildId] = id
             it[guildRank] = GuildRank.MEMBER
+            it[playerName] = member.name
         }
         player?.success("${member.name} joined your Guild!")
         added = true
