@@ -59,6 +59,7 @@ import com.mineinabyss.idofront.features.MainCommandFeature
 import com.mineinabyss.idofront.features.singleConfig
 import com.mineinabyss.idofront.features.singlePluginLogger
 import com.mineinabyss.idofront.messaging.ComponentLogger
+import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -102,11 +103,23 @@ class MineInAbyssPlugin : JavaPlugin(), AbyssContext {
     override val logger: ComponentLogger by getLazy()
     override val config: AbyssFeatureConfig by getLazy()
     override val db: Database by getLazy()
+    @Volatile private var cachedLayers: LayersContext? = null
     override val layers: LayersContext
-        get() = scope[LayersFeature]
+        get() = cachedLayers ?: loadLayers()
     override val guilds: GuildsModule
         get() = scope[GuildFeature]
 
+
+    // DIScope is not thread safe and reloads run on the main thread, so only cache there to never keep a value from an unloaded module
+    private fun loadLayers(): LayersContext {
+        val feature = scope[LayersFeature as DI.Module]
+        val value = LayersFeature.get(feature)
+        if (Bukkit.isPrimaryThread()) {
+            cachedLayers = value
+            feature.addCloseable { cachedLayers = null }
+        }
+        return value
+    }
 
     override fun onLoad() {
         AbyssContext.instance = this
