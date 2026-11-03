@@ -2,6 +2,7 @@ package com.mineinabyss.features.helpers
 
 import com.mineinabyss.components.curse.PlayerCurseEvent
 import com.mineinabyss.components.editPlayerData
+import com.mineinabyss.components.playerDataOrNull
 import com.mineinabyss.features.helpers.api.API
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import net.kyori.adventure.text.Component
@@ -64,11 +65,15 @@ fun handleCurse(player: Player, from: Location, to: Location) {
     if (!player.world.isAbyssWorld) return
     if (player.consumeRecentSectionChange()) return
 
+    val data = player.playerDataOrNull
+    if (data != null && data.curseAccrued == 0.0 && to.y <= from.y) return
+
     player.editPlayerData {
-        if (player.isInvulnerable || !isAffectedByCurse) {
+        if (!isAffectedByCurse || player.isInvulnerable) {
             curseAccrued = 0.0
             return@editPlayerData
         } else curseAccrued = (curseAccrued + to.y - from.y).coerceAtLeast(0.0)
+        if (curseAccrued < CURSE_THRESHOLD) return@editPlayerData
         val ascensionEffects = to.layer?.ascensionEffects ?: return@editPlayerData
 
         var applications = 0
