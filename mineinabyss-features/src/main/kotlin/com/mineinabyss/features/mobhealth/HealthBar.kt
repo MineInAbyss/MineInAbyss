@@ -73,8 +73,10 @@ class HealthBar(
         val sinceHit = age - lastHit
         if (trail == fill || sinceHit < TRAIL_DELAY) return
         val progress = ((sinceHit - TRAIL_DELAY + 1).toFloat() / TRAIL_TICKS).coerceAtMost(1f)
-        trail = (trailFrom + (fill - trailFrom) * progress).roundToInt()
-        render()
+        val next = (trailFrom + (fill - trailFrom) * progress).roundToInt()
+        if (next == trail) return
+        trail = next
+        trailLayer.text(glyphs.trail(trail))
     }
 
     private fun render() {
