@@ -41,10 +41,9 @@ class CurseAscensionListener : Listener {
 
     @EventHandler
     fun EntityMoveEvent.handleCurseOnPassengers() {
-        if (entity.passengers.isNotEmpty()) {
-            entity.passengers.filterIsInstance<Player>().forEach { passenger ->
-                handleCurse(passenger, from, to)
-            }
+        if (entity.isEmpty) return
+        entity.passengers.filterIsInstance<Player>().forEach { passenger ->
+            handleCurse(passenger, from, to)
         }
     }
 

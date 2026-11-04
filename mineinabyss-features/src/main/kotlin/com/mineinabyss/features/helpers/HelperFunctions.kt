@@ -61,6 +61,8 @@ private fun Player.consumeRecentSectionChange(): Boolean {
 }
 
 fun handleCurse(player: Player, from: Location, to: Location) {
+    // A move without height change adds no curse, the reset for players no longer affected waits for the next move that has one
+    if (to.y == from.y) return
     if (from.world != to.world) return
     if (!player.world.isAbyssWorld) return
     if (player.consumeRecentSectionChange()) return
