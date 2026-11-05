@@ -121,6 +121,7 @@ class MiscListener(private val config: MiscConfig) : Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun PlayerInteractEvent.onInteractPrivatedLectern() {
+        if (clickedBlock?.type != Material.LECTERN) return
         val (block, state) = (clickedBlock ?: return) to (clickedBlock!!.state as? Lectern ?: return)
         if (!rightClicked || !BlockLockerAPIv2.isProtected(block)) return
 

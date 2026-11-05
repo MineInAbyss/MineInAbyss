@@ -18,6 +18,7 @@ class BookshelfLocker : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun BlockPlaceEvent.onPlace() {
+        if (block.type != Material.ENCHANTING_TABLE) return
         val lockState = LockDisplayItem(player.uniqueId, player.playerDataOrNull?.defaultDisplayLockState ?: false, mutableSetOf(player.uniqueId))
         (block.state as? EnchantingTable)?.withGeary { eTable ->
             eTable.persistentDataContainer.encode(lockState)
@@ -34,6 +35,7 @@ class BookshelfLocker : Listener {
         if (block.type != Material.BOOKSHELF) return
         for (x in -2..2) for (y in -1..0) for (z in -2..2) {
             val block = block.getRelative(x, y, z)
+            if (block.type != Material.ENCHANTING_TABLE) continue
             val lockedTable = (block.state as? EnchantingTable)?.withGeary { it.persistentDataContainer.decode<LockDisplayItem>() } ?: continue
             if (lockedTable.hasAccess(player)) continue
 
@@ -44,6 +46,7 @@ class BookshelfLocker : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun BlockBreakEvent.onBreak() {
+        if (block.type != Material.ENCHANTING_TABLE) return
         (block.state as? EnchantingTable)?.withGeary { eTable ->
             val lockedTable = eTable.persistentDataContainer.decode<LockDisplayItem>() ?: return
             if (lockedTable.hasAccess(player)) return
