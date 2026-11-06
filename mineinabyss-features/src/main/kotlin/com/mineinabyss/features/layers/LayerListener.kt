@@ -65,14 +65,21 @@ class LayerListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.onPlayerJoin() { player.location.section?.let { player.sendWorldBorderPackets(it) } }
 
+    // Building a WorldBorder joins voxel shapes and teleports send these often
+    private val borderPackets = HashMap<Triple<Double, Double, Double>, Pair<ClientboundSetBorderCenterPacket, ClientboundSetBorderSizePacket>>()
+
     private fun Player.sendWorldBorderPackets(section: Section) {
-        val settings = WorldBorder()
-        settings.setCenter(section.center.x, section.center.z)
-        settings.size = (section.region.max.x - section.region.min.x).toDouble() + 2.0
+        val key = Triple(section.center.x, section.center.z, (section.region.max.x - section.region.min.x).toDouble() + 2.0)
+        val (center, size) = borderPackets.getOrPut(key) {
+            val settings = WorldBorder()
+            settings.setCenter(key.first, key.second)
+            settings.size = key.third
+            ClientboundSetBorderCenterPacket(settings) to ClientboundSetBorderSizePacket(settings)
+        }
 
         val connection = (player as CraftPlayer).handle.connection
-        connection.send(ClientboundSetBorderCenterPacket(settings))
-        connection.send(ClientboundSetBorderSizePacket(settings))
+        connection.send(center)
+        connection.send(size)
     }
 
     @EventHandler
