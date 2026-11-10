@@ -19,7 +19,7 @@ val OkiboTravelFeature = module("okibo-travel") {
     val repo by single { new(::OkiboRepository) }
     single { new(::OkiboMapMenu) }
 
-    listeners(new(::OkiboTravelListener), new(::OkiboCameraListener), OverlayListener)
+    listeners(new(::OkiboTravelListener), OkiboCameraListener(config.camera), OverlayListener)
     addCloseable { Overlays.closeAll() }
     addCloseable { Bukkit.getOnlinePlayers().forEach(Player::resetOkiboCamera) }
 
