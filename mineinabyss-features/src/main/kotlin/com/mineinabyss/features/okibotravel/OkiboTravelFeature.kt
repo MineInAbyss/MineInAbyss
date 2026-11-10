@@ -8,6 +8,8 @@ import com.mineinabyss.features.overlay.Overlays
 import com.mineinabyss.idofront.commands.brigadier.Args
 import com.mineinabyss.idofront.commands.brigadier.oneOf
 import com.mineinabyss.idofront.features.*
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 
 val OkiboTravelFeature = module("okibo-travel") {
     requirePlugins("BKCommonLib", "Train_Carts", "TCCoasters", "Nexo", "Emojy")
@@ -17,8 +19,9 @@ val OkiboTravelFeature = module("okibo-travel") {
     val repo by single { new(::OkiboRepository) }
     single { new(::OkiboMapMenu) }
 
-    listeners(new(::OkiboTravelListener), OverlayListener)
+    listeners(new(::OkiboTravelListener), new(::OkiboCameraListener), OverlayListener)
     addCloseable { Overlays.closeAll() }
+    addCloseable { Bukkit.getOnlinePlayers().forEach(Player::resetOkiboCamera) }
 
     launch {
         repo.warmUpRoutes()
