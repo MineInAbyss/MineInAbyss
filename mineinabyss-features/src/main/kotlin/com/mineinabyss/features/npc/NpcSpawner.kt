@@ -7,6 +7,7 @@ import com.mineinabyss.features.helpers.ChunkPos
 import com.mineinabyss.features.helpers.actionsOf
 import com.mineinabyss.features.helpers.chunkPos
 import com.mineinabyss.features.helpers.loading.KeyedYamlLoader
+import com.mineinabyss.features.helpers.loading.gearyYaml
 import com.mineinabyss.features.helpers.pos
 import com.mineinabyss.features.locations.ResolvedLocationPointSerializer
 import com.mineinabyss.geary.actions.Tasks
@@ -53,7 +54,8 @@ class NpcSpawner(private val root: Path, private val trades: TradeTables) : List
     fun reload(): List<String> = try {
         val files = KeyedYamlLoader.load(root, excludedNamespaces = setOf(TRADES_FOLDER))
         npcs.clear()
-        npcs += files.decodeAll("npc", NpcDefinition.serializer())
+        val yaml = gearyYaml()
+        npcs += files.decodeInherited("npc", files.resolveInheritance("npc")) { yaml.decodeFromYamlNode(NpcDefinition.serializer(), it) }
         files.errors += checkDialogs()
         files.errors += checkTrades()
         files.errors += checkModels()
