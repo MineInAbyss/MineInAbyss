@@ -1,6 +1,7 @@
 package com.mineinabyss.features.okibotravel
 
 import com.mineinabyss.components.okibotravel.OkiboLineStation
+import com.mineinabyss.idofront.serialization.VectorAltSerializer
 import kotlinx.serialization.Serializable
 import com.mineinabyss.idofront.serialization.VectorAsListSerializer
 import org.bukkit.Location
@@ -15,6 +16,7 @@ data class OkiboTravelConfig(
     val boardRange: Double = 16.0,
     val okiboModel: OkiboModelConfig = OkiboModelConfig(),
     val mapFace: MapFaceConfig = MapFaceConfig(),
+    val camera: CameraConfig = CameraConfig(),
 ) {
     private val stationsById = okiboStations.associateBy(OkiboLineStation::id)
 
@@ -28,7 +30,21 @@ data class OkiboTravelConfig(
     init {
         require(stationsById.size == okiboStations.size) { "Duplicate okibo station ids in config" }
     }
+
+    @Serializable
+    data class CameraConfig(
+        /** Highest camera_distance riders can scroll out to, -1 disables scrolling */
+        val maxDistance: Double = -1.0,
+        val distanceSteps: Double = 0.5,
+    )
+
+    @Serializable
+    data class MapFaceConfig(
+        val from: @Serializable(VectorAltSerializer::class) Vector = Vector(2.0, 6.5, 3.62),
+        val to: @Serializable(VectorAltSerializer::class) Vector = Vector(15.0, 19.5, 4.43),
+    )
 }
+
 
 /** Sizes are in blocks at scale 1 */
 @Serializable
@@ -41,11 +57,4 @@ data class OkiboModelConfig(
     val riderTop: Double = 3.45,
     val bodyPivot: Double = 0.625,
     val saddle: Double = 1.6,
-)
-
-/** from and to of the noticeboard model element whose north face shows the map */
-@Serializable
-data class MapFaceConfig(
-    val from: @Serializable(VectorAsListSerializer::class) Vector = Vector(2.0, 6.48, 3.6175),
-    val to: @Serializable(VectorAsListSerializer::class) Vector = Vector(14.96, 19.44, 4.4275),
 )

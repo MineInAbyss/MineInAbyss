@@ -23,6 +23,7 @@ import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
 private const val TRAIN_NAME = "OkiboCartPaid"
+const val OKIBO_TAG = "okibo"
 
 sealed interface TravelResult {
     data object Success : TravelResult
@@ -82,7 +83,7 @@ class OkiboRepository(
 
         train.properties.apply {
             destination = to.id
-            addTags("paid") // The ticket sign only launches trains tagged as paid
+            addTags("paid", OKIBO_TAG) // The ticket sign only launches trains tagged as paid
             setOwner(player.name, true)
             speedLimit = 1.0
             isSlowingDown = false
