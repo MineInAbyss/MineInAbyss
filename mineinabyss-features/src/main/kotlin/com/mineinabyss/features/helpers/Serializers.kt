@@ -19,13 +19,15 @@ private fun Decoder.isScalar() = (this as? YamlInput)?.node is YamlScalar
 
 /**
  * Reads a scalar with [fromScalar] and anything else with [full].
- * Wrapped in a value class action, this lets `- action: value` stand in for the action's map form
+ * As an action's serializer, this lets `- action: value` stand in for the action's map form.
+ * [serialName] is the action's name, polymorphic registration reads it from the descriptor rather than the class
  */
 open class ScalarShorthandSerializer<T>(
     private val full: KSerializer<T>,
     private val fromScalar: (Decoder) -> T,
+    serialName: String,
 ) : KSerializer<T> {
-    override val descriptor = SCALAR_OR_MAP
+    override val descriptor = SerialDescriptor(serialName, SCALAR_OR_MAP)
 
     override fun deserialize(decoder: Decoder): T = if (decoder.isScalar()) fromScalar(decoder) else full.deserialize(decoder)
 

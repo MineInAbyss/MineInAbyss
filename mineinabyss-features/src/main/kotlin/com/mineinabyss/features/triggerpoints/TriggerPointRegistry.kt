@@ -72,7 +72,7 @@ class TriggerPointRegistry(private val root: Path) {
     private fun actionProblems(key: PrefabKey, point: TriggerPoint): List<String> {
         val dialogs = point.actions.brokenDialogs().map { "Trigger point $key opens a broken dialog: $it" }
         val destinations = point.actions.actionsOf<WarpToAction>().mapNotNull { action ->
-            action.warp.to.problem()?.let { "Trigger point $key has a broken warp_to: $it" }
+            action.to.problem()?.let { "Trigger point $key has a broken warp_to: $it" }
         }
         return dialogs + destinations
     }
