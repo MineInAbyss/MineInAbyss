@@ -12,7 +12,7 @@ import com.mineinabyss.features.helpers.pos
 import com.mineinabyss.features.locations.ResolvedLocationPointSerializer
 import com.mineinabyss.geary.actions.Tasks
 import com.mineinabyss.geary.prefabs.PrefabKey
-import com.mineinabyss.idofront.serialization.VectorAltSerializer
+import com.mineinabyss.idofront.serialization.Vector3fAltSerializer
 import com.mineinabyss.idofront.spawning.spawn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.textcomponents.toPlainText
@@ -30,7 +30,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.world.ChunkLoadEvent
-import org.bukkit.util.Vector
 import org.joml.Vector3f
 import java.nio.file.Path
 
@@ -90,7 +89,7 @@ class NpcSpawner(private val root: Path, private val trades: TradeTables) : List
         return npcs.mapNotNull { (key, npc) ->
             when {
                 npc.model == null -> "Npc $key has no model, so it will be invisible and cannot be clicked"
-                ModelEngineAPI.getBlueprint(npc.model) == null -> "Npc $key uses unknown model ${npc.model}"
+                ModelEngineAPI.getBlueprint(npc.model.blueprint) == null -> "Npc $key uses unknown model ${npc.model.blueprint}"
                 else -> null
             }
         }
@@ -127,6 +126,15 @@ class NpcSpawner(private val root: Path, private val trades: TradeTables) : List
         }
     }
 
+    fun playAnimation(key: PrefabKey, animation: String, speed: Double = 1.0, force: Boolean = false): Boolean {
+        if (!abyss.isModelEngineEnabled) return false
+        val entity = entity(key) ?: return false
+        val modeledEntity = ModelEngineAPI.getModeledEntity(entity) ?: return false
+        return modeledEntity.models.values.any { model ->
+            model.animationHandler.playAnimation(animation, 0.0, 0.0, speed, force) != null
+        }
+    }
+
     private fun respawn() {
         despawnAll()
         Bukkit.getWorlds().forEach { world -> world.loadedChunks.forEach(::spawnIn) }
@@ -160,10 +168,13 @@ class NpcSpawner(private val root: Path, private val trades: TradeTables) : List
         }
 
         if (npc.model != null && abyss.isModelEngineEnabled) {
-            val blueprint = ModelEngineAPI.getBlueprint(npc.model) ?: return
+            val blueprint = ModelEngineAPI.getBlueprint(npc.model.blueprint) ?: return
             val model = ModelEngineAPI.createActiveModel(blueprint)
-            model.scale = Vector3f(npc.scale.x.toFloat(), npc.scale.y.toFloat(), npc.scale.z.toFloat())
-            ModelEngineAPI.createModeledEntity(entity).addModel(model, true)
+            val modeledEntity = ModelEngineAPI.createModeledEntity(entity)
+
+            model.scale = npc.scale
+            model.animationHandler.playAnimation(npc.model.animation, 0.0, 0.0, 1.0, false)
+            modeledEntity.addModel(model, true)
         }
     }
 
@@ -179,8 +190,8 @@ const val NPC_ENTITY_KEY = "npc_entity"
 class NpcDefinition(
     val name: String,
     val location: @Serializable(ResolvedLocationPointSerializer::class) Location,
-    val scale: @Serializable(VectorAltSerializer::class) Vector = Vector(1, 1, 1),
-    val model: String? = null,
+    val scale: @Serializable(Vector3fAltSerializer::class) Vector3f = Vector3f(1f, 1f, 1f),
+    val model: ModelEngineModel? = null,
     val showName: Boolean = true,
     val speaker: String? = null,
     val dialogStyle: String? = null,
@@ -188,4 +199,7 @@ class NpcDefinition(
 ) {
     val speakerName: String
         get() = speaker ?: name.miniMsg().toPlainText()
+
+    @Serializable
+    data class ModelEngineModel(val blueprint: String, val animation: String? = null)
 }
