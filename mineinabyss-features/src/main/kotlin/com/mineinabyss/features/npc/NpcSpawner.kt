@@ -8,6 +8,7 @@ import com.mineinabyss.features.helpers.actionsOf
 import com.mineinabyss.features.helpers.chunkPos
 import com.mineinabyss.features.helpers.loading.KeyedYamlLoader
 import com.mineinabyss.features.helpers.loading.gearyYaml
+import com.mineinabyss.features.helpers.ScalarShorthandSerializer
 import com.mineinabyss.features.helpers.pos
 import com.mineinabyss.features.locations.ResolvedLocationPointSerializer
 import com.mineinabyss.geary.actions.Tasks
@@ -20,6 +21,7 @@ import com.mineinabyss.idofront.time.ticks
 import com.ticxo.modelengine.api.ModelEngineAPI
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
@@ -200,6 +202,11 @@ class NpcDefinition(
     val speakerName: String
         get() = speaker ?: name.miniMsg().toPlainText()
 
-    @Serializable
-    data class ModelEngineModel(val blueprint: String, val animation: String? = null)
+    @KeepGeneratedSerializer
+    @Serializable(ModelEngineModel.Serializer::class)
+    data class ModelEngineModel(val blueprint: String, val animation: String? = null) {
+        object Serializer : ScalarShorthandSerializer<ModelEngineModel>(
+            generatedSerializer(), { ModelEngineModel(it.decodeString()) }, "mineinabyss:npc_model"
+        )
+    }
 }

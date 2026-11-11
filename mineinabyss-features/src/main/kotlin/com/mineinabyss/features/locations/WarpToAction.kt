@@ -15,7 +15,6 @@ import com.mineinabyss.geary.actions.Action
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.idofront.messaging.error
 import kotlinx.coroutines.future.await
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 
@@ -24,7 +23,6 @@ import kotlinx.serialization.Serializable
  * @param transition left out teleports straight away
  * @param offset an area around [to] the player lands at random inside of
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(WarpToAction.Serializer::class)
 class WarpToAction(

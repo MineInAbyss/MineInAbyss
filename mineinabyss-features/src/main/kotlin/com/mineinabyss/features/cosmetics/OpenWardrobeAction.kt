@@ -12,7 +12,6 @@ import com.mineinabyss.features.helpers.player
 import com.mineinabyss.features.locations.LocationPoint
 import com.mineinabyss.geary.actions.Action
 import com.mineinabyss.geary.actions.ActionGroupContext
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Player
@@ -25,7 +24,6 @@ import org.bukkit.entity.Player
  * @param leave left out returns the player to where they stood, HMCCosmetics' return-last-location overrides it
  * @param menu an HMCCosmetics menu id, left out uses its default menu
  */
-@OptIn(ExperimentalSerializationApi::class)
 @KeepGeneratedSerializer
 @Serializable(OpenWardrobeAction.Serializer::class)
 class OpenWardrobeAction(
