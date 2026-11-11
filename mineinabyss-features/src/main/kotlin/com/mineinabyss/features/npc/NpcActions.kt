@@ -5,12 +5,15 @@ import com.mineinabyss.features.dialogs.runtime.FOCUS_KEY
 import com.mineinabyss.features.dialogs.runtime.session
 import com.mineinabyss.features.helpers.KeyOrInline
 import com.mineinabyss.features.helpers.KeyOrInlineSerializer
+import com.mineinabyss.features.helpers.ScalarShorthandSerializer
 import com.mineinabyss.features.helpers.player
 import com.mineinabyss.features.npc.tradeTables
 import com.mineinabyss.geary.actions.Action
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.error
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import kotlinx.serialization.Serializable
@@ -46,4 +49,26 @@ value class OpenTradesAction(val table: TradeTableSource) : Action {
         session?.close()
         tradeTable.open(player)
     }
+}
+
+/** Written as just an animation name, or as a map of its fields */
+@KeepGeneratedSerializer
+@Serializable(PlayAnimationAction.Serializer::class)
+class PlayAnimationAction(
+    val animation: String,
+    val npc: PrefabKey? = null,
+    val speed: Double = 1.0,
+    val force: Boolean = false,
+) : Action {
+    override fun ActionGroupContext.execute() {
+        val spawner = npcSpawner ?: return abyss.logger.w("Npcs feature is not loaded, cannot play animation $animation")
+        val target = npc ?: environment[FOCUS_KEY] as? PrefabKey
+            ?: return abyss.logger.w("play_animation $animation has no npc and no target_npc was set")
+        if (!spawner.playAnimation(target, animation, speed, force))
+            abyss.logger.w("Could not play animation $animation on npc $target, it is either not loaded or has no such animation")
+    }
+
+    object Serializer : ScalarShorthandSerializer<PlayAnimationAction>(
+        generatedSerializer(), { PlayAnimationAction(it.decodeString()) }, "mineinabyss:play_animation"
+    )
 }
