@@ -7,15 +7,17 @@ import com.mineinabyss.features.helpers.KeyOrInline
 import com.mineinabyss.features.helpers.KeyOrInlineSerializer
 import com.mineinabyss.features.helpers.ScalarShorthandSerializer
 import com.mineinabyss.features.helpers.player
-import com.mineinabyss.features.npc.tradeTables
 import com.mineinabyss.geary.actions.Action
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.prefabs.PrefabKey
 import com.mineinabyss.idofront.messaging.error
+import com.mineinabyss.idofront.serialization.DurationSerializer
+import com.nexomc.nexo.utils.seconds
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
 import org.aselstudios.luxdialoguesapi.LuxDialoguesAPI
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
 
 @Serializable
 @SerialName("mineinabyss:target_npc")
@@ -57,13 +59,15 @@ class PlayAnimationAction(
     val animation: String,
     val npc: PrefabKey? = null,
     val speed: Double = 1.0,
+    val lerpIn: @Serializable(DurationSerializer::class) Duration = Duration.ZERO,
+    val lerpOut: @Serializable(DurationSerializer::class) Duration = Duration.ZERO,
     val force: Boolean = false,
 ) : Action {
     override fun ActionGroupContext.execute() {
         val spawner = npcSpawner ?: return abyss.logger.w("Npcs feature is not loaded, cannot play animation $animation")
         val target = npc ?: environment[FOCUS_KEY] as? PrefabKey
             ?: return abyss.logger.w("play_animation $animation has no npc and no target_npc was set")
-        if (!spawner.playAnimation(target, animation, speed, force))
+        if (!spawner.playAnimation(target, animation, lerpIn.seconds.toDouble(), lerpOut.seconds.toDouble(), speed, force))
             abyss.logger.w("Could not play animation $animation on npc $target, it is either not loaded or has no such animation")
     }
 

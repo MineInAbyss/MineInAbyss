@@ -17,12 +17,15 @@ import com.mineinabyss.idofront.serialization.Vector3fAltSerializer
 import com.mineinabyss.idofront.spawning.spawn
 import com.mineinabyss.idofront.textcomponents.miniMsg
 import com.mineinabyss.idofront.textcomponents.toPlainText
+import com.mineinabyss.idofront.time.inWholeTicks
 import com.mineinabyss.idofront.time.ticks
+import com.nexomc.nexo.utils.seconds
 import com.ticxo.modelengine.api.ModelEngineAPI
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
+import net.minecraft.advancements.predicates.entity.MovementPredicate.speed
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
@@ -128,12 +131,12 @@ class NpcSpawner(private val root: Path, private val trades: TradeTables) : List
         }
     }
 
-    fun playAnimation(key: PrefabKey, animation: String, speed: Double = 1.0, force: Boolean = false): Boolean {
+    fun playAnimation(key: PrefabKey, animation: String, lerpIn: Double, lerpOut: Double, speed: Double = 1.0, force: Boolean = false): Boolean {
         if (!abyss.isModelEngineEnabled) return false
         val entity = entity(key) ?: return false
         val modeledEntity = ModelEngineAPI.getModeledEntity(entity) ?: return false
         return modeledEntity.models.values.any { model ->
-            model.animationHandler.playAnimation(animation, 0.0, 0.0, speed, force) != null
+            model.animationHandler.playAnimation(animation, lerpIn, lerpOut, speed, force) != null
         }
     }
 
