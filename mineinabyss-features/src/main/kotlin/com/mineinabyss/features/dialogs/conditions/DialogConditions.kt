@@ -2,6 +2,7 @@ package com.mineinabyss.features.dialogs.conditions
 
 import com.charleskorn.kaml.YamlInput
 import com.charleskorn.kaml.yamlMap
+import com.mineinabyss.components.whistle.Whistle
 import com.mineinabyss.features.abyss
 import com.mineinabyss.features.dialogs.runtime.session
 import com.mineinabyss.features.dialogs.runtime.unlocks
@@ -9,6 +10,7 @@ import com.mineinabyss.features.helpers.Cost
 import com.mineinabyss.features.helpers.player
 import com.mineinabyss.features.quests.QuestState
 import com.mineinabyss.features.quests.questManager
+import com.mineinabyss.features.whistle.hasWhistle
 import com.mineinabyss.geary.actions.ActionGroupContext
 import com.mineinabyss.geary.actions.ActionsCancelledException
 import com.mineinabyss.geary.actions.Condition
@@ -106,17 +108,9 @@ value class UnlockedCondition(val key: String) : Condition {
     override fun ActionGroupContext.execute(): Boolean = player?.unlocks?.contains(key) == true
 }
 
-enum class WhistleRank {
-    BELL, RED, BLUE, MOON, BLACK, WHITE
-}
-
-// Placeholder until whistles are done
 @Serializable
 @SerialName("mineinabyss:whistle_rank")
 @JvmInline
-value class WhistleRankCondition(val atLeast: WhistleRank) : Condition {
-    override fun ActionGroupContext.execute(): Boolean {
-        val player = player ?: return false
-        return WhistleRank.entries.drop(atLeast.ordinal).any { player.hasPermission("mineinabyss.whistle.${it.name.lowercase()}") }
-    }
+value class WhistleRankCondition(val atLeast: Whistle) : Condition {
+    override fun ActionGroupContext.execute(): Boolean = player?.hasWhistle(atLeast) == true
 }

@@ -8,6 +8,7 @@ import com.mineinabyss.features.abyss
 import com.mineinabyss.deeperworld.sections.section
 import com.mineinabyss.features.patreons.patreonEmotePrefix
 import com.mineinabyss.features.tools.depthmeter.getAbyssDepth
+import com.mineinabyss.features.whistle.whistle
 import com.mineinabyss.geary.papermc.tracking.entities.toGeary
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.attribute.Attribute
@@ -39,6 +40,7 @@ class Placeholders : PlaceholderExpansion() {
             "layer" -> player.location.layer?.name
             "layer_simple" -> player.simpleLayerName
             "whistle" -> player.getLayerWhistleForHud()
+            "whistle_rank" -> player.whistle?.id ?: "none"
             "section" -> player.location.section?.name ?: "Unmanaged Section"
             "depth" -> player.location.getAbyssDepth()
 
